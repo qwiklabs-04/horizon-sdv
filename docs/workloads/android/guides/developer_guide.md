@@ -14,6 +14,8 @@ These exercises cater for two types of developers:
 - [**Application Developers**](#5-application-developer): Those who may use Android Studio as their primary development and testing platform.
 - [**Platform Developers**](#6-platform-developer): Those who may focus on Cuttlefish and hardware platform targets.
 
+  <br/><img src="images/section.1/Hackathon_Overview.drawio.png" width="400" /><br/>
+
 > [!NOTE]
 > - Developers are free to choose their own path and are not limited to a single approach.
 >   - They can select the labs that works best for them, or participate in both, without any restrictions or siloing.
@@ -115,6 +117,8 @@ For these development streams, the necessary infrastructure will have been pre-p
 This is documented elsewhere, not applicable for this stream.
 
 ### <span style="color:#335bff">3.2 Docker Image Template <a name="3-2-docker-image-template"></a></span>
+<details>
+<summary>Create Docker Image Template</summary>
 
 To build Android targets and utilise other pipeline jobs, it is mandatory to run the Docker Image Template job, which creates the Docker image that Kubernetes will use to execute the jobs on the build nodes.
 
@@ -125,8 +129,18 @@ To build Android targets and utilise other pipeline jobs, it is mandatory to run
   <li>Deselect <code>NO_PUSH</code></li>
   <li>Select <code>Build</code></li>
   </ul>
+</details>
 
 ### <span style="color:#335bff">3.3 Cuttlefish Instance Templates <a name="3-3-cuttlefish-instance-templates"></a></span>
+
+> [!TIP]
+> If there are issues observed when creating the templates, review the console logs for errors to ensure the environment
+> and jobs were setup correctly.
+>
+> The person preparing the platform may wish to test the instance templates using `CVD Launcher` and `CTS Execution` test jobs, using the `aosp_cf` targets created by the `Warm Build Caches` job. Refer to lab exercises for details how to prepare and run those jobs.
+
+<details>
+<summary>Create Cuttlefish Instance Templates</summary>
 
 This job generates the Google Compute Engine (GCE) instance templates required by test pipelines to provision Cuttlefish-ready and CTS-ready cloud instances. These instances are then used to launch [CVD](https://source.android.com/docs/devices/cuttlefish) and execute [CTS](https://source.android.com/docs/compatibility/cts) tests.
 
@@ -163,12 +177,7 @@ Verify the templates have been created.
   - `instance-template-cuttlefish-vm-main`
   - `instance-template-cuttlefish-vm-v110`
 
-> [!TIP]
-> If there are issues observed when creating the templates, review the console logs for errors to ensure the environment
-> and jobs were setup correctly.
->
-> The person preparing the platform may wish to test the instance templates using `CVD Launcher` and `CTS Execution` test jobs, using the `aosp_cf` targets created by the `Warm Build Caches` job. Refer to lab exercises for details how to prepare and run those jobs.
-
+</details>
 
 ### <span style="color:#335bff">3.4 Gerrit Setup <a name="3-4-gerrit-setup"></a></span>
 
@@ -196,14 +205,7 @@ This task can be done concurrently while `CF Instance Template` job is running, 
 
 This section describes how to add new users and create their HTTP token/password so they may work with Gerrit.
 
-##### <span style="color:#335bff">3.4.1.1 Add users to Administrators group <a name="3-4-1-1-add-users-to-administrators-group"></a></span>
-- Login to Gerrit as <code>gerrit-admin</code> and associated password retrieved from keycloak secrets earlier.
-- Select `BROWSE` → `Groups` → `Administrators`
-- Select `Members` and add your email and any other users to the `Administrators` group:
-
-  <img src="images/section.3/3.4.1.1_administrators.png" width="200" /><br/>
-
-> [!NOTE]
+> [!IMPORTANT]
 > - _All users must be members of the Administrator group._
 > - _Any members of the Administrator group can add new users to that group._
 >   - _Any new users need to have logged in at least once before they can be added to the Administrator group_
@@ -212,6 +214,16 @@ This section describes how to add new users and create their HTTP token/password
 >   - _Try incognito_
 >   - _If all else fails , reach out and team will share RESTful method._
 
+<details>
+<summary>Update User Access</summary>
+
+##### <span style="color:#335bff">3.4.1.1 Add users to Administrators group <a name="3-4-1-1-add-users-to-administrators-group"></a></span>
+- Login to Gerrit as <code>gerrit-admin</code> and associated password retrieved from keycloak secrets earlier.
+- Select `BROWSE` → `Groups` → `Administrators`
+- Select `Members` and add your email and any other users to the `Administrators` group:
+
+  <img src="images/section.3/3.4.1.1_administrators.png" width="200" /><br/>
+
 ##### <span style="color:#335bff">3.4.1.2 Create User HTTP token/password <a name="3-4-1-2-create-user-http-token-password"></a></span>
 
 In order to be able to access repos etc, a token must be created.
@@ -219,6 +231,7 @@ In order to be able to access repos etc, a token must be created.
 - Select `USER`(Top Right Hand Side)→`Settings`→`HTTP Credentials`
 - Select `GENERATE NEW PASSWORD`
 - Note the password for later usage.
+</details>
 
 > [!IMPORTANT]
 > - _All further work (in git & Gerrit) should be performed as the user, not gerrit-admin_
@@ -226,13 +239,14 @@ In order to be able to access repos etc, a token must be created.
 >   - _How the user manages their git login/password credentials is up to them, e.g. use of git credentials, config, netrc etc, is wholly dependent on preference and perhaps company security policies._
 
 #### <span style="color:#335bff">3.4.2 Project Access Settings<a name="3-4-2-project-access-settings"></a></span>
+<details>
+<summary>Update Project Access Settings</summary>
 
 In order to create projects based on Google Android Opensource tags, there are some additional permissions required to allow the forks to be created. These permissions are set as part of `All-Projects` project (`refs/meta/config`) and for sake of this tutorial, we will use the Gerrit UI to update these settings rather than cloning and updating `refs/meta/config`.
 
-> [!NOTE]
-> [Skip Validation](https://gerrit-review.googlesource.com/Documentation/user-upload.html#skip_validation) is required for projects with a large number of commits and also to retain the original committer etc.
->
-> The Gerrit Admin can decide when to revoke these permissions but for sake of these exercises, we leave the permissions in place.
+> **NOTE**
+> - the [Skip Validation](https://gerrit-review.googlesource.com/Documentation/user-upload.html#skip_validation) push option is required for projects with a large number of commits and also to retain the original committer etc.
+> - The Gerrit Admin can decide when to revoke these permissions but for sake of these exercises, we leave the permissions in place.
 
 To edit the Access options of All-Projects perform the following:
 
@@ -251,8 +265,11 @@ To edit the Access options of All-Projects perform the following:
   - In `Add group` text box, type `Administrators` and add
   - Repeat for `Push` and `Push Merge Commit`
   - Select `SAVE` at the bottom of the page to update the configuration.
+</details>
 
 #### <span style="color:#335bff">3.4.3 Project Fork Creation <a name="3-4-3-project-fork-creation"></a></span>
+<details>
+<summary>Create Android Project Forks</summary>
 
 Manifests and Projects must be hosted in Gerrit in order to utilise the default Jenkins pipeline configuration.<br/>
 
@@ -288,15 +305,14 @@ This section shows how to create and populate the mirrors on Horizon SDV Gerrit.
 - Select `CREATE`.
 - Repeat for `android/platform/frameworks/native`, `android/platform/packages/services/Car`, `android/platform/platform_testing`, `android/platform/hardware/interfaces`, `android/platform/packages/apps/Car/Launcher`
 
-> [!NOTE]
+> **NOTE**
 > The `android` prefix is used because Gerrit may not only host Android repos and as such we use a prefix to separate them under android workload.
 
 ##### <span style="color:#335bff">3.4.3.2 Create forks of upstream repos <a name="3-4-3-2-create-forks-of-upstream-repos"></a></span>
-> [!IMPORTANT]
+> **IMPORTANT**
 > - Before proceeding with these exercises, please note the URLs referenced in the instructions reference an example domain.
 >   - Replace `example.horizon-sdv.com` in the URLs with your domain
 > - Remember to use your Horizon SDV Gerrit credentials and HTTP token/password as mentioned in earlier sections. How you manage those is entirely up to you.
-<details><summary><code>platform/manifest</code></summary>
 <pre>
 # Clone Google AOSP repo
 git clone https://android.googlesource.com/platform/manifest
@@ -315,7 +331,6 @@ git push -o skip-validation horizon horizon/android-15.0.0_r20
 cd ..
 rm -rf manifest
 </pre>
-</details>
 <details><summary><code>platform/frameworks/native</code></summary>
 <pre>
 # Clone Google AOSP repo
@@ -421,7 +436,7 @@ rm -rf Launcher
 In order to use the forked repos, the Horizon SDV Gerrit manifests must be updated to reference the forked repos. We must update the
 manifests remotes and forked project names.
 
-> [!IMPORTANT]
+> **IMPORTANT**
 > - URLs differ per project, so do not cut and paste from this text, copy from Gerrit only.
 > - Remember to use your Horizon SDV Gerrit credentials and HTTP token/password as mentioned in earlier sections. How you manage those is entirely up to you.
 
@@ -564,11 +579,12 @@ Repeat the steps for the following branches:
 <li>Review and submit the change: <code>REPLY</code> → <code>CODE-REVIEW+2</code> → <code>SUBMIT</code> → <code>CONTINUE</code></li></ul></ul>
 </details>
 
+</details>
+
 #### <span style="color:#335bff">3.4.4 Patch Android<a name="3-4-4-patch-android"></a></span>
 
-> [!IMPORTANT]
-> - Before proceeding with these exercises, please note the URLs referenced in the instructions reference an example domain.
->   - Replace `example.horizon-sdv.com` in the URLs with your domain
+<details>
+<summary>Apply Android Patches</summary>
 
 ##### <span style="color:#335bff">3.4.4.1 `android-14.0.0_r74` - surround view bug<a name="3-4-4-1-surround-view-bug"></a></span>
 
@@ -609,7 +625,18 @@ This patch is already included in later releases, but simpler to include here an
   cd -
   rm -rf Car
   ```
+
+</details>
+
+> [!IMPORTANT]
+> - Before proceeding with these exercises, please note the URLs referenced in the instructions reference an example domain.
+>   - Replace `example.horizon-sdv.com` in the URLs with your domain
+
+
 ### <span style="color:#335bff">3.5 Warmed Build Caches<a name="3-5-warmed-build-caches"></a></span>
+
+<details>
+<summary>Prime Build Caches</summary>
 
 This job is provided as an aid for improving on build times by pre-warming the build caches, i.e. the persistent volumes, ahead of time.
 It does so by running a number of standard builds against the defined manifest and revision.
@@ -637,6 +664,8 @@ This task can be done concurrently while `CF Instance Template` job is running, 
   <li>Decision on number of persistent volumes depends on how many parallel builds you may allow across the team. Always apply 25% extra PVs to number of builds to ensure there is always some headroom.</li></ul>
  </ul>
 
+</details>
+
 ### <span style="color:#335bff">3.6 Hackathon On-Site Preparation<a name="3-6-hackathon-on-site-preparation"></a></span>
 
 Users must be given access to their respective GCP Project, but also:
@@ -662,13 +691,22 @@ Users must be given access to their respective GCP Project, but also:
 ## <span style="color:#335bff">4. Common Developer Preparation<a name="4-common-developer-preparation"></a></span>
 - PC (Mac, Linux, Windows) with [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [gcloud CLI](https://cloud.google.com/sdk/docs/install) installed.
 - PC with `adb` and `fastboot` installed in order to utilise the project tooling (Cuttlefish and Hardware platforms):
-  - Android Studio installed (minimal requirement for application developers)
+  - [Android Studio](https://developer.android.com/studio/install) installed (minimal requirement for application developers)
   - Alternatively, Google [platform-tools](https://developer.android.com/tools/releases/platform-tools) installed.
+  - Windows users will need [win-usb](https://developer.android.com/studio/run/win-usb) to use `adb` with Hardware via USB.
 - Access to their Google Cloud Platform project (assumes GCP project and tooling was already setup ahead of time)
+  - Student ID (email) assigned for Qwiklabs.
+    - Only required if accessing the lab from within the Qwiklabs environment.
   - Users added to keycloak so they may access the tools.
   - Users can access their Horizon SDV landing page, and access the tools in the browser:
     - Gerrit, Jenkins and MTK Connect
 - User has been added as a member of Gerrit Administrator group
+
+
+> [!IMPORTANT]
+> - **Multiple users** will be using the platform in parallel so it is important each user takes note of which jobs is 'theirs'; to facilitate this, all jobs descriptions show the user that kicked off the job.
+>
+> - Android Studio's ***Android Emulator*** is used in these exercises to verify the target images created using the pipeline build jobs. With the exception of section 5.2.2 (Road Reels Application), Android Studio itself should not be used to perform builds or to clone repos.
 
 ---
 
@@ -686,13 +724,13 @@ The lab exercises are organised into three levels:
 ### <span style="color:#335bff">5.1 Foundation<a name="5-1-foundation"></a></span>
 The objective of this set of lab exercises is to gain a basic understanding of the Horizon SDV platform.
 It will demonstrate the following:
-- Building Android Virtual Device builds for use with Android Studio.
+- Building Android Virtual Device builds for use with Android Studio's Android Emulator.
 - Building Android Cuttlefish Virtual Devices for use with the Cuttlefish host platform and verifying through the use of MTK Connect.
 
 #### <span style="color:#335bff">5.1.1 Android SDK Virtual Devices<a name="5-1-1-android-sdk-virtual-devices"></a></span>
 **Learning Objective**
 
-By completing this exercise, you will gain hands-on experience in building and testing SDK AVD targets and verifying their functionality within Android Studio.
+By completing this exercise, you will gain hands-on experience in building and testing SDK AVD targets and verifying their functionality with Android Studio's Android Emulator.
 
 <details><summary><b>Lab Exercise</b></summary>
 
@@ -821,7 +859,7 @@ Google Cloud Storage bucket for use with testing CF Virtual Devices and connecti
   - Wait for job to enter the `Keep Devices Alive` stage and then we can use MTK Connect to verify the device
 
 **_Verify in MTK Connect Application:_**
-- Open MTK Connect application from landing page, or the URL reported within the console log for the CVD Launcher job.
+- Open MTK Connect application from landing page (link in jenkins description of CVD Launcher job), or the URL reported within the console log for the CVD Launcher job.
   - Select `TESTBENCHES` option within the application:
 
     <img src="images/section.5/5.1.2_mtkc_testbench_option.png" width="300" />
@@ -856,7 +894,7 @@ ___
 
 **Learning Objective**
 
-Upon completing this exercise, you will gain hands-on experience in making code changes, pushing for review in Gerrit, automated triggering of the Gerrit build pipeline job, and verifying the build targets using the tools available, including Android Studio, Cuttlefish host VMs, and MTK Connect.
+Upon completing this exercise, you will gain hands-on experience in making code changes, pushing for review in Gerrit, automated triggering of the Gerrit build pipeline job, and verifying the build targets using the tools available, including Android Studio's Android Emulator, Cuttlefish host VMs, and MTK Connect.
 
 > [!NOTE]
 > This example provides a basic change to guarantee that the Gerrit build pipeline is triggered, builds are successful and successful result is reported back to Gerrit in review comments and the `VERIFIED` label.
@@ -876,6 +914,8 @@ ___
 
 Make a code change to the `platform/packages/apps/Car/Launcher` repo and stage the change in Gerrit Code Review.
 
+Cloning / editing of code should be performed as per usual methods - it is not intended that this be done in Android Studio.
+
 **_Clone Repo:_**
 
 > **Important:**
@@ -890,7 +930,7 @@ Make a code change to the `platform/packages/apps/Car/Launcher` repo and stage t
      git clone "https://example.horizon-sdv.com/gerrit/android/platform/packages/apps/Car/Launcher" && (cd "Launcher" && mkdir -p git rev-parse --git-dir/hooks/ && curl -Lo git rev-parse --git-dir/hooks/commit-msg https://example.horizon-sdv.com/gerrit/tools/hooks/commit-msg && chmod +x git rev-parse --git-dir/hooks/commit-msg)
      ```
 **_Modify the code and push to Gerrit:_**
-- Edit `app/res/values/strings.xml` strings and update `weather_app_name`, e.g.:
+- Open `app/res/values/strings.xml`, find the string labelled `weather_app_name` and update the value e.g.:
 
   `<string name="weather_app_name">Horizon-SDV Weather</string>`
 
@@ -924,7 +964,7 @@ Make a code change to the `platform/packages/apps/Car/Launcher` repo and stage t
 
   <img src="images/section.5/5.1.3_gerrit_build_jenkins_3.png" width="300" />
 
-  - Pick the artifact file for the target application that suits your test environment: `sdk_car_xxx` for Android Studio, `aosp_cf_x86_64_xx`x for Cuttlefish Virtual Devices. Note the GCS storage location as per previous foundation exercises.
+  - Pick the artifact file for the target application that suits your test environment: `sdk_car_xxx` for Android Emulator, `aosp_cf_x86_64_xxx` for Cuttlefish Virtual Devices. Note the GCS storage location as per previous foundation exercises.
 
 </details><br/>
 
@@ -953,9 +993,14 @@ ___
 
 **_Verify the change:_**
 
-We will verify that the change made to the Car Launcher Weather app, is visible in both Android Studio and MTK Connect (Cuttlefish Virtual Device). Ensure the application has updated as to you expectations, e.g. Weather app name.
+We will verify that the change made to the Car Launcher Weather app, is visible in both Android Emulator and MTK Connect (Cuttlefish Virtual Device). Ensure the application has updated as to you expectated, e.g. Weather app name.
 
-Note: users should uninstall the previous Virtual Device using `Android Studio` → `SDK Manager` → `Languages & Frameworks` → `Android SDK` → `SDK Platforms`. Once uninstalled, then install the device add-on and system images.
+> Note: users should uninstall the previous Virtual Device using
+> - `Android Studio` → `Virtual Device Manager` → 3 dots on device row → `Delete` → `Confirm`
+> - `Android Studio` → `SDK Manager` → `Languages & Frameworks` → `Android SDK` → `SDK Platforms` → untick the previous SDK you installed → `Apply`
+> - `Android Studio` → `SDK Manager` → `Languages & Frameworks` → `Android SDK` → `SDK Update Sites` → tick the previous entry you made → `minus` sign → `Ok`
+
+Once uninstalled, then install the device add-on and system images.
 
 - **Android Studio Virtual Device**
   - Repeat the steps from previous exercise to install the virtual device image and add-ons in Android Studio, create and run the device.
@@ -1058,7 +1103,7 @@ This next part of the lab builds upon that application but allows user to instal
 
     <img src="images/section.5/5.2.2_road_reels_device_manager.png" width="500" />
 
-  - Now you can see the device from MTK Connect and within Android Studio.
+  - Now you can see the device on MTK Connect and via Android Studio.
   - The Road Reels <img src="images/section.5/5.2.2_road_reels_app_icon.png" width="20" /> application can now be launched.
 
     <img src="images/section.5/5.2.2_road_reels_installed.png" width="500" />
@@ -1070,7 +1115,7 @@ ___
 
 **Learning Objective**
 
-Upon completing this exercise, you will acquire practical skills in updating the default Android boot animation and evaluate in Android Studio.
+Upon completing this exercise, you will acquire practical skills in updating the default Android boot animation and evaluate using Android Studio's Android Emulator.
 
 <details><summary><b>Lab Exercise</b></summary>
 
@@ -1080,6 +1125,10 @@ ___
 > This is optional. Included if developer is interested in changing the Android Boot Animation.
 >
 > Refer to Google [README](https://android.googlesource.com/platform/packages/services/Car/+/refs/tags/android-14.0.0_r30/car_product/car_ui_portrait/bootanimation/README) and [FORMAT.md](https://android.googlesource.com/platform/frameworks/base/+/master/cmds/bootanimation/FORMAT.md) for further details.
+
+>**Important:**
+> Cloning / editing of code should be performed as per usual methods - it is not intended that this be done in Android Studio.
+
 
 **_Clone Repo:_**
 
@@ -1128,7 +1177,7 @@ The PNG files must be unique and sequence from `000.png` to `999.png`.
   # Store it under Car/car_product/bootanimations/
   zip -0qry -i \*.txt \*.png \*.wav @ ../horizon-animation.zip *.txt part*
   ```
-- Update the `Car/car_product/build/car_generic_system.m`k makefile to use your new animation, e.g.
+- Update the `Car/car_product/build/car_generic_system.mk` makefile to use your new animation, e.g.
   ```
   # Boot animation
   PRODUCT_COPY_FILES += \
@@ -1201,6 +1250,9 @@ It will demonstrate the following:
 By completing this exercise, you will have learned about the process of building CTS, rather than relying on the default Google versions.
 
 Currently, our test jobs rely on the default Android CTS versions provided by Google, which are pre-installed on the VM instances used to launch Cuttlefish Virtual Devices. But the purpose of this build, is to allow user flexibility to test with their own CTS, rather than the default versions.
+
+> [!IMPORTANT]
+> If you're running this lab exercise as part of a Qwiklabs-based Hackathon event, please be aware that resources are limited. To ensure a smooth experience, we recommend having only one attendee per instance complete this lab exercise at a time during the `Foundation` exercises.
 
 <details><summary><b>Lab Exercise</b></summary>
 
@@ -1281,7 +1333,7 @@ You will build a Cuttlefish Virtual Device target and test it using `CVD launche
 
 - Open Jenkins Dashboard (e.g. https://example.horizon-sdv.com/jenkins/) and navigate to `AAOS Builder` pipeline job to prepare build targets that will be used in this lab exercise.
 - Select `Android Workflows` → `Builds` → `AAOS Builder`
-  - Select `Build with Parameters` and set the `AAOS_LUNCH_TARGET` to `aosp_cf_x86_64_auto-ap1a-userdebug a` and select `Build`
+  - Select `Build with Parameters` and set the `AAOS_LUNCH_TARGET` to `aosp_cf_x86_64_auto-ap1a-userdebug` and select `Build`
   - When build completes, the job will show the artifacts it has stored. These help the user locate the build artifacts within the Google Cloud Storage bucket for use with testing CF Virtual Devices and connecting to the device through Android Studio.
 
     <img src="images/section.6/6.1.3_cf_build.png" width="300" />
@@ -1313,7 +1365,7 @@ You will build a Cuttlefish Virtual Device target and test it using `CVD launche
 
 **_Verify in MTK Connect Application:_**
 
-- Open MTK Connect application from landing page, or the URL reported within the console log for the CVD Launcher job.
+- Open MTK Connect application from landing page (link in jenkins description of CVD Launcher job), or the URL reported within the console log for the CVD Launcher job.
   - Select `TESTBENCHES` option within the application:
 
     <img src="images/section.6/6.1.3_mtkc_testbench_option.png" width="300" />
@@ -1337,12 +1389,14 @@ You will build a Cuttlefish Virtual Device target and test it using `CVD launche
 
     <img src="images/section.6/6.1.3_mtkc_testbench_ui.png" width="500" />
 
-    Select the three dots symbol and you can use `adb` or connect directly to the cuttlefish host platform.
+    - Select the three dots symbol -> `Launch` -> `adb` to connect to the device via adb.
+    - Select the three dots symbol -> `Launch` -> `HOST` to connect to the cuttlefish host platform via adb.
+
   - Familiarise yourself with the `CVD Launcher` job and `MTK Connect` because we will be using this in later exercises.
 
 This next stage demonstrates the `Compatibility Test Suite` test job.
 
-**_Launch CTS on the Cuttlefish Virtual Devices:_**
+**_Run CTS on the Cuttlefish Virtual Devices:_**
 
 > **Note:**
 > This will require the Google Cloud Storage bucket URL you saved from the build section where you built the Cuttlefish Virtual devices.
@@ -1353,7 +1407,7 @@ This next stage demonstrates the `Compatibility Test Suite` test job.
 
     <img src="images/section.6/6.1.3_cts_execution.png" width="300" />
 
-    - By default we will use the `CtsHostsideNumberBlockingTestCases` defined in `CTS Module` parameter:
+    - By default we will run a single test module using the default `CtsHostsideNumberBlockingTestCases` value specified for the `CTS Module` parameter:
 
       <img src="images/section.6/6.1.3_cts_execution_modules.png" width="300" />
 
@@ -1365,6 +1419,9 @@ This next stage demonstrates the `Compatibility Test Suite` test job.
 
     - User may wish to use MTK Connect to verify UI tests, to do so, enable `MTK_CONNECT_ENABLE` before building.
 
+> **Note:**
+> Multiple cuttlefish devices can be launched in parallel, in which case CTS tests are spread between then - use `NUM_INSTANCES` parameter to specifiy 1-8 devices. Note that testing is spread over devices on a module-by-module basis, so if you want to see multiple devices being used for testing you will need to run a full CTS test plan (i.e. leave the `CTS MODULE` parameter empty).
+
 **_CTS Artifacts:_**
 
  - When the test has completed, the Jenkins job stores the CTS artifacts such as details of the CTS Modules, Test Plans, Results etc:
@@ -1372,7 +1429,7 @@ This next stage demonstrates the `Compatibility Test Suite` test job.
    <img src="images/section.6/6.1.3_cts_execution_artifacts.png" width="300" />
 
 - Summary of artifacts:
-  - `cts-modules.txt` shows the available tests for `CTS_MODULE` parameter
+  - `cts-modules.txt` shows the available modules for `CTS_MODULE` parameter
   - `cts-plans.txt` shows the available plans for `CTS_TESTPLAN` parameter
   - `invocation_summary.txt` shows the test result summary
   - The zip file contains the full set of results files.
@@ -1380,8 +1437,10 @@ This next stage demonstrates the `Compatibility Test Suite` test job.
 - You may rerun the test with different modules (`CTS_MODULE` empty will run a full set of modules).
 
 **_Test user defined CTS:_**
+> **Note:**
+> This can be performed in parallel with the previous section.
 
-- In the previous exercise where you built the CTS using `CTS Builder` job, you may now use that `android-cts.zip` instead of the default CTS provided by Google.
+In the previous exercise where you built the CTS using `CTS Builder` job, you may now use that `android-cts.zip` instead of the default CTS provided by Google.
 
  - Repeat the `Build with Parameters` steps as per above but this time we will define `CTS_DOWNLOAD_URL` so the test will use your prebuilt CTS:
 
@@ -1391,7 +1450,8 @@ This next stage demonstrates the `Compatibility Test Suite` test job.
   - Note: ensure it is the full URL including `android-cts.zip`
 - Then select `Build`. This job takes a little longer as it pulls down and unpacks your `android-cts.zip` from Google
   Cloud Storage.
-- The job will complete and provide you with the test results, artifacts as per previous examples.
+
+The job will complete and provide you with the test results, artifacts as per previous examples.
 
 ___
 
@@ -1427,7 +1487,6 @@ ___
 > - Remember to use your Horizon SDV Gerrit credentials and HTTP token/password as mentioned in earlier sections. How you manage those is entirely up to you.
 
 - Open Gerrit (e.g. https://example.horizon-sdv.com/gerrit/) and clone the `android/platform/frameworks/native` repo.
-- Clone the `android/platform/frameworks/native` repo
   - `Gerrit` → `BROWSE` → `Repositories` → `android/platform/frameworks/native`
     - Copy the `Clone with commit-msg hook` and start clone, e.g.
       ```
@@ -1435,7 +1494,7 @@ ___
        ```
        <img src="images/section.6/6.1.4_gerrit_clone.png" width="300" />
 
-- Edit `services/surfaceflinger/SurfaceFlinger.cpp` and make the following changes:
+- Edit `services/surfaceflinger/SurfaceFlinger.cpp` and add the following comment:
   ```// <Your Name> - test Gerrit pipeline```
 - Save and push the change for review:
   - Commit: `git commit -am "Surface Flinger basic test"`
@@ -1467,7 +1526,7 @@ ___
 
 **_Test the change:_**
 
-Decide whether you wish to test the change or defer to later lab exercises.
+Decide whether you wish to test the change (e.g. with the `CVD Launcher` and/or `CTS Execution` jobs) or defer to later lab exercises.
 
 </details><br/>
 
@@ -1501,34 +1560,40 @@ ___
 **_Modify the Surface Flinger code and push to Gerrit review:_**
 
 - Open Gerrit (e.g. https://example.horizon-sdv.com/gerrit/) and clone the `android/platform/frameworks/native` repo.
-- Clone the `android/platform/frameworks/native` repo
-  - `Gerrit` → `BROWSE` → `Repositories` → `android/platform/frameworks/native`
+- `BROWSE` → `Repositories` → `android/platform/frameworks/native`
+- Copy the `Clone with commit-msg hook` and perform the clone
+
 - `cd native`
 
 - Edit `services/surfaceflinger/SurfaceFlinger.cpp` and make the following changes:
-  - Add the following code snippet in `SurfaceFlinger::composite`:
+  - Search for the following line in `SurfaceFlinger::composite`:
+    ```
+    refreshArgs.devOptForceClientComposition = mDebugDisableHWC;
+    ```
+  - Add the following code snippet before that line:
     ```
     refreshArgs.colorTransformMatrix =
             mat4(vec4{1.0f, 0.0f, 0.0f, 0.0f}, vec4{0.0f, -1.0f, 0.0f, 0.0f},
                  vec4{0.0f, 0.0f, -1.0f, 0.0f}, vec4{0.0f, 1.0f, 1.0f, 1.0f});
     ```
-    before the following line:
-    ```
-    refreshArgs.devOptForceClientComposition = mDebugDisableHWC;
-    ```
-  - Replace the following in `SurfaceFlinger::renderScreenImpl`:
+  - Search for the following in `SurfaceFlinger::renderScreenImpl`:
     ```
     .updatingGeometryThisFrame = true,
     .colorTransformMatrix = calculateColorMatrix(colorSaturation),
     ```
-    with the following:
+    and replace it with the following:
     ```
     .updatingGeometryThisFrame = true,
     .colorTransformMatrix =
                 mat4(vec4{1.0f, 0.0f, 0.0f, 0.0f}, vec4{0.0f, -1.0f, 0.0f, 0.0f},
                      vec4{0.0f, 0.0f, -1.0f, 0.0f}, vec4{0.0f, 1.0f, 1.0f, 1.0f}),
     ```
-  - There may be an unused variable that will show an error. You can add the following line to your code to avoid this error. Add the following before return `output->getRenderSurface()->getClientTargetAcquireFence()`;
+  - There may be an unused variable that will show an error; do the following to avoid the error:
+    - Search for the following line:
+    ```
+    return output->getRenderSurface()->getClientTargetAcquireFence()`;
+    ```
+    - Add the following code snippet before that line:
     ```
     base::StringPrintf("%.2fadb", colorSaturation);
     ```
@@ -1538,17 +1603,17 @@ ___
 
 - If you can’t wait for the Gerrit build to complete the SDK AVD and CF Virtual device builds, then you may run the build manually as per Foundation,
   - `Android Workflows` → `Builds` → `AAOS Builder` → `Build with Parameters`
-  - Define the `AAOS_LUNCH_TARGET` to build `aosp_cf_x86_64_auto-ap1a-userdebug` and update the `GERRIT_PROJECT`, `GERRIT_CHANGE_NUMBER` and `GERRIT_PATCHSET_NUMBER` parameters to identify the change you wish to include in the build, e.g.
+  - Define the `AAOS_LUNCH_TARGET` to build `aosp_cf_x86_64_auto-ap1a-userdebug` and update the `GERRIT_PROJECT`, `GERRIT_CHANGE_NUMBER` and `GERRIT_PATCHSET_NUMBER` parameters to identify the change you wish to include in the build (note that the required details are shown in the Gerrit build job that was triggered by the change), e.g.
 
     <img src="images/section.6/6.2.1_gerrit_build_params.png" width="200" />
 
-- As per the foundation examples, the Gerrit builder also creates the artifact summaries in Jenkins to help identify the bucket URL to retrieve the build artifacts required for verification/test.
+- As per the foundation examples, the auto-triggered Gerrit build job also creates the artifact summaries in Jenkins to help identify the bucket URL to retrieve the build artifacts required for verification/test.
 
 **_Test the change:_**
 
-- We will verify that the change made using `CVD Launcher`.
+- We will verify that the change has taken effect using `CVD Launcher`.
 - **Cuttlefish Virtual Device**
-  - Repeat the steps from Foundation to run `CVD Launcher`, remembering to use the artifact URL that contains the change made for this exercise, e.g. below shows the Gerrit artifact but also remember to define `CUTTLEFISH_KEEP_ALIVE_TIME` to suit your needs.
+  - Repeat the steps from Foundation to run `CVD Launcher`, remembering to use the artifact URL that points to the built image containing the change made for this exercise, e.g. below shows the Gerrit artifact but also remember to define `CUTTLEFISH_KEEP_ALIVE_TIME` to suit your needs.
 
     <img src="images/section.6/6.2.1_cuttlefish.png" width="200" />
 
@@ -1584,6 +1649,7 @@ ___
 > **Important:**
 > Assumes `adb` and `fastboot` installed on local PC.
 > Refer to `Common Developer Preparation` section.
+> Charging cable should be unplugged - if plugged in, see Tip at bottom
 
 **_Set up the device to flash the build:_**
 
@@ -1592,7 +1658,7 @@ ___
   - Enable **USB debugging** and **OEM unlocking** from `Settings > System > Developer options`
 
 - **Flash the Build:**
-  - Download the Pixel Tablet artifact previously built in the Foundations lab exercise, e.g.
+  - Onto your own machine, download the Pixel Tablet artifact previously built in the Foundations lab exercise, e.g.
     ```
     gsutil cp gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/2/out_sdv-aosp_tangorpro_car-ap1a-userdebug.tgz .
     ```
@@ -1684,7 +1750,7 @@ ___
 
 **Learning Objective**
 
-Upon completing this exercise, you will acquire practical skills in to updating build job make commands, in case the default commands are not sufficient.
+Upon completing this exercise, you will acquire practical skills in updating build job make commands, in case the default commands are not sufficient.
 
 <details><summary><b>Lab Exercise</b></summary>
 
@@ -1760,14 +1826,14 @@ This lab exercise shows how the user may override make commands, such as require
   - `OVERRIDE_MAKE_COMMAND` `m android.hardware.automotive.vehicle.property-update-api && m dist`
   - `GERRIT_PROJECT` `android/platform/hardware/interfaces`
   - `GERRIT_CHANGE_NUMBER` to the number of the change in Gerrit
-  - `GERRIT_PATCHSET_NUMBER` to the patchset number of the change in Gerrit<br/>
+  - `GERRIT_PATCHSET_NUMBER` to the patchset number of the change in Gerrit.<br/>
      e.g.
 
      <img src="images/section.6/6.2.3_gerrit_parameters.png" width="200" />
  - Select `Build`
 
 - The build console log will show AIDL update.
-- If you wish to check the property, then run the target in `CVD Launcher`, use `MTK Connect` to book the device and launch `adb` to see the impact of the change and AIDL build. The example change show the property as not supported in HAL but it recognises the property. That’s expected because it is not the purpose of this lab to provide a working HAL update, rather demonstrate the build command override.
+- If you wish to check the property, run the target in `CVD Launcher`, use `MTK Connect` to book the device and launch `adb` to see the impact of the change and AIDL build. The example change shows the property as not supported in HAL but it recognises the property. That’s expected because it is not the purpose of this lab to provide a working HAL update, rather demonstrate the build command override.
   ```
   dumpsys car_service get-property-value 0x11101000
   INFO_HORIZON_SDV(0x11101000) not supported by HAL
@@ -1819,8 +1885,6 @@ ___
 
    ```Car/car_product/build/car_generic_system.mk```
 
-   Note: for SDK and CF etc, change `Car/car_product/build/car_generic_system.mk`
-
 The Android boot animation archive contains partX directories which contain the image files, and a description file, `desc.txt`.
 
 The `desc.txt` file describes the resolution of the boot animation and the PNG files, sequence (loops / delays). e.g.
@@ -1845,17 +1909,18 @@ The PNG files must be unique and sequence from `000.png` to `999.png`.
   zip -0qry -i \*.txt \*.png \*.wav @ ../horizon-animation.zip *.txt part*
   ```
 - Update the `Car/car_product/build/car.mk` makefile to use your new animation, e.g.
+  (Note: for SDK and CF etc, change `Car/car_product/build/car_generic_system.mk`)
   ```
   # Boot animation
   PRODUCT_COPY_FILES += \
       packages/services/Car/car_product/bootanimations/horizon-animation.zip:system/media/bootanimation.zip
   ```
 - Save, commit and push the change for review.
-- Once the Gerrit builds have finished, decide on which target you wish to use in test. Retrieve from GCS bucket identified in the build archive files.
+- Once the Gerrit builds have finished, decide on which target you wish to use in test (see next section). Retrieve from GCS bucket identified in the build archive files. 
 
 **_Test the change:_**
 
-Use the previous lab exercises and decide how you wish to test, e.g. Pixel Tablet may be best candidate. You may also decide to use `adb` and install the new animation to `/system/media/bootanimation.zip` on the device.
+Use the previous lab exercises and decide how you wish to test, e.g. Pixel Tablet or Android Emulator may be best candidates because it is not possible to view the device on MTK Connect during bootup. You may also decide to use `adb` and install the new animation to `/system/media/bootanimation.zip` on the device.
 
 - Pixel Tablet builds the car.mk so users animation should be included.
 - For SDK AVD and CF targets, consider changing the generic makefile.
@@ -1956,9 +2021,11 @@ For more information, user may reference [3.4 Gerrit Setup](#3-4-gerrit-setup).
 
 #### <span style="color:#335bff">7.3.1 Fork a project <a name="7-3-1-fork-a-project"></a></span>
 
+<details>
+<summary>Create a fork</summary>
 Pick the upstream project you wish to fork and do the following (note: change the Horizon SDV Gerrit URL to suit your GCP project URL):
 
-> [!NOTE]
+> **Note**
 > Replace `<UPSTREAM PROJECT NAME>` with the AOSP project you wish to fork and host in Horizon SDV Gerrit
 >
 > Replace `<HORIZON_DOMAIN>` with the URL of the GCP project you are working in.
@@ -1981,9 +2048,12 @@ Pick the upstream project you wish to fork and do the following (note: change th
   git checkout -b horizon/<TAG|BRANCH> <TAG|BRANCH>``
   git push -o skip-validation horizon horizon/<TAG|BRANCH>
   ```
+</details>
 
 #### <span style="color:#335bff">7.3.2 Update the Manifest <a name="7-3-2-update-the-manifest"></a></span>
 
+<details>
+<summary>Add fork to manifest</summary>
 If the user wishes to support additional branches then they must create a new manifest fork and update the `default.xml` accordingly. In that scenario, please look at `horizon/android-14.0.0_r30` as a reference example as to what other changes must be made to support other revisions.
 
 This example shows you how to update an existing manifest to include a new forked project for the supported branches.
@@ -2009,6 +2079,8 @@ This example shows you how to update an existing manifest to include a new forke
   - Review and Submit change in Gerrit:
     - In Gerrit, select `CHANGES` → `OPEN` and click on the change or open the CLI link reported in the console after `push`.
     - Review and submit the change: `REPLY` → `CODE-REVIEW+2` → `SUBMIT` → `CONTINUE`
+
+</details>
 
 #### <span style="color:#335bff">7.3.3 Gerrit Triggers <a name="7-3-3-gerrit-triggers"></a></span>
 
@@ -2059,7 +2131,7 @@ ___
 
 ___
 
-- Normally we define a new `computeEngine` entry, or replace and existing `computeEngine` entry within Jenkins CasC (`gitops/env/stage2/templates/jenkins.yaml` in the [horizon-sdv](https://github.com/googlecloudplatform/horizon-sdv) repo) and let ArgoCD deploy the change which will create the new cloud entry in Jenkins.
+- Normally we define a new `computeEngine` entry, or replace an existing `computeEngine` entry within Jenkins CasC (`gitops/env/stage2/templates/jenkins.yaml` in the [horizon-sdv](https://github.com/googlecloudplatform/horizon-sdv) repo) and let ArgoCD deploy the change which will create the new cloud entry in Jenkins.
 - If you do not create in CasC the new cloud entry will not persist across Jenkins restarts.
 - For sake of time, for this exercise we will create a new cloud entry manually in Jenkins.
   - In Jenkins navigate to `Manage Jenkins` → `Clouds` → `New Cloud`

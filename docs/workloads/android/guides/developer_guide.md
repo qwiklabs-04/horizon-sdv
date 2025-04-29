@@ -745,6 +745,12 @@ ___
 
     <img src="images/section.5/5.1.1_aaos_builder.png" width="200" />
 
+  - To identify your job within the pipeline, refer to the Builds summary section. This section provides a concise description of each build, i.e.:
+    - The target and branch built.
+    - Who ran the build job
+
+      <img src="images/section.5/5.1.1_build_summary.png" width="140" />
+
   - When build completes, the job will show the artifacts it has stored. These help the user locate the build artifacts within the Google Cloud Storage bucket.
 
     <img src="images/section.5/5.1.1_aaos_builder_artifact_1.png" width="300" />
@@ -1304,6 +1310,12 @@ You will build the Pixel Tablet target for use in later exercises.
   - Select `Build with Parameters` and set the `AAOS_LUNCH_TARGET` to `aosp_tangorpro_car-ap1a-userdebug` and select `Build`
 
     <img src="images/section.6/6.1.2_pixel_tablet_build.png" width="200" />
+
+  - To identify your job within the pipeline, refer to the Builds summary section. This section provides a concise description of each build, i.e.:
+    - The target and branch built.
+    - Who ran the build job.
+
+      <img src="images/section.6/6.1.2_build_summary.png" width="140" />
 
   - When build completes, the job will show the artifacts it has stored. These help the user locate the build artifacts within the Google Cloud Storage bucket.
 

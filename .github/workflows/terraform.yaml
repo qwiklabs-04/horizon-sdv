@@ -322,7 +322,8 @@ jobs:
         run: |
           git config --global url."https://x-access-token:${{steps.get_github_app_token.outputs.token}}@github.com".insteadOf https://github.com
           terraform init -input=false -backend-config bucket="${{ vars.GCP_BACKEND_BUCKET_NAME }}"
-          terraform plan -parallelism=${{ inputs.parallelism }} -input=false -no-color -out=tfplan && terraform show -no-color tfplan
+          terraform destroy -auto-approve
+          # terraform plan -parallelism=${{ inputs.parallelism }} -input=false -no-color -out=tfplan && terraform show -no-color tfplan
         continue-on-error: true
 
       - name: Reformat Plan

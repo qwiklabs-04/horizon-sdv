@@ -68,5 +68,5 @@ RUN git config --global user.email "aaosp.jenkins@dummy.com" && \
 # Create virtualenv ready for RPi builds (include-system-site-packages=true)
 # Install the required packages.
 RUN virtualenv --system-site-packages venv && \
-    . ${HOME}/venv/bin/activate && pip3 install --user meson==1.1.0 mako \
+    . ${HOME}/venv/bin/activate && pip3 install --user meson==1.3.0 mako \
     jinja2 ply pyyaml dataclasses && deactivate

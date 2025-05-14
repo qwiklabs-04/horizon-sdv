@@ -378,8 +378,7 @@ jobs:
           TF_VAR_sdv_gh_env_name: ${{ needs.get-env.outputs.environment }}
         run: |
           git config --global url."https://x-access-token:${{steps.get_github_app_token.outputs.token}}@github.com".insteadOf https://github.com
-          # terraform apply -parallelism=${{ inputs.parallelism }} -input=false -no-color tfplan
-          terraform destroy -auto-approve
+          terraform apply -parallelism=${{ inputs.parallelism }} -input=false -no-color tfplan          
         continue-on-error: true
 
       - name: Post Apply Success

@@ -280,7 +280,7 @@ spec:
                           value: {{ .Values.config.domain }}
                         - key: "JENKINS_SERVICE_ACCOUNT"
                           value: "jenkins-sa"
-                        - key: "JENKINS_CACHE_STORAGE_CLASS_NAME"
+                        - key: "JENKINS_AAOS_BUILD_CACHE_STORAGE_PREFIX"
                           value: "reclaimable-storage-class"
                         - key: "REPO_SYNC_JOBS"
                           value: {{ .Values.config.workloads.android.repoSyncJobs }}
@@ -375,7 +375,7 @@ spec:
                           stringParam {
                             name('ANDROID_CUTTLEFISH_REVISION')
                             defaultValue('')
-                            description('''<p>The branch/tag version of Android Cuttlefish to use, e.g..</p>
+                            description('''<p>The branch/tag version of Android Cuttlefish to use, e.g.</p>
                               <ul>
                                 <li>main</li>
                                 <li>v1.1.0</li>
@@ -495,6 +495,18 @@ spec:
                           <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>''')
 
                         parameters {
+                          choiceParam {
+                            name('ANDROID_VERSION')
+                            description('''<p>Version of disk pool to use for the build cache:</p>
+                                <ul>
+                                  <li>14: Use the Android 14 disk pool.</li>
+                                  <li>15: Use the Android 15 disk pool.</li>
+                                  <li>14-rpi: Use the Android 14 RPi disk pool.</li>
+                                  <li>15-rpi: Use the Android 15 RPi disk pool.</li>
+                                </ul>''')
+                            choices(['14', '15', '14-rpi', '15-rpi'])
+                          }
+
                           choiceParam {
                             name('INSTANCE_MAX_UPTIME')
                             choices(['0', '1', '2', '4', '8'])
@@ -637,6 +649,17 @@ spec:
                             trim(true)
                           }
 
+                          choiceParam {
+                            name('ANDROID_VERSION')
+                            description('''<p>Version of disk pool to use for the build cache, select from one of the following options:</p>
+                                <ul>
+                                  <li>default: let job determine pool.</li>
+                                  <li>14: Use the Android 14 disk pool.</li>
+                                  <li>15: Use the Android 15 disk pool.</li>
+                                </ul>''')
+                            choices(['default', '14', '15'])
+                          }
+
                           booleanParam {
                             name('ARCHIVE_ARTIFACTS')
                             defaultValue(false)
@@ -708,9 +731,13 @@ spec:
 
                           choiceParam {
                             name('ANDROID_VERSION')
-                            description('''<p>Android Version for AVD image builds.<br/>
-                              Essential for <b>Android Studio</b> devices <i>sdk_car</i> targets to create the SDK addons and device files</p>''')
-                            choices(['14', '15'])
+                            description('''<p>Version of disk pool to use for the build cache, select from one of the following options:</p>
+                                <ul>
+                                  <li>default: let job determine pool.</li>
+                                  <li>14: Use the Android 14 disk pool, if RPi target `14-rpi` will be used.</li>
+                                  <li>15: Use the Android 15 disk pool, if RPi target `15-rpi` will be used.</li>
+                                </ul>''')
+                            choices(['default', '14', '15'])
                           }
 
                           stringParam {
@@ -856,6 +883,17 @@ spec:
                             defaultValue('')
                             description('''<p>Build Android CTS from cuttlefish target.</p>''')
                             trim(true)
+                          }
+
+                          choiceParam {
+                            name('ANDROID_VERSION')
+                            description('''<p>Version of disk pool to use for the build cache, select from one of the following options:</p>
+                                <ul>
+                                  <li>default: let job determine pool.</li>
+                                  <li>14: Use the Android 14 disk pool, if RPi target `14-rpi` will be used.</li>
+                                  <li>15: Use the Android 15 disk pool, if RPi target `15-rpi` will be used.</li>
+                                </ul>''')
+                            choices(['default', '14', '15'])
                           }
 
                           choiceParam {

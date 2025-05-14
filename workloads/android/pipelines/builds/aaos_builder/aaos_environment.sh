@@ -128,7 +128,6 @@ AAOS_SDK_SYSTEM_IMAGE_PREFIX=${AAOS_SDK_SYSTEM_IMAGE_PREFIX:-sdk-repo-linux-syst
 AAOS_CACHE_DIRECTORY=${AAOS_CACHE_DIRECTORY:-/aaos-cache}
 
 AAOS_BUILDS_DIRECTORY="aaos_builds"
-AAOS_BUILDS_RPI_DIRECTORY="aaos_builds_rpi"
 
 # AAOS workspace and artifact storage paths
 # Store original workspace for use later.
@@ -146,8 +145,8 @@ if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
 
     # Remove unwanted directories that may have been created for dev.
     # Retain the official cache directories.
-    find "${AAOS_CACHE_DIRECTORY}" -mindepth 1 -maxdepth 1 -type d ! -name "${AAOS_BUILDS_DIRECTORY}" ! -name \
-        "${AAOS_BUILDS_RPI_DIRECTORY}" ! -name 'lost+found' -exec rm -rf {} + || true
+    find "${AAOS_CACHE_DIRECTORY}" -mindepth 1 -maxdepth 1 -type d ! -name "${AAOS_BUILDS_DIRECTORY}" ! \
+        -name 'lost+found' -exec rm -rf {} + || true
 
     # Remove oldest target directory if disk usage is greater than 92%
     # Builds consume ~6% of disk space.
@@ -178,15 +177,10 @@ EMPTY_DIR="${CACHE_DIRECTORY}"/empty_dir
 
 declare -a DIRECTORY_LIST=(
     "${CACHE_DIRECTORY}"/"${AAOS_BUILDS_DIRECTORY}"
-    "${CACHE_DIRECTORY}"/"${AAOS_BUILDS_RPI_DIRECTORY}"
 )
 
-if [[ "${AAOS_LUNCH_TARGET}" =~ "rpi" ]]; then
-    # Avoid RPI builds affecting standard android repos.
-    WORKSPACE="${CACHE_DIRECTORY}"/"${AAOS_BUILDS_RPI_DIRECTORY}"
-else
-    WORKSPACE="${CACHE_DIRECTORY}"/"${AAOS_BUILDS_DIRECTORY}"
-fi
+# Avoid RPI builds affecting standard android repos.
+WORKSPACE="${CACHE_DIRECTORY}"/"${AAOS_BUILDS_DIRECTORY}"
 
 # Clean commands
 AAOS_CLEAN=${AAOS_CLEAN:-NO_CLEAN}
@@ -530,4 +524,3 @@ function recreate_workspace() {
 }
 
 create_workspace
-

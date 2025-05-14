@@ -310,6 +310,63 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ inputs.terraform-version }}
+          
+      - name: terraform plan
+        working-directory: ${{ inputs.directory }}/
+        id: tfplan
+        if: ${{ contains(needs.get-env.outputs.action, 'plan')}}
+        env:
+          TF_VAR_sdv_gh_access_token: ${{ steps.get_github_app_token.outputs.token }}
+          TF_VAR_sdv_gh_repo_name: ${{ github.event.repository.full_name }}
+          TF_VAR_sdv_gh_env_name: ${{ needs.get-env.outputs.environment }}
+        run: |
+          git config --global url."https://x-access-token:${{steps.get_github_app_token.outputs.token}}@github.com".insteadOf https://github.com
+          terraform init -input=false -backend-config bucket="${{ vars.GCP_BACKEND_BUCKET_NAME }}"
+          terraform plan -parallelism=${{ inputs.parallelism }} -input=false -no-color -out=tfplan && terraform show -no-color tfplan
+        continue-on-error: true
+
+      - name: Reformat Plan
+        if: ${{ needs.get-env.outputs.environment != '' }}
+        env:
+          TFPLAN_STDOUT: ${{ steps.tfplan.outputs.stdout }}
+          TFPLAN_STDERR: ${{ steps.tfplan.outputs.stderr }}
+        run: |
+          if [[ "${{ steps.tfplan.outcome }}" == 'success' ]]; then
+            printf '%s' "$TFPLAN_STDOUT" \
+            | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt
+          else
+            printf '%s' "$TFPLAN_STDERR" \
+            | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt
+          fi
+
+      - name: Put Plan in Env Var
+        if: ${{ needs.get-env.outputs.environment != '' }}
+        run: |
+          PLAN=$(cat plan.txt)
+          echo "PLAN<<EOF" >> $GITHUB_ENV
+          echo "$PLAN" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Post Plan to GitHub PR
+        uses: mshick/add-pr-comment@v2
+        if: ${{ needs.get-env.outputs.environment != '' }}
+        with:
+          allow-repeats: false
+          repo-token: ${{steps.get_github_app_token.outputs.token}}
+          message-id: plan-${{ needs.get-env.outputs.environment }}
+          message: |
+            ## Terraform plan ${{ needs.get-env.outputs.environment }}
+            ```diff
+            ${{ env.PLAN }}
+            ```
+        continue-on-error: true
+        
+      - name: Check if Plan failed
+        if: steps.tfplan.outcome == 'failure'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.setFailed('Terraform plan failed.')
 
       - name: terraform apply
         working-directory: ${{ inputs.directory }}/

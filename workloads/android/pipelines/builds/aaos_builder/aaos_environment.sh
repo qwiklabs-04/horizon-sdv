@@ -37,6 +37,8 @@
 #  - POST_REPO_INITIALISE_COMMAND: additional vendor commands for repo initialisation.
 #  - POST_REPO_SYNC_COMMAND: additional vendor commands initialisation post
 #        repo sync.
+#  - DISK_SPACE_WATERMARK: percentage watermark to clean out old buids
+#        to retain space for current build.
 #
 # For Gerrit review change sets:
 #  - GERRIT_SERVER_URL: URL of Gerrit server.
@@ -70,14 +72,11 @@ unset BUILD_NUMBER
 # hostname: jenkins-aaos-build-pod
 
 AAOS_DEFAULT_REVISION=$(echo "${AAOS_DEFAULT_REVISION}" | xargs)
-AAOS_DEFAULT_REVISION=${AAOS_DEFAULT_REVISION:-android-14.0.0_r30}
+AAOS_DEFAULT_REVISION=${AAOS_DEFAULT_REVISION:-android-15.0.0_r32}
 
 # Android branch/tag:
 AAOS_REVISION=${AAOS_REVISION:-${AAOS_DEFAULT_REVISION}}
 AAOS_REVISION=$(echo "${AAOS_REVISION}" | xargs)
-
-# RPi Revision (Vanilla RPi)
-AAOS_RPI_REVISION="android-15.0"
 
 # Gerrit AAOS and RPi manifest URLs.
 AAOS_GERRIT_MANIFEST_URL=$(echo "${AAOS_GERRIT_MANIFEST_URL}" | xargs)
@@ -128,7 +127,6 @@ AAOS_SDK_SYSTEM_IMAGE_PREFIX=${AAOS_SDK_SYSTEM_IMAGE_PREFIX:-sdk-repo-linux-syst
 AAOS_CACHE_DIRECTORY=${AAOS_CACHE_DIRECTORY:-/aaos-cache}
 
 AAOS_BUILDS_DIRECTORY="aaos_builds"
-AAOS_BUILDS_RPI_DIRECTORY="aaos_builds_rpi"
 
 # AAOS workspace and artifact storage paths
 # Store original workspace for use later.
@@ -136,6 +134,12 @@ if [ -z "${WORKSPACE}" ]; then
     ORIG_WORKSPACE="${HOME}"
 else
     ORIG_WORKSPACE="${WORKSPACE}"
+fi
+
+# Disk space ceiling, remove older build targets if insufficient space.
+DISK_SPACE_WATERMARK=${DISK_SPACE_WATERMARK:-84}
+if [[ "${AAOS_LUNCH_TARGET}" =~ "rpi" ]]; then
+    DISK_SPACE_WATERMARK=78
 fi
 
 if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
@@ -146,14 +150,13 @@ if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
 
     # Remove unwanted directories that may have been created for dev.
     # Retain the official cache directories.
-    find "${AAOS_CACHE_DIRECTORY}" -mindepth 1 -maxdepth 1 -type d ! -name "${AAOS_BUILDS_DIRECTORY}" ! -name \
-        "${AAOS_BUILDS_RPI_DIRECTORY}" ! -name 'lost+found' -exec rm -rf {} + || true
+    find "${AAOS_CACHE_DIRECTORY}" -mindepth 1 -maxdepth 1 -type d ! -name "${AAOS_BUILDS_DIRECTORY}" ! \
+        -name 'lost+found' -exec rm -rf {} + || true
 
-    # Remove oldest target directory if disk usage is greater than 92%
-    # Builds consume ~6% of disk space.
+    # Remove oldest target directory if disk space is limited.
     while true; do
         USED_PERCENTAGE=$(df "${AAOS_CACHE_DIRECTORY}" | tail -1 | awk '{print ($3/$2)*100}' | cut -d '.' -f 1)
-        if [ "${USED_PERCENTAGE}" -lt 92 ]; then
+        if [ "${USED_PERCENTAGE}" -lt "${DISK_SPACE_WATERMARK}" ]; then
             break
         fi
         USAGE=$(df -h "${AAOS_CACHE_DIRECTORY}" | tail -1 | awk '{print "Used " $3 " of " $2}')
@@ -178,15 +181,10 @@ EMPTY_DIR="${CACHE_DIRECTORY}"/empty_dir
 
 declare -a DIRECTORY_LIST=(
     "${CACHE_DIRECTORY}"/"${AAOS_BUILDS_DIRECTORY}"
-    "${CACHE_DIRECTORY}"/"${AAOS_BUILDS_RPI_DIRECTORY}"
 )
 
-if [[ "${AAOS_LUNCH_TARGET}" =~ "rpi" ]]; then
-    # Avoid RPI builds affecting standard android repos.
-    WORKSPACE="${CACHE_DIRECTORY}"/"${AAOS_BUILDS_RPI_DIRECTORY}"
-else
-    WORKSPACE="${CACHE_DIRECTORY}"/"${AAOS_BUILDS_DIRECTORY}"
-fi
+# Avoid RPI builds affecting standard android repos.
+WORKSPACE="${CACHE_DIRECTORY}"/"${AAOS_BUILDS_DIRECTORY}"
 
 # Clean commands
 AAOS_CLEAN=${AAOS_CLEAN:-NO_CLEAN}
@@ -206,7 +204,9 @@ if [[ "${AAOS_LUNCH_TARGET}" =~ "arm64" ]]; then
     AAOS_ARCH_ABI="-v8a"
 elif [[ "${AAOS_LUNCH_TARGET}" =~ "x86_64" ]]; then
     AAOS_ARCH="x86_64"
-elif [[ "${AAOS_LUNCH_TARGET}" =~ "rpi" ]]; then
+elif [[ "${AAOS_LUNCH_TARGET}" =~ "rpi4" ]]; then
+    AAOS_ARCH="rpi4"
+elif [[ "${AAOS_LUNCH_TARGET}" =~ "rpi5" ]]; then
     AAOS_ARCH="rpi5"
 elif [[ "${AAOS_LUNCH_TARGET}" =~ "tangor" ]]; then
     AAOS_ARCH="arm64"
@@ -250,11 +250,29 @@ case "${AAOS_LUNCH_TARGET}" in
             "${OUT_DIR}/target/product/${AAOS_ARCH}/system.img"
             "${OUT_DIR}/target/product/${AAOS_ARCH}/vendor.img"
         )
-        # Download the RPi manifest if we are building for an RPi device.
-        POST_REPO_INITIALISE_COMMANDS_LIST=(
-            "curl -o .repo/local_manifests/manifest_brcm_rpi.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/${AAOS_RPI_REVISION}/manifest_brcm_rpi.xml --create-dirs"
-            "curl -o .repo/local_manifests/remove_projects.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/${AAOS_RPI_REVISION}/remove_projects.xml"
-        )
+
+        case "${AAOS_LUNCH_TARGET}" in
+            # Download the RPi manifest if we are building for an RPi device.
+            *ap1a*)
+                POST_REPO_INITIALISE_COMMANDS_LIST=(
+                    "curl -o .repo/local_manifests/manifest_brcm_rpi.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-14.0.0_r34/manifest_brcm_rpi.xml --create-dirs"
+                    "curl -o .repo/local_manifests/remove_projects.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-14.0.0_r34/remove_projects.xml"
+                )
+                ;;
+            *ap3a*)
+                POST_REPO_INITIALISE_COMMANDS_LIST=(
+                    "curl -o .repo/local_manifests/manifest_brcm_rpi.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-15.0.0_r4/manifest_brcm_rpi.xml --create-dirs"
+                    "curl -o .repo/local_manifests/remove_projects.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-15.0.0_r4/remove_projects.xml"
+                )
+                ;;
+            *)
+                # android-15.0.0_r32
+                POST_REPO_INITIALISE_COMMANDS_LIST=(
+                    "curl -o .repo/local_manifests/manifest_brcm_rpi.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-15.0/manifest_brcm_rpi.xml --create-dirs"
+                    "curl -o .repo/local_manifests/remove_projects.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-15.0/remove_projects.xml"
+                )
+                ;;
+        esac
         ;;
     sdk_car*)
         AAOS_MAKE_CMDLINE="m && m emu_img_zip && m sbom"
@@ -304,6 +322,12 @@ case "${AAOS_LUNCH_TARGET}" in
         AAOS_MAKE_CMDLINE="m && m android.hardware.automotive.vehicle@2.0-default-service android.hardware.automotive.audiocontrol-service.example"
         # Pixel Tablet binaries for Android ap1a/ap2a/ap3a/ap4a/bp1a
         case "${AAOS_LUNCH_TARGET}" in
+            *ap1a*)
+                POST_REPO_SYNC_COMMANDS_LIST=(
+                    "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap1a.240405.002-8d141153.tgz | tar -xzvf - "
+                    "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
+                )
+                ;;
             *ap2a*)
                 POST_REPO_SYNC_COMMANDS_LIST=(
                     "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap2a.240805.005-7e95f619.tgz | tar -xzvf - "
@@ -324,14 +348,14 @@ case "${AAOS_LUNCH_TARGET}" in
                 ;;
             *bp1a*)
                 POST_REPO_SYNC_COMMANDS_LIST=(
-                    "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-bp1a.250305.020.t2-636db283.tgz | tar -xzvf - "
+                    "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-bp1a.250505.005-fb23c626.tgz | tar -xzvf - "
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
                 )
                 ;;
             *)
-                # android-14.0.0_r30: https://developers.google.com/android/drivers#tangorproap1a.240405.002
+                # android-15.0.0_r32: https://developers.google.com/android/drivers (same as bp1a above)
                 POST_REPO_SYNC_COMMANDS_LIST=(
-                    "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap1a.240405.002-8d141153.tgz | tar -xzvf - "
+                    "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-bp1a.250505.005-fb23c626.tgz | tar -xzvf - "
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
                 )
                 ;;
@@ -530,4 +554,3 @@ function recreate_workspace() {
 }
 
 create_workspace
-

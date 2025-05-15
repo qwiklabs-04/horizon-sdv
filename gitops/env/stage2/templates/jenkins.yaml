@@ -226,22 +226,22 @@ spec:
                         noDelayProvisioning: true
                         projectId: {{ .Values.config.projectID }}
                     - computeEngine:
-                        cloudName: "cuttlefish-vm-v110"
+                        cloudName: "cuttlefish-vm-v170"
                         configurations:
                         - bootDiskAutoDelete: true
                           bootDiskSizeGb: 10
                           bootDiskSizeGbStr: "10"
                           bootDiskType: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/zones/{{ .Values.config.zone }}/diskTypes/hyperdisk-balanced"
-                          description: "cuttlefish-vm-v110"
+                          description: "cuttlefish-vm-v170"
                           javaExecPath: "/usr/bin/java"
                           labelSet:
-                          - name: "cuttlefish-vm-v110"
-                          labelString: "cuttlefish-vm-v110"
-                          labels: "cuttlefish-vm-v110"
+                          - name: "cuttlefish-vm-v170"
+                          labelString: "cuttlefish-vm-v170"
+                          labels: "cuttlefish-vm-v170"
                           launchTimeoutSeconds: 300
                           launchTimeoutSecondsStr: "300"
                           mode: NORMAL
-                          namePrefix: "cuttlefish-vm-v110"
+                          namePrefix: "cuttlefish-vm-v170"
                           numExecutors: 1
                           numExecutorsStr: "1"
                           oneShot: true
@@ -252,7 +252,7 @@ spec:
                           runAsUser: "jenkins"
                           sshConfiguration:
                             customPrivateKeyCredentialsId: "jenkins-cuttlefish-vm-ssh-private-key"
-                          template: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/global/instanceTemplates/instance-template-cuttlefish-vm-v110"
+                          template: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/global/instanceTemplates/instance-template-cuttlefish-vm-v170"
                           useInternalAddress: true
                           zone: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/zones/{{ .Values.config.zone }}"
                         credentialsId: "gce-creds"
@@ -378,7 +378,7 @@ spec:
                             description('''<p>The branch/tag version of Android Cuttlefish to use, e.g.</p>
                               <ul>
                                 <li>main</li>
-                                <li>v1.1.0</li>
+                                <li>v1.7.0</li>
                               </ul>
                               <p>Reference: <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a></p>''')
                             trim(true)
@@ -387,9 +387,9 @@ spec:
                           stringParam {
                             name('CUTTLEFISH_INSTANCE_UNIQUE_NAME')
                             defaultValue('')
-                            description('''<p>Optional parameter to define the unique name used for the instance template, e.g. <i>cuttlefish-vm-instance-test-v110</i><br/>
+                            description('''<p>Optional parameter to define the unique name used for the instance template, e.g. <i>cuttlefish-vm-instance-test-v170</i><br/>
                               Name must start with <i>cuttlefish-vm</i>, refer to docs for details on regex requirements for name.<br/>
-                              Default: The name will be automatically derived from ANDROID_CUTTLEFISH_REVISION., e.g. <i>cuttlefish-vm-v110</i><br/><br/></p>''')
+                              Default: The name will be automatically derived from ANDROID_CUTTLEFISH_REVISION., e.g. <i>cuttlefish-vm-v170</i><br/><br/></p>''')
                             trim(true)
                           }
 
@@ -499,12 +499,12 @@ spec:
                             name('ANDROID_VERSION')
                             description('''<p>Version of disk pool to use for the build cache:</p>
                                 <ul>
-                                  <li>14: Use the Android 14 disk pool.</li>
                                   <li>15: Use the Android 15 disk pool.</li>
-                                  <li>14-rpi: Use the Android 14 RPi disk pool.</li>
+                                  <li>14: Use the Android 14 disk pool.</li>
                                   <li>15-rpi: Use the Android 15 RPi disk pool.</li>
+                                  <li>14-rpi: Use the Android 14 RPi disk pool.</li>
                                 </ul>''')
-                            choices(['14', '15', '14-rpi', '15-rpi'])
+                            choices(['15', '14', '15-rpi', '14-rpi'])
                           }
 
                           choiceParam {
@@ -644,7 +644,7 @@ spec:
 
                           stringParam {
                             name('AAOS_REVISION')
-                            defaultValue('horizon/android-14.0.0_r30')
+                            defaultValue('horizon/android-15.0.0_r32')
                             description('''<p>Android revision tag/branch name.</p>''')
                             trim(true)
                           }
@@ -654,10 +654,10 @@ spec:
                             description('''<p>Version of disk pool to use for the build cache, select from one of the following options:</p>
                                 <ul>
                                   <li>default: let job determine pool.</li>
-                                  <li>14: Use the Android 14 disk pool.</li>
                                   <li>15: Use the Android 15 disk pool.</li>
+                                  <li>14: Use the Android 14 disk pool.</li>
                                 </ul>''')
-                            choices(['default', '14', '15'])
+                            choices(['default', '15', '14'])
                           }
 
                           booleanParam {
@@ -717,7 +717,7 @@ spec:
 
                           stringParam {
                             name('AAOS_REVISION')
-                            defaultValue('horizon/android-14.0.0_r30')
+                            defaultValue('horizon/android-15.0.0_r32')
                             description('''<p>Android revision tag/branch name.</p>''')
                             trim(true)
                           }
@@ -734,10 +734,10 @@ spec:
                             description('''<p>Version of disk pool to use for the build cache, select from one of the following options:</p>
                                 <ul>
                                   <li>default: let job determine pool.</li>
-                                  <li>14: Use the Android 14 disk pool, if RPi target `14-rpi` will be used.</li>
-                                  <li>15: Use the Android 15 disk pool, if RPi target `15-rpi` will be used.</li>
+                                  <li>15: Use the Android 15 disk pool, if target is for RPi the Android 15 RPi pool will be used.</li>
+                                  <li>14: Use the Android 14 disk pool, if target is for RPi the Android 14 RPi pool will be used.</li>
                                 </ul>''')
-                            choices(['default', '14', '15'])
+                            choices(['default', '15', '14'])
                           }
 
                           stringParam {
@@ -873,7 +873,7 @@ spec:
 
                           stringParam {
                             name('AAOS_REVISION')
-                            defaultValue('horizon/android-14.0.0_r30')
+                            defaultValue('horizon/android-15.0.0_r32')
                             description('''<p>Android revision tag/branch name.</p>''')
                             trim(true)
                           }
@@ -890,10 +890,10 @@ spec:
                             description('''<p>Version of disk pool to use for the build cache, select from one of the following options:</p>
                                 <ul>
                                   <li>default: let job determine pool.</li>
-                                  <li>14: Use the Android 14 disk pool, if RPi target `14-rpi` will be used.</li>
-                                  <li>15: Use the Android 15 disk pool, if RPi target `15-rpi` will be used.</li>
+                                  <li>15: Use the Android 15 disk pool.</li>
+                                  <li>14: Use the Android 14 disk pool.</li>
                                 </ul>''')
-                            choices(['default', '14', '15'])
+                            choices(['default', '15', '14'])
                           }
 
                           choiceParam {
@@ -1057,7 +1057,7 @@ spec:
                             description('''<p>The Jenkins GCE Clouds label for the Cuttlefish instance template, e.g.<br/></p>
                               <ul>
                                 <li>cuttlefish-vm-main</li>
-                                <li>cuttlefish-vm-v110</li>
+                                <li>cuttlefish-vm-v170</li>
                               </ul>''')
                             trim(true)
                           }
@@ -1080,8 +1080,8 @@ spec:
 
                           choiceParam {
                             name('ANDROID_VERSION')
-                            choices(['14', '15'])
-                            description('''<p>Select Android version: Android 14 or 15<br/>
+                            choices(['15', '14'])
+                            description('''<p>Select Android version: Android 15 or 14<br/>
                               Essential for picking the correct test hardness</p>''')
                           }
 
@@ -1206,7 +1206,7 @@ spec:
                             description('''<p>The Jenkins GCE Clouds label for the Cuttlefish instance template, e.g.<br/></p>
                               <ul>
                                 <li>cuttlefish-vm-main</li>
-                                <li>cuttlefish-vm-v110</li>
+                                <li>cuttlefish-vm-v170</li>
                               </ul>''')
                             trim(true)
                           }

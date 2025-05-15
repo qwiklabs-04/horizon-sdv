@@ -116,6 +116,7 @@ pipeline {
                   if ( "${env.AAOS_REVISION}" =~ "android-15.0.0_r4" )  env.ANDROID_BUILD_ID="ap3a-"
                   if ( "${env.AAOS_REVISION}" =~ "android-15.0.0_r10" ) env.ANDROID_BUILD_ID="ap4a-"
                   if ( "${env.AAOS_REVISION}" =~ "android-15.0.0_r20" ) env.ANDROID_BUILD_ID="bp1a-"
+                  if ( "${env.AAOS_REVISION}" =~ "android-15.0.0_r32" ) env.ANDROID_BUILD_ID="bp1a-"
                 }
                 sh '''
                   set +x

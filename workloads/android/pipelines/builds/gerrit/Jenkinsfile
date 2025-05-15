@@ -116,6 +116,7 @@ pipeline {
                   if ( "${env.GERRIT_BRANCH}" =~ "android-15.0.0_r4" )  env.ANDROID_BUILD_ID="ap3a-"
                   if ( "${env.GERRIT_BRANCH}" =~ "android-15.0.0_r10" ) env.ANDROID_BUILD_ID="ap4a-"
                   if ( "${env.GERRIT_BRANCH}" =~ "android-15.0.0_r20" ) env.ANDROID_BUILD_ID="bp1a-"
+                  if ( "${env.GERRIT_BRANCH}" =~ "android-15.0.0_r32" ) env.ANDROID_BUILD_ID="bp1a-"
 
                   if ( "$ANDROID_BUILD_ID" =~ "ap3a" ) env.ANDROID_VERSION=15
                   if ( "$ANDROID_BUILD_ID" =~ "ap4a" ) env.ANDROID_VERSION=15

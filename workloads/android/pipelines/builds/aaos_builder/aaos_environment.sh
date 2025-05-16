@@ -148,29 +148,35 @@ if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
     sudo chown builder:builder /"${AAOS_CACHE_DIRECTORY}"
     sudo chmod g+s /"${AAOS_CACHE_DIRECTORY}"
 
-    # Remove unwanted directories that may have been created for dev.
-    # Retain the official cache directories.
-    find "${AAOS_CACHE_DIRECTORY}" -mindepth 1 -maxdepth 1 -type d ! -name "${AAOS_BUILDS_DIRECTORY}" ! \
-        -name 'lost+found' -exec rm -rf {} + || true
+    case "$0" in
+        *initialise.sh | *build.sh)
+            # Remove unwanted directories that may have been created for dev.
+            # Retain the official cache directories.
+            find "${AAOS_CACHE_DIRECTORY}" -mindepth 1 -maxdepth 1 -type d ! -name "${AAOS_BUILDS_DIRECTORY}" ! \
+                -name 'lost+found' -exec rm -rf {} + || true
 
-    # Remove oldest target directory if disk space is limited.
-    while true; do
-        USED_PERCENTAGE=$(df "${AAOS_CACHE_DIRECTORY}" | tail -1 | awk '{print ($3/$2)*100}' | cut -d '.' -f 1)
-        if [ "${USED_PERCENTAGE}" -lt "${DISK_SPACE_WATERMARK}" ]; then
-            break
-        fi
-        USAGE=$(df -h "${AAOS_CACHE_DIRECTORY}" | tail -1 | awk '{print "Used " $3 " of " $2}')
-        echo "WARNING: Insufficient disk space - ${USED_PERCENTAGE}% (${USAGE})"
+            # Remove oldest target directory if disk space is limited.
+            while true; do
+                USED_PERCENTAGE=$(df "${AAOS_CACHE_DIRECTORY}" | tail -1 | awk '{print ($3/$2)*100}' | cut -d '.' -f 1)
+                if [ "${USED_PERCENTAGE}" -lt "${DISK_SPACE_WATERMARK}" ]; then
+                    break
+                fi
+                USAGE=$(df -h "${AAOS_CACHE_DIRECTORY}" | tail -1 | awk '{print "Used " $3 " of " $2}')
+                echo "WARNING: Insufficient disk space - ${USED_PERCENTAGE}% (${USAGE})"
 
-        # List the oldest target directory
-        OLDEST_DIR=$(find "${AAOS_CACHE_DIRECTORY}"/aaos_builds* -mindepth 1 -maxdepth 1 -type d -name 'out_sdv*' -exec ls -drt {} + | head -1)
-        if [ -z "${OLDEST_DIR}" ]; then
-            echo "No further target directories to clean up."
-            break
-        fi
-        echo "WARNING: Removing ${OLDEST_DIR} ..."
-        find "${OLDEST_DIR}" -delete
-    done
+                # List the oldest target directory
+                OLDEST_DIR=$(find "${AAOS_CACHE_DIRECTORY}"/aaos_builds* -mindepth 1 -maxdepth 1 -type d -name 'out_sdv*' -exec ls -drt {} + | head -1)
+                if [ -z "${OLDEST_DIR}" ]; then
+                    echo "No further target directories to clean up."
+                    break
+                fi
+                echo "WARNING: Removing ${OLDEST_DIR} ..."
+                find "${OLDEST_DIR}" -delete
+            done
+            ;;
+        *)
+            ;;
+    esac
 else
     # Local build or no PVC mounted, build in user home.
     AAOS_CACHE_DIRECTORY="${HOME}"
@@ -196,6 +202,7 @@ BUILD_INFO_FILE="${WORKSPACE}/build_info.txt"
 # separate from each other.
 export OUT_DIR="out_sdv-${AAOS_LUNCH_TARGET}"
 
+
 # Architecture:
 AAOS_ARCH=""
 AAOS_ARCH_ABI=""
@@ -216,10 +223,8 @@ fi
 USER=$(whoami)
 
 # Post repo init commands
-declare -a POST_REPO_INITIALISE_COMMANDS_LIST=(
-    "rm .repo/local_manifests/manifest_brcm_rpi.xml > /dev/null 2>&1"
-    "rm .repo/local_manifests/remove_projects.xml > /dev/null 2>&1"
-)
+declare -a POST_REPO_INITIALISE_COMMANDS_LIST
+
 # Post repo sync commands
 declare -a POST_REPO_SYNC_COMMANDS_LIST
 
@@ -253,6 +258,7 @@ case "${AAOS_LUNCH_TARGET}" in
 
         case "${AAOS_LUNCH_TARGET}" in
             # Download the RPi manifest if we are building for an RPi device.
+            # Note: if versions change then the previous manifests must be removed, eg. see POST_REPO_INITIALISE_COMMANDS_LIST above
             *ap1a*)
                 POST_REPO_INITIALISE_COMMANDS_LIST=(
                     "curl -o .repo/local_manifests/manifest_brcm_rpi.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-14.0.0_r34/manifest_brcm_rpi.xml --create-dirs"
@@ -266,13 +272,19 @@ case "${AAOS_LUNCH_TARGET}" in
                 )
                 ;;
             *)
-                # android-15.0.0_r32
+                # bp1a fallthrough: android-15.0.0_r32 / android-15.0.0_r20
                 POST_REPO_INITIALISE_COMMANDS_LIST=(
                     "curl -o .repo/local_manifests/manifest_brcm_rpi.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-15.0/manifest_brcm_rpi.xml --create-dirs"
                     "curl -o .repo/local_manifests/remove_projects.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-15.0/remove_projects.xml"
                 )
                 ;;
         esac
+
+        # Clean up the manifests to avoid issues when versions change.
+        POST_REPO_SYNC_COMMANDS_LIST=(
+            "rm .repo/local_manifests/manifest_brcm_rpi.xml > /dev/null 2>&1"
+            "rm .repo/local_manifests/remove_projects.xml > /dev/null 2>&1"
+        )
         ;;
     sdk_car*)
         AAOS_MAKE_CMDLINE="m && m emu_img_zip && m sbom"

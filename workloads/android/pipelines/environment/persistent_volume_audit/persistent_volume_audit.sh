@@ -82,10 +82,11 @@ K8S_PV+=($(kubectl get pv -n "${JENKINS_NAMESPACE}" -o jsonpath='{.items[?(@.spe
 K8S_PV+=($(kubectl get pv -n "${JENKINS_NAMESPACE}" -o jsonpath='{.items[?(@.spec.storageClassName=="reclaimable-storage-class-android-15")].metadata.name}'))
 # shellcheck disable=SC2207
 K8S_PV+=($(kubectl get pv -n "${JENKINS_NAMESPACE}" -o jsonpath='{.items[?(@.spec.storageClassName=="reclaimable-storage-class-android-15-rpi")].metadata.name}'))
+# Do not use zone because it not work with descriptions and we need that to try to isolate build volumes.
 # shellcheck disable=SC2207
-GCE_PV=($(gcloud compute disks list --zones="${ZONE}" --filter="type:(pd-balanced) AND sizeGb=500" 2>/dev/null | tail -n +2 | awk '{print $1}'))
+GCE_PV=($(gcloud compute disks list --filter="type:(pd-balanced) AND sizeGb=500 AND description:android AND description:jenkins" 2>/dev/null | tail -n +2 | awk '{print $1}'))
 # shellcheck disable=SC2207
-GCE_PV+=($(gcloud compute disks list --zones="${ZONE}" --filter="type:(pd-balanced) AND sizeGb=1000" 2>/dev/null | tail -n +2 | awk '{print $1}'))
+GCE_PV+=($(gcloud compute disks list --filter="type:(pd-balanced) AND sizeGb=1000 AND description:android AND description:jenkins" 2>/dev/null | tail -n +2 | awk '{print $1}'))
 # shellcheck disable=SC2207
 COMMON=($(comm -12 <(printf "%s\n" "${K8S_PV[@]}" | sort) <(printf "%s\n" "${GCE_PV[@]}" | sort)))
 # shellcheck disable=SC2207

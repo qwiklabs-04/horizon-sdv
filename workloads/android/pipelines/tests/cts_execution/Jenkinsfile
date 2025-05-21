@@ -53,7 +53,7 @@ pipeline {
           when { expression { env.CUTTLEFISH_DOWNLOAD_URL } }
           steps {
             script {
-              currentBuild.description = "$BUILD_USER"
+              currentBuild.description = "${params.JENKINS_GCE_CLOUD_LABEL}" + "<br/>" + "$BUILD_USER"
             }
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
               script { env.VM_NODE_NAME = env.NODE_NAME }
@@ -69,7 +69,6 @@ pipeline {
               '''
             }
             archiveArtifacts artifacts: 'wifi*.log', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
-
           }
         }
 

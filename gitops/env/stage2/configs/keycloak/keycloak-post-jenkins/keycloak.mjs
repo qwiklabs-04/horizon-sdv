@@ -31,6 +31,13 @@ const config = {
       redirectUris: [process.env.DOMAIN + '/jenkins/*'],
       protocol: 'openid-connect',
       publicClient: false
+    },
+    adminUser: {
+      username: process.env.JENKINS_ADMIN_USERNAME,
+      password: process.env.JENKINS_ADMIN_PASSWORD,
+      firstName: 'Jenkins',
+      lastName: 'Jenkins',
+      email: 'jenkins@jenkins'
     }
   }
 };
@@ -96,6 +103,38 @@ async function createClientIfRequired()  {
   }
 }
 
+async function createUserIfRequired()  {
+  try {
+    let users = await keycloakAdmin.users.find();
+    let user = _.find(users, {username: config.keycloak.adminUser.username});
+
+    if (user) {
+      console.info('deleting old instance of %s user', config.keycloak.adminUser.username);
+      await keycloakAdmin.users.del({id: user.id});
+    }
+
+    console.info('creating %s user', config.keycloak.adminUser.username);
+    const new_user = await keycloakAdmin.users.create({
+      username: config.keycloak.adminUser.username,
+      enabled: true,
+      requiredActions: [],
+      realm: config.keycloak.realm.realm,
+      firstName: config.keycloak.adminUser.firstName,
+      lastName: config.keycloak.adminUser.lastName,
+      email: config.keycloak.adminUser.email
+    });
+
+    await keycloakAdmin.users.resetPassword({
+      id: new_user.id,
+      realm: config.keycloak.realm.realm,
+      credential: {temporary: false, type: 'password', value: config.keycloak.adminUser.password}
+    });
+
+  } catch (err) {
+    throw err
+  }
+}
+
 async function generateSecretFiles()  {
   try {
     let clients = await keycloakAdmin.clients.find();
@@ -116,6 +155,7 @@ async function configureKeycloak()  {
     await waitForKeycloak();
     await getRealm();
     await createClientIfRequired();
+    await createUserIfRequired();
     await generateSecretFiles();
   } catch (err) {
     throw err

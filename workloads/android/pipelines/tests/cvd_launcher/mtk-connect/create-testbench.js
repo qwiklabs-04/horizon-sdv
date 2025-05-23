@@ -50,7 +50,7 @@ const _ = require("lodash");
  * Sets up the Axios configuration with a base URL and authentication
  * credentials from environment variables.
  */
-const { MTK_CONNECT_DOMAIN, MTK_CONNECT_USERNAME, MTK_CONNECT_PASSWORD, MTK_CONNECT_REGISTRATION, MTK_CONNECT_TESTBENCH, MTK_CONNECT_DEVICES, MTK_CONNECT_HOST } = process.env;
+const { MTK_CONNECT_DOMAIN, MTK_CONNECT_USERNAME, MTK_CONNECT_PASSWORD, MTK_CONNECT_REGISTRATION, MTK_CONNECT_TESTBENCH, MTK_CONNECT_TESTBENCH_USER, MTK_CONNECT_DEVICES, MTK_CONNECT_HOST } = process.env;
 const registration = MTK_CONNECT_REGISTRATION || fs.readFileSync('/usr/src/config/registration.name', 'utf-8');
 
 axios.defaults.baseURL = `https://${MTK_CONNECT_DOMAIN}/mtk-connect`;
@@ -80,13 +80,25 @@ async function configureAgent() {
       registration: registration
     })
     agent = agentResponse.data.data;
-    const data = {
-      group: {
-        name: 'everyone'
-      },
-      permission: 'book'
+    if (MTK_CONNECT_TESTBENCH_USER == 'everyone') {
+      console.log(`Using group permissions.`)
+      const data = {
+        group: {
+          name: 'everyone'
+        },
+        permission: 'book'
+      }
+      await axios.put(`/api/v1/agents/${agent.id}/permissions/group`, data)
+    } else {
+      console.log(`Using user permissions ${MTK_CONNECT_TESTBENCH_USER}.`)
+      const data = {
+        user: {
+          name: MTK_CONNECT_TESTBENCH_USER
+        },
+        permission: 'book'
+      }
+      await axios.put(`/api/v1/agents/${agent.id}/permissions/user`, data)
     }
-    await axios.put(`/api/v1/agents/${agent.id}/permissions/group`, data)
   }
   console.log(`Created agent using registration ${registration}`);
 }
@@ -199,6 +211,9 @@ async function main()  {
     console.log(`configureAgent`);
     await configureAgent();
   } catch (err) {
+    if (MTK_CONNECT_TESTBENCH_USER != 'everyone') {
+      console.log(`ERROR: Please check you have logged into MTK Connect at least once to avoid access issues.`);
+    }
     throw err;
   }
 

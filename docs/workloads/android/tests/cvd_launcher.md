@@ -149,6 +149,7 @@ MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
 MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
 MTK_CONNECTED_DEVICES=1 \
 MTK_CONNECT_TESTBENCH="Example-Testbench" \
+MTK_CONNECT_TESTBENCH_USER="joeb@company.com" \
 ./workloads/android/pipelines/tests/cvd_launcher/cvd_mtk_connect.sh --start
 
 # When complete, stop MTK Connect and delete the testbench.

@@ -29,7 +29,9 @@
 #  - MTK_CONNECTED_DEVICES: the number of connected devices.
 #  - MTK_CONNECT_TESTBENCH: the name of the testbench to create in mtk-connect.
 #  - MTK_CONNECT_TEST_ARTIFACT: what is being tested.
-
+#  - MTK_CONNECT_TESTBENCH_USER: users email address limiting access to test
+#      benches.
+#
 # Example Usage:
 # sudo \
 #   MTK_CONNECT_DOMAIN=${MTK_CONNECT_DOMAIN} \
@@ -44,6 +46,8 @@ MTK_CONNECTED_DEVICES=${MTK_CONNECTED_DEVICES:-8}
 MTK_CONNECTED_DEVICES=$(echo "${MTK_CONNECTED_DEVICES}" | xargs)
 MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH// /_}
 MTK_CONNECT_TESTBENCH=$(echo "${MTK_CONNECT_TESTBENCH}" | xargs)
+MTK_CONNECT_TESTBENCH_USER=${MTK_CONNECT_TESTBENCH_USER:-everyone}
+MTK_CONNECT_TESTBENCH_USER=$(echo "${MTK_CONNECT_TESTBENCH_USER}" | xargs)
 MTK_CONNECT_HOST=$(hostname -I | sed 's/ .*//')
 MTK_CONNECT_TEST_ARTIFACT=${MTK_CONNECT_TEST_ARTIFACT:-N/A}
 MTK_CONNECT_TEST_ARTIFACT=$(echo "${MTK_CONNECT_TEST_ARTIFACT}" | xargs)
@@ -80,6 +84,7 @@ function mtkc_start() {
         echo "MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD}"
         echo "MTK_CONNECT_DEVICES=${MTK_CONNECTED_DEVICES}"
         echo "MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH}"
+        echo "MTK_CONNECT_TESTBENCH_USER=${MTK_CONNECT_TESTBENCH_USER}"
         echo "MTK_CONNECT_HOST=${MTK_CONNECT_HOST}"
         echo "MTK_CONNECT_DELETE_OFFLINE=${MTK_CONNECT_DELETE_OFFLINE}"
     } >> "${scripts_path}"/.env
@@ -142,6 +147,7 @@ function mtkc_summary() {
         echo "MTK Connect Test Artifact URL: ${MTK_CONNECT_TEST_ARTIFACT}"
         echo "MTK Connect URL: https://${MTK_CONNECT_DOMAIN}/mtk-connect"
         echo "MTK Connect Testbench: ${MTK_CONNECT_TESTBENCH}"
+        echo "MTK Connect Testbench User: ${MTK_CONNECT_TESTBENCH_USER}"
         echo "===================================================================="
     fi
 }
@@ -154,6 +160,7 @@ Environment:
     MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD}
     MTK_CONNECTED_DEVICES=${MTK_CONNECTED_DEVICES}
     MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH}
+    MTK_CONNECT_TESTBENCH_USER=${MTK_CONNECT_TESTBENCH_USER}
     MTK_CONNECT_HOST=${MTK_CONNECT_HOST}
     MTK_CONNECT_TEST_ARTIFACT=${MTK_CONNECT_TEST_ARTIFACT}
     MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES=${MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES}

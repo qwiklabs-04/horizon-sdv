@@ -24,7 +24,7 @@ pipelineJob('Android/Builds/AAOS Builder') {
     <h4 style="margin-bottom: 10px;">Build Outputs</h4>
     <p>Build outputs are stored in a Google Cloud Storage bucket (refer to build artifact for location).</p>
     <h4 style="margin-bottom: 10px;">Viewing Artifacts on Google Cloud</h4>
-    <p><a href="https://cloud.google.com/docs/authentication/gcloud" target="_blank">Sign in to Google Cloud</a> and run the following command: <br/><code>gcloud storage ls gs://${CLOUD_PROJECT}-aaos/Android/Builds/AAOS_Builder/&lt;BUILD_NUMBER&gt;</code></p>
+    <p><a href="https://cloud.google.com/docs/authentication/gcloud" target="_blank">Sign in to Google Cloud</a> and run the following command: <br/><code>gcloud storage ls gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/AAOS_Builder/&lt;BUILD_NUMBER&gt;</code></p>
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
   parameters {

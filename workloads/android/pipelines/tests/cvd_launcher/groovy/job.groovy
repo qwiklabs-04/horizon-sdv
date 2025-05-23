@@ -44,7 +44,7 @@ pipelineJob('Android/Tests/CVD Launcher') {
     stringParam {
       name('CUTTLEFISH_DOWNLOAD_URL')
       defaultValue('')
-      description("""<p>Storage URL pointing to the location of the Cuttlefish Virtual Device images and host packages, e.g.<br/>gs://${CLOUD_PROJECT}-aaos/Android/Builds/AAOS_Builder/&lt;BUILD_NUMBER&gt;</p>""")
+      description("""<p>Storage URL pointing to the location of the Cuttlefish Virtual Device images and host packages, e.g.<br/>gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/AAOS_Builder/&lt;BUILD_NUMBER&gt;</p>""")
       trim(true)
     }
 

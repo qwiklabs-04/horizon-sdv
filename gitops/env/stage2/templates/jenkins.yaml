@@ -138,6 +138,7 @@ spec:
             - workflow-step-api:700.v6e45cb_a_5a_a_21
             - workflow-support:961.v51869f7b_d409
           additionalPlugins:
+            - authorize-project:1.8.1
             - build-blocker-plugin:166.vc82fc20b_a_ed6
             - build-user-vars-plugin:195.v8c35f9d5c3dc
             - configuration-as-code-groovy:1.1
@@ -167,6 +168,16 @@ spec:
           markupFormatter: rawHtml
           JCasC:
             enabled: true
+            security:
+              queueItemAuthenticator:
+                authenticators:
+                - project:
+                    disabledStrategies:
+                    - "org.jenkinsci.plugins.authorizeproject.strategy.SystemAuthorizationStrategy"
+                    enabledStrategies:
+                    - "org.jenkinsci.plugins.authorizeproject.strategy.SpecificUsersAuthorizationStrategy"
+                    - "org.jenkinsci.plugins.authorizeproject.strategy.TriggeringUsersAuthorizationStrategy"
+                    - "org.jenkinsci.plugins.authorizeproject.strategy.AnonymousAuthorizationStrategy"
             securityRealm: |-
               keycloak:
                 keycloakJson: ${jenkins-keycloak-keycloakJson}
@@ -298,6 +309,14 @@ spec:
                   - script: >
                       pipelineJob('Seed Workloads') {
                         description('''Seed all workloads and respective pipeline jobs.''')
+
+                        properties {
+                          authorizeProjectProperty {
+                            strategy {
+                              triggeringUsersAuthorizationStrategy()
+                            }
+                          }
+                        }
 
                         definition {
                           cpsScm {

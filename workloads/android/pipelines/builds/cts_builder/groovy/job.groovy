@@ -26,7 +26,7 @@ pipelineJob('Android/Builds/CTS Builder') {
       <li>The full suite of CTS tests (not including <a href="https://source.android.com/docs/compatibility/cts/verifier" target="_blank" title="CTS-V">CTS-V</a> tests)</li>
     </ul>
     <h4 style="margin-bottom: 10px;">Viewing Artifacts on Google Cloud</h4>
-    <p><a href="https://cloud.google.com/docs/authentication/gcloud" target="_blank">Sign in to Google Cloud</a> and run the following command: <br/><code>gcloud storage ls gs://${CLOUD_PROJECT}-aaos/Android/Builds/CTS_Builder/&lt;BUILD_NUMBER&gt;</code></p>
+    <p><a href="https://cloud.google.com/docs/authentication/gcloud" target="_blank">Sign in to Google Cloud</a> and run the following command: <br/><code>gcloud storage ls gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/CTS_Builder/&lt;BUILD_NUMBER&gt;</code></p>
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
   parameters {

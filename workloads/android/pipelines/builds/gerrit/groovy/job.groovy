@@ -24,7 +24,7 @@ by performing builds on that patchset and providing the user with a vote to thei
     <ul><li>This build job serves only to demonstrate the pipeline with Gerrit</li>
     <li>It includes a single CTS test job also for demonstration purposes, but this has no impact on the vote.</li></ul>
     <h4 style="margin-bottom: 10px;">Viewing Artifacts on Google Cloud</h4>
-    <p><a href="https://cloud.google.com/docs/authentication/gcloud" target="_blank">Sign in to Google Cloud</a> and run the following command: <br/><code>gcloud storage ls gs://${CLOUD_PROJECT}-aaos/Android/Builds/Gerrit/&lt;BUILD_NUMBER&gt;</code></p>
+    <p><a href="https://cloud.google.com/docs/authentication/gcloud" target="_blank">Sign in to Google Cloud</a> and run the following command: <br/><code>gcloud storage ls gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/Gerrit/&lt;BUILD_NUMBER&gt;</code></p>
     <br/><br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
   triggers {

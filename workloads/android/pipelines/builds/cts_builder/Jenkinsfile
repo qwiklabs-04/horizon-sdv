@@ -21,7 +21,7 @@ def getAndroidVersion(revision) {
     return "15"
   } else {
     currentBuild.result = 'FAILURE'
-    error "Failed to extract Android version from revision: ${revision}"
+    error "Failed to determine Android version from revision: ${revision}"
   }
 }
 

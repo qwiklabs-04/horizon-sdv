@@ -98,7 +98,7 @@ Examples:
 
 ### `ANDROID_VERSION`
 
-This is required for the SDK Car AVD builds so that the correct `devices.xml` and SDK Addon can be generated for use with Android Studio.
+This specifies which build disk pool to use for build cache. If `default` then the job will determine the pool based on `AAOS_REVISION` and target. For sdk AVD targets, this is also used to derive the Android API version for the SDK addons and device files.
 
 ### `POST_REPO_INITIALISE_COMMAND`
 
@@ -254,8 +254,8 @@ These are as follows:
 -   `HORIZON_DOMAIN`
     - The URL domain which is required by pipeline jobs to derive URL for tools and GCP.
 
--   `JENKINS_CACHE_STORAGE_CLASS_NAME`
-    - This identifies the Persistent Volume Claim (PVC) that provisions persistent storage for build cache, ensuring efficient reuse of cached resources across builds.  The default is [`pd-balanced`](https://cloud.google.com/compute/docs/disks/performance), which strikes a balance between optimal performance and cost-effectiveness.
+-   `JENKINS_AAOS_BUILD_CACHE_STORAGE_PREFIX`
+    - This identifies the Persistent Volume Claim (PVC) prefix that is used to provision persistent storage for build cache, ensuring efficient reuse of cached resources across builds.  The default is [`pd-balanced`](https://cloud.google.com/compute/docs/disks/performance), which strikes a balance between optimal performance and cost-effectiveness.
 
 -   `JENKINS_SERVICE_ACCOUNT`
     - Service account to use for pipelines. Required to ensure correct roles and permissions for GCP resources.

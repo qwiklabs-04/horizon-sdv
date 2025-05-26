@@ -31,6 +31,10 @@ One-time setup requirements.
 
 **Jenkins Parameters:** Defined in the respective pipeline jobs within `gitops/env/stage2/templates/jenkins.yaml` (CasC).
 
+### `ANDROID_VERSION`
+
+This specifies which build disk pool to use for the development instance.
+
 ### `INSTANCE_MAX_UPTIME`
 
 This is the maximum time that the instance may be running before it is automatically terminated and deleted. This is important to avoid leaving expensive instances in running state.
@@ -54,6 +58,9 @@ These are as follows:
 
 -   `CLOUD_ZONE`
     - The GCP project zone. Important for bucket, registry paths used in pipelines.
+
+-   `JENKINS_AAOS_BUILD_CACHE_STORAGE_PREFIX`
+    - This identifies the Persistent Volume Claim (PVC) prefix that is used to provision persistent storage for build cache, ensuring efficient reuse of cached resources across builds.  The default is [`pd-balanced`](https://cloud.google.com/compute/docs/disks/performance), which strikes a balance between optimal performance and cost-effectiveness.
 
 -   `JENKINS_SERVICE_ACCOUNT`
     - Service account to use for pipelines. Required to ensure correct roles and permissions for GCP resources.

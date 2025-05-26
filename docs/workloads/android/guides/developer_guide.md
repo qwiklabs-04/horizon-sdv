@@ -1,7 +1,7 @@
-# <span style="color:#335bff">Horizon SDV Hackathon Developer Guide</span>
+# <span style="color:#335bff">Horizon SDV Developer Guide</span>
 
 ## <span style="color:#335bff">1. Overview<a name="1-overview"></a></span>
-This page offers a set of suggested lab exercises and projects for developers to work on during the Horizon SDV Hackathon sessions.
+This page offers a set of suggested exercises and projects for developers to work on in order to gain an understanding of the Horizon SDV pipeline jobs.
 
 The lab exercises are organised into three levels:
 
@@ -14,22 +14,19 @@ These exercises cater for two types of developers:
 - [**Application Developers**](#5-application-developer): Those who may use Android Studio as their primary development and testing platform.
 - [**Platform Developers**](#6-platform-developer): Those who may focus on Cuttlefish and hardware platform targets.
 
-  <br/><img src="images/section.1/Hackathon_Overview.drawio.png" width="400" /><br/>
+  <br/><img src="images/section.1/Overview.drawio.png" width="400" /><br/>
 
 > [!NOTE]
+> - When following the guide make sure to use the latest Android revision available. Revisions in Jenkins move while
+>   this guide is unchanged.
 > - Developers are free to choose their own path and are not limited to a single approach.
 >   - They can select the labs that works best for them, or participate in both, without any restrictions or siloing.
 > - There is some common setup required, outlined in the following section:
 >   - [4. Common Developer Preparation](#4-common-developer-preparation)
 
 > [!IMPORTANT]
-> **Hackathon Events**
-> - If you're attending a hackathon event, you can skip section [3. Prerequisites](#3-prerequisites).
->   - The Hackathon facilitation team will have already set up the necessary infrastructure for the labs, and they'll provide the details to your team on the day of the event, i.e. [3.6 Hackathon On-Site Preparation](#3-6-hackathon-on-site-preparation).
->   - They too may ensure you have the correct hardware setup for the labs, and provide any additional instructions that may be required. i.e. [4. Common Developer Preparation](#4-common-developer-preparation).
-> - However, if you're interested in learning more about the underlying setup, section [3. Prerequisites](#3-prerequisites) provides additional context that may be helpful, especially when reviewing and working with section [7. Appendix](#7-appendix).
-
----
+> - Please use the latest available Android revisions when following this guide. Jenkins Android revisions may change over time, while this guide remains showing older versions.
+> - When working with Cuttlefish, please be aware that the latest supported versions change frequently. The examples provided in this guide may become outdated, as <a href=https://github.com/google/android-cuttlefish/tags>tags</a> are updated regularly.
 
 ## <span style="color:#335bff">2. Table Of Contents <a name="2-table-of-contents"></a></span>
 
@@ -52,7 +49,7 @@ These exercises cater for two types of developers:
       * [3.4.4.1 `android-14.0.0_r74` - surround view bug](#3-4-4-1-surround-view-bug)
       * [3.4.4.2 `android-14.0.0_r30` - audio crash bug](#3-4-4-2-audio-crash-bug)
   * [3.5 Warmed Build Caches](#3-5-warmed-build-caches)
-  * [3.6 Hackathon On-Site Preparation](#3-6-hackathon-on-site-preparation)
+  * [3.6 Preparation](#3-6-preparation)
 - [4. Common Developer Preparation](#4-common-developer-preparation)
 - [5. Application Developer](#5-application-developer)
   * [5.1 Foundation](#5-1-foundation)
@@ -93,7 +90,7 @@ These exercises cater for two types of developers:
 
 ## <span style="color:#335bff">3. Prerequisites <a name="3-prerequisites"></a></span>
 
-Before either developer can utilise the Horizon SDV platform tools, several prerequisite steps must be completed. Hackathon facilitation team may have already done all these steps for these streams, but included here for completeness.
+Before either developer can utilise the Horizon SDV platform tools, several prerequisite steps must be completed.
 
 Summary of pre-requisite tasks:
 - Horizon SDV Platform Provisioned.
@@ -708,7 +705,7 @@ This task can be done concurrently while `CF Instance Template` job is running, 
 
 </details>
 
-### <span style="color:#335bff">3.6 Hackathon On-Site Preparation<a name="3-6-hackathon-on-site-preparation"></a></span>
+### <span style="color:#335bff">3.6 Preparation<a name="3-6-preparation"></a></span>
 
 Users must be given access to their respective GCP Project, but also:
 
@@ -717,9 +714,6 @@ Users must be given access to their respective GCP Project, but also:
 - Users are provided an overview of GCP, authentication/login and gcloud CLI installation and usage ahead of break out into team tutorial sessions.
 - Users added to Keycloak so they may access Gerrit, Jenkins and MTK Connect
 - Users added to Administrator group in Gerrit so they may work with code review system.
-
-> [!TIP]
-> - It may be best to nominate a team member to manage user accounts on the day of the Hackathon, i.e. assign an initial administrator for both Keycloak and Gerrit to grant access to team members.
 
 - Hardware Platforms available (Pixel Tablets)
 
@@ -737,8 +731,6 @@ Users must be given access to their respective GCP Project, but also:
   - Alternatively, Google [platform-tools](https://developer.android.com/tools/releases/platform-tools) installed.
   - Windows users will need [win-usb](https://developer.android.com/studio/run/win-usb) to use `adb` with Hardware via USB.
 - Access to their Google Cloud Platform project (assumes GCP project and tooling was already setup ahead of time)
-  - Student ID (email) assigned for Qwiklabs.
-    - Only required if accessing the lab from within the Qwiklabs environment.
   - Users added to keycloak so they may access the tools.
   - Users can access their Horizon SDV landing page, and access the tools in the browser:
     - Gerrit, Jenkins and MTK Connect
@@ -783,7 +775,7 @@ ___
 - Open Jenkins Dashboard (e.g. https://example.horizon-sdv.com/jenkins/) and navigate to AAOS Builder pipeline job to prepare build targets that will be used in this exercise.
 - Select `Android Workflows` → `Builds` → `AAOS Builder` → `Build with Parameters` and define the `AAOS_LUNCH_TARGET` and select `Build`
 
-  - `sdk_car_x86_64-ap1a-userdebug` or `sdk_car_arm64-ap1a-userdebug` (choose based on you local PC architecture)
+  - `sdk_car_x86_64-bp1a-userdebug` or `sdk_car_arm64-bp1a-userdebug` (choose based on you local PC architecture)
 
     <img src="images/section.5/5.1.1_aaos_builder.png" width="200" />
 
@@ -822,9 +814,9 @@ The follow on section should be second nature to most but we will explain for th
 
   - Select `+` to add your virtual device images/addon downloaded from previous `sdk_car_<ARCH>-userdebug` build.
 
-    - Find your addon file `horizon-sdv-aaos-sys-img2-1.xml` and define URL: using `file:////`, e.g.
+    - Find your addon file `horizon-sdv-aaos-sys-img2-1.xml` and define URL: using `file:///`, e.g.
 
-      `file:////Users/dave.m.smith/horizon-sdv/horizon-sdv-aaos-sys-img2-1.xml` and select `OK` and in `Settings` select `Apply`
+      `file:///Users/dave.m.smith/horizon-sdv/horizon-sdv-aaos-sys-img2-1.xml` and select `OK` and in `Settings` select `Apply`
 
       <img src="images/section.5/5.1.1_android_studio_update_sites_url.png" width="275" />
 
@@ -848,8 +840,7 @@ The follow on section should be second nature to most but we will explain for th
 
     <img src="images/section.5/5.1.1_android_studio_virtual_device.png" width="400" />
 
-    <img src="images/section.5/5.1.1_android_studio_virtual_device_1.png" width="400" />
-  - `System Image` should show the `Android 14.0 (Horizon SDV)` target image, select it and select `Next`
+  - `System Image` should show the `Android 15.0 (Horizon SDV)` target image, select it and select `Next`
   - If you wish, change the `AVD Name` within `Verify Configuration`.
   - The Virtual Device is now available to use:
 
@@ -878,14 +869,14 @@ Application developers may not use Cuttlefish to any great extent, but this lab 
 **_Create Cuttlefish Virtual Device target:_**
 
 - Open Jenkins Dashboard (e.g. https://example.horizon-sdv.com/jenkins/) and navigate to AAOS Builder pipeline job to prepare build targets that will be used in this lab exercise.
-- Select `Android Workflows` → `Builds` → `AAOS Builder` → `Build with Parameters` and define the `AAOS_LUNCH_TARGET` as `aosp_cf_x86_64_auto-ap1a-userdebug` and select `Build`
+- Select `Android Workflows` → `Builds` → `AAOS Builder` → `Build with Parameters` and define the `AAOS_LUNCH_TARGET` as `aosp_cf_x86_64_auto-bp1a-userdebug` and select `Build`
 
   - When the build completes, the job will show the artifacts it has stored. These help the user locate the build artifacts within the
 Google Cloud Storage bucket for use with testing CF Virtual Devices and connecting to the device through Android Studio.  e.g.
 
     <img src="images/section.5/5.1.2_aaos_builder_artifact_1.png" width="400" />
 
-  - Open the `aosp_cf_x86_64_auto-ap1a-userdebug-artifacts.txt` which will show you were the artfifacts are stored, e.g.
+  - Open the `aosp_cf_x86_64_auto-bp1a-userdebug-artifacts.txt` which will show you were the artfifacts are stored, e.g.
 
     <img src="images/section.5/5.1.2_aaos_builder_artifact_2.png" width="600" />
 
@@ -987,7 +978,7 @@ Cloning / editing of code should be performed as per usual methods - it is not i
 - Save and push the change for review:
   - Commit: `git commit -am "Car Launcher weather app update"`
   - Update Change ID if one was not automatically generated in your commit: `git commit --amend --no-edit`
-  - Push for Review: `git push origin HEAD:refs/for/horizon/android-14.0.0_r30`
+  - Push for Review: `git push origin HEAD:refs/for/horizon/android-15.0.0_r32`
     - The remote should report success and provide a link back to the Gerrit review, e.g.
       - `https://example.horizon-sdv.com/gerrit/c/android/platform/packages/apps/Car/Launcher/+/182 Car Launcher weather app update [NEW]`
 
@@ -1299,9 +1290,6 @@ By completing this exercise, you will have learned about the process of building
 
 Currently, our test jobs rely on the default Android CTS versions provided by Google, which are pre-installed on the VM instances used to launch Cuttlefish Virtual Devices. But the purpose of this build, is to allow user flexibility to test with their own CTS, rather than the default versions.
 
-> [!IMPORTANT]
-> If you're running this lab exercise as part of a Qwiklabs-based Hackathon event, please be aware that resources are limited. To ensure a smooth experience, we recommend having only one attendee per instance complete this lab exercise at a time during the `Foundation` exercises.
-
 <details><summary><b>Lab Exercise</b></summary>
 
 ___
@@ -1315,7 +1303,7 @@ In this exercise, we will walk you through the process of building your own CTS 
 
 - Open Jenkins Dashboard (e.g. https://example.horizon-sdv.com/jenkins/) and navigate to `CTS Builder` pipeline job to prepare build targets that will be used in this lab exercise.
 - Select `Android Workflows` → `Builds` → `CTS Builder`
-  - Select `Build with Parameters` and set the `AAOS_LUNCH_TARGET` to `aosp_cf_x86_64_auto-ap1a-userdebug` and select `Build`
+  - Select `Build with Parameters` and set the `AAOS_LUNCH_TARGET` to `aosp_cf_x86_64_auto-bp1a-userdebug` and select `Build`
 
     <img src="images/section.6/6.1.1_cts_builder.png" width="200" />
 
@@ -1323,11 +1311,11 @@ In this exercise, we will walk you through the process of building your own CTS 
 
     <img src="images/section.6/6.1.1_cts_builder_artifacts.png" width="300" />
 
-  - Open the `aosp_cf_x86_64_auto-ap1a-userdebug-artifacts.txt` which will show you how to retrieve the artifacts, e.g.
+  - Open the `aosp_cf_x86_64_auto-bp1a-userdebug-artifacts.txt` which will show you how to retrieve the artifacts, e.g.
 
     <img src="images/section.6/6.1.1_cts_builder_artifacts_txt.png" width="500" />
 
-    - Note the storage URL for `android-cts.zip` for later use in test jobs, e.g. `gs://sdva-2108202401-aaos/Android/Builds/CTS_Builder/1/android-cts.zip`. You do not need to download these artifacts, later jobs will simply reference the URL.
+    - Note the storage URL for `android-cts.zip` for later use in test jobs, e.g. `gs://sdva-2108202401-aaos/Android/Builds/CTS_Builder/3/android-cts.zip`. You do not need to download these artifacts, later jobs will simply reference the URL.
 
 ___
 
@@ -1349,7 +1337,7 @@ You will build the Pixel Tablet target for use in later exercises.
 
 - Open Jenkins Dashboard (e.g. https://example.horizon-sdv.com/jenkins/) and navigate to `AAOS Builder` pipeline job to prepare build targets that will be used in a later lab exercise.
 - Select `Android Workflows` → `Builds` → `AAOS Builder`
-  - Select `Build with Parameters` and set the `AAOS_LUNCH_TARGET` to `aosp_tangorpro_car-ap1a-userdebug` and select `Build`
+  - Select `Build with Parameters` and set the `AAOS_LUNCH_TARGET` to `aosp_tangorpro_car-bp1a-userdebug` and select `Build`
 
     <img src="images/section.6/6.1.2_pixel_tablet_build.png" width="200" />
 
@@ -1361,11 +1349,11 @@ You will build the Pixel Tablet target for use in later exercises.
 
   - When build completes, the job will show the artifacts it has stored. These help the user locate the build artifacts within the Google Cloud Storage bucket.
 
-  - Open the `aosp_tangorpro_car-ap1a-userdebus-artifacts.txt` which will show you how to retrieve the artifacts, e.g.
+  - Open the `aosp_tangorpro_car-bp1a-userdebus-artifacts.txt` which will show you how to retrieve the artifacts, e.g.
 
     <img src="images/section.6/6.1.2_pixel_tablet_build_artifacts.png" width="500" />
 
-    - Note the URL to download the `out_sdv-aosp_tangorpro_car-ap1a-userdebug.tgz` to your local machine for use in later exercises.
+    - Note the URL to download the `out_sdv-aosp_tangorpro_car-bp1a-userdebug.tgz` to your local machine for use in later exercises.
 
 ___
 
@@ -1387,16 +1375,16 @@ You will build a Cuttlefish Virtual Device target and test it using `CVD launche
 
 - Open Jenkins Dashboard (e.g. https://example.horizon-sdv.com/jenkins/) and navigate to `AAOS Builder` pipeline job to prepare build targets that will be used in this lab exercise.
 - Select `Android Workflows` → `Builds` → `AAOS Builder`
-  - Select `Build with Parameters` and set the `AAOS_LUNCH_TARGET` to `aosp_cf_x86_64_auto-ap1a-userdebug` and select `Build`
+  - Select `Build with Parameters` and set the `AAOS_LUNCH_TARGET` to `aosp_cf_x86_64_auto-bp1a-userdebug` and select `Build`
   - When build completes, the job will show the artifacts it has stored. These help the user locate the build artifacts within the Google Cloud Storage bucket for use with testing CF Virtual Devices and connecting to the device through Android Studio.
 
     <img src="images/section.6/6.1.3_cf_build.png" width="300" />
 
-  - Open the `aosp_cf_x86_64_auto-ap1a-userdebug-artifacts.txt` which will show you were the artfifacts are stored, e.g.
+  - Open the `aosp_cf_x86_64_auto-bp1a-userdebug-artifacts.txt` which will show you were the artfifacts are stored, e.g.
 
     <img src="images/section.6/6.1.3_cf_build_artifacts.png" width="500" />
 
-    - Note the storage location, e.g. `gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/45` you will need that for testing. There is no need to download these artifacts.
+    - Note the storage location, e.g. `gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/27` you will need that for testing. There is no need to download these artifacts.
 
 **_Launch Cuttlefish Virtual Device:_**
 
@@ -1553,7 +1541,7 @@ ___
 - Save and push the change for review:
   - Commit: `git commit -am "Surface Flinger basic test"`
   - Update Change ID if one was not automatically generated in your commit: `git commit --amend --no-edit`
-  - Push for Review: `git push origin HEAD:refs/for/horizon/android-14.0.0_r30`
+  - Push for Review: `git push origin HEAD:refs/for/horizon/android-15.0.0_r32`
     - The remote should report success and provide a link back to the Gerrit review, e.g.
       - `https://example.horizon-sdv.com/gerrit/c/android/platform/frameworks/native/+/184 Surface Flinger basic test [NEW]`
 
@@ -1657,7 +1645,7 @@ ___
 
 - If you can’t wait for the Gerrit build to complete the SDK AVD and CF Virtual device builds, then you may run the build manually as per Foundation,
   - `Android Workflows` → `Builds` → `AAOS Builder` → `Build with Parameters`
-  - Define the `AAOS_LUNCH_TARGET` to build `aosp_cf_x86_64_auto-ap1a-userdebug` and update the `GERRIT_PROJECT`, `GERRIT_CHANGE_NUMBER` and `GERRIT_PATCHSET_NUMBER` parameters to identify the change you wish to include in the build (note that the required details are shown in the Gerrit build job that was triggered by the change), e.g.
+  - Define the `AAOS_LUNCH_TARGET` to build `aosp_cf_x86_64_auto-bp1a-userdebug` and update the `GERRIT_PROJECT`, `GERRIT_CHANGE_NUMBER` and `GERRIT_PATCHSET_NUMBER` parameters to identify the change you wish to include in the build (note that the required details are shown in the Gerrit build job that was triggered by the change), e.g.
 
     <img src="images/section.6/6.2.1_gerrit_build_params.png" width="200" />
 
@@ -1714,15 +1702,15 @@ ___
 - **Flash the Build:**
   - Onto your own machine, download the Pixel Tablet artifact previously built in the Foundations lab exercise, e.g.
     ```
-    gsutil cp gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/2/out_sdv-aosp_tangorpro_car-ap1a-userdebug.tgz .
+    gsutil cp gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/2/out_sdv-aosp_tangorpro_car-bp1a-userdebug.tgz .
     ```
   - Unpack the artifacts:
     ```
-    tar -zxf out_sdv-aosp_tangorpro_car-ap1a-userdebug.tgz
+    tar -zxf out_sdv-aosp_tangorpro_car-bp1a-userdebug.tgz
     ```
   - Define `ANDROID_PRODUCT_OUT` so `fastboot` can detect the `fastboot-info.txt` file and images to flash.
     ```
-    export ANDROID_PRODUCT_OUT=out_sdv-aosp_tangorpro_car-ap1a-userdebug/target/product/tangorpro
+    export ANDROID_PRODUCT_OUT=out_sdv-aosp_tangorpro_car-bp1a-userdebug/target/product/tangorpro
     ```
     - We do not have `LUNCH` target nor the full `OUT_DIR` hence we define the environment variable for `fastboot`.
 
@@ -1834,10 +1822,10 @@ This lab exercise shows how the user may override make commands, such as require
 - Example simply demonstrates the build override, as to code changes, feel free to use your own, but we provide an example below.
 - Modify the files as per following `git diff` (remove the new lines `+` markers):
   ```
-  diff --git a/automotive/vehicle/aidl/impl/default_config/config/DefaultProperties.json b/automotive/vehicle/aidl/impl/default_config/config/DefaultProperties.json
+  diff --git a/automotive/vehicle/aidl/impl/current/default_config/config/DefaultProperties.json b/automotive/vehicle/aidl/impl/current/default_config/config/DefaultProperties.json
   index 665c10e8e3..0a4ae2e0c6 100644
-  --- a/automotive/vehicle/aidl/impl/default_config/config/DefaultProperties.json
-  +++ b/automotive/vehicle/aidl/impl/default_config/config/DefaultProperties.json
+  --- a/automotive/vehicle/aidl/impl/current/default_config/config/DefaultProperties.json
+  +++ b/automotive/vehicle/aidl/impl/current/default_config/config/DefaultProperties.json
   @@ -1,6 +1,12 @@
    {
        "apiVersion": 1,
@@ -1876,7 +1864,7 @@ This lab exercise shows how the user may override make commands, such as require
   - The Gerrit build will fail because the AIDL must be rebuilt, hence manual build following to include the additional make command step.
 
 - In Jenkins, select `Android Workflows` → `Builds` → `AAOS Builder` → `Build with Parameters` and define the `AAOS_LUNCH_TARGET` and select ` Build`
-  - `AAOS_LUNCH_TARGET` `aosp_cf_x86_64_auto-ap1a-userdebug`
+  - `AAOS_LUNCH_TARGET` `aosp_cf_x86_64_auto-bp1a-userdebug`
   - `OVERRIDE_MAKE_COMMAND` `m android.hardware.automotive.vehicle.property-update-api && m dist`
   - `GERRIT_PROJECT` `android/platform/hardware/interfaces`
   - `GERRIT_CHANGE_NUMBER` to the number of the change in Gerrit
@@ -1910,7 +1898,7 @@ ___
 > **Note:**
 > This is optional. Included if developer is interested in changing the Android Boot Animation.
 >
-> Refer to Google [README](https://android.googlesource.com/platform/packages/services/Car/+/refs/tags/android-14.0.0_r30/car_product/car_ui_portrait/bootanimation/README) and [FORMAT.md](https://android.googlesource.com/platform/frameworks/base/+/master/cmds/bootanimation/FORMAT.md) for further details.
+> Refer to Google [README](https://android.googlesource.com/platform/packages/services/Car/+/refs/tags/android-15.0.0_r32/car_product/car_ui_portrait/bootanimation/README) and [FORMAT.md](https://android.googlesource.com/platform/frameworks/base/+/master/cmds/bootanimation/FORMAT.md) for further details.
 
 **_Clone Repo:_**
 

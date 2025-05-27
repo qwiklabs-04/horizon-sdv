@@ -2259,7 +2259,7 @@ The table below shows the templates and machine types used for the Android workf
 
 If users are interested in how these machine types are configured, then refer to the following within the OSS repo: [horizon-sdv](https://github.com/googlecloudplatform/horizon-sdv)
 
-**Build Jobs: `c2d-highcpu-112`**
+**Android Build Jobs: `c2d-highcpu-112`**
 - `./terraform/env/main.tf`: `sdv_build_node_pool_machine_type   = "c2d-highcpu-112"`
 - `./terraform/modules/base/variables.tf`: ` default     = "c2d-highcpu-112"`
   - Requires GitHub actions to run the Terraform workflow to apply any changes.
@@ -2270,6 +2270,11 @@ If users are interested in how these machine types are configured, then refer to
   - `workloads/android/pipelines/environment/dev_instance/Jenkinsfile`
   - `workloads/android/pipelines/builds/aaos_builder/Jenkinsfile`
   - `workloads/android/pipelines/builds/cts_builder/Jenkinsfile`
+
+**OpenBSW Build Jobs: `n1-standard-8`**
+- `./terraform/env/main.tf`: `sdv_openbsw_build_node_pool_machine_type   = "n1-standard-8"`
+- `./terraform/modules/base/variables.tf`: ` default     = "n1-standard-8"`
+  - Requires GitHub actions to run the Terraform workflow to apply any changes.
 
 **Test Jobs: `n1-standard-64`**
 - This is part of the `Android Workflows` → `Environment` → `CF Instance Template` configuration.

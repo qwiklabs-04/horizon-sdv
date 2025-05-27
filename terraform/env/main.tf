@@ -64,6 +64,9 @@ module "base" {
   sdv_build_node_pool_machine_type   = "c2d-highcpu-112"
   sdv_build_node_pool_max_node_count = 20
 
+  sdv_openbsw_build_node_pool_machine_type   = "n1-standard-8"
+  sdv_openbsw_build_node_pool_max_node_count = 20
+
   sdv_bastion_host_name    = "sdv-bastion-host"
   sdv_bastion_host_sa      = "sdv-bastion-host-sa-iap"
   sdv_bastion_host_members = []

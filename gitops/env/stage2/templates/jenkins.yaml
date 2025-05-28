@@ -148,6 +148,7 @@ spec:
             - kubernetes:4314.v5b_846cf499eb_
             - kubernetes-credentials:190.v03c305394deb_
             - pipeline-stage-view:2.37
+            - role-strategy:743.v142ea_b_d5f1d3
             - ssh-slaves:3.1031.v72c6b_883b_869
             - timestamper:1.28
           additionalExistingSecrets:
@@ -169,9 +170,6 @@ spec:
                 keycloakJson: ${jenkins-keycloak-keycloakJson}
                 keycloakRespectAccessTokenTimeout: false
                 keycloakValidate: false
-            authorizationStrategy: |-
-              loggedInUsersCanDoAnything:
-                allowAnonymousRead: false
             defaultConfig: true
             configScripts:
               welcome-message: |
@@ -190,6 +188,15 @@ spec:
                                 secretJsonKey: ${base64:${jenkins-gce-creds-gce-creds-json}}
                 jenkins:
                   systemMessage: Welcome to Horizon SDV server.
+                  authorizationStrategy:
+                    roleBased:
+                      roles:
+                        global:
+                          - name: "admin"
+                            permissions:
+                              - "Overall/Administer"
+                            entries:
+                              - user: "jenkins-admin"
                   clouds:
                     - computeEngine:
                         cloudName: cuttlefish-vm-main

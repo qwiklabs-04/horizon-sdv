@@ -300,6 +300,10 @@ spec:
                           value: "jenkins-sa"
                         - key: "JENKINS_AAOS_BUILD_CACHE_STORAGE_PREFIX"
                           value: "reclaimable-storage-class"
+                        - key: "OPENBSW_BUILD_BUCKET_ROOT_NAME"
+                          value: {{ .Values.config.projectID }}-openbsw
+                        - key: "OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME"
+                          value: "horizon-sdv/openbsw_builder"
                         - key: "REPO_SYNC_JOBS"
                           value: {{ .Values.config.workloads.android.repoSyncJobs }}
                 groovy:

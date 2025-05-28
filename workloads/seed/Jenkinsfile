@@ -1,0 +1,98 @@
+// Copyright (c) 2025 Accenture, All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//         http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Description:
+// Seed job for Jenkins workloads. Support Stages within stages so
+// we can seed multiple workloads.
+pipeline {
+
+  agent { label 'seed-node' }
+
+  // Block concurrent seeding to avoid clashing.
+  options {
+    buildBlocker (useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'ALL', blockingJobs: '.*Seed.*')
+  }
+
+  parameters {
+    choice(name: 'SEED_WORKLOAD',
+           choices: ['none', 'all', 'android'],
+           description: '''<p>Workload to seed:</p>
+             <ul>
+             <li>none: seed nothing, derisk triggering by accident.</li>
+             <li>all: seed all workloads.</li>
+             <li>android: seed the android workload.</li>
+           </ul>''')
+  }
+
+  stages {
+    stage ('Workload: Seed Android') {
+      when {
+        anyOf {
+          expression { env.SEED_WORKLOAD == 'android' }
+          expression { env.SEED_WORKLOAD == 'all' }
+        }
+      }
+
+      stages {
+        stage ("Prepare Groovy files") {
+          steps {
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+              script {
+                // Single quotes simply match string, double quotes expand the value of the variable.
+                // This avoids DSL scripts (loosely based on Groovy) needing to approve getProperty method
+                // which is a real security risk across Jenkins.
+                // This array can be updated to include other mappings as required.
+                def replacements = [
+                  ['${ANDROID_BUILD_BUCKET_ROOT_NAME}', "${ANDROID_BUILD_BUCKET_ROOT_NAME}"],
+                  ['${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
+                  ['${CLOUD_REGION}', "${CLOUD_REGION}"],
+                  ['${CLOUD_PROJECT}', "${CLOUD_PROJECT}"],
+                  ['${HORIZON_DOMAIN}', "${HORIZON_DOMAIN}"],
+                  ['${HORIZON_GITHUB_URL}', "${HORIZON_GITHUB_URL}"],
+                  ['${HORIZON_GITHUB_BRANCH}', "${HORIZON_GITHUB_BRANCH}"],
+                  ['${REPO_SYNC_JOBS}', "${REPO_SYNC_JOBS}"]
+                ]
+
+                def files = sh(returnStdout: true, script: "find workloads/android -name '*.groovy'").trim().split('\n')
+
+                files.each { file ->
+                  replacements.each { replacement ->
+                    def escapedValue = replacement[1].replace('/', '\\/')
+                    sh "sed -i 's/${replacement[0]}/${escapedValue}/g' ${file}"
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        stage ("Seed folders") {
+          steps {
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+              jobDsl targets: 'workloads/android/pipelines/groovy/folders.groovy', sandbox: true
+            }
+          }
+        }
+
+        stage ("Seed jobs") {
+          steps {
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+              jobDsl targets: 'workloads/android/pipelines/*/*/groovy/*.groovy', sandbox: true
+            }
+          }
+        }
+      }
+    }
+  }
+}

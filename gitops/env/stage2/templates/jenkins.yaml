@@ -153,6 +153,7 @@ spec:
             - kubernetes-credentials:190.v03c305394deb_
             - pipeline-stage-view:2.37
             - ssh-slaves:3.1031.v72c6b_883b_869
+            - startup-trigger-plugin:2.9.4
             - timestamper:1.28
           additionalExistingSecrets:
             - name: jenkins-keycloak
@@ -313,6 +314,15 @@ spec:
                   - script: >
                       pipelineJob('Seed Workloads') {
                         description('''Seed all workloads and respective pipeline jobs.''')
+
+                        triggers {
+                          hudsonStartupTrigger {
+                            nodeParameterName("")
+                            label("")
+                            quietPeriod("0")
+                            runOnChoice("ON_CONNECT")
+                          }
+                        }
 
                         properties {
                           authorizeProjectProperty {

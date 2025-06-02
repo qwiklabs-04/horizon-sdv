@@ -53,6 +53,9 @@ const config = {
     adminUser: {
       username: process.env.HORIZON_ADMIN_USERNAME,
       password: process.env.HORIZON_ADMIN_PASSWORD
+    },
+    clientScope:{
+      clientScopeName: 'groups'
     }
   }
 };
@@ -156,12 +159,33 @@ async function createRealmAdminRoleIfRequired() {
   }
 }
 
+async function createGroupsClientScopeIfRequired() {
+  const clientScopeName = config.keycloak.clientScope.clientScopeName;
+
+  try {
+    let clientScope = await keycloakAdmin.clientScopes.findOneByName({name: clientScopeName});
+    if (clientScope) {
+      console.info(`client scope ${clientScopeName} exists`);
+    } else {
+      console.info(`creating client scope ${clientScopeName}`);
+      await keycloakAdmin.clientScopes.create({
+        name: clientScopeName,
+        description: 'Provides access to user group information.',
+        protocol: 'openid-connect'
+      });
+    }
+  } catch (err) {
+    throw err;
+  } 
+}
+
 async function configureKeycloak()  {
   try {
     await waitForKeycloak();
     await createRealmIfRequired();
     await createRealmAdminRoleIfRequired();
     await createAdminUserIfRequired();
+    await createGroupsClientScopeIfRequired();
   } catch (err) {
     throw err
   }

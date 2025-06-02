@@ -38,7 +38,15 @@ const config = {
       firstName: 'Jenkins',
       lastName: 'Jenkins',
       email: 'jenkins@jenkins'
-    }
+    },
+    clientScope:{
+      clientScopeName: 'groups'
+    },
+    rolesAndGroups: [
+      'horizon-jenkins-administrators',
+      'horizon-jenkins-workloads-android-developers',
+      'horizon-jenkins-workloads-android-users'
+    ]
   }
 };
 
@@ -150,6 +158,198 @@ async function generateSecretFiles()  {
   }
 }
 
+async function addGroupsClientScopeToJenkinsClientIfRequired() {
+  const clientId = config.keycloak.client.clientId;
+  const clientScopeName = config.keycloak.clientScope.clientScopeName;
+
+  try {
+    const clients = await keycloakAdmin.clients.find();
+    const jenkinsClient = clients.find(client => client.clientId === clientId);
+
+    if (!jenkinsClient) {
+      console.error(`client "${clientId}" does not exist.`);
+      return;
+    }
+
+    const clientScopes = await keycloakAdmin.clientScopes.find();
+    const groupsScope = clientScopes.find(scope => scope.name === clientScopeName);
+    
+    if (!groupsScope) {
+      console.error(`client scope "${clientScopeName}" does not exist.`);
+      return;
+    }
+
+    const defaultScopes = await keycloakAdmin.clients.listDefaultClientScopes({ id: jenkinsClient.id });
+    const isGroupsScopeAssigned = defaultScopes.some(scope => scope.id === groupsScope.id);
+    
+    if (isGroupsScopeAssigned) {
+      console.info('"groups" client scope already exists in "jenkins" client.');
+    } else {
+      console.log('adding "groups" client scope to "jenkins" client.');
+      await keycloakAdmin.clients.addDefaultClientScope({id: jenkinsClient.id, clientScopeId: groupsScope.id,});
+    }
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function createJenkinsRealmRolesIfRequired() {
+  const realmRoleNames = config.keycloak.rolesAndGroups;
+
+  for (const realmRoleName of realmRoleNames) {
+    try {
+      let realmRole = await keycloakAdmin.roles.findOneByName({name: realmRoleName});
+      if (realmRole) {
+        console.info(`role ${realmRoleName} exists`);
+      } else {
+        console.log(`creating ${realmRoleName} role`);
+        await keycloakAdmin.roles.create({name: realmRoleName});
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+}
+
+async function createJenkinsClientRolesIfRequired() {
+  const clientId = config.keycloak.client.clientId;
+  const clientRoleNames = config.keycloak.rolesAndGroups;
+
+  try {
+    const clients = await keycloakAdmin.clients.find();
+    const jenkinsClient = clients.find(client => client.clientId === clientId);
+
+    if (!jenkinsClient) {
+      console.error(`client "${clientId}" does not exist.`);
+      return;
+    }
+
+    const existingRoles = await keycloakAdmin.clients.listRoles({ id: jenkinsClient.id });
+
+    for (const roleName of clientRoleNames) {
+      const roleExists = existingRoles.some(role => role.name === roleName);
+      if (roleExists) {
+        console.info(`client role "${roleName}" already exists for "${clientId}".`);
+        continue;
+      }
+
+      await keycloakAdmin.clients.createRole({id: jenkinsClient.id, name: roleName});
+      console.log(`client role "${roleName}" created for client "${clientId}".`);
+    }
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function createJenkinsRealmGroupsIfRequired() {
+  const realmGroupNames = config.keycloak.rolesAndGroups;
+
+  for (const realmGroupName of realmGroupNames) {
+    try {
+      const existingGroups = await keycloakAdmin.groups.find({ search: realmGroupName });
+      const matchedGroup = existingGroups.find(group => group.name === realmGroupName);
+
+      if (matchedGroup) {
+        console.info(`group "${realmGroupName}" already exists.`);
+      } else {
+        console.log(`creating group "${realmGroupName}".`);
+        await keycloakAdmin.groups.create({ name: realmGroupName });
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+}
+
+async function mapJenkinsRealmRolesIntoClientRolesIfRequired() {
+  const clientId = config.keycloak.client.clientId;
+  const roleNames = config.keycloak.rolesAndGroups;
+
+  try {
+    const clients = await keycloakAdmin.clients.find();
+    const jenkinsClient = clients.find(client => client.clientId === clientId);
+    
+    if (!jenkinsClient) {
+      console.error(`client "${clientId}" does not exist.`);
+      return;
+    }
+
+    for (const roleName of roleNames) {
+      const clientRole = await keycloakAdmin.clients.findRole({id: jenkinsClient.id, roleName});
+
+      if (!clientRole) {
+        console.warn(`client role "${roleName}" does not exist under client "${clientId}".`);
+        continue;
+      }
+
+      const realmRole = await keycloakAdmin.roles.findOneByName({ name: roleName });
+      if (!realmRole) {
+        console.warn(`realm role "${roleName}" does not exist.`);
+        continue;
+      }
+
+      let parentRole = await keycloakAdmin.clients.findRole({id: jenkinsClient.id, roleName: roleName});
+      let childRole = await keycloakAdmin.roles.findOneByName({name: roleName});
+      await keycloakAdmin.roles.createComposite({roleId: parentRole.id}, [childRole]);
+      console.log(`realm role "${roleName}" mapped into client role "${roleName}".`);
+    }
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function mapJenkinsClientRolesToGroupsIfRequired() {
+  const clientId = config.keycloak.client.clientId;
+  const roleGroupNames = config.keycloak.rolesAndGroups;
+
+  try {
+    const clients = await keycloakAdmin.clients.find();
+    const jenkinsClient = clients.find(client => client.clientId === clientId);
+    
+    if (!jenkinsClient) {
+      console.error(`client "${clientId}" does not exist.`);
+      return;
+    }
+
+    for (const roleGroupName of roleGroupNames) {
+      const clientRole = await keycloakAdmin.clients.findRole({id: jenkinsClient.id, roleName: roleGroupName});
+
+      if (!clientRole) {
+        console.warn(`client role "${roleGroupName}" does not exist in "${clientId}".`);
+        continue;
+      }
+
+      const allGroups = await keycloakAdmin.groups.find();
+      const group = allGroups.find(g => g.name === roleGroupName);
+
+      if (!group) {
+        console.warn(`group "${roleGroupName}" does not exist.`);
+        continue;
+      }
+
+      const mappedRoles = await keycloakAdmin.groups.listClientRoleMappings({id: group.id, clientUniqueId: jenkinsClient.id});
+      const alreadyMapped = mappedRoles.some(role => role.name === clientRole.name);
+
+      if (alreadyMapped) {
+        console.info(`client role "${roleGroupName}" is already mapped to group "${roleGroupName}".`);
+        continue;
+      }
+
+      await keycloakAdmin.groups.addClientRoleMappings({
+        id: group.id,
+        clientUniqueId: jenkinsClient.id,
+        roles: [{
+          id: clientRole.id,
+          name: clientRole.name
+        }]
+      });
+      console.log(`client role "${roleGroupName}" mapped to group "${roleGroupName}".`);
+    }
+  } catch (err) {
+    throw err;
+  }
+}
+
 async function configureKeycloak()  {
   try {
     await waitForKeycloak();
@@ -157,6 +357,12 @@ async function configureKeycloak()  {
     await createClientIfRequired();
     await createUserIfRequired();
     await generateSecretFiles();
+    await addGroupsClientScopeToJenkinsClientIfRequired();
+    await createJenkinsRealmRolesIfRequired();
+    await createJenkinsRealmGroupsIfRequired();
+    await createJenkinsClientRolesIfRequired();
+    await mapJenkinsRealmRolesIntoClientRolesIfRequired();
+    await mapJenkinsClientRolesToGroupsIfRequired();
   } catch (err) {
     throw err
   }

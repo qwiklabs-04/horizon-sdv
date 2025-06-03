@@ -105,6 +105,13 @@ module "sdv_gke_cluster" {
   build_node_pool_machine_type   = var.sdv_build_node_pool_machine_type
   build_node_pool_min_node_count = var.sdv_build_node_pool_min_node_count
   build_node_pool_max_node_count = var.sdv_build_node_pool_max_node_count
+
+  # OpenBSW node pool configuration
+  openbsw_build_node_pool_name           = var.sdv_openbsw_build_node_pool_name
+  openbsw_build_node_pool_node_count     = var.sdv_openbsw_build_node_pool_node_count
+  openbsw_build_node_pool_machine_type   = var.sdv_openbsw_build_node_pool_machine_type
+  openbsw_build_node_pool_min_node_count = var.sdv_openbsw_build_node_pool_min_node_count
+  openbsw_build_node_pool_max_node_count = var.sdv_openbsw_build_node_pool_max_node_count
 }
 
 module "sdv_artifact_registry" {

@@ -15,68 +15,75 @@
 // Description:
 // Create a development instance that developers can connect to for a finite
 // time, allowing them to develop builds and investigate issues.
-def kubernetesPodTemplate = """
-        apiVersion: v1
-        kind: Pod
-        metadata:
-          annotations:
-            cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
-          labels:
-            aaos_pod: "true"
-        spec:
-          tolerations:
-          - key: workloadType
-            operator: Equal
-            value: android
-            effect: "NoSchedule"
-          affinity:
-            podAntiAffinity:
-              requiredDuringSchedulingIgnoredDuringExecution:
-              - labelSelector:
-                  matchExpressions:
-                  - key: aaos_pod
-                    operator: Exists
-                topologyKey: kubernetes.io/hostname
-          hostname: jenkins-aaos-build-pod
-          serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
-          containers:
-          - name: builder
-            image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}:latest
-            imagePullPolicy: IfNotPresent
-            command:
-            - sleep
-            args:
-            - 9h
-            resources:
-              limits:
-                cpu: 96000m
-                memory: 160000Mi
-              requests:
-                cpu: 96000m
-                memory: 160000Mi
-            volumeMounts:
-              - mountPath: /aaos-cache
-                name: aaos-cache
-          volumes:
-            - name: aaos-cache
-              ephemeral:
-                volumeClaimTemplate:
-                  spec:
-                    storageClassName: ${JENKINS_CACHE_STORAGE_CLASS_NAME}
-                    resources:
-                      requests:
-                        storage: 2000Gi
-                    accessModes:
-                      - ReadWriteOnce
-          nodeSelector:
-            workloadLabel: android
-""".stripIndent()
 
 pipeline {
 
   // Parameters defined in gitops/env/stage2/templates/jenkins.yaml (Jenkins CasC)
 
   agent none
+
+  environment {
+    STORAGE_CLASS_SUFFIX="android-${ANDROID_VERSION}"
+    STORAGE_SIZE="${ANDROID_VERSION =~ "rpi" ? "500Gi" : "1000Gi"}"
+
+    // Define Pod Template in environment so we can override.
+    def kubernetesPodTemplate = """
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        annotations:
+          cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+        labels:
+          aaos_pod: "true"
+      spec:
+        tolerations:
+        - key: workloadType
+          operator: Equal
+          value: android
+          effect: "NoSchedule"
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: aaos_pod
+                  operator: Exists
+              topologyKey: kubernetes.io/hostname
+        hostname: jenkins-aaos-build-pod
+        serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
+        containers:
+        - name: builder
+          image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}:latest
+          imagePullPolicy: IfNotPresent
+          command:
+          - sleep
+          args:
+          - 5h
+          resources:
+            limits:
+              cpu: 96000m
+              memory: 160000Mi
+            requests:
+              cpu: 96000m
+              memory: 160000Mi
+          volumeMounts:
+            - mountPath: /aaos-cache
+              name: aaos-cache
+        volumes:
+          - name: aaos-cache
+            ephemeral:
+              volumeClaimTemplate:
+                spec:
+                  storageClassName: ${JENKINS_AAOS_BUILD_CACHE_STORAGE_PREFIX}-${STORAGE_CLASS_SUFFIX}
+                  resources:
+                    requests:
+                      storage: ${STORAGE_SIZE}
+                  accessModes:
+                    - ReadWriteOnce
+        nodeSelector:
+          workloadLabel: android
+    """.stripIndent()
+  }
 
   stages {
     stage ('Start VM Instance') {

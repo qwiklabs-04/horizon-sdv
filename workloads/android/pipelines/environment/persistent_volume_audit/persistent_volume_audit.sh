@@ -22,12 +22,28 @@
 # discrepancies and provides options to delete or ignore them.
 #
 #    Identification Criteria:
-#    - Storage class: "reclaimable-storage-class"
-#    - Volume size: 2TB
+#    - Storage class:
+#      reclaimable-storage-class-android-14
+#      reclaimable-storage-class-android-15
+#      reclaimable-storage-class-android-14-rpi
+#      reclaimable-storage-class-android-15-rpi
+#    - type: pd-balanced
+#    - Volume size: 1TB
 #
 # This script helps ensure consistency between Kubernetes build persistent
 # volumes and GCE disks, allowing for efficient management and cleanup of
 # unused resources.
+#
+# Warning: Use delete options only if you are confident that it has shown
+#          the exact disks you wish to manage.
+#
+#          GCE disks are selected by type and size as that's all that is
+#          available to identify them, whereas k8s PVs are selected by
+#          storageClassName. Risk that users create pd-balanced
+#          GCE disks with same size that are not build volumes.
+#
+#          If in doubt, take the audit HTML list and manage deletion
+#          manually by checking each disk.
 #
 # Usage:
 # Run from bastion host with appropriate role/permissions to get/delete
@@ -59,9 +75,18 @@ ZONE=${ZONE:-europe-west1-d}
 
 # Create the lists of PVs in k8s and GCE Disks, and then compare.
 # shellcheck disable=SC2207
-K8S_PV=($(kubectl get pv -n "${JENKINS_NAMESPACE}" -o jsonpath='{.items[?(@.spec.storageClassName=="reclaimable-storage-class")].metadata.name}'))
+K8S_PV=($(kubectl get pv -n "${JENKINS_NAMESPACE}" -o jsonpath='{.items[?(@.spec.storageClassName=="reclaimable-storage-class-android-14")].metadata.name}'))
 # shellcheck disable=SC2207
-GCE_PV=($(gcloud compute disks list --zones="${ZONE}" --filter="type:(pd-balanced) AND sizeGb=2000" 2>/dev/null | tail -n +2 | awk '{print $1}'))
+K8S_PV+=($(kubectl get pv -n "${JENKINS_NAMESPACE}" -o jsonpath='{.items[?(@.spec.storageClassName=="reclaimable-storage-class-android-14-rpi")].metadata.name}'))
+# shellcheck disable=SC2207
+K8S_PV+=($(kubectl get pv -n "${JENKINS_NAMESPACE}" -o jsonpath='{.items[?(@.spec.storageClassName=="reclaimable-storage-class-android-15")].metadata.name}'))
+# shellcheck disable=SC2207
+K8S_PV+=($(kubectl get pv -n "${JENKINS_NAMESPACE}" -o jsonpath='{.items[?(@.spec.storageClassName=="reclaimable-storage-class-android-15-rpi")].metadata.name}'))
+# Do not use zone because it not work with descriptions and we need that to try to isolate build volumes.
+# shellcheck disable=SC2207
+GCE_PV=($(gcloud compute disks list --filter="type:(pd-balanced) AND sizeGb=500 AND description:android AND description:jenkins" 2>/dev/null | tail -n +2 | awk '{print $1}'))
+# shellcheck disable=SC2207
+GCE_PV+=($(gcloud compute disks list --filter="type:(pd-balanced) AND sizeGb=1000 AND description:android AND description:jenkins" 2>/dev/null | tail -n +2 | awk '{print $1}'))
 # shellcheck disable=SC2207
 COMMON=($(comm -12 <(printf "%s\n" "${K8S_PV[@]}" | sort) <(printf "%s\n" "${GCE_PV[@]}" | sort)))
 # shellcheck disable=SC2207

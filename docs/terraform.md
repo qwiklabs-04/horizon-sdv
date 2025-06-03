@@ -195,10 +195,10 @@ Resource "google_container_cluster" "sdv_cluster" defines a GKE cluster with var
 - Add-ons: Enales the Load Balancing feature and Filestore CSI driver.
 - Autoscaling is disabled.
 
-Resource "google_container_node_pool" "sdv_main_node_pool" and "google_container_node_pool" "sdv_build_node_pool"  defines a main node pool and build node pool for the GKE cluster with the configurations:
+Resource "google_container_node_pool" "sdv_main_node_pool", "google_container_node_pool" "sdv_build_node_pool" and "google_container_node_pool" "sdv_openbsw_build_node_pool" define a main node pool, Android and OpenBSW build node pools for the GKE cluster with the configurations:
 - Node Pool Details: configures the name, location, cluster, node count, and node locations.
 - Node Configuration: specifies the machine type, service account, OAuth scopes, and workload metadata.
-- Autoscaling: Configures autoscaling with minimum and maximum node counts (for sdv_build_node_pool).
+- Autoscaling: Configures autoscaling with minimum and maximum node counts (for sdv_build_node_pool qnd sdv_openbsw_node_pool).
 
 ## Module - sdv-iam
 Module updates IAM policy to grant a role to a member or Service Account.
@@ -264,4 +264,4 @@ To run terraform in the local environment:
 
 - `terraform apply` - Apply changes shown in terraform plan ( proper permission is needed for apllying) It preapare and execute the changes into infrastructure, including resources that to be created, modified, or destroyed.
 
-For more details about Terraform please reach the official documentation: https://cloud.google.com/docs/terraform/terraform-overview 
+For more details about Terraform please reach the official documentation: https://cloud.google.com/docs/terraform/terraform-overview

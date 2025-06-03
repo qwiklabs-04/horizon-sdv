@@ -11,6 +11,7 @@ It supports the following branches:
 -   `android-14.0.0_r74`
 -   `android-15.0.0_r4`
 -   `android-15.0.0_r20`
+-   `android-15.0.0_r32`
 
 The branch is used to derive the full name (build identifier) of the build targets, e.g.
 
@@ -18,6 +19,7 @@ The branch is used to derive the full name (build identifier) of the build targe
 -   `android-14.0.0_r74` -> `sdk_car_x86_64-ap2a-userdebug`
 -   `android-15.0.0_r4` -> `sdk_car_x86_64-ap3a-userdebug`
 -   `android-15.0.0_r20` -> `sdk_car_x86_64-bp1a-userdebug`
+-   `android-15.0.0_r32` -> `sdk_car_x86_64-bp1a-userdebug`
 
 It builds the following targets:
 
@@ -94,8 +96,8 @@ These are as follows:
 -   `HORIZON_DOMAIN`
     - The URL domain which is required by pipeline jobs to derive URL for tools and GCP.
 
--   `JENKINS_CACHE_STORAGE_CLASS_NAME`
-    - This identifies the Persistent Volume Claim (PVC) that provisions persistent storage for build cache, ensuring efficient reuse of cached resources across builds. The default is [`pd-balanced`](https://cloud.google.com/compute/docs/disks/performance), which strikes a balance between optimal performance and cost-effectiveness.
+-   `JENKINS_AAOS_BUILD_CACHE_STORAGE_PREFIX`
+    - This identifies the Persistent Volume Claim (PVC) prefix that is used to provision persistent storage for build cache, ensuring efficient reuse of cached resources across builds.  The default is [`pd-balanced`](https://cloud.google.com/compute/docs/disks/performance), which strikes a balance between optimal performance and cost-effectiveness.
 
 -   `JENKINS_SERVICE_ACCOUNT`
     - Service account to use for pipelines. Required to ensure correct roles and permissions for GCP resources.

@@ -165,6 +165,35 @@ variable "sdv_build_node_pool_max_node_count" {
   default     = 20
 }
 
+variable "sdv_openbsw_build_node_pool_name" {
+  description = "Name of the OpenBSW build node pool"
+  type        = string
+  default     = "sdv-openbsw-build-node-pool"
+}
+
+variable "sdv_openbsw_build_node_pool_node_count" {
+  description = "Number of nodes for the OpenBSW build node pool"
+  type        = number
+  default     = 0
+}
+
+variable "sdv_openbsw_build_node_pool_machine_type" {
+  description = "Type of the machine for the OpenBSW build node pool"
+  type        = string
+  default     = "n1-standard-8"
+}
+
+variable "sdv_openbsw_build_node_pool_min_node_count" {
+  description = "Number of minimum nodes for the OpenBSW build node pool"
+  type        = number
+  default     = 0
+}
+
+variable "sdv_openbsw_build_node_pool_max_node_count" {
+  description = "Number of max nodes for the OpenBSW build node pool"
+  type        = number
+  default     = 20
+}
 
 variable "sdv_wi_service_accounts" {
   description = "A map of service accounts and their configurations for WI"

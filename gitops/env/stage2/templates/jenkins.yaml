@@ -207,11 +207,39 @@ spec:
                     roleBased:
                       roles:
                         global:
-                          - name: "admin"
+                          - name: "horizon-jenkins-administrators"
+                            description: "Jenkins administration role for unrestricted access."
                             permissions:
                               - "Overall/Administer"
                             entries:
-                              - user: "jenkins-admin"
+                              - group: "horizon-jenkins-administrators"
+                          - name: "horizon-jenkins-workloads-android-developers"
+                            description: "Jenkins workloads Android developers role for workload usage and configuration."
+                            permissions:
+                              - "Overall/Read"
+                              - "Job/Read"
+                              - "Job/Discover"
+                              - "Job/Build"
+                              - "View/Read"
+                              - "Job/Configure"
+                              - "Job/Delete"
+                              - "Job/Create"
+                              - "Job/Move"
+                              - "Job/Workspace"
+                              - "Job/Cancel"
+                            entries:
+                              - group: "horizon-jenkins-workloads-android-developers"
+                          - name: "horizon-jenkins-workloads-android-users"
+                            description: "Jenkins workloads Android users role with restricted access to workloads."
+                            permissions:
+                              - "Overall/Read"
+                              - "Job/Read"
+                              - "Job/Discover"
+                              - "Job/Build"
+                              - "View/Read"
+                              - "Job/Cancel"
+                            entries:
+                              - group: "horizon-jenkins-workloads-android-users"
                   clouds:
                     - computeEngine:
                         cloudName: cuttlefish-vm-main

@@ -205,6 +205,26 @@ spec:
                   systemMessage: Welcome to Horizon SDV server.
                   authorizationStrategy:
                     roleBased:
+                      permissionTemplates:
+                        - name: "horizon-jenkins-workload-developers"
+                          permissions:
+                            - "Job/Read"
+                            - "Job/Discover"
+                            - "Job/Build"
+                            - "View/Read"
+                            - "Job/Configure"
+                            - "Job/Delete"
+                            - "Job/Create"
+                            - "Job/Move"
+                            - "Job/Workspace"
+                            - "Job/Cancel"
+                        - name: "horizon-jenkins-workload-users"
+                          permissions:
+                            - "Job/Read"
+                            - "Job/Discover"
+                            - "Job/Build"
+                            - "View/Read"
+                            - "Job/Cancel"
                       roles:
                         global:
                           - name: "horizon-jenkins-administrators"
@@ -217,27 +237,25 @@ spec:
                             description: "Jenkins workloads Android developers role for workload usage and configuration."
                             permissions:
                               - "Overall/Read"
-                              - "Job/Read"
-                              - "Job/Discover"
-                              - "Job/Build"
-                              - "View/Read"
-                              - "Job/Configure"
-                              - "Job/Delete"
-                              - "Job/Create"
-                              - "Job/Move"
-                              - "Job/Workspace"
-                              - "Job/Cancel"
                             entries:
                               - group: "horizon-jenkins-workloads-android-developers"
                           - name: "horizon-jenkins-workloads-android-users"
                             description: "Jenkins workloads Android users role with restricted access to workloads."
                             permissions:
                               - "Overall/Read"
-                              - "Job/Read"
-                              - "Job/Discover"
-                              - "Job/Build"
-                              - "View/Read"
-                              - "Job/Cancel"
+                            entries:
+                              - group: "horizon-jenkins-workloads-android-users"
+                        items:
+                          - name: "workloads-android-developers" 
+                            description: "Android workloads developers item role with unrestricted access." 
+                            pattern: "Android.*"
+                            templateName: "horizon-jenkins-workload-developers"
+                            entries:
+                              - group: "horizon-jenkins-workloads-android-developers"
+                          - name: "workloads-android-users" 
+                            description: "Android workloads user item role with restricted access." 
+                            pattern: "Android.*"
+                            templateName: "horizon-jenkins-workload-users"
                             entries:
                               - group: "horizon-jenkins-workloads-android-users"
                   clouds:

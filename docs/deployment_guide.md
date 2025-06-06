@@ -25,6 +25,7 @@ Horizon SDV is designed to simplify the deployment and management of Android wor
    - [Section #5a - Retrieve Certificate's DNS Authz resources](#section-5a---retrieve-certificates-dns-authz-resources)
    - [Section #5b - Retrieve Load balancer details](#section-5b---retrieve-load-balancer-details)
    - [Section #5c - Setup Keycloak](#section-5c---setup-keycloak)
+   - [Section #5d - Jenkins Access via Keycloak Groups](#section-5d---jenkins-access-via-keycloak-groups)
 - [Section #6 - Run Cluster Apps](#section-6---run-cluster-apps)
    - [Section #6a - Horizon Landing Page](#section-6a---horizon-landing-page)
    - [Section #6b - Argo CD](#section-6b---argo-cd)
@@ -103,12 +104,18 @@ It is required to replace them with actual values as you follow the setup instru
    - Service Usage API
    - Secret Manager API
    - Certificate Manager API
-* IAM Roles to be granted to the user
-   - Compute Admin
-   - Kubernetes Engine Admin
-   - Artifact Registry Administrator
-   - Cloud Filestore Editor
-   - Storage Admin
+* IAM Roles to be granted to new user accounts added by the owner of the project 
+   You can either assign a basic role or a fine-grained permission.
+   - Basic: Editor
+   **OR**
+   - Fine-grained:
+      - Compute Admin
+      - Kubernetes Engine Admin
+      - Artifact Registry Administrator
+      - Cloud Filestore Editor
+      - Storage Admin
+
+   Refer this document for detailed instructions for adding new user accounts: [Add an account for a new user](https://support.google.com/cloudidentity/answer/33310?sjid=12027755488314741556-NC)
 
 ## Section #2 - GCP Foundation Setup
 This section covers creation and configuration of required Google Cloud Platform (GCP) services.
@@ -202,7 +209,10 @@ Below are the resources which are required to be configured:
       * "attribute.repository" = "assertion.repository"
    - Click on ADD CONDITION under Attribute Conditions.
    - Configure Attribute Conditions as below
-      * Condition CEL = "assertion.repository_owner=='<GITHUB_ORGANIZATION_NAME>'"
+      - Condition CEL:
+         ```
+         assertion.repository_owner=='<GITHUB_ORGANIZATION_NAME>'
+         ```
    - Click save.
 3. Workload Identity Federation Pool and Provider has now been created successfully.   
    <img src="images/gcp_workload_identity_pool_1.png" width="750" />
@@ -535,9 +545,9 @@ Use this method for creating secrets which hold private keys.<br>
    * **GCP_BACKEND_BUCKET_NAME**
       - Enter the name of the GCS Bucket created in [Create a Bucket in GCP](#section-2b---create-a-bucket-in-gcp)
    * **GCP_CLOUD_REGION**
-      - Enter the Cloud region of your choice. (example: `us-central1`)
+      - Enter the Cloud region of your choice. (`us-central1`, `europe-west1`, etc.)
    * **GCP_CLOUD_ZONE**
-      - Enter the Cloud region of your choice. (example: `us-central1-a`)
+      - Enter the Cloud region of your choice. (`us-central1-a`, `europe-west1`, etc.)
    * **GCP_COMPUTER_SA**
       - Enter the default compute service account details retrieved from the [Section #2a - GCP Project details](#section-2a---gcp-project-details) point number 1.
       - example: `<GCP_PROJECT_NUMBER>-compute@developer.gserviceaccount.com`
@@ -664,6 +674,57 @@ After logging in as the Horizon admin, follow these steps to create a human user
 
 Repeat the above steps to add additional users with the required access privilege level.
 
+### Section #5d - Jenkins Access via Keycloak Groups
+>[!NOTE]
+>Admin access to Keycloak is required for this section.
+
+This section includes the steps to assign a user to a Keycloak group to enable Jenkins access. Jenkins integrates with Keycloak using Role-based Authorization Strategy (RBAC).
+Group membership determines the level of access granted to the user.
+
+#### Available Groups
+Below table details the Keycloak to jenkins RBAC mapping with their access level granted to users within the respective groups.
+
+| Keycloak Group                                 | Jenkins Role                         | Access Level                           |
+|------------------------------------------------|--------------------------------------|----------------------------------------|
+| `horizon-jenkins-administrators`               | Global: Admin                        | Full admin access                      |
+| `horizon-jenkins-workloads-android-developers` | Item: workloads-android-developers   | Full build/config rights for Android   |
+| `horizon-jenkins-workloads-android-users`      | Item: workloads-android-users        | Limited build access for Android       |
+
+#### Steps to Assign a User to a Group
+>[!NOTE]
+>Log out and log in again from Jenkins for the new permissions to take effect.
+
+Follow the below steps to assign a user to required Keycloak group,
+
+1. Keycloak UI can be accessed here from the Landing page under 'Admin Applications': `https://<SUB_DOMAIN>.<HORIZON_DOMAIN>`
+   - Login to Keycloak as admin.   
+      <img src="images/keycloak_launch.png" width="325" />
+2. Find the User
+   - Go to `Users` in the left sidebar.
+   - Use the search bar to locate the user.
+   - Click on the username to open their details.
+3. Assign the Group
+   - **horizon-jenkins-admininstrators**
+      - Click on the **Groups** tab.
+      - Click on **Join Group** which opens a new pop-up window.
+      - Select the group `horizon-jenkins-admininstrators`.
+      - Click **Join**.   
+         <img src="images/keycloak-jenkins-groups-1.png" width="325" />
+   - **horizon-jenkins-workloads-android-developers**
+      - Click on the **Groups** tab.
+      - Click on **Join Group** which opens a new pop-up window.
+      - Select the group `horizon-jenkins-workloads-android-developers`.
+      - Click **Join**.   
+         <img src="images/keycloak-jenkins-groups-2.png" width="325" />
+   - **horizon-jenkins-workloads-android-users**
+      - Click on the **Groups** tab.
+      - Click on **Join Group** which opens a new pop-up window.
+      - Select the group `horizon-jenkins-workloads-android-users`.
+      - Click **Join**.   
+         <img src="images/keycloak-jenkins-groups-3.png" width="325" />
+4. Verify Group Assignment
+   - The group should now appear under the user's "Group Membership".
+
 ## Section #6 - Run Cluster Apps
 This section details how to sign in to and use cluster applications, including their functionalities within the cluster environment.
 
@@ -683,7 +744,7 @@ It ensures the Kubernetes Cluster (GKE) always matches that desired state. Here,
 
 1. To Access Argo CD UI, go to the Horizon Landing page here: `https://<SUB_DOMAIN>.<HORIZON_DOMAIN>` and click on the Launch button within the Argo CD app card as below.   
    <img src="images/argocd_launch.png" width="325" />
-2. Log-in using the credentials configured in section [Add Environment secrets](#add-environment-secrets).   
+2. Log-in using the credentials configured in section [Add Environment secrets](#add-environment-secrets) with username `admin`.   
 
 <details>
   <summary>Click for more details on Argo CD</summary>
@@ -950,4 +1011,3 @@ DNS changes take anywhere from a few minutes to 24-48 hours to propagate across 
 
 ## LICENSE
 Refer to the [LICENSE](../LICENSE) file for license rights and limitations (Apache 2.0).
-

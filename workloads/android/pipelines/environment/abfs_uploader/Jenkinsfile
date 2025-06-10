@@ -25,37 +25,18 @@ pipeline {
     def kubernetesPodTemplate = """
       apiVersion: v1
       kind: Pod
-      metadata:
-        annotations:
-          cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
-        labels:
-          abfs_uploader_pod: "true"
       spec:
-        tolerations:
-        - key: workloadType
-          operator: Equal
-          value: android-abfs
-          effect: "NoSchedule"
-        affinity:
-          podAntiAffinity:
-            requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                - key: abfs_uploader_pod
-                  operator: Exists
-              topologyKey: kubernetes.io/hostname
-        hostname: jenkins-abfs-uploader-pod
+        hostname: jenkins-abfs-uploader-build-pod
         serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
         containers:
-        - name: abfs-uploader
+        - name: abfs-uploader-builder
           image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/horizon-sdv/abfs-uploader:latest
           imagePullPolicy: IfNotPresent
           command:
           - sleep
           args:
           - 5h
-        nodeSelector:
-          workloadLabel: android-abfs
+          tty: true
     """.stripIndent()
   }
 
@@ -65,7 +46,7 @@ pipeline {
       stages {
         stage ('Initialise') {
           steps {
-            container(name: 'abfs-uploader') {
+            container(name: 'abfs-uploader-builder') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                 sh '''
                   set +x
@@ -78,7 +59,7 @@ pipeline {
 
         stage ('Retain Uploader Instance') {
           steps {
-            container(name: 'abfs-uploader') {
+            container(name: 'abfs-uploader-builder') {
               script {
                 sleep(time: "${INSTANCE_RETENTION_TIME}", unit: 'MINUTES')
               }

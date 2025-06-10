@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-pipelineJob('Android/Environment/Docker Image Template') {
+pipelineJob('Android/Environment/ABFS Uploader Image Template') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">Container Image Builder</h3>
     <p>This job builds the container image that serves as a dependency for other pipeline jobs.</p>

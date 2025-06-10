@@ -22,7 +22,7 @@ RUN apt-get update -y && \
   apt-get install -y --no-install-recommends \
   apt-transport-https ca-certificates \
   gnupg software-properties-common curl git sudo && \
-  apt-get update -yi && \
+  apt-get update -y && \
   rm -rf /var/lib/apt/lists/*
 
 # The following installs gcloud sdk including gsutil required for uploading

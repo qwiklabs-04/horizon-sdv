@@ -13,60 +13,77 @@
 // limitations under the License.
 
 // Description:
-// This pipeline builds the ABFS Uploader Docker image using Kaniko
-// rather than use a Docker to avoid docker in docker privilege issues.
-//
-// References:
-//   * https://github.com/GoogleContainerTools/kaniko
+// AAOS Build targets pipeline.
+
 pipeline {
 
-  // Parameters defined in gitops/env/stage2/templates/jenkins.yaml (Jenkins CasC)
-
-  agent {
-    kubernetes {
-      yaml """\
-        apiVersion: v1
-        kind: Pod
-        spec:
-          hostname: jenkins-abfs-uploader-pod
-          serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
-          containers:
-          - name: kaniko
-            image: gcr.io/kaniko-project/executor:debug
-            imagePullPolicy: IfNotPresent
-            command:
-            - /busybox/cat
-            tty: true
-      """.stripIndent()
-    }
-  }
-
-  // Block concurrent builds to avoid clashing.
-  options {
-    buildBlocker (useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'BUILDABLE', blockingJobs: '.*Docker.*')
-  }
+  agent none
 
   environment {
-    // Update latest tag.
-    DESTINATION="--destination=${env.CLOUD_REGION}-docker.pkg.dev/${env.CLOUD_PROJECT}/horizon-sdv/abfs-uploader"
-    KANIKO_OPTIONS="${NO_PUSH == "true" ? "--no-push" : "${DESTINATION}:${IMAGE_TAG}"}"
+
+    // Define Pod Template in environment so we can override storageClassName.
+    def kubernetesPodTemplate = """
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        annotations:
+          cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+        labels:
+          abfs_uploader_pod: "true"
+      spec:
+        tolerations:
+        - key: workloadType
+          operator: Equal
+          value: android-abfs
+          effect: "NoSchedule"
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: abfs_uploader_pod
+                  operator: Exists
+              topologyKey: kubernetes.io/hostname
+        hostname: jenkins-abfs-uploader-pod
+        serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
+        containers:
+        - name: abfs-uploader
+          image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/horizon-sdv/abfs-uploader:latest
+          imagePullPolicy: IfNotPresent
+          command:
+          - sleep
+          args:
+          - 5h
+        nodeSelector:
+          workloadLabel: android-abfs
+    """.stripIndent()
   }
 
   stages {
-    stage ('Create ABFS Uploader Docker Image'){
-      when { expression { env.IMAGE_TAG } }
-      steps {
-        container(name: 'kaniko') {
-          script {
-            currentBuild.description = "NO_PUSH=${env.NO_PUSH}" + "<br>" + "$BUILD_USER"
+    stage ('Start Uploader Instance') {
+      agent { kubernetes { yaml kubernetesPodTemplate } }
+      stages {
+        stage ('Initialise') {
+          steps {
+            container(name: 'abfs-uploader') {
+              catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                sh '''
+                  set +x
+                  echo "Hello World !"
+                '''
+              }
+            }
           }
-          sh '''
-            # Build the docker image and push to Artifact registry using service account configured with
-            # correct roles/permissions.
-            /kaniko/executor -f workloads/android/pipelines/environment/abfs_uploader/Dockerfile \
-              -c workloads/android/pipelines/environment/abfs_uploader --skip-tls-verify-pull \
-              --insecure --skip-tls-verify "${KANIKO_OPTIONS}"
-          '''
+        }
+
+        stage ('Retain Uploader Instance') {
+          steps {
+            container(name: 'abfs-uploader') {
+              script {
+                sleep(time: "${INSTANCE_RETENTION_TIME}", unit: 'MINUTES')
+              }
+            }
+          }
         }
       }
     }

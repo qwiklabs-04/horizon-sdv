@@ -11,32 +11,28 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-pipelineJob('Android/Environment/ABFS Uploader Image Template') {
+pipelineJob('Android/Environment/ABFS Uploader') {
   description("""
-    <br/><h3 style="margin-bottom: 10px;">Container Image Builder</h3>
-    <p>This job builds the container image that serves as a dependency for other pipeline jobs.</p>
-    <h4 style="margin-bottom: 10px;">Image Configuration</h4>
-    <p>The Dockerfile specifies the installed packages and tools required by these jobs.</p>
-    <h4 style="margin-bottom: 10px;">Pushing Changes to the Registry</h4>
-    <p>To push changes to the registry, set the parameter <code>NO_PUSH=false</code>.</p>
-    <p>The image will be pushed to ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/horizon-sdv/abfs-uploader</p>
-    <h4 style="margin-bottom: 10px;">Verifying Changes</h4>
-    <p>When working with new Dockerfile updates, it's recommended to set <code>NO_PUSH=true</code> to verify the changes before pushing the image to the registry.</p>
-    <h4 style="margin-bottom: 10px;">Important Notes</h4>
-    <p>This job need only be run once, or when there are updates to be applied based on Dockerfile changes..</p>
+    <br/><h3 style="margin-bottom: 10px;">Android Automotive Virtual Devices and Platform Targets Builder</h3>
+    <p>This job is used to build Android Automotive virtual devices and platform targets from the provided source manifest.</p>
+    <h4 style="margin-bottom: 10px;">Supported Builds</h4>
+    <ul>
+      <li><a href="https://source.android.com/docs/automotive/start/avd/android_virtual_device" target="_blank">Android Virtual Devices</a> for use with <a href="https://source.android.com/docs/automotive/start/avd/android_virtual_device#share-an-avd-image-with-android-studio-users" target="_blank">Android Studio</a></li> 
+      <li><a href="https://source.android.com/docs/devices/cuttlefish" target="_blank">Cuttlefish Virtual Devices</a> for use with <a href="https://source.android.com/docs/compatibility/cts" target="_blank">CTS</a></li>
+      <li>Reference hardware platforms such as <a href="https://github.com/raspberry-vanilla/android_local_manifest" target="_blank">RPi</a> and <a href="https://source.android.com/docs/automotive/start/pixelxl" target="_blank">Pixel Tablets</a></li>
+    </ul>
+    <h4 style="margin-bottom: 10px;">Build Outputs</h4>
+    <p>Build outputs are stored in a Google Cloud Storage bucket (refer to build artifact for location).</p>
+    <h4 style="margin-bottom: 10px;">Viewing Artifacts on Google Cloud</h4>
+    <p><a href="https://cloud.google.com/docs/authentication/gcloud" target="_blank">Sign in to Google Cloud</a> and run the following command: <br/><code>gcloud storage ls gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/AAOS_Builder/&lt;BUILD_NUMBER&gt;</code></p>
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
   parameters {
-    stringParam {
-      name('IMAGE_TAG')
-      defaultValue('latest')
-      description('''<p>Image tag for the builder image.</p>''')
-      trim(true)
-    }
-    booleanParam {
-      name('NO_PUSH')
-      defaultValue(true)
-      description('''<p>Build only, do not push to registry.</p>''')
+    choiceParam {
+      name('INSTANCE_RETENTION_TIME')
+      description('''<p>Time in minutes to retain the instance after build completion.<br/>
+        Useful for debugging build issues, reviewing target outputs etc.</p>''')
+      choices(['0', '15', '30', '45', '60', '120', '180'])
     }
   }
 

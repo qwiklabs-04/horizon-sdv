@@ -57,6 +57,13 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
       trim(true)
     }
     stringParam {
+      name('NODEJS_VERSION')
+      defaultValue('20.9.0')
+      description('''<p>NodeJS version.<br/>
+        This is installed using <i>nvm</i> on the instance template to be compatible with other tooling.</p>''')
+      trim(true)
+    }
+    stringParam {
       name('TREEFMT_URL')
       defaultValue('https://github.com/numtide/treefmt/releases/download/v2.1.0/treefmt_2.1.0_linux_amd64.tar.gz')
       description('''<p>Treefmt archive URL.</p>''')

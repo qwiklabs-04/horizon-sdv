@@ -13,24 +13,33 @@
 # limitations under the License.
 
 # Latest stable.
-FROM --platform=linux/amd64  ubuntu:22.04
+FROM --platform=linux/amd64 debian:12
 
 ARG ARM_TOOLCHAIN_URL
 ARG CLANG_TOOLS_URL
 ARG CMAKE_URL
 ARG TREEFMT_URL
+ARG NODEJS_VERSION
 
 # Install packages required for building OpenBSW targets.
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends apt-utils && \
     apt-get -y upgrade && \
     apt-get install -y --no-install-recommends \
+    apt-transport-https ca-certificates \
     clang-tidy gcc-11 g++11 build-essential file \
     gnupg git git-core lcov  bzip2 zip unzip tar xz-utils \
     python3 python3-setuptools python3-pip python3-requests \
+    python3-venv python3-virtualenv gettext \
     rsync less curl wget sudo vim ssh gawk htop && \
-    apt-get update -y && \
+    apt-get update -y && apt install -y npm nodejs && \
     rm -rf /var/lib/apt/lists/*
+
+# Node version manager
+RUN npm cache clean -f \
+    && npm install -g n \
+    && n ${NODEJS_VERSION} \
+    && ln -sf /usr/local/bin/node /usr/local/bin/nodejs || true
 
 # Download and install OpenBSW dependent tools.
 RUN curl -L ${CMAKE_URL} -o cmake-linux-x86_64.sh \
@@ -51,12 +60,10 @@ RUN curl -L ${CMAKE_URL} -o cmake-linux-x86_64.sh \
     && install -m 755 treefmt /root/.local/bin/treefmt \
     && rm LICENSE README.md treefmt treefmt.tar.gz \
     && curl -L ${CLANG_TOOLS_URL} -o /root/.local/bin/clang-format \
-    && chmod +x /root/.local/bin/clang-format
-
-ENV PATH="/root/.local/bin:$PATH"
-
-RUN pip3 install cmakelang \
+    && chmod +x /root/.local/bin/clang-format \
     && echo 'export HISTFILE=/root/.bash_history/history' >> /root/.bashrc
+
+ENV PATH="/root/.local/bin:/usr/bin:$PATH"
 
 # The following installs gcloud sdk including gsutil required for uploading
 # artifacts to Google Cloud Storage. Remove if using alternative storage.
@@ -81,8 +88,11 @@ RUN useradd -u 1000 -ms /bin/bash ${USER} && \
 USER ${USER}
 WORKDIR /home/${USER}
 
-# Configure git config (fake details) for Google repo.
+# Configure git config (fake details)
 RUN git config --global user.email "bsw.jenkins@dummy.com" && \
     git config --global user.name "BSW Jenkins" && \
-    git config --global color.ui false
+    git config --global color.ui false && \
+    virtualenv --system-site-packages venv && \
+    . ${HOME}/venv/bin/activate && pip3 install --user cmakelang && deactivate
 
+ENV PATH="/root/.local/bin:/usr/bin:$PATH"

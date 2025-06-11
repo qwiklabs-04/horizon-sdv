@@ -54,6 +54,13 @@ module "sdv_gcs" {
   location    = var.sdv_location
 }
 
+module "sdv_gcs_openbsw" {
+  source = "../sdv-gcs"
+
+  bucket_name = "${data.google_project.project.project_id}-openbsw"
+  location    = var.sdv_location
+}
+
 module "sdv_network" {
   source = "../sdv-network"
 
@@ -83,7 +90,8 @@ module "sdv_gke_cluster" {
   depends_on = [
     module.sdv_apis,
     module.sdv_network,
-    module.sdv_gcs
+    module.sdv_gcs,
+    module.sdv_gcs_openbsw
   ]
 
   project_id      = data.google_project.project.project_id

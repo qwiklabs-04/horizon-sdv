@@ -19,6 +19,7 @@
 
 function abfs_uploader_run() {
   echo "ABFS Uploader Run"
+  env
   terraform init
   terraform plan
 }

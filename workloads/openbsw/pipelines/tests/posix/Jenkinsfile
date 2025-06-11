@@ -74,7 +74,7 @@ pipeline {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                 sh '''
                   OPENBSW_DOWNLOAD_URL="${OPENBSW_DOWNLOAD_URL}" \
-                  ./workloads/openbsw/pipelines/tests/posix/bsw_install.sh
+                  ./workloads/openbsw/pipelines/tests/posix/bsw_download_artifact.sh
                 '''
               }
             }

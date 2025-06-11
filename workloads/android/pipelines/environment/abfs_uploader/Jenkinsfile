@@ -48,11 +48,13 @@ pipeline {
           steps {
             container(name: 'abfs-uploader-builder') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                sh '''
-                  set +x
-                  cd ./workloads/android/pipelines/environment/abfs_uploader/
-                  ./abfs_uploader_run.sh
-                '''
+               withCredentials([string(credentialsId: 'jenkins-abfs-license-b64', variable: "JENKINS_ABFS_LICENSE_B64")]) {
+                  sh '''
+                    set +x
+                    cd ./workloads/android/pipelines/environment/abfs_uploader/
+                    ABFS_LICENSE_B64=${JENKINS_ABFS_LICENSE_B64} ./abfs_uploader_run.sh
+                  '''
+                }
               }
             }
           }

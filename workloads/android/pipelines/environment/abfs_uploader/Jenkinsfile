@@ -50,7 +50,7 @@ pipeline {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                 sh '''
                   set +x
-                  echo "Hello World !"
+                  ./workloads/android/pipelines/environment/abfs-uploader/abfs_uploader_run.sh
                 '''
               }
             }

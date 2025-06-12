@@ -105,7 +105,7 @@ pipeline {
         stage ('Initialise') {
           steps {
             script {
-              currentBuild.description = "Revision: ${env.AAOS_REVISION}"
+              currentBuild.description = "Revision: ${env.AAOS_REVISION}" + "<br>" + "$BUILD_USER"
             }
             container(name: 'builder') {
               withCredentials([usernamePassword(credentialsId: env.GERRIT_CREDENTIALS_ID, passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {

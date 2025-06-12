@@ -14,28 +14,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Description
-# Download the OpenBSW POSIX binary ready for test.
+# Description:
+# Initialise the OpenBSW repository.
+#
+# The following variables must be set before running this script:
+#
+#  - OPENBSW_GIT_URL: the URL of the OpenBSW Git Repo.
+#  - OPENBSW_GIT_BRANCH: the branch or tag to checkout.
+#
+# Example usage:
+# OPENBSW_GIT_URL=https://github.com/eclipse-openbsw/openbsw.git \
+# OPENBSW_GIT_BRANCH=main \
+# ./workloads/openbsw/pipelines/builds/bsw_builder/bsw_initialise.sh
 
 # Include common functions and variables.
 # shellcheck disable=SC1091
 source "$(dirname "${BASH_SOURCE[0]}")"/bsw_environment.sh "$0"
 
-# Download OpenBSW artifacts
-function bsw_download_artifacts() {
+if ! eval "${OPENBSW_CLONE_CMDLINE}"
+then
+    echo "Cloned failed."
+    exit 1
+fi
 
-    case "${OPENBSW_DOWNLOAD_URL}" in
-        gs://*)
-            echo "Copying artifacts from ${OPENBSW_DOWNLOAD_URL}"
-            gcloud storage cp -r "${OPENBSW_DOWNLOAD_URL}" "${HOME}" || true
-            ;;
-        *)
-            echo "WARNING: only GCS bucket access is supported"
-            ;;
-    esac
+# Additional commands to run after git clone.
+for command in "${POST_GIT_CLONE_COMMANDS_LIST[@]}"; do
+    echo "${command}"
+    eval "${command}"
+done
 
-    # Binaries require executable permissions.
-    chmod -R 755 "${HOME}"/posix
-}
-
-bsw_download_artifacts
+# Return result
+exit $?

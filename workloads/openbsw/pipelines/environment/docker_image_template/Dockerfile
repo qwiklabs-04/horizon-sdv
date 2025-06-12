@@ -38,6 +38,7 @@ RUN apt-get update -y && \
 # Node version manager
 RUN npm cache clean -f \
     && npm install -g n \
+    && npm install -g wait-on \
     && n ${NODEJS_VERSION} \
     && ln -sf /usr/local/bin/node /usr/local/bin/nodejs || true
 

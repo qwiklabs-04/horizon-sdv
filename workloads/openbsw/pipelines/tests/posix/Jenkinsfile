@@ -101,6 +101,7 @@ pipeline {
                     MTK_CONNECT_TEST_ARTIFACT="${OPENBSW_DOWNLOAD_URL}" \
                     MTK_CONNECT_TESTBENCH="${JOB_NAME}-${BUILD_NUMBER}" \
                     MTK_CONNECT_TESTBENCH_USER="${BUILD_USER_ID}" \
+                    MTK_CONNECT_LAUNCH_APPLICATION_NAME="${LAUNCH_APPLICATION_NAME}" \
                     timeout 15m ./workloads/openbsw/pipelines/tests/posix/bsw_mtk_connect.sh --start
                   '''
                 }

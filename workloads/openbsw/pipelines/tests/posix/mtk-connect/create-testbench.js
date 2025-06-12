@@ -50,7 +50,7 @@ const _ = require("lodash");
  * Sets up the Axios configuration with a base URL and authentication
  * credentials from environment variables.
  */
-const { MTK_CONNECT_DOMAIN, MTK_CONNECT_USERNAME, MTK_CONNECT_PASSWORD, MTK_CONNECT_REGISTRATION, MTK_CONNECT_TESTBENCH, MTK_CONNECT_TESTBENCH_USER, MTK_CONNECT_DEVICES, MTK_CONNECT_HOST } = process.env;
+const { MTK_CONNECT_DOMAIN, MTK_CONNECT_USERNAME, MTK_CONNECT_PASSWORD, MTK_CONNECT_REGISTRATION, MTK_CONNECT_TESTBENCH, MTK_CONNECT_TESTBENCH_USER, MTK_CONNECT_DEVICES, MTK_CONNECT_HOST, MTK_CONNECT_LAUNCH_APPLICATION_NAME} = process.env;
 const registration = MTK_CONNECT_REGISTRATION || fs.readFileSync('/usr/src/config/registration.name', 'utf-8');
 
 axios.defaults.baseURL = `https://${MTK_CONNECT_DOMAIN}/mtk-connect`;
@@ -149,12 +149,17 @@ async function configureDevice(i) {
             'name': 'HOST',
             'driver': 'spawn',
             'command': 'bash',
-            'args': ['-c', 'cd /home/builder; su builder; bash --login', '']
+            'args': ['-c', 'cd /home/builder; su builder; bash --login;', '']
           }
         ]
       }
     }
   }
+
+  if (MTK_CONNECT_LAUNCH_APPLICATION_NAME) {
+    data.interface.terminal.types[0].args = ['-c', 'cd /home/builder; su builder -c "eval ./posix/${MTK_CONNECT_LAUNCH_APPLICATION_NAME}"', ''];
+  }
+ 
   await axios.patch(`/api/v1/agents/${agent.id}/devices/${index}`, data);
 }
 

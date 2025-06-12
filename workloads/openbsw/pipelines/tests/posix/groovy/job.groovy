@@ -22,14 +22,24 @@ pipelineJob('OpenBSW/Tests/POSIX') {
     <ul>
       <li><code>OPENBSW_DOWNLOAD_URL</code>: The URL of the user's POISX test binaries to install and run.</li>
     </ul>
-    <p>Refer to the README.md in the respective repository for further details.</p>
+    <h4>Reference documentation:</h4>
+    <ul>
+      <li><a href="https://eclipse-openbsw.github.io/openbsw/sphinx_docs/doc/learning/console/index.html" target="_blank">Application Console.</a></li>
+    </ul>
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
   parameters {
     stringParam {
       name('OPENBSW_DOWNLOAD_URL')
       defaultValue('')
-      description("""<p>Storage URL pointing to the location of the test image, e.g.<br/>gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Builds/BSW_Builder/&lt;BUILD_NUMBER&gt;</p>""")
+      description("""<p>Storage URL pointing to the location of the test image, e.g.<br/>gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Builds/BSW_Builder/&lt;BUILD_NUMBER&gt;/posix/</p>""")
+      trim(true)
+    }
+
+    stringParam {
+      name('LAUNCH_APPLICATION_NAME')
+      defaultValue('app.referenceApp.elf')
+      description("""<p>Name of the application to launch, or empty to manually launch.</p>""")
       trim(true)
     }
 

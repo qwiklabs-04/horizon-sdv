@@ -52,7 +52,15 @@ pipeline {
                   sh '''
                     set +x
                     cd ./workloads/android/pipelines/environment/abfs_uploader/
-                    ABFS_LICENSE_B64=${JENKINS_ABFS_LICENSE_B64} ./abfs_uploader_run.sh
+                    APPLY_OR_DESTROY=${APPLY_OR_DESTROY} \
+                    UPLOADER_COUNT=${UPLOADER_COUNT} \
+                    MACHINE_TYPE=${MACHINE_TYPE} \
+                    DATADISK_SIZE_GB=${DATADISK_SIZE_GB} \
+                    MANIFEST_SERVER=${MANIFEST_SERVER} \
+                    GIT_BRANCH=${GIT_BRANCH} \
+                    MANIFEST_FILE=${MANIFEST_FILE} \
+                    ABFS_LICENSE_B64=${JENKINS_ABFS_LICENSE_B64} \
+                    ./abfs_uploader_run.sh
                   '''
                 }
               }

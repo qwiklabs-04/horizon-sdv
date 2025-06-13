@@ -23,19 +23,28 @@ function abfs_uploader_run() {
   export TF_VAR_project_id=${CLOUD_PROJECT}
   export TF_VAR_region=${CLOUD_REGION}
   export TF_VAR_zone=${CLOUD_ZONE}
-  export TF_VAR_abfs_gerrit_uploader_count=1
-  export TF_VAR_abfs_gerrit_uploader_machine_type="n2d-standard-4"
-  export TF_VAR_abfs_gerrit_uploader_datadisk_size_gb="1024"
+  export TF_VAR_abfs_gerrit_uploader_count=${UPLOADER_COUNT}
+  export TF_VAR_abfs_gerrit_uploader_machine_type=${MACHINE_TYPE}
+  export TF_VAR_abfs_gerrit_uploader_datadisk_size_gb=${DATADISK_SIZE_GB}
   export TF_VAR_abfs_gerrit_uploader_datadisk_type="pd-balanced"
   export TF_VAR_abfs_docker_image_uri="europe-docker.pkg.dev/abfs-binaries/abfs-containers-alpha/abfs-alpha:latest"
-  export TF_VAR_abfs_gerrit_uploader_manifest_server="android.googlesource.com"
-  export TF_VAR_abfs_gerrit_uploader_git_branch="[\"main\"]"
-  export TF_VAR_abfs_manifest_file="default.xml"
+  export TF_VAR_abfs_gerrit_uploader_manifest_server=${MANIFEST_SERVER}
+  export TF_VAR_abfs_gerrit_uploader_git_branch=${GIT_BRANCH}
+  export TF_VAR_abfs_manifest_file=${MANIFEST_FILE}
   export TF_VAR_abfs_license=$(echo $ABFS_LICENSE_B64 | base64 -d)
 
   terraform init
-  terraform plan
-  terraform apply -auto-approve
+
+  if [ ${APPLY_OR_DESTROY} = "APPLY" ]; then
+    terraform plan
+    terraform apply -auto-approve
+
+  elif [ ${APPLY_OR_DESTROY} = "DESTROY" ]; then
+    terraform plan -destroy
+    terraform destroy --auto-approve
+  else
+    echo "WRONG ACTION"
+  fi
 }
 
 abfs_uploader_run

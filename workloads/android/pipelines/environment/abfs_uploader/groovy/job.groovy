@@ -34,6 +34,40 @@ pipelineJob('Android/Environment/ABFS Uploader') {
         Useful for debugging build issues, reviewing target outputs etc.</p>''')
       choices(['0', '15', '30', '45', '60', '120', '180'])
     }
+    choiceParam {
+      name('APPLY_OR_DESTROY')
+      choices(['APPLY', 'DESTROY'])
+    }
+    stringParam {
+      name('UPLOADER_COUNT')
+      defaultValue('1')
+      trim(true)
+    }
+    stringParam {
+      name('MACHINE_TYPE')
+      defaultValue('n2d-standard-4')
+      trim(true)
+    }
+    stringParam {
+      name('DATADISK_SIZE_GB')
+      defaultValue('1024')
+      trim(true)
+    }
+    stringParam {
+      name('MANIFEST_SERVER')
+      defaultValue('android.googlesource.com')
+      trim(true)
+    }
+    stringParam {
+      name('GIT_BRANCH')
+      defaultValue('["main"]')
+      trim(true)
+    }
+    stringParam {
+      name('MANIFEST_FILE')
+      defaultValue('default.xml')
+      trim(true)
+    }
   }
 
   logRotator {

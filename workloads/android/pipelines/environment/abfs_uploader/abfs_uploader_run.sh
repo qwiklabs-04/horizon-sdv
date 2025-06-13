@@ -29,7 +29,7 @@ function abfs_uploader_run() {
   export TF_VAR_abfs_gerrit_uploader_datadisk_type="pd-balanced"
   export TF_VAR_abfs_docker_image_uri="europe-docker.pkg.dev/abfs-binaries/abfs-containers-alpha/abfs-alpha:latest"
   export TF_VAR_abfs_gerrit_uploader_manifest_server="android.googlesource.com"
-  export TF_VAR_abfs_gerrit_uploader_git_branch=["main"]
+  export TF_VAR_abfs_gerrit_uploader_git_branch="[\"main\"]"
   export TF_VAR_abfs_manifest_file="default.xml"
   export TF_VAR_abfs_license=""
 

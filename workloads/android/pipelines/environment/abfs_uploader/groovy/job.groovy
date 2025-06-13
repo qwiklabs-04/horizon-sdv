@@ -35,7 +35,7 @@ pipelineJob('Android/Environment/ABFS Uploader') {
       choices(['0', '15', '30', '45', '60', '120', '180'])
     }
     choiceParam {
-      name('APPLY_OR_DESTROY')
+      name('UPLOADER_APPLY_OR_DESTROY')
       choices(['APPLY', 'DESTROY'])
     }
     stringParam {
@@ -44,27 +44,27 @@ pipelineJob('Android/Environment/ABFS Uploader') {
       trim(true)
     }
     stringParam {
-      name('MACHINE_TYPE')
+      name('UPLOADER_MACHINE_TYPE')
       defaultValue('n2d-standard-4')
       trim(true)
     }
     stringParam {
-      name('DATADISK_SIZE_GB')
+      name('UPLOADER_DATADISK_SIZE_GB')
       defaultValue('1024')
       trim(true)
     }
     stringParam {
-      name('MANIFEST_SERVER')
+      name('UPLOADER_MANIFEST_SERVER')
       defaultValue('android.googlesource.com')
       trim(true)
     }
     stringParam {
-      name('GIT_BRANCH')
+      name('UPLOADER_GIT_BRANCH')
       defaultValue('["main"]')
       trim(true)
     }
     stringParam {
-      name('MANIFEST_FILE')
+      name('UPLOADER_MANIFEST_FILE')
       defaultValue('default.xml')
       trim(true)
     }

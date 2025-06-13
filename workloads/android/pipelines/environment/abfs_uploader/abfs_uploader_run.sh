@@ -35,6 +35,7 @@ function abfs_uploader_run() {
 
   terraform init
   terraform plan
+  terraform apply -auto-approve
 }
 
 abfs_uploader_run

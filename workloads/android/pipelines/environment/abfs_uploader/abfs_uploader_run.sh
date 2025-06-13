@@ -31,7 +31,7 @@ function abfs_uploader_run() {
   export TF_VAR_abfs_gerrit_uploader_manifest_server="android.googlesource.com"
   export TF_VAR_abfs_gerrit_uploader_git_branch="[\"main\"]"
   export TF_VAR_abfs_manifest_file="default.xml"
-  export TF_VAR_abfs_license=$(echo ABFS_LICENSE_B64 | base64 -d)
+  export TF_VAR_abfs_license=$(echo $ABFS_LICENSE_B64 | base64 -d)
 
   terraform init
   terraform plan

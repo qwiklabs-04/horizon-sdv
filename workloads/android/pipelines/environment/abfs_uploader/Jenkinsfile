@@ -76,7 +76,9 @@ pipeline {
   post {
     aborted {
       script {
-        echo "Pipeline ABORT !!!"
+        echo "Pipeline ABORT START !!!"
+        sleep(time: "1", unit: 'MINUTES')
+        echo "Pipeline ABORT END !!!"
       }
     }
   }

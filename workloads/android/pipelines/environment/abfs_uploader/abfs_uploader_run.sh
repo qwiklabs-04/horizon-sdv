@@ -19,7 +19,7 @@
 
 function abfs_uploader_run() {
   echo "ABFS Uploader Run"
-
+  env
   export TF_VAR_project_id=${CLOUD_PROJECT}
   export TF_VAR_region=${CLOUD_REGION}
   export TF_VAR_zone=${CLOUD_ZONE}

@@ -72,4 +72,12 @@ pipeline {
       }
     }
   }
+
+  post {
+    aborted {
+      script {
+        echo "Pipeline ABORT !!!"
+      }
+    }
+  }
 }

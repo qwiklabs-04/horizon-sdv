@@ -72,20 +72,4 @@ pipeline {
       }
     }
   }
-
-  post {
-    aborted {
-      container(name: 'abfs-uploader-builder') {
-        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-          withCredentials([string(credentialsId: 'jenkins-abfs-license-b64', variable: "JENKINS_ABFS_LICENSE_B64")]) {
-            sh '''
-              set +x
-              cd ./workloads/android/pipelines/environment/abfs_uploader/
-               echo "Hello from abourt post job" 
-              '''
-          }
-        }
-      }
-    }
-  }
 }

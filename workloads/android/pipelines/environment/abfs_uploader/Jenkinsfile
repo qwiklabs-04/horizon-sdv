@@ -77,6 +77,7 @@ pipeline {
     aborted {
       script {
         echo "Pipeline ABORT START !!!"
+        terraform plan
         sleep(time: "1", unit: 'MINUTES')
         echo "Pipeline ABORT END !!!"
       }

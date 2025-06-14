@@ -120,6 +120,16 @@ spec:
                 secretKeyRef:
                   name: keycloak-initial-creds
                   key: password
+            - name: JENKINS_ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-jenkins-admin
+                  key: username
+            - name: JENKINS_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-jenkins-admin
+                  key: password
           image: {{ .Values.config.postjobs.keycloakjenkins }}
           imagePullPolicy: Always
       restartPolicy: Never

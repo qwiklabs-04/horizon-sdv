@@ -175,10 +175,10 @@ spec:
                 - project:
                     disabledStrategies:
                     - "org.jenkinsci.plugins.authorizeproject.strategy.SystemAuthorizationStrategy"
-                    enabledStrategies:
                     - "org.jenkinsci.plugins.authorizeproject.strategy.SpecificUsersAuthorizationStrategy"
-                    - "org.jenkinsci.plugins.authorizeproject.strategy.TriggeringUsersAuthorizationStrategy"
                     - "org.jenkinsci.plugins.authorizeproject.strategy.AnonymousAuthorizationStrategy"
+                    enabledStrategies:
+                    - "org.jenkinsci.plugins.authorizeproject.strategy.TriggeringUsersAuthorizationStrategy"
             securityRealm: |-
               keycloak:
                 keycloakJson: ${jenkins-keycloak-keycloakJson}

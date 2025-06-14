@@ -147,6 +147,13 @@ pipelineJob('OpenBSW/Builds/BSW_Builder') {
       trim(true)
     }
 
+    choiceParam {
+      name('INSTANCE_RETENTION_TIME')
+      description('''<p>Time in minutes to retain the instance after build completion.<br/>
+        Useful for debugging build issues, reviewing target outputs etc.</p>''')
+      choices(['0', '15', '30', '45', '60', '120', '180'])
+    }
+
     stringParam {
       name('OPENBSW_ARTIFACT_STORAGE_SOLUTION')
       defaultValue('GCS_BUCKET')

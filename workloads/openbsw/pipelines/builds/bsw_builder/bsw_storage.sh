@@ -74,7 +74,7 @@ function gcs_bucket() {
                 echo "Copied ${file} to ${destination}"
                 # shellcheck disable=SC2086
                 filename=$(echo ${file} | awk -F / '{print $NF}')
-                echo "    gcloud storage cp -r ${destination}/${filename} ." | tee -a "${artifacts_summary}"
+                echo "    gcloud storage cp ${destination}/${filename} ." | tee -a "${artifacts_summary}"
             fi
         done
     done

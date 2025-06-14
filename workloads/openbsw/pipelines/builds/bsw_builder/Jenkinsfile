@@ -266,6 +266,22 @@ pipeline {
           }
         }
 
+        stage ('Retain instance') {
+          when {
+            allOf {
+              expression { env.BUILD_UNIT_TESTS == 'true' }
+              expression { env.BUILD_NXP_S32K148 == 'true' }
+              expression { env.BUILD_POSIX == 'true' }
+            }
+          }
+          steps {
+            container(name: 'builder') {
+              script {
+                sleep(time: "${INSTANCE_RETENTION_TIME}", unit: 'MINUTES')
+              }
+            }
+          }
+        }
       }
     }
   }

@@ -310,7 +310,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ inputs.terraform-version }}
-          
+
       - name: terraform plan
         working-directory: ${{ inputs.directory }}/
         id: tfplan
@@ -360,7 +360,7 @@ jobs:
             ${{ env.PLAN }}
             ```
         continue-on-error: true
-        
+
       - name: Check if Plan failed
         if: steps.tfplan.outcome == 'failure'
         uses: actions/github-script@v6

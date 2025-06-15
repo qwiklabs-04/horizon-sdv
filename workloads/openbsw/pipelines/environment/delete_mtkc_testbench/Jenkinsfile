@@ -39,6 +39,11 @@ pipeline {
     }
   }
 
+  // Block concurrent builds to avoid clashing.
+  options {
+    buildBlocker (useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'BUILDABLE', blockingJobs: '.*MTK.*Cleanup.*')
+  }
+
   stages {
     stage ('Delete Offline Testbenches') {
       when {

@@ -44,11 +44,6 @@ pipeline {
     }
   }
 
-  // Block concurrent builds to avoid clashing.
-  options {
-    buildBlocker (useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'BUILDABLE', blockingJobs: '.*Template.*')
-  }
-
   stages {
     stage ('Stage 1: Create base instance template') {
 

@@ -109,6 +109,11 @@ pipelineJob('Android/Environment/CF Instance Template') {
     }
   }
 
+  // Block concurrent builds to avoid clashing.
+  options {
+    buildBlocker (useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'BUILDABLE', blockingJobs: '.*Template.*')
+  }
+
   logRotator {
     daysToKeep(60)
     numToKeep(200)

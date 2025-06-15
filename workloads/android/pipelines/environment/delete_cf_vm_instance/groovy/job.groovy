@@ -33,6 +33,10 @@ pipelineJob('Android/Environment/Delete Cuttlefish VM Instance') {
     }
   }
 
+  options {
+    buildBlocker (useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'ALL', blockingJobs: '.*Delete.*Cuttlefish.*')
+  }
+
   logRotator {
     daysToKeep(60)
     numToKeep(200)

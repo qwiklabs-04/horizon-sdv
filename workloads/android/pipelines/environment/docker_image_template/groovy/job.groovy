@@ -40,6 +40,11 @@ pipelineJob('Android/Environment/Docker Image Template') {
     }
   }
 
+  // Block concurrent builds to avoid clashing.
+  options {
+    buildBlocker (useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'BUILDABLE', blockingJobs: '.*Docker.*')
+  }
+
   logRotator {
     daysToKeep(60)
     numToKeep(200)

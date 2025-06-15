@@ -32,6 +32,11 @@ pipelineJob('OpenBSW/Environment/Delete MTK Connect Testbench') {
     }
   }
 
+  // Block concurrent builds to avoid clashing.
+  options {
+    buildBlocker (useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'BUILDABLE', blockingJobs: '.*Delete.*MTK.*')
+  }
+
   logRotator {
     daysToKeep(60)
     numToKeep(200)

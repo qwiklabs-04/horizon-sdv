@@ -45,10 +45,6 @@ pipeline {
     }
   }
 
-  options {
-    buildBlocker (useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'ALL', blockingJobs: '.*CF.*Cleanup.*')
-  }
-
   stages {
     stage ('Delete VM instance') {
       when {

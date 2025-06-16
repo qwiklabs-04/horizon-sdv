@@ -128,7 +128,8 @@ if ${CODE_COVERAGE}; then
         "lcov --capture --directory . --output-file ${WORKSPACE}/coverage_unfiltered.info"
         "lcov --remove ${WORKSPACE}/coverage_unfiltered.info '*libs/3rdparty/googletest/*' '*/mock/*' '*/gmock/*' --output-file ${WORKSPACE}/coverage.info"
         "genhtml ${WORKSPACE}/coverage.info --output-directory cmake-build-unit-tests/coverage"
-        "cd cmake-build-unit-tests && tar -zcf ${WORKSPACE}/coverage.html.tgz coverage && cd -"
+        "cd cmake-build-unit-tests && cp -rf coverage ${WORKSPACE} && cd -"
+        "cd ${WORKSPACE} && tar -zcf ${WORKSPACE}/coverage.html.tgz coverage && cd -"
     )
     OPENBSW_ARTIFACT_LIST+=(
         "${WORKSPACE}/coverage_unfiltered.info"

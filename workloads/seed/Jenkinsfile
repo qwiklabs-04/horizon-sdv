@@ -50,6 +50,8 @@ pipeline {
           steps {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
               script {
+                currentBuild.description = "$BUILD_USER"
+
                 // Single quotes simply match string, double quotes expand the value of the variable.
                 // This avoids DSL scripts (loosely based on Groovy) needing to approve getProperty method
                 // which is a real security risk across Jenkins.
@@ -109,6 +111,8 @@ pipeline {
           steps {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
               script {
+                currentBuild.description = "$BUILD_USER"
+
                 def replacements = [
                   ['${OPENBSW_BUILD_BUCKET_ROOT_NAME}', "${OPENBSW_BUILD_BUCKET_ROOT_NAME}"],
                   ['${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],

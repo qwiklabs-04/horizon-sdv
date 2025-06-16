@@ -49,19 +49,18 @@ RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
 #    curl -s https://storage.googleapis.com/git-repo-downloads/repo.asc | \
 #    gpg --verify - ${REPO} && install -m 755 ${REPO} /usr/bin/repo
 
+RUN echo 'deb http://packages.cloud.google.com/apt apt-transport-artifact-registry-stable main' | tee -a /etc/apt/sources.list.d/artifact-registry.list && \
+  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
+  apt update -y && apt install -y apt-transport-artifact-registry && \
+  echo 'deb ar+https://us-apt.pkg.dev/projects/abfs-binaries abfs-apt-alpha-public main' | tee -a /etc/apt/sources.list.d/artifact-registry.list && \
+  apt update -y && apt install -y abfs-client
+
 # Add USER and provide sudo access.
 ARG USER=builder
 RUN useradd -u 1000 -ms /bin/bash ${USER} && \
   passwd -d ${USER} && \
   usermod -aG sudo ${USER} && \
   echo "${USER} ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers
-
-RUN echo 'deb http://packages.cloud.google.com/apt apt-transport-artifact-registry-stable main' | sudo tee -a /etc/apt/sources.list.d/artifact-registry.list && \
-  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - && \
-  sudo apt update && sudo apt install apt-transport-artifact-registry
-
-RUN echo 'deb ar+https://us-apt.pkg.dev/projects/abfs-binaries abfs-apt-alpha-public main' | sudo tee -a  /etc/apt/sources.list.d/artifact-registry.list && \
-  sudo apt update && sudo apt install abfs-client
 
 # Switch to user
 USER ${USER}

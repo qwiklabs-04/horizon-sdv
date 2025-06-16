@@ -186,6 +186,15 @@ pipeline {
                   ./workloads/openbsw/pipelines/builds/bsw_builder/bsw_build.sh
                 '''
                 archiveArtifacts artifacts: '*coverage.html.tgz', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+
+                publishHTML target: [
+                  allowMissing: true,
+                  alwaysLinkToLastBuild: true,
+                  keepAll: true,
+                  reportDir: "coverage",
+                  reportFiles: 'index.html',
+                  reportName: 'OpenBSW Unit Test Coverage Report'
+                ]
               }
             }
           }

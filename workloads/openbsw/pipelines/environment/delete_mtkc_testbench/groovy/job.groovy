@@ -33,7 +33,7 @@ pipelineJob('OpenBSW/Environment/Delete MTK Connect Testbench') {
   }
 
   // Block build if certain jobs are running.
-  blockOn('.*Delete.*MTK.*') {
+  blockOn('OpenBSW*.*Delete.*MTK.*') {
     // Possible values are 'GLOBAL' and 'NODE' (default).
     blockLevel('GLOBAL')
     // Possible values are 'ALL', 'BUILDABLE' and 'DISABLED' (default).

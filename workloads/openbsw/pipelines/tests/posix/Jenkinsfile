@@ -93,6 +93,7 @@ pipeline {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                 withCredentials([usernamePassword(credentialsId: 'jenkins-mtk-connect-apikey', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
                   sh '''
+                    cd ./workloads/common/mtk-connect/ || true
                     sudo \
                     MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \
                     MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
@@ -102,7 +103,9 @@ pipeline {
                     MTK_CONNECT_TESTBENCH="${JOB_NAME}-${BUILD_NUMBER}" \
                     MTK_CONNECT_TESTBENCH_USER="${BUILD_USER_ID}" \
                     MTK_CONNECT_LAUNCH_APPLICATION_NAME="${LAUNCH_APPLICATION_NAME}" \
-                    timeout 15m ./workloads/openbsw/pipelines/tests/posix/bsw_mtk_connect.sh --start
+                    MTK_CONNECT_WORKLOAD="openbsw" \
+                    timeout 15m ./mtk_connect.sh --start
+                    cd - || true
                   '''
                 }
               }
@@ -137,13 +140,16 @@ pipeline {
                   script {
                     sh 'echo "Stopping  MTK Connect"'
                     sh '''
+                      cd ./workloads/common/mtk-connect/ || true
                       sudo \
                       MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \
                       MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
                       MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
                       MTK_CONNECTED_DEVICES="1" \
                       MTK_CONNECT_TESTBENCH="${JOB_NAME}-${BUILD_NUMBER}" \
-                      timeout 10m ./workloads/openbsw/pipelines/tests/posix/bsw_mtk_connect.sh --stop || true
+                      MTK_CONNECT_WORKLOAD="openbsw" \
+                      timeout 10m ./mtk_connect.sh --stop || true
+                      cd - || true
                     '''
                   }
                 }

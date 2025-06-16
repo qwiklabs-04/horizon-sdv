@@ -50,7 +50,7 @@ const _ = require("lodash");
  * Sets up the Axios configuration with a base URL and authentication
  * credentials from environment variables.
  */
-const { MTK_CONNECT_DOMAIN, MTK_CONNECT_USERNAME, MTK_CONNECT_PASSWORD, MTK_CONNECT_REGISTRATION, MTK_CONNECT_TESTBENCH, MTK_CONNECT_TESTBENCH_USER, MTK_CONNECT_DEVICES, MTK_CONNECT_HOST } = process.env;
+const { MTK_CONNECT_DOMAIN, MTK_CONNECT_USERNAME, MTK_CONNECT_PASSWORD, MTK_CONNECT_REGISTRATION, MTK_CONNECT_TESTBENCH, MTK_CONNECT_TESTBENCH_USER, MTK_CONNECT_DEVICES, MTK_CONNECT_HOST, MTK_CONNECT_LAUNCH_APPLICATION_NAME, MTK_CONNECT_WORKLOAD} = process.env;
 const registration = MTK_CONNECT_REGISTRATION || fs.readFileSync('/usr/src/config/registration.name', 'utf-8');
 
 axios.defaults.baseURL = `https://${MTK_CONNECT_DOMAIN}/mtk-connect`;
@@ -107,7 +107,7 @@ async function configureAgent() {
  * Configures the devices by creating them if they don't already exist.
  */
 async function configureDevices() {
-  await BPromise.mapSeries(_.times(MTK_CONNECT_DEVICES), configureDevice);
+  await BPromise.mapSeries(_.times(MTK_CONNECT_DEVICES), configureDevice)
 }
 
 /**
@@ -128,82 +128,121 @@ async function configureDevice(i) {
     console.log(`device ${index} already exists`);
   } else {
     console.log(`creating device ${index}`);
-    await axios.post(`/api/v1/agents/${agent.id}/devices`, {
-      name: `AAOS ${index}`
-    });
-  }
-  const data = {
-    interface: {
-      'adb': {
-        mode: 'tcp',
-        port: 6520 + (index - 1),
-        host: MTK_CONNECT_HOST
-      },
-      'button': {
-        'driver': 'adb',
-        'skin': 'Default Android'
-      },
-      'fs': {
-        'types': [
-          {
-            'name': 'adb',
-            'driver': 'adb',
-            'root': '/'
-          },
-          {
-            'name': 'HOST',
-            'driver': 'native',
-            'root': '/root'
-          }
-        ]
-      },
-      'log': {
-        'types': [
-          {
-            'name': 'logcat',
-            'driver': 'logcat'
-          }
-        ]
-      },
-      'mjpeg': {
-        'types': [
-          {
-            'name': 'screen',
-            'driver': 'minicap',
-            'scale': 1.0
-          }
-        ]
-      },
-      'terminal': {
-        'types': [
-          {
-            'name': 'adb',
-            'driver': 'adb',
-            'icon': 'adb'
-          },
-          {
-            'name': 'HOST',
-            'driver': 'spawn',
-            'command': 'bash',
-            'args': ['-c', 'cd ~/; bash --login', '']
-          }
-        ]
-      },
-      'touch': {
-        'driver': 'adb',
-        'native': true
-      },
-      'tunnel': {
-        'types': [
-          {
-            'name': 'adb',
-            'driver': 'adb'
-          }
-        ]
-      }
+    if (MTK_CONNECT_WORKLOAD == 'android') {
+      await axios.post(`/api/v1/agents/${agent.id}/devices`, {
+        name: `AAOS ${index}`
+      });
+    } else {
+      await axios.post(`/api/v1/agents/${agent.id}/devices`, {
+        name: `BSW POSIX ${index}`
+      });
     }
   }
-  await axios.patch(`/api/v1/agents/${agent.id}/devices/${index}`, data);
+
+  if (MTK_CONNECT_WORKLOAD == 'android') {
+    const data = {
+      interface: {
+        'adb': {
+          mode: 'tcp',
+          port: 6520 + (index - 1),
+          host: MTK_CONNECT_HOST
+        },
+        'button': {
+          'driver': 'adb',
+          'skin': 'Default Android'
+        },
+        'fs': {
+          'types': [
+            {
+              'name': 'adb',
+              'driver': 'adb',
+              'root': '/'
+            },
+            {
+              'name': 'HOST',
+              'driver': 'native',
+              'root': '/root'
+            }
+          ]
+        },
+        'log': {
+          'types': [
+            {
+              'name': 'logcat',
+              'driver': 'logcat'
+            }
+          ]
+        },
+        'mjpeg': {
+          'types': [
+            {
+              'name': 'screen',
+              'driver': 'minicap',
+              'scale': 1.0
+            }
+          ]
+        },
+        'terminal': {
+          'types': [
+            {
+              'name': 'adb',
+              'driver': 'adb',
+              'icon': 'adb'
+            },
+            {
+              'name': 'HOST',
+              'driver': 'spawn',
+              'command': 'bash',
+              'args': ['-c', 'cd ~/; bash --login', '']
+            }
+          ]
+        },
+        'touch': {
+          'driver': 'adb',
+          'native': true
+        },
+        'tunnel': {
+          'types': [
+            {
+              'name': 'adb',
+              'driver': 'adb'
+            }
+          ]
+        }
+      }
+    }
+    await axios.patch(`/api/v1/agents/${agent.id}/devices/${index}`, data);
+  } else {
+    const data = {
+      interface: {
+        'fs': {
+          'types': [
+            {
+              'name': 'HOST',
+              'driver': 'native',
+              'root': '/root'
+            }
+          ]
+        },
+        'terminal': {
+          'types': [
+            {
+              'name': 'HOST',
+              'driver': 'spawn',
+              'command': 'bash',
+              'args': ['-c', 'cd /home/builder; su builder; bash --login;', '']
+            }
+          ]
+        }
+      }
+    }
+
+    if (MTK_CONNECT_LAUNCH_APPLICATION_NAME) {
+      console.log('openbsw app name');
+      data.interface.terminal.types[0].args = ['-c', 'cd /home/builder; su builder -c "eval ./posix/${MTK_CONNECT_LAUNCH_APPLICATION_NAME}"', ''];
+    }
+    await axios.patch(`/api/v1/agents/${agent.id}/devices/${index}`, data);
+  }
 }
 
 async function main()  {

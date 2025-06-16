@@ -15,8 +15,7 @@
 # limitations under the License.
 
 # Description:
-# Script to start/stop MTK Connect agent and testbench for a BSW POSIX
-# Host device tests.
+# Script to start/stop MTK Connect agent and testbench to create devices.
 #
 # The following variables must be set before running this script:
 #
@@ -34,13 +33,13 @@
 # sudo \
 #   MTK_CONNECT_DOMAIN=${MTK_CONNECT_DOMAIN} \
 #   MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
-#   MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} ../bsw_mtk_connect.sh
+#   MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} ./mtk_connect.sh
 
 # Environment
 MTK_CONNECT_DOMAIN=${MTK_CONNECT_DOMAIN:-}
 MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME:-}
 MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD:-}
-MTK_CONNECTED_DEVICES=${MTK_CONNECTED_DEVICES:-1}
+MTK_CONNECTED_DEVICES=${MTK_CONNECTED_DEVICES:-8}
 MTK_CONNECTED_DEVICES=$(echo "${MTK_CONNECTED_DEVICES}" | xargs)
 MTK_CONNECT_LAUNCH_APPLICATION_NAME=${MTK_CONNECT_LAUNCH_APPLICATION_NAME:-}
 MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH// /_}
@@ -52,14 +51,23 @@ MTK_CONNECT_TEST_ARTIFACT=${MTK_CONNECT_TEST_ARTIFACT:-N/A}
 MTK_CONNECT_TEST_ARTIFACT=$(echo "${MTK_CONNECT_TEST_ARTIFACT}" | xargs)
 MTK_CONNECT_FILE_PATH="$(dirname "${BASH_SOURCE[0]}")"
 MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES=${MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES:-false}
+MTK_CONNECT_WORKLOAD=${MTK_CONNECT_WORKLOAD:-android}
 NODEJS_VERSION=${NODEJS_VERSION-20.9.0}
 
 declare -r scripts_path="/usr/src/scripts"
+declare -r app_path="/usr/src/app"
+declare -r config_path="/usr/src/config"
 declare -r mtkc_config_path="/opt/mtk-connect-agent/config"
 
+# Adjust devices based on true number of active devices.
+function mtkc_max_devices() {
+    # If devices less than num_instances aka shards, then reduce.
+    MTK_CONNECTED_DEVICES=$(adb devices | grep -c -E '0.+device$')
+    echo "MTK_CONNECTED_DEVICES = ${MTK_CONNECTED_DEVICES}"
+}
+
+# Start MTK Connect agent and create testbench.
 function mtkc_start() {
-    local -r app_path="/usr/src/app"
-    local -r config_path="/usr/src/config"
 
     # Install the required packages.
     npm install -g wait-on pm2 >/dev/null 2>&1
@@ -77,6 +85,7 @@ function mtkc_start() {
         echo "MTK_CONNECT_HOST=${MTK_CONNECT_HOST}"
         echo "MTK_CONNECT_DELETE_OFFLINE=${MTK_CONNECT_DELETE_OFFLINE}"
         echo "MTK_CONNECT_LAUNCH_APPLICATION_NAME=${MTK_CONNECT_LAUNCH_APPLICATION_NAME}"
+        echo "MTK_CONNECT_WORKLOAD=${MTK_CONNECT_WORKLOAD}"
     } >> "${scripts_path}"/.env
 
     {
@@ -84,30 +93,50 @@ function mtkc_start() {
         echo "agent__log__appender=file"
     } >> "${app_path}"/.env
 
-    local -a mtkc_files=(create-testbench.js package.json remove-testbench.js download-agent.js)
+    local -a mtkc_files=(create-testbench.js package.json remove-testbench.js)
+
+    if [ "${MTK_CONNECT_WORKLOAD}" == "openbsw" ]; then
+       mtkc_files+=(download-agent.js)
+    fi
 
     # Copy over the MTKC files.
     for file in "${mtkc_files[@]}"; do
-        cp -f "${MTK_CONNECT_FILE_PATH}"/mtk-connect/"${file}" "${scripts_path}"
+        cp -f "${MTK_CONNECT_FILE_PATH}"/"${file}" "${scripts_path}"
     done
 
     # Required for dotenv.
     cd "${scripts_path}" || exit # If fails, exit, don't continue!
     npm install
 
-    # Download the agent
-    node download-agent.js
-    tar -zxf mtk-connect-agent.node.tgz
+    if [ "${MTK_CONNECT_WORKLOAD}" == "android" ]; then
+         # Local Linux host install.
+        AUTH=$(echo -n "${MTK_CONNECT_USERNAME}:${MTK_CONNECT_PASSWORD}" | base64)
+        curl -sSL https://"${MTK_CONNECT_DOMAIN}"/mtk-connect/get-agent?platform=linux | AUTH="${AUTH}" bash
+        RESULT="$?"
+        if (( RESULT != 0 )); then
+            echo "Error Download/install returned ${RESULT}"
+            exit "${RESULT}"
+        fi
 
-    # Reorganise the files
-    ln -sf "${mtkc_config_path}" "${config_path}"
-    mv -f src/* "${app_path}"
-    cd "${app_path}" || exit
-    node index.js &
+        rm -rf "${config_path}"
+        ln -sf "${mtkc_config_path}" "${config_path}"
+    else
+        # Download the agent
+        node download-agent.js
+        tar -zxf mtk-connect-agent.node.tgz
 
-    cd "${scripts_path}" || exit # If fails, exit, don't continue!
+        # Reorganise the files
+        ln -sf "${mtkc_config_path}" "${config_path}"
+        mv -f src/* "${app_path}"
+        cd "${app_path}" || exit
+        node index.js &
+
+        cd "${scripts_path}" || exit # If fails, exit, don't continue!
+    fi
+
     echo "Waiting on ${config_path}/registration.name complete."
     wait-on "${config_path}"/registration.name
+
 }
 
 function mtkc_create_testbench() {
@@ -120,6 +149,11 @@ function mtkc_create_testbench() {
 function mtkc_stop() {
     cd "${scripts_path}" || exit
     node remove-testbench.js
+    if [ "${MTK_CONNECT_WORKLOAD}" == "android" ]; then
+        # Clean up
+        rm -rf /opt/mtk-connect-agent "${config_path}" "${app_path}" "${scripts_path}"
+        pkill -9 -f runAgent.js
+    fi
 }
 
 # Print a summary of the MTK Connect agent.
@@ -148,6 +182,7 @@ Environment:
     MTK_CONNECT_LAUNCH_APPLICATION_NAME=${MTK_CONNECT_LAUNCH_APPLICATION_NAME}
     MTK_CONNECT_TEST_ARTIFACT=${MTK_CONNECT_TEST_ARTIFACT}
     MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES=${MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES}
+    MTK_CONNECT_WORKLOAD=${MTK_CONNECT_WORKLOAD}
    "
 echo "${VARIABLES}"
 
@@ -164,6 +199,9 @@ case "${1}" in
         RESULT=0
         ;;
     --start|*)
+        if [ "${MTK_CONNECT_WORKLOAD}" == "android" ]; then
+            mtkc_max_devices
+	    fi
         # Start
         mtkc_start
         mtkc_create_testbench

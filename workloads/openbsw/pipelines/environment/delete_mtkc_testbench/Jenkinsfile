@@ -44,7 +44,7 @@ pipeline {
       when {
         allOf {
           expression { env.MTK_CONNECT_TESTBENCH }
-          expression { env.MTK_CONNECT_TESTBENCH =~ /(POSIX)/ }
+          expression { env.MTK_CONNECT_TESTBENCH =~ /(OpenBSW)/ }
         }
       }
       steps {

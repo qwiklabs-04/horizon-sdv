@@ -64,7 +64,7 @@ pipeline {
       agent { kubernetes { yaml kubernetesPodTemplate } }
       stages {
         stage ('MTK Connect to Host Device') {
-          when { expression { env.MTK_CONNECT_ENABLE } }
+          when { expression { env.MTK_CONNECT_ENABLE == 'true' } }
           steps {
             container(name: 'builder') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
@@ -102,7 +102,7 @@ pipeline {
         }
 
         stage ('Stop Virtual Devices') {
-          when { expression { env.MTK_CONNECT_ENABLE } }
+          when { expression { env.MTK_CONNECT_ENABLE == 'true' } }
           steps {
             container(name: 'builder') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {

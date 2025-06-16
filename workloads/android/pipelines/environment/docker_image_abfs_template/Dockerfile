@@ -17,29 +17,29 @@ FROM --platform=linux/amd64 ubuntu:22.04
 
 # Install packages required for building AAOSP targets.
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends apt-utils && \
-    apt-get -y upgrade && \
-    apt-get install -y --no-install-recommends \
-    apt-transport-https ca-certificates \
-    git git-core gnupg flex bison build-essential zip unzip zlib1g-dev \
-    libc6-dev libxml2-utils xsltproc unzip fontconfig gcc-multilib \
-    g++-multilib libncurses5 libssl-dev python3 python3-setuptools python3-pip \
-    python3-requests python3-venv python3-virtualenv procps \
-    meson bc coreutils dosfstools e2fsprogs fdisk kpartx mtools ninja-build \
-    pkg-config rsync less curl sudo vim ssh findutils gawk jq htop && \
-    apt-get update -y && apt install -y npm nodejs && \
-    rm -rf /var/lib/apt/lists/*
+  apt-get install -y --no-install-recommends apt-utils && \
+  apt-get -y upgrade && \
+  apt-get install -y --no-install-recommends \
+  apt-transport-https ca-certificates \
+  git git-core gnupg flex bison build-essential zip unzip zlib1g-dev \
+  libc6-dev libxml2-utils xsltproc unzip fontconfig gcc-multilib \
+  g++-multilib libncurses5 libssl-dev python3 python3-setuptools python3-pip \
+  python3-requests python3-venv python3-virtualenv procps \
+  meson bc coreutils dosfstools e2fsprogs fdisk kpartx mtools ninja-build \
+  pkg-config rsync less curl sudo vim ssh findutils gawk jq htop && \
+  apt-get update -y && apt install -y npm nodejs && \
+  rm -rf /var/lib/apt/lists/*
 
 # The following installs gcloud sdk including gsutil required for uploading
 # artifacts to Google Cloud Storage. Remove if using alternative storage.
 # https://cloud.google.com/storage/docs/gsutil_install
 # GCS:START
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
-    gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | \
-    tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
-    apt-get update -y && apt-get install -y google-cloud-cli kubectl && \
-    apt-get -y clean
+  gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && \
+  echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | \
+  tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+  apt-get update -y && apt-get install -y google-cloud-cli kubectl && \
+  apt-get -y clean
 # GCS:END
 
 # Install Google repo command tool
@@ -52,9 +52,16 @@ RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
 # Add USER and provide sudo access.
 ARG USER=builder
 RUN useradd -u 1000 -ms /bin/bash ${USER} && \
-    passwd -d ${USER} && \
-    usermod -aG sudo ${USER} && \
-    echo "${USER} ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers
+  passwd -d ${USER} && \
+  usermod -aG sudo ${USER} && \
+  echo "${USER} ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers
+
+RUN echo 'deb http://packages.cloud.google.com/apt apt-transport-artifact-registry-stable main' | sudo tee -a /etc/apt/sources.list.d/artifact-registry.list && \
+  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - && \
+  sudo apt update && sudo apt install apt-transport-artifact-registry
+
+RUN echo 'deb ar+https://us-apt.pkg.dev/projects/abfs-binaries abfs-apt-alpha-public main' | sudo tee -a  /etc/apt/sources.list.d/artifact-registry.list && \
+  sudo apt update && sudo apt install abfs-client
 
 # Switch to user
 USER ${USER}
@@ -62,11 +69,11 @@ WORKDIR /home/${USER}
 
 # Configure git config (fake details) for Google repo.
 RUN git config --global user.email "aaosp.jenkins@dummy.com" && \
-    git config --global user.name "AAOSP Jenkins" && \
-    git config --global color.ui false
+  git config --global user.name "AAOSP Jenkins" && \
+  git config --global color.ui false
 
 # Create virtualenv ready for RPi builds (include-system-site-packages=true)
 # Install the required packages.
 RUN virtualenv --system-site-packages venv && \
-    . ${HOME}/venv/bin/activate && pip3 install --user meson==1.3.0 mako \
-    jinja2 ply pyyaml dataclasses && deactivate
+  . ${HOME}/venv/bin/activate && pip3 install --user meson==1.3.0 mako \
+  jinja2 ply pyyaml dataclasses && deactivate

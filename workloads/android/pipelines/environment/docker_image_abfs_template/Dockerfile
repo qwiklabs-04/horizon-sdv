@@ -62,9 +62,15 @@ RUN useradd -u 1000 -ms /bin/bash ${USER} && \
   usermod -aG sudo ${USER} && \
   echo "${USER} ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers
 
+# Create working directory
+RUN mkdir /src && chown builder:builder /src
+
 # Switch to user
 USER ${USER}
-WORKDIR /home/${USER}
+WORKDIR /src
+
+# Run ABFS cacheman
+RUN /usr/local/bin/abfs cacheman run -l /home/builder/.abfs/logs/cacheman
 
 # Configure git config (fake details) for Google repo.
 RUN git config --global user.email "aaosp.jenkins@dummy.com" && \

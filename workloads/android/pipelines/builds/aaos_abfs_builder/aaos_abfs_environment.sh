@@ -16,3 +16,6 @@
 
 abfs --remote-servers abfs-server:50051 --tunnel-ports 0 --manifest-server android.googlesource.com config -w
 abfs cacheman run -l /home/builder/.abfs/logs/cacheman
+cd /src/
+pwd
+ls -la

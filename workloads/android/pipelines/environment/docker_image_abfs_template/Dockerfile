@@ -67,7 +67,7 @@ RUN mkdir /src && chown builder:builder /src
 
 # Switch to user
 USER ${USER}
-WORKDIR /src
+WORKDIR /home/${USER}
 
 # Configure git config (fake details) for Google repo.
 RUN git config --global user.email "aaosp.jenkins@dummy.com" && \

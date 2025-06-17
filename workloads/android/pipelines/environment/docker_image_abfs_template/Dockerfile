@@ -69,9 +69,6 @@ RUN mkdir /src && chown builder:builder /src
 USER ${USER}
 WORKDIR /src
 
-# Run ABFS cacheman
-RUN /usr/local/bin/abfs cacheman run -l /home/builder/.abfs/logs/cacheman
-
 # Configure git config (fake details) for Google repo.
 RUN git config --global user.email "aaosp.jenkins@dummy.com" && \
   git config --global user.name "AAOSP Jenkins" && \

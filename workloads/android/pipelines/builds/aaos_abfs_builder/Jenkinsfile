@@ -94,53 +94,12 @@ pipeline {
             }
             container(name: 'builder') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-//                sh '''
-//                  AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
-//                  AAOS_CLEAN="${AAOS_CLEAN}" \
-//                  ./workloads/android/pipelines/builds/aaos_builder/aaos_environment.sh
-//                '''
+                sh '''
+                  AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
+                  AAOS_CLEAN="${AAOS_CLEAN}" \
+                  ./workloads/android/pipelines/builds/aaos_abfs_builder/aaos_abfs_environment.sh
+                '''
               }
-            }
-          }
-        }
-
-        stage ('Initialise') {
-          when {
-            allOf {
-              expression { env.AAOS_LUNCH_TARGET }
-              expression { currentBuild.currentResult == 'SUCCESS' }
-            }
-          }
-          steps {
-            script {
-              currentBuild.description = "${env.AAOS_LUNCH_TARGET}" + "<br>" + "${env.AAOS_REVISION}" + "<br>" + "$BUILD_USER"
-            }
-            container(name: 'builder') {
-              catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                withCredentials([usernamePassword(credentialsId: env.GERRIT_CREDENTIALS_ID, passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {
-//                  sh '''
-//                    set +x
-//                    echo "AAOS CACHE Persistent Volume Claim: ${NODE_NAME}-aaos-cache" | tee -a build_cache_volume.txt
-//                    /usr/bin/kubectl get pod ${NODE_NAME} -n jenkins -o=jsonpath='{.spec.nodeName}' | xargs -I {} gcloud compute instances describe {} --zone=${CLOUD_ZONE} | grep 'deviceName: pvc' | awk '{print "AAOS CACHE Persistent Volume: " $2}' | tee -a build_cache_volume.txt || true
-//                  '''
-//                  sh '''
-//                    git config --global credential.helper store
-//                    git config --global url."https://${GERRIT_USERNAME}@${HORIZON_DOMAIN}/gerrit".insteadOf "https://${HORIZON_DOMAIN}/gerrit"
-//                    echo https://"${GERRIT_USERNAME}":"${GERRIT_PASSWORD}"@"${HORIZON_DOMAIN}/gerrit" > ~/.git-credentials
-//
-//                    AAOS_GERRIT_MANIFEST_URL="${AAOS_GERRIT_MANIFEST_URL}" \
-//                    AAOS_REVISION="${AAOS_REVISION}" \
-//                    AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
-//                    AAOS_CLEAN="NO_CLEAN" \
-//                    GERRIT_SERVER_URL="${GERRIT_API_URL}" \
-//                    POST_REPO_INITIALISE_COMMAND="${POST_REPO_INITIALISE_COMMAND}" \
-//                    POST_REPO_SYNC_COMMAND="${POST_REPO_SYNC_COMMAND}" \
-//                    REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}" \
-//                    ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
-//                  '''
-                }
-              }
-//              archiveArtifacts artifacts: 'build_cache*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
             }
           }
         }

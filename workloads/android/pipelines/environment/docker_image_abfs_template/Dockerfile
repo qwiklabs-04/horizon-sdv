@@ -53,7 +53,7 @@ RUN echo 'deb http://packages.cloud.google.com/apt apt-transport-artifact-regist
   curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
   apt update -y && apt install -y apt-transport-artifact-registry && \
   echo 'deb ar+https://us-apt.pkg.dev/projects/abfs-binaries abfs-apt-alpha-public main' | tee -a /etc/apt/sources.list.d/artifact-registry.list && \
-  apt update -y && apt install -y abfs-client
+  apt update -y && apt install -y kmod abfs-client
 
 # Add USER and provide sudo access.
 ARG USER=builder

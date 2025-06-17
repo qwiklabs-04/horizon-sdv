@@ -14,8 +14,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-abfs --remote-servers abfs-server:50051 --tunnel-ports 0 --manifest-server android.googlesource.com config -w
-abfs cacheman run -l /home/builder/.abfs/logs/cacheman
-cd /src/
-pwd
-ls -la
+check_module_loaded() {
+  local module_name="$1"
+  local timeout="$2"
+  local interval=1
+  local elapsed=0
+
+  if [[ -z "$module_name" || -z "$timeout" ]]; then
+    echo "Usage: check_module_loaded <module_name> <timeout_seconds>"
+    return 2
+  fi
+
+  while ((elapsed < timeout)); do
+    if lsmod | grep -qw "$module_name"; then
+      echo "Module '$module_name' is loaded."
+      return 0
+    fi
+    sleep "$interval"
+    echo "$elapsed"
+    ((elapsed += interval))
+  done
+
+  echo "Timeout reached. Module '$module_name' not loaded."
+  return 1
+}
+
+check_module_loaded casfs 60
+if [[ $? -eq 0 ]]; then
+  echo "Success: module loaded."
+  abfs --remote-servers abfs-server:50051 --tunnel-ports 0 --manifest-server android.googlesource.com config -w
+  abfs cacheman run -l /home/builder/.abfs/logs/cacheman
+else
+  echo "Failure: module not loaded in time."
+  exit 1
+fi

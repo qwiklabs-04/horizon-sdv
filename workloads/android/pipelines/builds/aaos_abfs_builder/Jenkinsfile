@@ -116,7 +116,7 @@ pipeline {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                 sh '''
                   AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
-                  ./workloads/android/pipelines/builds/aaos_builder/aaos_abfs_build.sh
+                  ./workloads/android/pipelines/builds/aaos_abfs_builder/aaos_abfs_build.sh
                 '''
               }
             }

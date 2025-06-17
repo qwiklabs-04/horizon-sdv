@@ -94,11 +94,11 @@ pipeline {
             }
             container(name: 'builder') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                sh '''
-                  AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
-                  AAOS_CLEAN="${AAOS_CLEAN}" \
-                  ./workloads/android/pipelines/builds/aaos_abfs_builder/aaos_abfs_environment.sh
-                '''
+//                sh '''
+//                  AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
+//                  AAOS_CLEAN="${AAOS_CLEAN}" \
+//                  ./workloads/android/pipelines/builds/aaos_abfs_builder/aaos_environment.sh
+//                '''
               }
             }
           }
@@ -114,10 +114,10 @@ pipeline {
           steps {
             container(name: 'builder') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-//                sh '''
-//                  AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
-//                  ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
-//                '''
+                sh '''
+                  AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
+                  ./workloads/android/pipelines/builds/aaos_builder/aaos_abfs_build.sh
+                '''
               }
             }
           }

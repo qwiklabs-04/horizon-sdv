@@ -69,8 +69,9 @@ function gcs_bucket() {
             # Look for wildcard files.
             if [ -e "${file}" ]; then
                 [ -d "${file}" ] && copycmd="cp -r" || copycmd="cp"
-                # Copy the artifact to the bucket
-                gcloud storage "${copycmd}" "${file}" "${destination}"/ || true
+                # Copy the artifact to the bucket (do not use quotes for cp!)
+                # shellcheck disable=SC2086
+                gcloud storage ${copycmd} "${file}" "${destination}"/ || true
                 echo "Copied ${file} to ${destination}"
                 # shellcheck disable=SC2086
                 filename=$(echo ${file} | awk -F / '{print $NF}')

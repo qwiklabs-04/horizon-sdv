@@ -17,6 +17,8 @@
 // test benches left in MTK Connect during dev/testing.
 pipeline {
 
+  // Parameters defined in groovy/job.groovy
+
   agent {
     kubernetes {
       yaml """\

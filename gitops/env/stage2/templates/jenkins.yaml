@@ -313,7 +313,12 @@ spec:
                 jobs:
                   - script: >
                       pipelineJob('Seed Workloads') {
-                        description('''Seed all workloads and respective pipeline jobs.''')
+                        description('''<br/><h3 style="margin-bottom: 10px;">Seed Workloads Job</h3>
+                          <p>This seed job is used to to create and update the workload pipeline folders and jobs in Jenkins.</p>
+                          <h4 style="margin-bottom: 10px;">Mandatory Parameters</h4>
+                          <ul><li><code>SEED_WORKLOAD</code>: The name of the workload to populate.</li></ul>
+                          <p>Refer to the README.md in the repository for further information.</p>
+                        ''')
 
                         triggers {
                           hudsonStartupTrigger {

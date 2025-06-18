@@ -20,7 +20,7 @@
 // necessary packages to create the instance template.
 pipeline {
 
-  // Parameters defined in gitops/env/stage2/templates/jenkins.yaml (Jenkins CasC)
+  // Parameters defined in groovy/job.groovy
 
   agent {
     kubernetes {

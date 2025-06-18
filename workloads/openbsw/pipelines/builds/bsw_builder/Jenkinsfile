@@ -158,8 +158,8 @@ pipeline {
                   RUN_UNIT_TESTS_CMDLINE="${RUN_UNIT_TESTS_CMDLINE}" \
                   ./workloads/openbsw/pipelines/builds/bsw_builder/bsw_build.sh
                 '''
-                archiveArtifacts artifacts: '*unit_test*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
               }
+              archiveArtifacts artifacts: '*unit_test*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
             }
           }
         }
@@ -170,7 +170,6 @@ pipeline {
               expression { env.BUILD_UNIT_TESTS == 'true' }
               expression { env.RUN_UNIT_TESTS == 'true' }
               expression { env.CODE_COVERAGE == 'true' }
-              expression { currentBuild.currentResult == 'SUCCESS' }
             }
           }
           steps {

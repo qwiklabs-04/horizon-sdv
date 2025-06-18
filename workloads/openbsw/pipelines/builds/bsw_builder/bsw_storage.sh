@@ -68,12 +68,13 @@ function gcs_bucket() {
         for file in ${artifact}; do
             # Look for wildcard files.
             if [ -e "${file}" ]; then
+                [ -d "${file}" ] && recurse="-r" || recurse=""
                 # Copy the artifact to the bucket
-                gcloud storage cp -r "${file}" "${destination}"/ || true
+                gcloud storage cp "${recurse}" "${file}" "${destination}"/ || true
                 echo "Copied ${file} to ${destination}"
                 # shellcheck disable=SC2086
                 filename=$(echo ${file} | awk -F / '{print $NF}')
-                echo "    gcloud storage cp -r ${destination}/${filename} ." | tee -a "${artifacts_summary}"
+                echo "    gcloud storage cp ${recurse} ${destination}/${filename} ." | tee -a "${artifacts_summary}"
             fi
         done
     done

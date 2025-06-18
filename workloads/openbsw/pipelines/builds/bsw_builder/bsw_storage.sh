@@ -44,7 +44,6 @@ function gcs_bucket() {
     # Note: belts and braces because removal used to take time and appear to run in background. Now rm finishes cleanly.
     local -i attempts=0
     local -i max_attempts=10
-    i=0
     while gcloud storage ls "${destination}" &> /dev/null; do
         sleep 1.0
         ((attempts++))

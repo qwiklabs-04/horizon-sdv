@@ -42,7 +42,7 @@ function build_unit_tests() {
 function list_unit_tests() {
     echo "List unit tests"
     eval "${LIST_UNIT_TESTS_CMDLINE}" | tee -a "${UNIT_TESTS_LIST_FILE}"
-    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+    if [ "${PIPESTATUS[0]}" -ne 0 ]; then
         echo "ERROR: ${LIST_UNIT_TESTS_CMDLINE} failed"
         exit 1
     fi
@@ -52,7 +52,7 @@ function list_unit_tests() {
 function run_unit_tests() {
     echo "Running unit tests"
     eval "${RUN_UNIT_TESTS_CMDLINE}" | tee -a "${UNIT_TESTS_RESULTS_FILE}"
-    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+    if [ "${PIPESTATUS[0]}" -ne 0 ]; then
         echo "ERROR: ${RUN_UNIT_TESTS_CMDLINE} failed"
         exit 1
     fi

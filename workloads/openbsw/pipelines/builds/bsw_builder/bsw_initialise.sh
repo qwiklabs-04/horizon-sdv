@@ -31,6 +31,9 @@
 # shellcheck disable=SC1091
 source "$(dirname "${BASH_SOURCE[0]}")"/bsw_environment.sh "$0"
 
+# Clean up in case k8s instance is claimed before being released.
+rm -rf "${OPENBSW_GIT_DIR}"
+
 if ! eval "${OPENBSW_CLONE_CMDLINE}"
 then
     echo "Cloned failed."

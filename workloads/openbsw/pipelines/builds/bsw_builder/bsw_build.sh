@@ -41,8 +41,8 @@ function build_unit_tests() {
 # Function to list unit tests
 function list_unit_tests() {
     echo "List unit tests"
-    if ! eval "${LIST_UNIT_TESTS_CMDLINE}" | tee -a "${UNIT_TESTS_LIST_FILE}"
-    then
+    eval "${LIST_UNIT_TESTS_CMDLINE}" | tee -a "${UNIT_TESTS_LIST_FILE}"
+    if [ ${PIPESTATUS[0]} -ne 0 ]; then
         echo "ERROR: ${LIST_UNIT_TESTS_CMDLINE} failed"
         exit 1
     fi
@@ -51,8 +51,8 @@ function list_unit_tests() {
 # Function to run unit tests
 function run_unit_tests() {
     echo "Running unit tests"
-    if ! eval "${RUN_UNIT_TESTS_CMDLINE}" | tee -a "${UNIT_TESTS_RESULTS_FILE}"
-    then
+    eval "${RUN_UNIT_TESTS_CMDLINE}" | tee -a "${UNIT_TESTS_RESULTS_FILE}"
+    if [ ${PIPESTATUS[0]} -ne 0 ]; then
         echo "ERROR: ${RUN_UNIT_TESTS_CMDLINE} failed"
         exit 1
     fi

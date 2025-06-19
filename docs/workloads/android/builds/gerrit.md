@@ -51,15 +51,31 @@ The pipeline is triggered by a Gerrit patchset change based on Gerrit Triggers p
 - Project prefix path: `android` separates projects into Android workload.
 - Branch prefix path: `horizon` and separates branch names from upstream branches.
 
-The trigger for the job is configured in `gitops/env/stage2/templates/jenkins.yaml` (CasC), e.g.
+The trigger for the job is configured in `workloads/android/pipelines/builds/gerrit/groovy/job.groovy`, e.g.
 
 ```
-triggers {
-  gerrit {
-    events {
-      patchsetCreated()
+properties{
+  pipelineTriggers{
+    triggers{
+      gerrit{
+        gerritProjects{
+          gerritProject{
+            compareType('REG_EXP')
+            pattern('^android\\/(?!.*\\/manifest$).*')
+            branches{
+              branch{
+                compareType('ANT')
+                pattern('**/horizon/*')
+              }
+            }
+            disableStrictForbiddenFileVerification(true)
+          }
+        }
+        triggerOnEvents{
+          patchsetCreated()
+        }
+      }
     }
-    project('reg_exp:^android\\/(?!.*\\/manifest$).*', ['ant:**/horizon/*'])
   }
 }
 ```

@@ -43,6 +43,14 @@ pipelineJob('OpenBSW/Tests/POSIX') {
       trim(true)
     }
 
+    stringParam {
+      name('IMAGE_TAG')
+      defaultValue('latest-debian.12')
+      description('''<p>Docker image template to use.<p>
+        <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''')
+      trim(true)
+    }
+
     choiceParam {
       name('POSIX_KEEP_ALIVE_TIME')
       choices(['5', '15', '30', '60', '90', '120', '180'])

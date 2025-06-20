@@ -30,8 +30,16 @@ pipelineJob('OpenBSW/Environment/Delete MTK Connect Testbench') {
         </ul><b>WARNING:</b> Take care when using this option!</p>''')
       trim(true)
     }
-  }
 
+    stringParam {
+      name('IMAGE_TAG')
+      defaultValue('latest-debian.12')
+      description('''<p>Docker image template to use.<p>
+        <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''')
+      trim(true)
+    }
+
+  }
   // Block build if certain jobs are running.
   blockOn('OpenBSW*.*Delete.*MTK.*') {
     // Possible values are 'GLOBAL' and 'NODE' (default).

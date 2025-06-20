@@ -26,6 +26,15 @@ pipelineJob('OpenBSW/Environment/Development Instance') {
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
   parameters {
+
+    stringParam {
+      name('IMAGE_TAG')
+      defaultValue('latest-debian.12')
+      description('''<p>Docker image template to use.<p>
+        <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''')
+      trim(true)
+    }
+
     choiceParam {
       name('INSTANCE_MAX_UPTIME')
       choices(['0', '1', '2', '4', '8'])

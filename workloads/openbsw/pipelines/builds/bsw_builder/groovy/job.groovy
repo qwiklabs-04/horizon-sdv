@@ -48,6 +48,14 @@ pipelineJob('OpenBSW/Builds/BSW_Builder') {
     }
 
     stringParam {
+      name('IMAGE_TAG')
+      defaultValue('latest-debian.12')
+      description('''<p>Docker image template to use.<p>
+        <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''')
+      trim(true)
+    }
+
+    stringParam {
       name('CMAKE_SYNC_JOBS')
       defaultValue('7')
       description('''<p>Number of parallel sync jobs for <i>cmake</i>.<br/>

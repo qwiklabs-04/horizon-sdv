@@ -12,14 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Latest stable.
-FROM --platform=linux/amd64 debian:12
+# Overrides
+ARG LINUX_DISTRIBUTION
+FROM --platform=linux/amd64 ${LINUX_DISTRIBUTION}
 
 ARG ARM_TOOLCHAIN_URL
 ARG CLANG_TOOLS_URL
 ARG CMAKE_URL
 ARG TREEFMT_URL
 ARG NODEJS_VERSION
+
+# Allow user to choose distribution, e.g. Ubuntu vs debian.
 
 # Install packages required for building OpenBSW targets.
 RUN apt-get update -y && \
@@ -35,19 +38,12 @@ RUN apt-get update -y && \
     apt-get update -y && apt install -y npm nodejs && \
     rm -rf /var/lib/apt/lists/*
 
-# Node version manager
-RUN npm cache clean -f \
-    && npm install -g n \
-    && npm install -g wait-on \
-    && n ${NODEJS_VERSION} \
-    && ln -sf /usr/local/bin/node /usr/local/bin/nodejs || true
-
 # Download and install OpenBSW dependent tools.
-RUN curl -L ${CMAKE_URL} -o cmake-linux-x86_64.sh \
+RUN curl -L "${CMAKE_URL}" -o cmake-linux-x86_64.sh \
     && chmod +x cmake-linux-x86_64.sh \
     && ./cmake-linux-x86_64.sh --skip-license --prefix=/usr/local \
     && rm cmake-linux-x86_64.sh \
-    && curl -L ${ARM_TOOLCHAIN_URL} -o arm-gnu-toolchain.tar.xz \
+    && curl -L "${ARM_TOOLCHAIN_URL}" -o arm-gnu-toolchain.tar.xz \
     && case $(file -b arm-gnu-toolchain.tar.xz) in \
        *"bzip2"*) tar -xjf arm-gnu-toolchain.tar.xz --strip-components=1 -C /usr/local ;; \
        *"gzip"*) tar -xvzf arm-gnu-toolchain.tar.xz --strip-components=1 -C /usr/local ;; \
@@ -56,17 +52,17 @@ RUN curl -L ${CMAKE_URL} -o cmake-linux-x86_64.sh \
     && rm -f arm-gnu-toolchain.tar* \
     && ln -s /usr/local/gcc-arm-none-eabi-*/bin/* /usr/local/bin/  \
     && mkdir -p /root/.local/bin \
-    && curl -L ${TREEFMT_URL} -o treefmt.tar.gz \
+    && curl -L "${TREEFMT_URL}" -o treefmt.tar.gz \
     && tar -xvzf treefmt.tar.gz \
     && install -m 755 treefmt /root/.local/bin/treefmt \
     && rm LICENSE README.md treefmt treefmt.tar.gz \
-    && curl -L ${CLANG_TOOLS_URL} -o /root/.local/bin/clang-format \
+    && curl -L "${CLANG_TOOLS_URL}" -o /root/.local/bin/clang-format \
     && chmod +x /root/.local/bin/clang-format \
     && echo 'export HISTFILE=/root/.bash_history/history' >> /root/.bashrc
 
 ENV PATH="/root/.local/bin:/usr/bin:$PATH"
 
-# The following installs gcloud sdk including gsutil required for uploading
+# The following installs gcloud sdk required for uploading
 # artifacts to Google Cloud Storage. Remove if using alternative storage.
 # https://cloud.google.com/storage/docs/gsutil_install
 # GCS:START
@@ -97,3 +93,10 @@ RUN git config --global user.email "bsw.jenkins@dummy.com" && \
     . ${HOME}/venv/bin/activate && pip3 install --user cmakelang && deactivate
 
 ENV PATH="/root/.local/bin:/usr/bin:$PATH"
+
+# Node version manager
+RUN sudo npm cache clean -f && \
+    sudo npm install -g n && \
+    sudo npm install -g wait-on && \
+    sudo n "${NODEJS_VERSION}" && \
+    sudo ln -sf /usr/local/bin/node /usr/local/bin/nodejs || true

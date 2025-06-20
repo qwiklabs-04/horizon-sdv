@@ -29,8 +29,9 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
   parameters {
     stringParam {
       name('IMAGE_TAG')
-      defaultValue('latest')
-      description('''<p>Image tag for the builder image.</p>''')
+      defaultValue('latest-debian.12')
+      description('''<p>Docker image template to use.<p>
+        <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''')
       trim(true)
     }
     booleanParam {
@@ -54,6 +55,14 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
       name('CMAKE_URL')
       defaultValue('https://github.com/Kitware/CMake/releases/download/v3.22.5/cmake-3.22.5-linux-x86_64.sh')
       description('''<p>CMAKE shell install script URL.</p>''')
+      trim(true)
+    }
+    stringParam {
+      name('LINUX_DISTRIBUTION')
+      defaultValue('debian:12')
+      description('''<p>Define the Linux distribution to use, e.g.</p></br>
+        <ul><li>debian:12</li>
+            <li>ubuntu:22.04</li></ul>''')
       trim(true)
     }
     stringParam {

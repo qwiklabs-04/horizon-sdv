@@ -54,6 +54,7 @@ pipeline {
         container(name: 'builder') {
           withCredentials([usernamePassword(credentialsId: 'jenkins-mtk-connect-apikey', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
             sh '''
+              cd ./workloads/common/mtk-connect/ || true
               sudo \
               MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \
               MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
@@ -61,6 +62,7 @@ pipeline {
               MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH} \
               MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES=true \
               timeout 15m ./workloads/openbsw/pipelines/tests/posix/bsw_mtk_connect.sh --delete
+              cd - || true
             '''
           }
         }

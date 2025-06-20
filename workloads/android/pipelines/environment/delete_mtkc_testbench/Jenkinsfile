@@ -46,7 +46,7 @@ pipeline {
       when {
         allOf {
           expression { env.MTK_CONNECT_TESTBENCH }
-          expression { env.MTK_CONNECT_TESTBENCH =~ /(CVD_Launcher|CTS_Execution)/ }
+          expression { env.MTK_CONNECT_TESTBENCH =~ /(CVD_Launcher|CTS_Execution|Development)/ }
         }
       }
       steps {

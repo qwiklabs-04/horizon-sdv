@@ -61,7 +61,7 @@ pipeline {
               MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
               MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH} \
               MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES=true \
-              timeout 15m ./workloads/openbsw/pipelines/tests/posix/bsw_mtk_connect.sh --delete
+              timeout 15m ./mtk_connect.sh --delete
               cd - || true
             '''
           }

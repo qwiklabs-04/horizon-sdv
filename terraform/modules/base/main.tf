@@ -106,6 +106,13 @@ module "sdv_gke_cluster" {
   build_node_pool_min_node_count = var.sdv_build_node_pool_min_node_count
   build_node_pool_max_node_count = var.sdv_build_node_pool_max_node_count
 
+  # ABFS build node pool configuration
+  abfs_build_node_pool_name           = var.sdv_abfs_build_node_pool_name
+  abfs_build_node_pool_node_count     = var.sdv_abfs_build_node_pool_node_count
+  abfs_build_node_pool_machine_type   = var.sdv_abfs_build_node_pool_machine_type
+  abfs_build_node_pool_min_node_count = var.sdv_abfs_build_node_pool_min_node_count
+  abfs_build_node_pool_max_node_count = var.sdv_abfs_build_node_pool_max_node_count
+
   # OpenBSW node pool configuration
   openbsw_build_node_pool_name           = var.sdv_openbsw_build_node_pool_name
   openbsw_build_node_pool_node_count     = var.sdv_openbsw_build_node_pool_node_count
@@ -255,6 +262,20 @@ module "sdv_iam_service_account_user" {
 
   role = "roles/iam.serviceAccountUser"
 
+}
+
+module "sdv_abfs" {
+  source = "../sdv-abfs"
+
+  project_id   = data.google_project.project.project_id
+  sdv_network  = var.sdv_network
+  subnetwork   = var.sdv_subnetwork
+  abfs_license = base64decode(var.sdv_gh_abfs_license_b64)
+  zone         = var.sdv_zone
+
+  depends_on = [
+    module.sdv_network
+  ]
 }
 
 # defininion for custom VPN Firewall to to and from the instances.

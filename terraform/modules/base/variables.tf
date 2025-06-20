@@ -165,6 +165,36 @@ variable "sdv_build_node_pool_max_node_count" {
   default     = 20
 }
 
+variable "sdv_abfs_build_node_pool_name" {
+  description = "Name of the ABFS build node pool"
+  type        = string
+  default     = "sdv-abfs-build-node-pool"
+}
+
+variable "sdv_abfs_build_node_pool_node_count" {
+  description = "Number of nodes for the ABFS build node pool"
+  type        = number
+  default     = 0
+}
+
+variable "sdv_abfs_build_node_pool_machine_type" {
+  description = "Type fo the machine for the ABFS build node pool"
+  type        = string
+  default     = "n2-standard-2"
+}
+
+variable "sdv_abfs_build_node_pool_min_node_count" {
+  description = "Number of minimum of nodes for the ABFS build node pool"
+  type        = number
+  default     = 0
+}
+
+variable "sdv_abfs_build_node_pool_max_node_count" {
+  description = "Number of max of nodes for the build node pool"
+  type        = number
+  default     = 20
+}
+
 variable "sdv_openbsw_build_node_pool_name" {
   description = "Name of the OpenBSW build node pool"
   type        = string
@@ -244,3 +274,9 @@ variable "sdv_list_of_apis" {
 #   description = "Destination dir on the bastion host"
 #   type        = string
 # }
+
+variable "sdv_gh_abfs_license_b64" {
+  description = "ABFS license base64"
+  type        = string
+}
+

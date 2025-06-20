@@ -103,7 +103,7 @@ pipeline {
                     MTK_CONNECT_TESTBENCH="${JOB_NAME}-${BUILD_NUMBER}" \
                     MTK_CONNECT_TESTBENCH_USER="${BUILD_USER_ID}" \
                     MTK_CONNECT_LAUNCH_APPLICATION_NAME="${LAUNCH_APPLICATION_NAME}" \
-                    MTK_CONNECT_WORKLOAD="openbsw" \
+                    MTK_CONNECT_CONTAINER_HOST_ONLY="true" \
                     timeout 15m ./mtk_connect.sh --start
                     cd - || true
                   '''
@@ -147,7 +147,7 @@ pipeline {
                       MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
                       MTK_CONNECTED_DEVICES="1" \
                       MTK_CONNECT_TESTBENCH="${JOB_NAME}-${BUILD_NUMBER}" \
-                      MTK_CONNECT_WORKLOAD="openbsw" \
+                      MTK_CONNECT_CONTAINER_HOST_ONLY="true" \
                       timeout 10m ./mtk_connect.sh --stop || true
                       cd - || true
                     '''

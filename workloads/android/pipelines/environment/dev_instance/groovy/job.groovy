@@ -42,6 +42,12 @@ pipelineJob('Android/Environment/Development Instance') {
       choices(['0', '1', '2', '4', '8'])
       description('''<p>Time in hours to keep instance alive.</p>''')
     }
+
+    booleanParam {
+      name('MTK_CONNECT_ENABLE')
+      defaultValue(false)
+      description('''<p>Enable if wishing to use MTK Connect to connect to the host instance.</p>''')
+    }
   }
 
   logRotator {

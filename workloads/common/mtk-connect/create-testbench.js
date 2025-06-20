@@ -50,7 +50,7 @@ const _ = require("lodash");
  * Sets up the Axios configuration with a base URL and authentication
  * credentials from environment variables.
  */
-const { MTK_CONNECT_DOMAIN, MTK_CONNECT_USERNAME, MTK_CONNECT_PASSWORD, MTK_CONNECT_REGISTRATION, MTK_CONNECT_TESTBENCH, MTK_CONNECT_TESTBENCH_USER, MTK_CONNECT_DEVICES, MTK_CONNECT_HOST, MTK_CONNECT_LAUNCH_APPLICATION_NAME, MTK_CONNECT_WORKLOAD} = process.env;
+const { MTK_CONNECT_DOMAIN, MTK_CONNECT_USERNAME, MTK_CONNECT_PASSWORD, MTK_CONNECT_REGISTRATION, MTK_CONNECT_TESTBENCH, MTK_CONNECT_TESTBENCH_USER, MTK_CONNECT_DEVICES, MTK_CONNECT_HOST, MTK_CONNECT_LAUNCH_APPLICATION_NAME, MTK_CONNECT_CONTAINER_HOST_ONLY} = process.env;
 const registration = MTK_CONNECT_REGISTRATION || fs.readFileSync('/usr/src/config/registration.name', 'utf-8');
 
 axios.defaults.baseURL = `https://${MTK_CONNECT_DOMAIN}/mtk-connect`;
@@ -128,7 +128,7 @@ async function configureDevice(i) {
     console.log(`device ${index} already exists`);
   } else {
     console.log(`creating device ${index}`);
-    if (MTK_CONNECT_WORKLOAD == 'android') {
+    if (MTK_CONNECT_CONTAINER_HOST_ONLY == 'false') {
       await axios.post(`/api/v1/agents/${agent.id}/devices`, {
         name: `AAOS ${index}`
       });
@@ -139,7 +139,7 @@ async function configureDevice(i) {
     }
   }
 
-  if (MTK_CONNECT_WORKLOAD == 'android') {
+  if (MTK_CONNECT_CONTAINER_HOST_ONLY == 'false') {
     const data = {
       interface: {
         'adb': {

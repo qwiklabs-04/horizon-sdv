@@ -51,7 +51,7 @@ MTK_CONNECT_TEST_ARTIFACT=${MTK_CONNECT_TEST_ARTIFACT:-N/A}
 MTK_CONNECT_TEST_ARTIFACT=$(echo "${MTK_CONNECT_TEST_ARTIFACT}" | xargs)
 MTK_CONNECT_FILE_PATH="$(dirname "${BASH_SOURCE[0]}")"
 MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES=${MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES:-false}
-MTK_CONNECT_WORKLOAD=${MTK_CONNECT_WORKLOAD:-android}
+MTK_CONNECT_CONTAINER_HOST_ONLY=${MTK_CONNECT_CONTAINER_HOST_ONLY:-false}
 NODEJS_VERSION=${NODEJS_VERSION-20.9.0}
 
 declare -r scripts_path="/usr/src/scripts"
@@ -85,7 +85,7 @@ function mtkc_start() {
         echo "MTK_CONNECT_HOST=${MTK_CONNECT_HOST}"
         echo "MTK_CONNECT_DELETE_OFFLINE=${MTK_CONNECT_DELETE_OFFLINE}"
         echo "MTK_CONNECT_LAUNCH_APPLICATION_NAME=${MTK_CONNECT_LAUNCH_APPLICATION_NAME}"
-        echo "MTK_CONNECT_WORKLOAD=${MTK_CONNECT_WORKLOAD}"
+        echo "MTK_CONNECT_CONTAINER_HOST_ONLY=${MTK_CONNECT_CONTAINER_HOST_ONLY}"
     } >> "${scripts_path}"/.env
 
     {
@@ -95,7 +95,7 @@ function mtkc_start() {
 
     local -a mtkc_files=(create-testbench.js package.json remove-testbench.js)
 
-    if [ "${MTK_CONNECT_WORKLOAD}" == "openbsw" ]; then
+    if [ "${MTK_CONNECT_CONTAINER_HOST_ONLY}" == "true" ]; then
        mtkc_files+=(download-agent.js)
     fi
 
@@ -108,7 +108,7 @@ function mtkc_start() {
     cd "${scripts_path}" || exit # If fails, exit, don't continue!
     npm install
 
-    if [ "${MTK_CONNECT_WORKLOAD}" == "android" ]; then
+    if [ "${MTK_CONNECT_CONTAINER_HOST_ONLY}" == "false" ]; then
          # Local Linux host install.
         AUTH=$(echo -n "${MTK_CONNECT_USERNAME}:${MTK_CONNECT_PASSWORD}" | base64)
         curl -sSL https://"${MTK_CONNECT_DOMAIN}"/mtk-connect/get-agent?platform=linux | AUTH="${AUTH}" bash
@@ -149,7 +149,7 @@ function mtkc_create_testbench() {
 function mtkc_stop() {
     cd "${scripts_path}" || exit
     node remove-testbench.js
-    if [ "${MTK_CONNECT_WORKLOAD}" == "android" ]; then
+    if [ "${MTK_CONNECT_CONTAINER_HOST_ONLY}" == "false" ]; then
         # Clean up
         rm -rf /opt/mtk-connect-agent "${config_path}" "${app_path}" "${scripts_path}"
         pkill -9 -f runAgent.js
@@ -182,7 +182,7 @@ Environment:
     MTK_CONNECT_LAUNCH_APPLICATION_NAME=${MTK_CONNECT_LAUNCH_APPLICATION_NAME}
     MTK_CONNECT_TEST_ARTIFACT=${MTK_CONNECT_TEST_ARTIFACT}
     MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES=${MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES}
-    MTK_CONNECT_WORKLOAD=${MTK_CONNECT_WORKLOAD}
+    MTK_CONNECT_CONTAINER_HOST_ONLY=${MTK_CONNECT_CONTAINER_HOST_ONLY}
    "
 echo "${VARIABLES}"
 
@@ -199,7 +199,7 @@ case "${1}" in
         RESULT=0
         ;;
     --start|*)
-        if [ "${MTK_CONNECT_WORKLOAD}" == "android" ]; then
+        if [ "${MTK_CONNECT_CONTAINER_HOST_ONLY}" == "false" ]; then
             mtkc_max_devices
 	    fi
         # Start

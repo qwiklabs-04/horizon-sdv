@@ -35,7 +35,7 @@ RUN apt-get update -y && \
     python3 python3-setuptools python3-pip python3-requests \
     python3-venv python3-virtualenv gettext \
     rsync less curl wget sudo vim ssh gawk htop && \
-    apt-get update -y && apt install -y npm nodejs && \
+    apt-get update -y && apt install -y npm && \
     rm -rf /var/lib/apt/lists/*
 
 # Download and install OpenBSW dependent tools.
@@ -92,7 +92,7 @@ RUN git config --global user.email "bsw.jenkins@dummy.com" && \
     virtualenv --system-site-packages venv && \
     . ${HOME}/venv/bin/activate && pip3 install --user cmakelang && deactivate
 
-ENV PATH="/root/.local/bin:/usr/bin:$PATH"
+ENV PATH="/root/.local/bin:/usr/local/bin:/usr/bin:$PATH"
 
 # Node version manager
 RUN sudo npm cache clean -f && \

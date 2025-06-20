@@ -33,7 +33,7 @@ RUN apt-get update -y && \
     clang-tidy gcc-11 g++11 build-essential file \
     gnupg git git-core lcov  bzip2 zip unzip tar xz-utils \
     python3 python3-setuptools python3-pip python3-requests \
-    python3-venv python3-virtualenv gettext \
+    python3-venv python3-virtualenv gettext gettext-base \
     rsync less curl wget sudo vim ssh gawk htop && \
     apt-get update -y && apt install -y npm && \
     rm -rf /var/lib/apt/lists/*

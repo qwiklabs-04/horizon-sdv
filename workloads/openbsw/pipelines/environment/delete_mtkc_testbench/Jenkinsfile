@@ -61,6 +61,7 @@ pipeline {
               MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
               MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH} \
               MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES=true \
+              MTK_CONNECT_CONTAINER_HOST_ONLY="true" \
               timeout 15m ./mtk_connect.sh --delete
               cd - || true
             '''

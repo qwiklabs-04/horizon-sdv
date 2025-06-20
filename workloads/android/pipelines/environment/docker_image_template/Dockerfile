@@ -23,7 +23,7 @@ RUN apt-get update -y && \
     apt-transport-https ca-certificates \
     git git-core gnupg flex bison build-essential zip unzip zlib1g-dev \
     libc6-dev libxml2-utils xsltproc unzip fontconfig gcc-multilib \
-    gettext g++-multilib libncurses5 libssl-dev python3 python3-setuptools \
+    gettext gettext-base g++-multilib libncurses5 libssl-dev python3 python3-setuptools \
     python3-pip python3-requests python3-venv python3-virtualenv procps \
     meson bc coreutils dosfstools e2fsprogs fdisk kpartx mtools ninja-build \
     pkg-config rsync less curl sudo vim ssh findutils gawk jq htop && \

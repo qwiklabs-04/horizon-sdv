@@ -53,6 +53,10 @@ pipeline {
         container(name: 'builder') {
           withCredentials([usernamePassword(credentialsId: 'jenkins-mtk-connect-apikey', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
             sh '''
+              ls /usr/bin || true
+              sudo apt update -y && sudo apt install -y gettext gettext-base
+              ls /usr/local/bin || true
+              which envsubst || true
               cd ./workloads/common/mtk-connect/ || true
               sudo \
               MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \
@@ -61,6 +65,7 @@ pipeline {
               MTK_CONNECT_NATIVE_LINUX_INSTALL=false \
               MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH} \
               MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES=true \
+              MTK_CONNECT_CONTAINER_HOST_ONLY="true" \
               timeout 15m ./mtk_connect.sh --delete
               cd - || true
             '''

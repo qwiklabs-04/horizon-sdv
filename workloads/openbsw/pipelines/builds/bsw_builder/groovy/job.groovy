@@ -25,6 +25,13 @@ pipelineJob('OpenBSW/Builds/BSW_Builder') {
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
   parameters {
+    separator {
+      name('Common Parameters')
+      sectionHeader('Common Parameters')
+      sectionHeaderStyle(' color: white; background: blue; padding: 8px; text-align: center; ')
+      separatorStyle(' border: 0; border-bottom: 1px solid #ccc; background: #999; ')
+    }
+
     stringParam {
       name('OPENBSW_GIT_URL')
       defaultValue("https://github.com/eclipse-openbsw/openbsw.git")
@@ -61,6 +68,13 @@ pipelineJob('OpenBSW/Builds/BSW_Builder') {
       description('''<p>Number of parallel sync jobs for <i>cmake</i>.<br/>
         If undefined, defaults to -j.</p>''')
       trim(true)
+    }
+
+    separator {
+      name('Unit Tests')
+      sectionHeader('Unit Tests')
+      sectionHeaderStyle(' color: white; background: blue; padding: 8px; text-align: center; ')
+      separatorStyle(' border: 0; border-bottom: 1px solid #ccc; background: #999; ')
     }
 
     booleanParam {
@@ -115,6 +129,13 @@ pipelineJob('OpenBSW/Builds/BSW_Builder') {
       trim(true)
     }
 
+    separator {
+      name('POSIX Target')
+      sectionHeader('POSIX Target')
+      sectionHeaderStyle(' color: white; background: blue; padding: 8px; text-align: center; ')
+      separatorStyle(' border: 0; border-bottom: 1px solid #ccc; background: #999; ')
+    }
+
     booleanParam {
       name('BUILD_POSIX')
       defaultValue(true)
@@ -135,6 +156,13 @@ pipelineJob('OpenBSW/Builds/BSW_Builder') {
       trim(true)
     }
 
+    separator {
+      name('NXP Hardware Target')
+      sectionHeader('NXP Hardware Target')
+      sectionHeaderStyle(' color: white; background: blue; padding: 8px; text-align: center; ')
+      separatorStyle(' border: 0; border-bottom: 1px solid #ccc; background: #999; ')
+    }
+
     booleanParam {
       name('BUILD_NXP_S32K148')
       defaultValue(true)
@@ -153,6 +181,13 @@ pipelineJob('OpenBSW/Builds/BSW_Builder') {
       defaultValue('cmake-build-s32k148/application/app.referenceApp.elf')
       description('''<p>Default NXP S32K148 artifact''')
       trim(true)
+    }
+
+    separator {
+      name('Miscellaneous Options')
+      sectionHeader('Miscellaneous Options')
+      sectionHeaderStyle(' color: white; background: blue; padding: 8px; text-align: center; ')
+      separatorStyle(' border: 0; border-bottom: 1px solid #ccc; background: #999; ')
     }
 
     choiceParam {

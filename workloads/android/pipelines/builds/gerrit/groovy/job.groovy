@@ -27,12 +27,28 @@ by performing builds on that patchset and providing the user with a vote to thei
     <p><a href="https://cloud.google.com/docs/authentication/gcloud" target="_blank">Sign in to Google Cloud</a> and run the following command: <br/><code>gcloud storage ls gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/Gerrit/&lt;BUILD_NUMBER&gt;</code></p>
     <br/><br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
-  triggers {
-    gerrit {
-      events {
-        patchsetCreated()
+  properties{
+    pipelineTriggers{
+      triggers{
+        gerrit{
+          gerritProjects{
+            gerritProject{
+              compareType('REG_EXP')
+              pattern('^android\\/(?!.*\\/manifest$).*')
+              branches{
+                branch{
+                  compareType('ANT')
+                  pattern('**/horizon/*')
+                }
+              }
+              disableStrictForbiddenFileVerification(true)
+            }
+          }
+          triggerOnEvents{
+            patchsetCreated()
+          }
+        }
       }
-      project('reg_exp:^android\\/(?!.*\\/manifest$).*', ['ant:**/horizon/*'])
     }
   }
 

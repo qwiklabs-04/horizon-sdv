@@ -142,6 +142,8 @@ spec:
             - build-blocker-plugin:166.vc82fc20b_a_ed6
             - build-user-vars-plugin:195.v8c35f9d5c3dc
             - configuration-as-code-groovy:1.1
+            - envinject:2.919.v009a_a_1067cd0
+            - envinject-api:1.199.v3ce31253ed13
             - gerrit-code-review:0.4.9
             - gerrit-trigger:2.42.0
             - github-branch-source:1810.v913311241fa_9
@@ -291,8 +293,6 @@ spec:
                           value: {{ .Values.config.projectID }}
                         - key: "GERRIT_CREDENTIALS_ID"
                           value: "jenkins-gerrit-http-password"
-                        - key: "GERRIT_CUTTLEFISH_INSTANCE_TEMPLATE_LABEL"
-                          value: "cuttlefish-vm-main"
                         - key: "HORIZON_DOMAIN"
                           value: {{ .Values.config.domain }}
                         - key: "HORIZON_GITHUB_URL"
@@ -307,8 +307,6 @@ spec:
                           value: {{ .Values.config.projectID }}-openbsw
                         - key: "OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME"
                           value: "horizon-sdv/openbsw_builder"
-                        - key: "REPO_SYNC_JOBS"
-                          value: {{ .Values.config.workloads.android.repoSyncJobs }}
                 groovy:
                   - script: >
                       println("This is groovy !");

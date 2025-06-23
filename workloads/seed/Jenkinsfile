@@ -40,6 +40,27 @@ pipeline {
            </ul>''')
 
     separator(
+      name: "Android Workload",
+      sectionHeader: "Android Parameters",
+      separatorStyle: separatorStyle,
+      sectionHeaderStyle: headerStyle
+    )
+
+    string(name: 'REPO_SYNC_JOBS',
+           defaultValue: '2',
+           description: '''<p>Number of parallel sync jobs for <i>repo sync</i>.</p>''',
+           trim: true)
+
+    string(name: 'CUTTLEFISH_GCE_CLOUD_LABEL',
+           defaultValue: 'cuttlefish-vm-main',
+           description: '''<p>The Jenkins GCE Clouds label for jobs dependent on the Cuttlefish instance template, e.g.<br/></p>
+                        <ul>
+                          <li>cuttlefish-vm-main</li>
+                          <li>cuttlefish-vm-v170</li>
+                        </ul>''',
+           trim: true)
+
+    separator(
       name: "OpenBSW Workload",
       sectionHeader: "OpenBSW Parameters",
       separatorStyle: separatorStyle,
@@ -80,7 +101,8 @@ pipeline {
                   ['${HORIZON_DOMAIN}', "${HORIZON_DOMAIN}"],
                   ['${HORIZON_GITHUB_URL}', "${HORIZON_GITHUB_URL}"],
                   ['${HORIZON_GITHUB_BRANCH}', "${HORIZON_GITHUB_BRANCH}"],
-                  ['${REPO_SYNC_JOBS}', "${REPO_SYNC_JOBS}"]
+                  ['${REPO_SYNC_JOBS}', "${REPO_SYNC_JOBS}"],
+                  ['${JENKINS_GCE_CLOUD_LABEL}', "${CUTTLEFISH_GCE_CLOUD_LABEL}" ]
                 ]
 
                 def files = sh(returnStdout: true, script: "find workloads/android -name '*.groovy'").trim().split('\n')

@@ -43,7 +43,7 @@ One-time setup requirements.
   - Docker image template: `Android Workflows/Environment/Docker Image Template`
   - Cuttlefish instance template: `Android Workflows/Environment/CF Instance Template`
 
-To successfully run the pipeline, ensure that the referenced Cuttlefish instance template exists, as specified in the `GERRIT_CUTTLEFISH_INSTANCE_TEMPLATE_LABEL` system variable. If the template is missing, the job will fail. Update the `jenkins.yaml` system variables to align with the `computeEngine` label of the instance you intend to use.
+To successfully run the pipeline, ensure that the referenced Cuttlefish instance template exists, as specified in the `JENKINS_GCE_CLOUD_LABEL` variable defined in the Android Seed job. If the template is missing, the job will fail. The variable must reference align with the `computeEngine` label of the instance you intend to use.
 
 ## Gerrit Triggers
 
@@ -117,10 +117,6 @@ These are as follows:
 
 -   `JENKINS_SERVICE_ACCOUNT`
     - Service account to use for pipelines. Required to ensure correct roles and permissions for GCP resources.
-
--   `REPO_SYNC_JOBS`
-    - Defines the number of parallel sync jobs when running `repo sync`. By default this is used by Gerrit build
-      pipeline but also forms the default for `GERRIT_REPO_SYNC_JOBS` parameter in build jobs.
 
 ## KNOWN ISSUES <a name="known-issues"></a>
 

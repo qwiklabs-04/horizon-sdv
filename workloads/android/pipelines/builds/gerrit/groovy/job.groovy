@@ -52,6 +52,11 @@ by performing builds on that patchset and providing the user with a vote to thei
     }
   }
 
+  environmentVariables {
+    env('GERRIT_REPO_SYNC_JOBS', "${REPO_SYNC_JOBS}")
+    env('JENKINS_GCE_CLOUD_LABEL', "${JENKINS_GCE_CLOUD_LABEL}")
+  }
+
   logRotator {
     artifactDaysToKeep(60)
     artifactNumToKeep(100)

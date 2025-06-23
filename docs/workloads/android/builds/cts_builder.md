@@ -76,8 +76,7 @@ Option to clean the build workspace, either fully or simply for the `AAOS_LUNCH_
 
 ### `GERRIT_REPO_SYNC_JOBS`
 
-This is the value used for parallel jobs for `repo sync`, i.e. `-j <GERRIT_REPO_SYNC_JOBS>`.
-The default is defined in system environment variable: `REPO_SYNC_JOBS`.
+Defines the number of parallel sync jobs when running `repo sync`. Default provided by Seeding Android workloads.
 The minimum is 1 and the maximum is 24.
 
 ### `INSTANCE_RETENTION_TIME`
@@ -130,10 +129,6 @@ These are as follows:
 
 -   `JENKINS_SERVICE_ACCOUNT`
     - Service account to use for pipelines. Required to ensure correct roles and permissions for GCP resources.
-
--   `REPO_SYNC_JOBS`
-    - Defines the number of parallel sync jobs when running `repo sync`. By default this is used by Gerrit build
-      pipeline but also forms the default for `GERRIT_REPO_SYNC_JOBS` parameter in build jobs.
 
 ## KNOWN ISSUES <a name="known-issues"></a>
 

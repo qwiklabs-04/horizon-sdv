@@ -46,10 +46,10 @@ function cuttlefish_extract_artifacts() {
 
     case "${CUTTLEFISH_DOWNLOAD_URL}" in
         gs://*)
-            gsutil cp "${CUTTLEFISH_DOWNLOAD_URL}"/cvd-host_package.tar.gz .
-            gsutil cp "${CUTTLEFISH_DOWNLOAD_URL}"/aosp_cf_"${ARCHITECTURE}"_auto-img*.zip .
+            gcloud storage cp "${CUTTLEFISH_DOWNLOAD_URL}"/cvd-host_package.tar.gz .
+            gcloud storage cp "${CUTTLEFISH_DOWNLOAD_URL}"/aosp_cf_"${ARCHITECTURE}"_auto-img*.zip .
             # Allow this to fail.
-            gsutil cp "${CUTTLEFISH_DOWNLOAD_URL}/${WIFI_APK_NAME}" . >/dev/null 2>&1 || true
+            gcloud storage cp "${CUTTLEFISH_DOWNLOAD_URL}/${WIFI_APK_NAME}" . >/dev/null 2>&1 || true
             ;;
         *)
             wget -nv "${CUTTLEFISH_DOWNLOAD_URL}"/cvd-host_package.tar.gz .

@@ -28,7 +28,7 @@ function cts_initialise() {
         echo "Installing Android CTS from ${CTS_DOWNLOAD_URL}."
         case "${CTS_DOWNLOAD_URL}" in
             gs://*)
-                gsutil cp "${CTS_DOWNLOAD_URL}" android-cts.zip
+                gcloud storage cp "${CTS_DOWNLOAD_URL}" android-cts.zip
                 ;;
             *)
                 wget -nv "${CTS_DOWNLOAD_URL}" -O android-cts.zip > /dev/null 2>&1

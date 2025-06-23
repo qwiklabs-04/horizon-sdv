@@ -27,6 +27,7 @@ These exercises cater for two types of developers:
 > [!IMPORTANT]
 > - Please use the latest available Android revisions when following this guide. Jenkins Android revisions may change over time, while this guide remains showing older versions.
 > - When working with Cuttlefish, please be aware that the latest supported versions change frequently. The examples provided in this guide may become outdated, as <a href=https://github.com/google/android-cuttlefish/tags>tags</a> are updated regularly.
+> - Some examples reference `gsutil` which is now deprecated, please replace with `gcloud storage` commands instead.
 
 ## <span style="color:#335bff">2. Table Of Contents <a name="2-table-of-contents"></a></span>
 
@@ -793,7 +794,7 @@ ___
 
     <img src="images/section.5/5.1.1_aaos_builder_artifact_2.png" width="500" />
 
-  - Using `gcloud storage cp` or `gsutil`, download the `sdk-repo-linux-system-images.zip` images and `horizon-sdv-aaos-sys-img2-1.xml` addon files exactly as stated in your artifact file (or just copy the lines) and store for later.
+  - Using `gcloud storage cp` to download the `sdk-repo-linux-system-images.zip` images and `horizon-sdv-aaos-sys-img2-1.xml` addon files exactly as stated in your artifact file (or just copy the lines) and store for later.
 
 The follow on section should be second nature to most but we will explain for those that have not used Android Studio before with such virtual devices. It will also serve well for later sections of this tutorial session.
 
@@ -1702,7 +1703,7 @@ ___
 - **Flash the Build:**
   - Onto your own machine, download the Pixel Tablet artifact previously built in the Foundations lab exercise, e.g.
     ```
-    gsutil cp gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/2/out_sdv-aosp_tangorpro_car-bp1a-userdebug.tgz .
+    gcloud storage cp gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/2/out_sdv-aosp_tangorpro_car-bp1a-userdebug.tgz .
     ```
   - Unpack the artifacts:
     ```

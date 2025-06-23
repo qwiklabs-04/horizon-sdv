@@ -48,7 +48,22 @@ function gcs_bucket() {
     local -r artifacts_summary="${ORIG_WORKSPACE}/${AAOS_LUNCH_TARGET}-artifacts.txt"
 
     # Remove the old artifacts
-    /usr/bin/gsutil -m rm "${destination}"/* || true
+    gcloud storage rm -r "${destination}" || true
+
+    # Wait for old artifacts to be removed.
+    # Note: belts and braces because removal used to take time and appear to run in background. Now rm finishes cleanly.
+    local -i attempts=0
+    local -i max_attempts=10
+    while gcloud storage ls "${destination}" &> /dev/null; do
+        sleep 1.0
+        ((attempts++))
+        if [ "${attempts}" -gt "${max_attempts}" ]; then
+            echo "ERROR: ${destination} still exists after ${max_attempts}s." >&2
+            # Brute force just let it continue.
+            break
+        fi
+    done
+
     rm -f "${artifacts_summary}"
 
     # Print download URL links in console log and file..
@@ -63,12 +78,14 @@ function gcs_bucket() {
         for file in ${artifact}; do
             # Look for wildcard files.
             if [ -e "${file}" ]; then
-                # Copy the artifact to the bucket
-                /usr/bin/gsutil cp "${file}" "${destination}"/ || true
+                [ -d "${file}" ] && copycmd="cp -r" || copycmd="cp"
+                # Copy the artifact to the bucket (do not use quotes for cp!)
+                # shellcheck disable=SC2086
+                gcloud storage ${copycmd} "${file}" "${destination}"/ || true
                 echo "Copied ${file} to ${destination}"
                 # shellcheck disable=SC2086
                 filename=$(echo ${file} | awk -F / '{print $NF}')
-                echo "    gsutil cp ${destination}/${filename} ." | tee -a "${artifacts_summary}"
+                echo "    gcloud storage ${copycmd} ${destination}/${filename} ." | tee -a "${artifacts_summary}"
             fi
         done
     done

@@ -29,7 +29,7 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
   parameters {
     stringParam {
       name('IMAGE_TAG')
-      defaultValue('latest-debian.12')
+      defaultValue("${OPENBSW_IMAGE_TAG}")
       description('''<p>Docker image template to use.<p>
         <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''')
       trim(true)

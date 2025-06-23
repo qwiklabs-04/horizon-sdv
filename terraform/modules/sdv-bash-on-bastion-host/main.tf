@@ -24,9 +24,9 @@ data "google_project" "project" {}
 # }
 
 resource "null_resource" "execute_bash_commands" {
-  triggers = {
-    always_run = "${timestamp()}"
-  }
+  #triggers = {
+  #  always_run = "${timestamp()}"
+  #}
 
   provisioner "local-exec" {
     command = <<EOT

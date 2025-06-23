@@ -15,6 +15,10 @@
 // Description:
 // Seed job for Jenkins workloads. Support Stages within stages so
 // we can seed multiple workloads.
+
+String headerStyle = ' color: white; background: blue; padding: 8px; text-align: center; '
+String separatorStyle = ' border: 0; border-bottom: 1px solid #ccc; background: #999; '
+
 pipeline {
 
   agent { label 'seed-node' }
@@ -34,6 +38,18 @@ pipeline {
              <li>android: seed the Android workload.</li>
              <li>openbsw: seed the OpenBSW workload.</li>
            </ul>''')
+
+    separator(
+      name: "OpenBSW Workload",
+      sectionHeader: "OpenBSW Parameters",
+      separatorStyle: separatorStyle,
+      sectionHeaderStyle: headerStyle
+    )
+
+    string(name: 'OPENBSW_IMAGE_TAG',
+           defaultValue: 'latest-debian.12',
+           description: '''<p>Name of the build image tag used for OpenBSW pipelines.</p>''',
+           trim: true)
   }
 
   stages {
@@ -120,7 +136,8 @@ pipeline {
                   ['${CLOUD_PROJECT}', "${CLOUD_PROJECT}"],
                   ['${HORIZON_DOMAIN}', "${HORIZON_DOMAIN}"],
                   ['${HORIZON_GITHUB_URL}', "${HORIZON_GITHUB_URL}"],
-                  ['${HORIZON_GITHUB_BRANCH}', "${HORIZON_GITHUB_BRANCH}"]
+                  ['${HORIZON_GITHUB_BRANCH}', "${HORIZON_GITHUB_BRANCH}"],
+                  ['${OPENBSW_IMAGE_TAG}', "${OPENBSW_IMAGE_TAG}"]
                 ]
 
                 def files = sh(returnStdout: true, script: "find workloads/openbsw -name '*.groovy'").trim().split('\n')

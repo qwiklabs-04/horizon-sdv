@@ -233,31 +233,31 @@ spec:
                               - "Overall/Administer"
                             entries:
                               - group: "horizon-jenkins-administrators"
-                          - name: "horizon-jenkins-workloads-android-developers"
-                            description: "Jenkins workloads Android developers role for workload usage and configuration."
+                          - name: "horizon-jenkins-workloads-developers"
+                            description: "Jenkins workloads developers role for workload usage and configuration."
                             permissions:
                               - "Overall/Read"
                             entries:
-                              - group: "horizon-jenkins-workloads-android-developers"
-                          - name: "horizon-jenkins-workloads-android-users"
-                            description: "Jenkins workloads Android users role with restricted access to workloads."
+                              - group: "horizon-jenkins-workloads-developers"
+                          - name: "horizon-jenkins-workloads-users"
+                            description: "Jenkins workloads users role with restricted access to workloads."
                             permissions:
                               - "Overall/Read"
                             entries:
-                              - group: "horizon-jenkins-workloads-android-users"
+                              - group: "horizon-jenkins-workloads-users"
                         items:
-                          - name: "workloads-android-developers" 
-                            description: "Android workloads developers item role with unrestricted access." 
-                            pattern: "Android.*"
+                          - name: "workloads-developers" 
+                            description: "Workloads developers item role with unrestricted access." 
+                            pattern: ".*"
                             templateName: "horizon-jenkins-workload-developers"
                             entries:
-                              - group: "horizon-jenkins-workloads-android-developers"
-                          - name: "workloads-android-users" 
-                            description: "Android workloads user item role with restricted access." 
-                            pattern: "Android.*"
+                              - group: "horizon-jenkins-workloads-developers"
+                          - name: "workloads-users" 
+                            description: "Workloads user item role with restricted access." 
+                            pattern: ".*"
                             templateName: "horizon-jenkins-workload-users"
                             entries:
-                              - group: "horizon-jenkins-workloads-android-users"
+                              - group: "horizon-jenkins-workloads-users"
                   clouds:
                     - computeEngine:
                         cloudName: cuttlefish-vm-main

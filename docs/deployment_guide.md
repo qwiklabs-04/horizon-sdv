@@ -547,7 +547,7 @@ Use this method for creating secrets which hold private keys.<br>
    * **GCP_CLOUD_REGION**
       - Enter the Cloud region of your choice. (`us-central1`, `europe-west1`, etc.)
    * **GCP_CLOUD_ZONE**
-      - Enter the Cloud region of your choice. (`us-central1-a`, `europe-west1`, etc.)
+      - Enter the Cloud region of your choice. (`us-central1-a`, `europe-west1-d`, etc.)
    * **GCP_COMPUTER_SA**
       - Enter the default compute service account details retrieved from the [Section #2a - GCP Project details](#section-2a---gcp-project-details) point number 1.
       - example: `<GCP_PROJECT_NUMBER>-compute@developer.gserviceaccount.com`
@@ -687,8 +687,8 @@ Below table details the Keycloak to jenkins RBAC mapping with their access level
 | Keycloak Group                                 | Jenkins Role                         | Access Level                           |
 |------------------------------------------------|--------------------------------------|----------------------------------------|
 | `horizon-jenkins-administrators`               | Global: Admin                        | Full admin access                      |
-| `horizon-jenkins-workloads-android-developers` | Item: workloads-android-developers   | Full build/config rights for Android   |
-| `horizon-jenkins-workloads-android-users`      | Item: workloads-android-users        | Limited build access for Android       |
+| `horizon-jenkins-workloads-developers`         | Item: workloads-developers           | Full build/config rights for Workloads |
+| `horizon-jenkins-workloads-users`              | Item: workloads-users                | Limited build access for Workloads     |
 
 #### Steps to Assign a User to a Group
 >[!NOTE]
@@ -710,16 +710,16 @@ Follow the below steps to assign a user to required Keycloak group,
       - Select the group `horizon-jenkins-admininstrators`.
       - Click **Join**.   
          <img src="images/keycloak-jenkins-groups-1.png" width="325" />
-   - **horizon-jenkins-workloads-android-developers**
+   - **horizon-jenkins-workloads-developers**
       - Click on the **Groups** tab.
       - Click on **Join Group** which opens a new pop-up window.
-      - Select the group `horizon-jenkins-workloads-android-developers`.
+      - Select the group `horizon-jenkins-workloads-developers`.
       - Click **Join**.   
          <img src="images/keycloak-jenkins-groups-2.png" width="325" />
-   - **horizon-jenkins-workloads-android-users**
+   - **horizon-jenkins-workloads-users**
       - Click on the **Groups** tab.
       - Click on **Join Group** which opens a new pop-up window.
-      - Select the group `horizon-jenkins-workloads-android-users`.
+      - Select the group `horizon-jenkins-workloads-users`.
       - Click **Join**.   
          <img src="images/keycloak-jenkins-groups-3.png" width="325" />
 4. Verify Group Assignment

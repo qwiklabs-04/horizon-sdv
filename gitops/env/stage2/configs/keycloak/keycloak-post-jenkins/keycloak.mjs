@@ -44,8 +44,8 @@ const config = {
     },
     rolesAndGroups: [
       'horizon-jenkins-administrators',
-      'horizon-jenkins-workloads-android-developers',
-      'horizon-jenkins-workloads-android-users'
+      'horizon-jenkins-workloads-developers',
+      'horizon-jenkins-workloads-users'
     ]
   }
 };

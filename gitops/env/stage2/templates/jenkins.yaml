@@ -233,6 +233,7 @@ spec:
                               - "Overall/Administer"
                             entries:
                               - group: "horizon-jenkins-administrators"
+                              - user: "jenkins-admin"
                           - name: "horizon-jenkins-workloads-developers"
                             description: "Jenkins workloads developers role for workload usage and configuration."
                             permissions:

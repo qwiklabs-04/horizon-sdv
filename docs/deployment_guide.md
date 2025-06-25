@@ -25,7 +25,6 @@ Horizon SDV is designed to simplify the deployment and management of Android wor
    - [Section #5a - Retrieve Certificate's DNS Authz resources](#section-5a---retrieve-certificates-dns-authz-resources)
    - [Section #5b - Retrieve Load balancer details](#section-5b---retrieve-load-balancer-details)
    - [Section #5c - Setup Keycloak](#section-5c---setup-keycloak)
-   - [Section #5d - Jenkins Access via Keycloak Groups](#section-5d---jenkins-access-via-keycloak-groups)
 - [Section #6 - Run Cluster Apps](#section-6---run-cluster-apps)
    - [Section #6a - Horizon Landing Page](#section-6a---horizon-landing-page)
    - [Section #6b - Argo CD](#section-6b---argo-cd)
@@ -104,18 +103,12 @@ It is required to replace them with actual values as you follow the setup instru
    - Service Usage API
    - Secret Manager API
    - Certificate Manager API
-* IAM Roles to be granted to new user accounts added by the owner of the project 
-   You can either assign a basic role or a fine-grained permission.
-   - Basic: Editor
-   **OR**
-   - Fine-grained:
-      - Compute Admin
-      - Kubernetes Engine Admin
-      - Artifact Registry Administrator
-      - Cloud Filestore Editor
-      - Storage Admin
-
-   Refer this document for detailed instructions for adding new user accounts: [Add an account for a new user](https://support.google.com/cloudidentity/answer/33310?sjid=12027755488314741556-NC)
+* IAM Roles to be granted to the user
+   - Compute Admin
+   - Kubernetes Engine Admin
+   - Artifact Registry Administrator
+   - Cloud Filestore Editor
+   - Storage Admin
 
 ## Section #2 - GCP Foundation Setup
 This section covers creation and configuration of required Google Cloud Platform (GCP) services.
@@ -209,10 +202,7 @@ Below are the resources which are required to be configured:
       * "attribute.repository" = "assertion.repository"
    - Click on ADD CONDITION under Attribute Conditions.
    - Configure Attribute Conditions as below
-      - Condition CEL:
-         ```
-         assertion.repository_owner=='<GITHUB_ORGANIZATION_NAME>'
-         ```
+      * Condition CEL = "assertion.repository_owner=='<GITHUB_ORGANIZATION_NAME>'"
    - Click save.
 3. Workload Identity Federation Pool and Provider has now been created successfully.   
    <img src="images/gcp_workload_identity_pool_1.png" width="750" />
@@ -545,7 +535,7 @@ Use this method for creating secrets which hold private keys.<br>
    * **GCP_BACKEND_BUCKET_NAME**
       - Enter the name of the GCS Bucket created in [Create a Bucket in GCP](#section-2b---create-a-bucket-in-gcp)
    * **GCP_CLOUD_REGION**
-      - Enter the Cloud region of your choice. (`us-central1`, `europe-west1`, etc.)
+      - Enter the Cloud region of your choice. (example: `us-central1`)
    * **GCP_CLOUD_ZONE**
       - Enter the Cloud region of your choice. (`us-central1-a`, `europe-west1-d`, etc.)
    * **GCP_COMPUTER_SA**
@@ -744,7 +734,7 @@ It ensures the Kubernetes Cluster (GKE) always matches that desired state. Here,
 
 1. To Access Argo CD UI, go to the Horizon Landing page here: `https://<SUB_DOMAIN>.<HORIZON_DOMAIN>` and click on the Launch button within the Argo CD app card as below.   
    <img src="images/argocd_launch.png" width="325" />
-2. Log-in using the credentials configured in section [Add Environment secrets](#add-environment-secrets) with username `admin`.   
+2. Log-in using the credentials configured in section [Add Environment secrets](#add-environment-secrets).   
 
 <details>
   <summary>Click for more details on Argo CD</summary>
@@ -1011,3 +1001,4 @@ DNS changes take anywhere from a few minutes to 24-48 hours to propagate across 
 
 ## LICENSE
 Refer to the [LICENSE](../LICENSE) file for license rights and limitations (Apache 2.0).
+

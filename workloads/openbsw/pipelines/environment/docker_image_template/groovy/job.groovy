@@ -29,8 +29,9 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
   parameters {
     stringParam {
       name('IMAGE_TAG')
-      defaultValue('latest')
-      description('''<p>Image tag for the builder image.</p>''')
+      defaultValue("${OPENBSW_IMAGE_TAG}")
+      description('''<p>Docker image template to use.<p>
+        <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''')
       trim(true)
     }
     booleanParam {
@@ -57,11 +58,34 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
       trim(true)
     }
     stringParam {
+      name('LINUX_DISTRIBUTION')
+      defaultValue('debian:12')
+      description('''<p>Define the Linux distribution to use, e.g.</p></br>
+        <ul><li>debian:12</li>
+            <li>ubuntu:22.04</li></ul>''')
+      trim(true)
+    }
+    stringParam {
+      name('NODEJS_VERSION')
+      defaultValue('20.9.0')
+      description('''<p>NodeJS version.<br/>
+        This is installed using <i>nvm</i> on the instance template to be compatible with other tooling.</p>''')
+      trim(true)
+    }
+    stringParam {
       name('TREEFMT_URL')
       defaultValue('https://github.com/numtide/treefmt/releases/download/v2.1.0/treefmt_2.1.0_linux_amd64.tar.gz')
       description('''<p>Treefmt archive URL.</p>''')
       trim(true)
     }
+  }
+
+  // Block build if certain jobs are running.
+  blockOn('OpenBSW*.*Docker.*') {
+    // Possible values are 'GLOBAL' and 'NODE' (default).
+    blockLevel('GLOBAL')
+    // Possible values are 'ALL', 'BUILDABLE' and 'DISABLED' (default).
+    scanQueueFor('BUILDABLE')
   }
 
   logRotator {

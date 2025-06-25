@@ -33,6 +33,14 @@ pipelineJob('Android/Environment/Delete MTK Connect Testbench') {
     }
   }
 
+  // Block build if certain jobs are running.
+  blockOn('Android*.Delete.*MTK*') {
+    // Possible values are 'GLOBAL' and 'NODE' (default).
+    blockLevel('GLOBAL')
+    // Possible values are 'ALL', 'BUILDABLE' and 'DISABLED' (default).
+    scanQueueFor('BUILDABLE')
+  }
+
   logRotator {
     daysToKeep(60)
     numToKeep(200)

@@ -78,8 +78,7 @@ pipelineJob('Android/Builds/CTS Builder') {
       name('GERRIT_REPO_SYNC_JOBS')
       defaultValue("${REPO_SYNC_JOBS}")
       description('''<p>Number of parallel sync jobs for <i>repo sync</i>.<br/>
-        Default set to <code>REPO_SYNC_JOBS</code> environment variable value.<br/>
-        If undefined (or null), defaults to 1.</p>''')
+        Default value is defined by the Android Seed job</p>''')
       trim(true)
     }
 

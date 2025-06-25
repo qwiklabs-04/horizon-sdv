@@ -28,6 +28,8 @@ def getAndroidVersion(revision) {
 
 pipeline {
 
+  // Environment defined in groovy/job.groovy
+
   agent none
 
   environment {
@@ -153,6 +155,7 @@ pipeline {
                   export ANDROID_VERSION="${SDK_ANDROID_VERSION}"
                   export AAOS_CLEAN="NO_CLEAN"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh || true
@@ -179,6 +182,7 @@ pipeline {
                   export ANDROID_VERSION="${SDK_ANDROID_VERSION}"
                   export AAOS_CLEAN="NO_CLEAN"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export REPO_SYNC_JOBS="${REPO_SYNC_JOBS}"
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh || true
@@ -204,6 +208,7 @@ pipeline {
                   export AAOS_BUILD_NUMBER=${BUILD_NUMBER}/${AAOS_LUNCH_TARGET}
                   export AAOS_CLEAN="NO_CLEAN"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export REPO_SYNC_JOBS="${REPO_SYNC_JOBS}"
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
@@ -228,6 +233,7 @@ pipeline {
                   export AAOS_BUILD_NUMBER=${BUILD_NUMBER}/${AAOS_LUNCH_TARGET}
                   export AAOS_CLEAN="NO_CLEAN"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export REPO_SYNC_JOBS="${REPO_SYNC_JOBS}"
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
@@ -241,7 +247,7 @@ pipeline {
     }
 
     stage ('Start Test VM Instance') {
-      agent { label "${env.GERRIT_CUTTLEFISH_INSTANCE_TEMPLATE_LABEL}" }
+      agent { label "${env.JENKINS_GCE_CLOUD_LABEL}" }
       stages {
         stage ('Test: aosp_cf_x86_64_auto') {
           when { expression { env.GERRIT_CHANGE_NUMBER } }

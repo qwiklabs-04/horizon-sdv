@@ -20,15 +20,31 @@ pipelineJob('OpenBSW/Environment/Development Instance') {
     <h4 style="margin-bottom: 10px;">Accessing the Instance</h4>
     <p>Access the instance via <code>bastion</code> host and <code>kubectl</code> command line tool. Example command:</p>
     <p><code>kubectl exec -it -n jenkins &lt;pod name&gt; -- bash</code></p>
+    <p>Alternatively access Host via MTK Connect by enabling MTK_CONNECT_ENABLE.</p>
     <h4 style="margin-bottom: 10px;">Important Notes</h4>
     <p>Users are responsible for saving their own work to persistent storage before expiry.</p>
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
   parameters {
+
+    stringParam {
+      name('IMAGE_TAG')
+      defaultValue("${OPENBSW_IMAGE_TAG}")
+      description('''<p>Docker image template to use.<p>
+        <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''')
+      trim(true)
+    }
+
     choiceParam {
       name('INSTANCE_MAX_UPTIME')
       choices(['0', '1', '2', '4', '8'])
       description('''<p>Time in hours to keep instance alive.</p>''')
+    }
+
+    booleanParam {
+      name('MTK_CONNECT_ENABLE')
+      defaultValue(false)
+      description('''<p>Enable if wishing to use MTK Connect to connect to the host instance.</p>''')
     }
   }
 

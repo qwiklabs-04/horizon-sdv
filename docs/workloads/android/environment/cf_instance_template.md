@@ -42,7 +42,7 @@ One-time setup requirements.
 
 ## Environment Variables/Parameters <a name="environment-variables"></a>
 
-**Jenkins Parameters:** Defined in the respective pipeline jobs within `gitops/env/stage2/templates/jenkins.yaml` (CasC).
+**Jenkins Parameters:** Defined in the groovy job definition `groovy/job.groovy`.
 
 ### `ANDROID_CUTTLEFISH_REVISION`
 

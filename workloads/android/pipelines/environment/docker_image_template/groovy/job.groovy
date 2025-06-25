@@ -40,6 +40,14 @@ pipelineJob('Android/Environment/Docker Image Template') {
     }
   }
 
+  // Block build if certain jobs are running.
+  blockOn('Android*.*Docker.*') {
+    // Possible values are 'GLOBAL' and 'NODE' (default).
+    blockLevel('GLOBAL')
+    // Possible values are 'ALL', 'BUILDABLE' and 'DISABLED' (default).
+    scanQueueFor('BUILDABLE')
+  }
+
   logRotator {
     daysToKeep(60)
     numToKeep(200)

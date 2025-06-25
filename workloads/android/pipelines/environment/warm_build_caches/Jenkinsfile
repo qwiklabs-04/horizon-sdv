@@ -29,6 +29,8 @@ def getAndroidVersion(revision) {
 
 pipeline {
 
+  // Parameters defined in groovy/job.groovy
+
   agent none
 
   environment {
@@ -105,7 +107,7 @@ pipeline {
         stage ('Initialise') {
           steps {
             script {
-              currentBuild.description = "Revision: ${env.AAOS_REVISION}"
+              currentBuild.description = "Revision: ${env.AAOS_REVISION}" + "<br>" + "$BUILD_USER"
             }
             container(name: 'builder') {
               withCredentials([usernamePassword(credentialsId: env.GERRIT_CREDENTIALS_ID, passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {
@@ -149,6 +151,7 @@ pipeline {
                   export AAOS_CLEAN="NO_CLEAN"
                   export AAOS_ARTIFACT_STORAGE_SOLUTION="${ARTIFACT_STORAGE_SOLUTION}"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh || true
@@ -175,6 +178,7 @@ pipeline {
                   export AAOS_CLEAN="NO_CLEAN"
                   export AAOS_ARTIFACT_STORAGE_SOLUTION="${ARTIFACT_STORAGE_SOLUTION}"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh || true
@@ -200,6 +204,7 @@ pipeline {
                   export AAOS_CLEAN="NO_CLEAN"
                   export AAOS_ARTIFACT_STORAGE_SOLUTION="${ARTIFACT_STORAGE_SOLUTION}"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
@@ -224,6 +229,7 @@ pipeline {
                   export AAOS_CLEAN="NO_CLEAN"
                   export AAOS_ARTIFACT_STORAGE_SOLUTION="${ARTIFACT_STORAGE_SOLUTION}"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh

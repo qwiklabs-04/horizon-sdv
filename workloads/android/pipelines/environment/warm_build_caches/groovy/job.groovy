@@ -47,6 +47,14 @@ pipelineJob('Android/Environment/Warm Build Caches') {
       choices(['default', '15', '14'])
     }
 
+    stringParam {
+      name('GERRIT_REPO_SYNC_JOBS')
+      defaultValue("${REPO_SYNC_JOBS}")
+      description('''<p>Number of parallel sync jobs for <i>repo sync</i>.<br/>
+        Default value is defined by the Android Seed job</p>''')
+      trim(true)
+    }
+
     booleanParam {
       name('ARCHIVE_ARTIFACTS')
       defaultValue(false)

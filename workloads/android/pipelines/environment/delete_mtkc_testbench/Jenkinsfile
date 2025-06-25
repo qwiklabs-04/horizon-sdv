@@ -17,7 +17,7 @@
 // test benches left in MTK Connect during dev/testing.
 pipeline {
 
-  // Parameters defined in gitops/env/stage2/templates/jenkins.yaml (Jenkins CasC)
+  // Parameters defined in groovy/job.groovy
 
   agent {
     kubernetes {

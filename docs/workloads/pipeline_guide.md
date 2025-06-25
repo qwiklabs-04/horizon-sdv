@@ -1,0 +1,132 @@
+# Pipeline Guide
+
+## Table of contents
+- [Overview](#overview)
+- [Groovy Definitions](#definitions)
+- [Creating / Editing Job](#editing)
+- [Seed Job](#seed)
+
+## Overview <a name="overview"></a>
+
+Immediately after initial launch, Jenkins contains a single job - _Seed Workloads_ - which is defined in `gitops/env/stage2/templates/jenkins.yaml` (CasC).
+
+The _Seed Workloads_ job uses the groovy definitions to initialise the jobs required for each workload.
+<br>It also allows users to update Jenkins to pull in any changes made to the groovy definitions - these can be new job definitions and/or changes to existing jobs.
+
+
+### Jenkins Pipeline Job Organization
+Each Jenkins Pipeline Job is defined in a separate Groovy file, stored within its own dedicated job directory, e.g.:
+- `workloads/android/pipelines/builds/aaos_builder/groovy/job.groovy`
+- `workloads/android/pipelines/environment/cf_instance_template/groovy/job.groovy`
+- `workloads/android/pipelines/tests/cvd_launcher/groovy/job.groovy`
+- `workloads/android/pipelines/tests/cts_execution/groovy/job.groovy`
+
+There are also Groovy files that define the folder structure within Jenkins, e.g
+- `workloads/android/pipelines/groovy/folders.groovy`
+
+### Initial Jenkins Configuration
+
+Upon initial launch, Jenkins contains a single job called _"Seed Workloads"_, defined in `gitops/env/stage2/templates/jenkins.yaml` (CasC).
+
+### Seed Workloads Job Functionality
+
+The _Seed Workloads_ job serves the following purpose:
+
+1. It initializes the jobs required for each workload using the Groovy definitions.
+2. It allows users to update Jenkins to incorporate changes made to the Groovy definitions, including new job definitions and modifications to existing jobs.
+3. Allows common job parameters to be populated via the seed job.
+
+## Groovy Definitions <a name="definitions"></a>
+
+### Folders
+
+The Jenkins folder structure for each workload is defined in a top-level Groovy file located at::
+- `workloads/<workload_name>/pipelines/groovy/folders.groovy`
+- This file is executed before the job files are called, and is responsible for setting up the folder hierarchy.
+
+**Folder Properties**
+
+Each folder is defined with the following properties:
+- **path**: The path to the folder.
+- **displayName**: The display name of the folder.
+- **description**: A brief HTML description of the folder.
+
+Here is an example of how folders are defined:
+
+```
+	folder('Android') {
+	  displayName('Android Workflows')
+	  description('<p>This is the top-level workload folder</p>')
+	}
+	folder('Android/Builds') {
+	  displayName('Builds')
+	  description('<p>This sub-folder contains jobs to build Android targets.</p>')
+	}
+```
+The resulting folder and subfolder structure in Jenkins will be:
+<br><img src="images/jenkins_folder.png" width="300" />
+
+
+### Jobs
+Individual jobs are stored in the following directory structure:
+
+`workloads/<workload_name>/pipelines/<folder_name>/<job_name>/groovy/job.groovy`
+
+Each job definition includes the following components:
+
+- **Description** (optional): An HTML description that appears on the Jenkins job page.
+- **Parameters** (optional): Build parameters that can be passed to the job.
+- **Triggers** (optional): Build triggers that determine when the job should be executed.
+- **LogRotator** (optional): Settings that specify how long artifacts and build histories are retained.
+- **Definition**: The source code definitions for the job.
+
+For more detailed information on each of these components, refer to existing Groovy files for examples and guidance.
+
+## Creating / Editing Jobs <a name="edits"></a>
+
+> [!IMPORTANT]
+> Environment variables can be referenced in Groovy files, but they are replaced with their actual values before the Groovy files are executed by the seed job. This approach avoids the need for explicit script approval, which is required when using the `getProperty` Groovy method to resolve environment variables.
+> The replacement of environment variables with their actual values is performed in the _"Prepare Groovy files"_ stage of the seed job. Therefore, it is crucial to update the replacements list in the Jenkinsfile whenever new environment variables are added to Groovy scripts.
+> To ensure that environment variables are properly replaced, please refer to the [Seed Workloads](seed.md#groovymethods) documentation for more information on how to update the replacements list in the Jenkinsfile.
+> Environment variables are defined in the `gitops/env/stage2/templates/jenkins.yaml` file (CasC).
+
+
+### Update Existing Jobs
+
+To make any changes to pipeline jobs (or folders):
+
+1.  Edit the job's groovy file.
+2.  Commit and push the change
+3.  Run the _Seed Workloads_ job & wait for completion
+
+### Create a New Job
+
+1. Using an existing job in the repo as reference, create a new job in the repo (including the job folder, groovy folder, Jenkinsfile and groovy script)
+2. Commit and push the change
+3. Run the _Seed Workloads_ job & wait for completion
+
+> [!NOTE]
+> The folder location and name of a job are specified together in the groovy definition.
+> - `pipelineJob('<folders>/<jobname>')`
+> - e.g.:
+>   - `pipelineJob('Android/Builds/CTS Builder')`
+>   - `pipelineJob('Android/Tests/CVD Launcher')`
+
+### Delete a Job:
+
+1. Delete the job's groovy file (and optionally its job folder, groovy folder, Jenkinsfile)
+2. Commit and push the change
+3. Navigate to the job on Jenkins
+4. Select _Delete Pipeline_ from the options on the left hand side
+5. Optional: Run the _Seed Workloads_ job & wait for completion
+
+> [!NOTE]
+> The _Seed Workloads_ job will never remove existing jobs/folders from Jenkins; while removing a job's groovy definition ensures that it will not be re-created when the job runs, the actual deletion needs to be done manually by the user.
+
+### Rename a Job:
+If a job is renamed in its groovy definition (`pipelineJob('<folders>/<jobname>')`) it is treated as a new job and the old job will still be retained. See previous sections for how new / deleted jobs are handled.
+
+
+## Seed Job <a name="seed"></a>
+
+For additional information on the seed job refer to [Seed Workloads](seed.md).

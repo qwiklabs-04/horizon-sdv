@@ -28,6 +28,8 @@ def getAndroidVersion(revision) {
 
 pipeline {
 
+  // Environment defined in groovy/job.groovy
+
   agent none
 
   environment {

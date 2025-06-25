@@ -18,6 +18,8 @@
 
 pipeline {
 
+  // Parameters defined in groovy/job.groovy
+
   agent none
 
   environment {

@@ -20,6 +20,8 @@
 //   * https://github.com/GoogleContainerTools/kaniko
 pipeline {
 
+  // Parameters defined in groovy/job.groovy
+
   agent {
     kubernetes {
       yaml """\

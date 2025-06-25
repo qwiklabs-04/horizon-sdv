@@ -237,13 +237,18 @@ spec:
                               - "Overall/Administer"
                             entries:
                               - group: "horizon-jenkins-administrators"
-                              - user: "jenkins-admin"
+                              # Example user
+                              # - user: "dave.m.smith@accenture.com"
                           - name: "horizon-jenkins-workloads-developers"
                             description: "Jenkins workloads developers role for workload usage and configuration."
                             permissions:
                               - "Overall/Read"
+                              - "Agent/Build"
+                              - "Job/Create"
                             entries:
                               - group: "horizon-jenkins-workloads-developers"
+                              # Example user
+                              # - user: "dave.m.smith@accenture.com"
                           - name: "horizon-jenkins-workloads-users"
                             description: "Jenkins workloads users role with restricted access to workloads."
                             permissions:
@@ -257,6 +262,8 @@ spec:
                             templateName: "horizon-jenkins-workload-developers"
                             entries:
                               - group: "horizon-jenkins-workloads-developers"
+                              # Example user
+                              # - user: "dave.m.smith@accenture.com"
                           - name: "workloads-users" 
                             description: "Workloads user item role with restricted access." 
                             pattern: ".*"

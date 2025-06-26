@@ -80,6 +80,7 @@ Main entry point for terraform execution is `env/main.tf` file. This file contai
 - sdv_computer_sa (Main GCE Computer Service Account)
 - sdv_gcp_cloud_region (GCP Cloud Region)
 - sdv_gcp_cloud_zone (GCP Cloud Zone)
+- sdv_gcp_backend_bucket_name (GCP Backend Bucket to store tfstate)
 
 
 

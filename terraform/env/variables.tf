@@ -110,3 +110,8 @@ variable "sdv_gcp_cloud_zone" {
   description = "GCP cloud zone"
   type        = string
 }
+
+variable "sdv_gcp_backend_bucket_name" {
+  description = "GCP Backend bucket name where tfstate is stored"
+  type        = string
+}

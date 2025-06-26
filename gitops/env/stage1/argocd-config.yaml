@@ -50,6 +50,7 @@ spec:
           projectID: ##PROJECT_ID##
           region: ##CLOUD_REGION##
           zone: ##CLOUD_ZONE##
+          backendBucket: ##CLOUD_BACKEND_BUCKET##
           apps:
             landingpage: ##CLOUD_REGION##-docker.pkg.dev/##PROJECT_ID##/horizon-sdv/landingpage-app:1.0.0
           postjobs:

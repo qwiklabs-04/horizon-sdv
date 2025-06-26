@@ -201,6 +201,7 @@ jobs:
           echo "TF_VAR_sdv_computer_sa=${{ vars.GCP_COMPUTER_SA }}" >> $GITHUB_ENV;
           echo "TF_VAR_sdv_gcp_cloud_region=${{ vars.GCP_CLOUD_REGION }}" >> $GITHUB_ENV;
           echo "TF_VAR_sdv_gcp_cloud_zone=${{ vars.GCP_CLOUD_ZONE }}" >> $GITHUB_ENV;
+          echo "TF_VAR_sdv_gcp_backend_bucket_name=${{ vars.GCP_BACKEND_BUCKET_NAME }}" >> $GITHUB_ENV;
           echo "TF_VAR_sdv_gh_domain_name=${{ vars.HORIZON_DOMAIN }}" >> $GITHUB_ENV;
 
           if [[ "${{ secrets.gcp-sa }}" != '' && "${{ secrets.wif-provider }}" != '' ]]; then

@@ -233,7 +233,7 @@ spec:
                               - "Overall/Administer"
                             entries:
                               - group: "horizon-jenkins-administrators"
-                              # Example user (use the same username as defined in Keycloak)
+                              # Example user
                               # - user: "dave.m.smith@accenture.com"
                               - user: "jenkins-admin"
                           - name: "horizon-jenkins-workloads-developers"
@@ -244,7 +244,7 @@ spec:
                               - "Job/Create"
                             entries:
                               - group: "horizon-jenkins-workloads-developers"
-                              # Example user (use the same username as defined in Keycloak)
+                              # Example user
                               # - user: "dave.m.smith@accenture.com"
                           - name: "horizon-jenkins-workloads-users"
                             description: "Jenkins workloads users role with restricted access to workloads."
@@ -252,7 +252,7 @@ spec:
                               - "Overall/Read"
                             entries:
                               - group: "horizon-jenkins-workloads-users"
-                              # Example user (use the same username as defined in Keycloak)
+                              # Example user
                               # - user: "dave.m.smith@accenture.com"
                         items:
                           - name: "workloads-developers" 
@@ -261,7 +261,7 @@ spec:
                             templateName: "horizon-jenkins-workload-developers"
                             entries:
                               - group: "horizon-jenkins-workloads-developers"
-                              # Example user (use the same username as defined in Keycloak)
+                              # Example user
                               # - user: "dave.m.smith@accenture.com"
                           - name: "workloads-users" 
                             description: "Workloads user item role with restricted access." 

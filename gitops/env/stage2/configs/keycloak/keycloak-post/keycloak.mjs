@@ -48,6 +48,19 @@ const config = {
             'friendly.name':'email',
             'attribute.name':'urn:oid:1.2.840.113549.1.9.1'
           }
+      },
+      {
+        protocol: 'openid-connect',
+        name: 'groups',
+        protocolMapper: 'oidc-group-membership-mapper',
+        config: {
+          'claim.name': 'groups',
+          'full.group.path': 'false',
+          'id.token.claim': 'true',
+          'access.token.claim': 'true',
+          'userinfo.token.claim': 'true',
+          'introspection.token.claim': 'true',
+        }
       }
     ],
     adminUser: {
@@ -179,6 +192,35 @@ async function createGroupsClientScopeIfRequired() {
   } 
 }
 
+async function createGroupsMapperIfRequired() {
+  try {
+    const clientScopeName  = config.keycloak.clientScope.clientScopeName;
+
+    let clientScope   = await keycloakAdmin.clientScopes.findOneByName({ name: clientScopeName });
+    if (!clientScope) {
+      console.warn(`client scope ${clientScopeName} does not exist.`);
+    }
+
+    const existing = await keycloakAdmin.clientScopes.listProtocolMappers({ id: clientScope.id });
+    if (existing.some(map => map.name === 'groups')) {
+      console.info('"groups" mapper already exists.');
+      return;
+    }
+
+    const groupsMapper = config.keycloak.mappers.find(map => map.name === 'groups');
+    if (!groupsMapper) {
+      console.warn(`"groups" mapper not found in configuration.`);
+      return;
+    }
+
+    await keycloakAdmin.clientScopes.addProtocolMapper({ id: clientScope.id }, groupsMapper);
+    console.info('"groups" mapper added successfully.');
+
+  } catch (err) {
+    throw err;
+  }
+}
+
 async function configureKeycloak()  {
   try {
     await waitForKeycloak();
@@ -186,6 +228,7 @@ async function configureKeycloak()  {
     await createRealmAdminRoleIfRequired();
     await createAdminUserIfRequired();
     await createGroupsClientScopeIfRequired();
+    await createGroupsMapperIfRequired();
   } catch (err) {
     throw err
   }

@@ -26,6 +26,7 @@ Horizon SDV is designed to simplify the deployment and management of Android wor
    - [Section #5b - Retrieve Load balancer details](#section-5b---retrieve-load-balancer-details)
    - [Section #5c - Setup Keycloak](#section-5c---setup-keycloak)
    - [Section #5d - Jenkins Access via Keycloak Groups](#section-5d---jenkins-access-via-keycloak-groups)
+   - [Section #5e - Argo CD Access via Keycloak Groups](#section-5e---argo-cd-access-via-keycloak-groups)
 - [Section #6 - Run Cluster Apps](#section-6---run-cluster-apps)
    - [Section #6a - Horizon Landing Page](#section-6a---horizon-landing-page)
    - [Section #6b - Argo CD](#section-6b---argo-cd)
@@ -725,6 +726,39 @@ Follow the below steps to assign a user to required Keycloak group,
 4. Verify Group Assignment
    - The group should now appear under the user's "Group Membership".
 
+### Section #5e - Argo CD Access via Keycloak Groups
+This section includes the steps to assign a user to a Keycloak group to enable Argo CD access. Group membership determines the level of access granted to the user.
+
+#### Available Groups
+Below table details the Keycloak to jenkins RBAC mapping with their access level granted to users within the respective groups.
+
+| Keycloak Group                                 | Argo CD Role                         | Access Level                             |
+|------------------------------------------------|--------------------------------------|------------------------------------------|
+| `horizon-argocd-administrators`                | role: admin                          | Full admin access                        |
+
+#### Steps to Assign a User to a Group
+>[!NOTE]
+>Log out and log in again from Argo CD for the new permissions to take effect.
+
+Follow the below steps to assign a user to required Keycloak group,
+
+1. Keycloak UI can be accessed here from the Landing page under 'Admin Applications': `https://<SUB_DOMAIN>.<HORIZON_DOMAIN>`
+   - Login to Keycloak as admin.   
+      <img src="images/keycloak_launch.png" width="325" />
+2. Find the User
+   - Go to `Users` in the left sidebar.
+   - Use the search bar to locate the user.
+   - Click on the username to open their details.
+3. Assign the Group
+   - **horizon-argocd-admininstrators**
+      - Click on the **Groups** tab.
+      - Click on **Join Group** which opens a new pop-up window.
+      - Select the group `horizon-argocd-admininstrators`.
+      - Click **Join**.   
+         <img src="images/keycloak-argocd-groups-1.png" width="325" />
+4. Verify Group Assignment
+   - The group should now appear under the user's "Group Membership".
+
 ## Section #6 - Run Cluster Apps
 This section details how to sign in to and use cluster applications, including their functionalities within the cluster environment.
 
@@ -744,7 +778,7 @@ It ensures the Kubernetes Cluster (GKE) always matches that desired state. Here,
 
 1. To Access Argo CD UI, go to the Horizon Landing page here: `https://<SUB_DOMAIN>.<HORIZON_DOMAIN>` and click on the Launch button within the Argo CD app card as below.   
    <img src="images/argocd_launch.png" width="325" />
-2. Log-in using the credentials configured in section [Add Environment secrets](#add-environment-secrets) with username `admin`.   
+2. Log-in to Argo CD by clicking on the "Log in via Keycloak" button. (Your user must be assigned to `horizon-argocd-administrators` on Keycloak for SSO access)   
 
 <details>
   <summary>Click for more details on Argo CD</summary>

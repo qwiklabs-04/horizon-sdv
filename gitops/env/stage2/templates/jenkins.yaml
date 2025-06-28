@@ -255,6 +255,8 @@ spec:
                               - "Overall/Read"
                             entries:
                               - group: "horizon-jenkins-workloads-users"
+                              # Example user
+                              # - user: "dave.m.smith@accenture.com"
                         items:
                           - name: "workloads-developers" 
                             description: "Workloads developers item role with unrestricted access." 
@@ -352,6 +354,8 @@ spec:
                           value: {{ .Values.config.zone }}
                         - key: "CLOUD_PROJECT"
                           value: {{ .Values.config.projectID }}
+                        - key: "CLOUD_BACKEND_BUCKET"
+                          value: {{ .Values.config.backendBucket }}
                         - key: "GERRIT_CREDENTIALS_ID"
                           value: "jenkins-gerrit-http-password"
                         - key: "HORIZON_DOMAIN"

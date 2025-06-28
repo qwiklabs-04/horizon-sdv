@@ -340,6 +340,8 @@ module "base" {
     echo $GCP_CLOUD_REGION
     export GCP_CLOUD_ZONE=${var.sdv_gcp_cloud_zone}
     echo $GCP_CLOUD_ZONE
+    export GCP_BACKEND_BUCKET_NAME=${var.sdv_gcp_backend_bucket_name}
+    echo $GCP_BACKEND_BUCKET_NAME
     cd bash-scripts
     chmod +x stage1.sh
     ./stage1.sh

@@ -62,6 +62,7 @@ To start GitOps deployment process it is required to provide list of configure p
 - GCP_PROJECT_ID (GCP Project ID)
 - GCP_CLOUD_REGION (GCP Cloud Region)
 - GCP_CLOUD_ZONE (GCP Cloud Zone)
+- GCP_BACKEND_BUCKET_NAME (GCP Bucket used to store tfstate)
 - GITHUB_ENV_NAME (Environment name, also used as a subdomain)
 - GITHUB_DOMAIN_NAME (top level domain name)
 

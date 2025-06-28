@@ -20,7 +20,7 @@
 //   * https://github.com/GoogleContainerTools/kaniko
 pipeline {
 
-  // Parameters defined in gitops/env/stage2/templates/jenkins.yaml (Jenkins CasC)
+  // Parameters defined in groovy/job.groovy
 
   agent {
     kubernetes {
@@ -39,11 +39,6 @@ pipeline {
             tty: true
       """.stripIndent()
     }
-  }
-
-  // Block concurrent builds to avoid clashing.
-  options {
-    buildBlocker (useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'BUILDABLE', blockingJobs: '.*Docker.*')
   }
 
   environment {

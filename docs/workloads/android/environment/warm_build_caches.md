@@ -23,7 +23,7 @@ One-time setup requirements.
 
 ## Environment Variables/Parameters <a name="environment-variables"></a>
 
-**Jenkins Parameters:** Defined in the respective pipeline jobs within `gitops/env/stage2/templates/jenkins.yaml` (CasC).
+**Jenkins Parameters:** Defined in the groovy job definition `groovy/job.groovy`.
 
 ### `AAOS_GERRIT_MANIFEST_URL`
 
@@ -90,7 +90,3 @@ These are as follows:
 
 -   `JENKINS_SERVICE_ACCOUNT`
     - Service account to use for pipelines. Required to ensure correct roles and permissions for GCP resources.
-
--   `REPO_SYNC_JOBS`
-    - Defines the number of parallel sync jobs when running `repo sync`. By default this is used by Gerrit build
-      pipeline but also forms the default for `GERRIT_REPO_SYNC_JOBS` parameter in build jobs.

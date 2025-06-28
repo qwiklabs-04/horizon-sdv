@@ -21,7 +21,7 @@ This depends only on [`kaniko`](https://github.com/GoogleContainerTools/kaniko) 
 
 ## Environment Variables/Parameters <a name="environment-variables"></a>
 
-**Jenkins Parameters:** Defined in the respective pipeline jobs within `gitops/env/stage2/templates/jenkins.yaml` (CasC).
+**Jenkins Parameters:** Defined in the groovy job definition `groovy/job.groovy`.
 
 ### `IMAGE_TAG`
 

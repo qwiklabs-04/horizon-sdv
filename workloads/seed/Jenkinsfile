@@ -16,8 +16,21 @@
 // Seed job for Jenkins workloads. Support Stages within stages so
 // we can seed multiple workloads.
 
-String headerStyle = ' color: white; background: blue; padding: 8px; text-align: center; '
-String separatorStyle = ' border: 0; border-bottom: 1px solid #ccc; background: #999; '
+def HEADER_STYLE = ' color: white; background: blue; padding: 8px; text-align: center; '
+def SEPARATOR_STYLE = ' border: 0; border-bottom: 1px solid #ccc; background: #999; '
+
+// Single quotes simply match string, double quotes expand the value of the variable.
+// This avoids DSL scripts (loosely based on Groovy) needing to approve getProperty method
+// which is a real security risk across Jenkins.
+// This array can be updated to include other mappings as required.
+def replacements = [
+ ['${CLOUD_REGION}', "${CLOUD_REGION}"],
+ ['${CLOUD_PROJECT}', "${CLOUD_PROJECT}"],
+ ['${HORIZON_DOMAIN}', "${HORIZON_DOMAIN}"],
+ ['${HORIZON_GITHUB_URL}', "${HORIZON_GITHUB_URL}"],
+ ['${HORIZON_GITHUB_BRANCH}', "${HORIZON_GITHUB_BRANCH}"],
+ ['${HEADER_STYLE}', "${HEADER_STYLE}"],
+ ['${SEPARATOR_STYLE}', "${SEPARATOR_STYLE}"]]
 
 pipeline {
 
@@ -42,8 +55,8 @@ pipeline {
     separator(
       name: "Android Workload",
       sectionHeader: "Android Parameters",
-      separatorStyle: separatorStyle,
-      sectionHeaderStyle: headerStyle
+      separatorStyle: "${SEPARATOR_STYLE}",
+      sectionHeaderStyle: "${HEADER_STYLE}"
     )
 
     string(name: 'REPO_SYNC_JOBS',
@@ -63,8 +76,8 @@ pipeline {
     separator(
       name: "OpenBSW Workload",
       sectionHeader: "OpenBSW Parameters",
-      separatorStyle: separatorStyle,
-      sectionHeaderStyle: headerStyle
+      separatorStyle: "${SEPARATOR_STYLE}",
+      sectionHeaderStyle: "${HEADER_STYLE}"
     )
 
     string(name: 'OPENBSW_IMAGE_TAG',
@@ -89,18 +102,9 @@ pipeline {
               script {
                 currentBuild.description = "$BUILD_USER"
 
-                // Single quotes simply match string, double quotes expand the value of the variable.
-                // This avoids DSL scripts (loosely based on Groovy) needing to approve getProperty method
-                // which is a real security risk across Jenkins.
-                // This array can be updated to include other mappings as required.
-                def replacements = [
+                replacements += [
                   ['${ANDROID_BUILD_BUCKET_ROOT_NAME}', "${ANDROID_BUILD_BUCKET_ROOT_NAME}"],
                   ['${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
-                  ['${CLOUD_REGION}', "${CLOUD_REGION}"],
-                  ['${CLOUD_PROJECT}', "${CLOUD_PROJECT}"],
-                  ['${HORIZON_DOMAIN}', "${HORIZON_DOMAIN}"],
-                  ['${HORIZON_GITHUB_URL}', "${HORIZON_GITHUB_URL}"],
-                  ['${HORIZON_GITHUB_BRANCH}', "${HORIZON_GITHUB_BRANCH}"],
                   ['${REPO_SYNC_JOBS}', "${REPO_SYNC_JOBS}"],
                   ['${JENKINS_GCE_CLOUD_LABEL}', "${CUTTLEFISH_GCE_CLOUD_LABEL}" ]
                 ]
@@ -151,14 +155,9 @@ pipeline {
               script {
                 currentBuild.description = "$BUILD_USER"
 
-                def replacements = [
+                replacements += [
                   ['${OPENBSW_BUILD_BUCKET_ROOT_NAME}', "${OPENBSW_BUILD_BUCKET_ROOT_NAME}"],
                   ['${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
-                  ['${CLOUD_REGION}', "${CLOUD_REGION}"],
-                  ['${CLOUD_PROJECT}', "${CLOUD_PROJECT}"],
-                  ['${HORIZON_DOMAIN}', "${HORIZON_DOMAIN}"],
-                  ['${HORIZON_GITHUB_URL}', "${HORIZON_GITHUB_URL}"],
-                  ['${HORIZON_GITHUB_BRANCH}', "${HORIZON_GITHUB_BRANCH}"],
                   ['${OPENBSW_IMAGE_TAG}', "${OPENBSW_IMAGE_TAG}"]
                 ]
 

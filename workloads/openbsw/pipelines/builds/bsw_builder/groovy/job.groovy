@@ -28,8 +28,8 @@ pipelineJob('OpenBSW/Builds/BSW_Builder') {
     separator {
       name('Common Parameters')
       sectionHeader('Common Parameters')
-      sectionHeaderStyle(' color: white; background: blue; padding: 8px; text-align: center; ')
-      separatorStyle(' border: 0; border-bottom: 1px solid #ccc; background: #999; ')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
     }
 
     stringParam {
@@ -73,8 +73,8 @@ pipelineJob('OpenBSW/Builds/BSW_Builder') {
     separator {
       name('Unit Tests')
       sectionHeader('Unit Tests')
-      sectionHeaderStyle(' color: white; background: blue; padding: 8px; text-align: center; ')
-      separatorStyle(' border: 0; border-bottom: 1px solid #ccc; background: #999; ')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
     }
 
     booleanParam {
@@ -132,8 +132,8 @@ pipelineJob('OpenBSW/Builds/BSW_Builder') {
     separator {
       name('POSIX Target')
       sectionHeader('POSIX Target')
-      sectionHeaderStyle(' color: white; background: blue; padding: 8px; text-align: center; ')
-      separatorStyle(' border: 0; border-bottom: 1px solid #ccc; background: #999; ')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
     }
 
     booleanParam {
@@ -159,8 +159,8 @@ pipelineJob('OpenBSW/Builds/BSW_Builder') {
     separator {
       name('NXP Hardware Target')
       sectionHeader('NXP Hardware Target')
-      sectionHeaderStyle(' color: white; background: blue; padding: 8px; text-align: center; ')
-      separatorStyle(' border: 0; border-bottom: 1px solid #ccc; background: #999; ')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
     }
 
     booleanParam {
@@ -186,8 +186,8 @@ pipelineJob('OpenBSW/Builds/BSW_Builder') {
     separator {
       name('Miscellaneous Options')
       sectionHeader('Miscellaneous Options')
-      sectionHeaderStyle(' color: white; background: blue; padding: 8px; text-align: center; ')
-      separatorStyle(' border: 0; border-bottom: 1px solid #ccc; background: #999; ')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
     }
 
     choiceParam {

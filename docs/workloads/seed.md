@@ -21,6 +21,10 @@ Updating Jenkins to incorporate changes to existing jobs and new job definitions
 - Top-level folder definitions: `workloads/<workload_name>/pipelines/groovy/folders.groovy`
 - Individual job definitions: `workloads/<workload_name>/pipelines/<folder_name>/<job_name>/groovy/job.groovy`
 
+## Prerequisites<a name="prerequisites"></a>
+
+Refer to [Pipeline Guide](guides/pipeline_guide.md#prerequisites) for common prerequisites.
+
 ## Parameters <a name="parameters"></a>
 
 ### `SEED_WORKLOAD`
@@ -108,4 +112,4 @@ To make changes to pipeline jobs (or folders):
 2.  Commit and push the change
 3.  Run this job & wait for completion
 
-For more detailed information on various types of edits, see [Pipeline Guide](pipeline_guide.md#edits).
+For more detailed information on various types of edits, see [Pipeline Guide](guides/pipeline_guide.md#edits).

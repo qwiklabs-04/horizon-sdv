@@ -95,24 +95,24 @@ Before either developer can utilise the Horizon SDV platform tools, several prer
 
 Summary of pre-requisite tasks:
 - Horizon SDV Platform Provisioned.
+  - Keycloak and Jenkins group/role access provisioned.
 - Docker Image Template created from Jenkins.
 - Cuttlefish Instance Templates created from Jenkins.
 - Gerrit projects (code repos and manifests) provisioned ahead of time.
 - Build caches warmed.
-- On site preparation.
-
-> [!NOTE]
-> Please note that for developer-focused streams, the platforms will already have been pre-provisioned ahead of the event. The information in Section 3 is provided for informational purposes only and does not require action by developers.
+- Final platform preparation.
 
 ### <span style="color:#335bff">3.1 Horizon SDV Platform Provisioning <a name="3-1-horizon-sdv-platform-provisioning"></a></span>
 
-For these development streams, the necessary infrastructure will have been pre-provisioned, enabling developers to immediately access the platforms and begin the tutorials.
-> [!IMPORTANT]
->  It is essential Accenture dev teams have access to the forked repo from which each lab was provisioned.
->
-> Members will need to be added so that they can create branches in order to support any on-site, day of the demo issues or demonstrate changes that people may request.
+For these development streams, the necessary infrastructure should have been pre-provisioned, enabling developers to immediately access the platforms and begin the tutorials.
 
-This is documented elsewhere, not applicable for this stream.
+**Prerequisite: Jenkins Access and Permissions**
+
+To run pipeline jobs, users must have access to Jenkins and be granted permissions to access jobs in the workloads.
+
+- Users given appropriate Keycloak Group access as per the instructions detailed in [Jenkins Access via Keycloak Groups](../../../deployment_guide.md#section-5d---jenkins-access-via-keycloak-groups), i.e. `docs/deployment_guide.md`.
+- Jenkins `Role Based Strategy` permissions granted as per [Pipeline Guide](../../guides/pipeline_guide.md#prerequisites).
+- Workloads are seeded/created as per [Seed Workloads](../../seed.md).
 
 ### <span style="color:#335bff">3.2 Docker Image Template <a name="3-2-docker-image-template"></a></span>
 <details>

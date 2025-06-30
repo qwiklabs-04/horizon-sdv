@@ -43,7 +43,7 @@ options to override the build and test commands.
 - [Welcome to Eclipse OpenBSW](https://eclipse-openbsw.github.io/openbsw/sphinx_docs/doc/index.html).
 - [Building and Running Unit Tests.](https://eclipse-openbsw.github.io/openbsw/sphinx_docs/doc/learning/unit_tests/index.html).
 - [POSIX Platform](https://eclipse-openbsw.github.io/openbsw/sphinx_docs/doc/learning/setup/setup_posix_ubuntu_build.html#setup-posix-ubuntu-build).
-- [NXP S32K148 Platform](href="https://eclipse-openbsw.github.io/openbsw/sphinx_docs/doc/learning/setup/setup_s32k148_ubuntu_build.html).
+- [NXP S32K148 Platform](https://eclipse-openbsw.github.io/openbsw/sphinx_docs/doc/learning/setup/setup_s32k148_ubuntu_build.html).
 - [OpenBSW GitHub repo](https://github.com/eclipse-openbsw/openbsw.git).
 
 ## Prerequisites<a name="prerequisites"></a>

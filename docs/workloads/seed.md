@@ -71,22 +71,38 @@ To avoid explicit script approval, environment variables used in Groovy files ar
 
 This replacement is performed in the _"Prepare Groovy files"_ stage, using a predefined replacement list. This approach bypasses the need for explicit script approval, which is typically required when using the `getProperty` Groovy method to resolve environment variables from within the job.groovy files.
 
-The replacement list is used to substitute environment variables with their actual values, ensuring that the Groovy files can be executed without requiring explicit script approval. e.g.
+A replacement list is used to substitute environment variables with their actual values, ensuring that the Groovy files can be executed without requiring explicit script approval. There is a common list of variables to replace that is used by all workloads, e.g.
 
 ```
-	def replacements = [
-	  ['${ANDROID_BUILD_BUCKET_ROOT_NAME}', "${ANDROID_BUILD_BUCKET_ROOT_NAME}"],
-	  ['${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
-	  ['${CLOUD_REGION}', "${CLOUD_REGION}"],
-	  ['${CLOUD_PROJECT}', "${CLOUD_PROJECT}"],
-	  ['${HORIZON_DOMAIN}', "${HORIZON_DOMAIN}"],
-	  ['${HORIZON_GITHUB_URL}', "${HORIZON_GITHUB_URL}"],
-	  ['${HORIZON_GITHUB_BRANCH}', "${HORIZON_GITHUB_BRANCH}"],
-	  ['${REPO_SYNC_JOBS}', "${REPO_SYNC_JOBS}"]
-	]
+def HEADER_STYLE = ' color: white; background: blue; padding: 8px; text-align: center; '
+def SEPARATOR_STYLE = ' border: 0; border-bottom: 1px solid #ccc; background: #999; '
+
+// Single quotes simply match string, double quotes expand the value of the variable.
+// This avoids DSL scripts (loosely based on Groovy) needing to approve getProperty method
+// which is a real security risk across Jenkins.
+// This array can be updated to include other mappings as required.
+def replacements = [
+ ['${CLOUD_REGION}', "${CLOUD_REGION}"],
+ ['${CLOUD_PROJECT}', "${CLOUD_PROJECT}"],
+ ['${HORIZON_DOMAIN}', "${HORIZON_DOMAIN}"],
+ ['${HORIZON_GITHUB_URL}', "${HORIZON_GITHUB_URL}"],
+ ['${HORIZON_GITHUB_BRANCH}', "${HORIZON_GITHUB_BRANCH}"],
+ ['${HEADER_STYLE}', "${HEADER_STYLE}"],
+ ['${SEPARATOR_STYLE}', "${SEPARATOR_STYLE}"]]
 ```
 
+Then the workload stages append their unique replacements, e.g.
+
+```
+                replacements += [
+                  ['${OPENBSW_BUILD_BUCKET_ROOT_NAME}', "${OPENBSW_BUILD_BUCKET_ROOT_NAME}"],
+                  ['${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
+                  ['${OPENBSW_IMAGE_TAG}', "${OPENBSW_IMAGE_TAG}"]
+                ]
+
+```
 > [!NOTE]
+> - Separating the lists reduces time for script replacement stage and also maintenance.
 > - The values used to make the replacements can be seen in the console output
 > - See the following example where the <i>CLOUD_REGION</i> system variable is replaced with the string 'europe-west':
 >   - `sed -i s/${CLOUD_REGION}/europe-west1/g`

@@ -17,7 +17,7 @@ The test will launch MTK Connect, allowing users to connect to the POSIX host an
 
 ### References <a name="references"></a>
 
-- [Application Console](href="https://eclipse-openbsw.github.io/openbsw/sphinx_docs/doc/learning/console/index.html)
+- [Application Console](https://eclipse-openbsw.github.io/openbsw/sphinx_docs/doc/learning/console/index.html)
 - [POSIX](https://eclipse-openbsw.github.io/openbsw/sphinx_docs/doc/platforms/posix/index.html#posix)
 
 ## Prerequisites<a name="prerequisites"></a>
@@ -33,7 +33,7 @@ One-time setup requirements.
 
 ### `OPENBSW_DOWNLOAD_URL`
 
-Storage URL pointing to the location of the POSIX target application image that was build using `BSW Builder`, e.g.`gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Builds/BSW_Builder/&lt;BUILD_NUMBER&gt;/posix`
+Storage URL pointing to the location of the POSIX target application image that was build using `BSW Builder`, e.g.`gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Builds/BSW_Builder/<BUILD_NUMBER>/posix`
 
 ### `LAUNCH_APPLICATION_NAME`
 

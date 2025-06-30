@@ -59,10 +59,10 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
     }
     stringParam {
       name('LINUX_DISTRIBUTION')
-      defaultValue('debian:12')
+      defaultValue('ubuntu:22.04')
       description('''<p>Define the Linux distribution to use, e.g.</p></br>
-        <ul><li>debian:12</li>
-            <li>ubuntu:22.04</li></ul>''')
+        <li>ubuntu:22.04</li></ul>''')
+        <li>ubuntu:20.04</li></ul>''')
       trim(true)
     }
     stringParam {

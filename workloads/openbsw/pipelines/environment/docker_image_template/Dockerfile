@@ -12,17 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Overrides
+# Allow user to choose distribution, e.g. ubuntu:22.04
 ARG LINUX_DISTRIBUTION
 FROM --platform=linux/amd64 ${LINUX_DISTRIBUTION}
 
+# Overrides
 ARG ARM_TOOLCHAIN_URL
 ARG CLANG_TOOLS_URL
 ARG CMAKE_URL
 ARG TREEFMT_URL
 ARG NODEJS_VERSION
 
-# Allow user to choose distribution, e.g. Ubuntu vs debian.
 
 # Install packages required for building OpenBSW targets.
 RUN apt-get update -y && \

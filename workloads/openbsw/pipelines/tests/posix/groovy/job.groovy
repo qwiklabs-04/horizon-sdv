@@ -14,7 +14,7 @@
 pipelineJob('OpenBSW/Tests/POSIX') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">OpenBSW POSIX Test Job</h3>
-    <p>This job allows the user to access the OpenBSW platform to use the POSIX virtualisation test app.</p>
+    <p>This job allows the user to access the OpenBSW platform to test a prior build of the POSIX application.</p>
     <h4 style="margin-bottom: 10px;">Job Overview</h4>
     <p>Devices are initialized and remain active for a specified period, allowing users to interact with them via <a href="http://${HORIZON_DOMAIN}/mtk-connect/portal/testbenches" target="_blank">MTK Connect</a>.<br/>
     After the <code>POSIX_KEEP_ALIVE_TIME</code> period expires, the devices, testbenches, and test instance are terminated in a controlled manner.</p>

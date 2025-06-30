@@ -16,6 +16,7 @@ The _Seed Workloads_ job uses the groovy definitions to initialise the jobs requ
 
 ## Prerequisites<a name="prerequisites"></a>
 
+### Role Based Strategy
 To run pipeline jobs, users must have access to Jenkins and be granted permissions to access jobs in the workloads.
 
 - Users given appropriate Keycloak Group access as per the instructions detailed in [Jenkins Access via Keycloak Groups](../../deployment_guide.md#section-5d---jenkins-access-via-keycloak-groups), i.e. `docs/deployment_guide.md`.
@@ -182,3 +183,8 @@ If a job is renamed in its groovy definition (`pipelineJob('<folders>/<jobname>'
 ## Seed Job <a name="seed"></a>
 
 For additional information on the seed job refer to [Seed Workloads](../seed.md).
+
+## Workload Prerequisites
+
+Refer to the respective workload jobs README files or the `developer_guide.md` for examples of preparatory work that is
+required in order to use the build and test jobs, i.e. environment / adminstrative setup.

@@ -101,7 +101,7 @@ pipeline {
           steps {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
               script {
-                currentBuild.description = "$BUILD_USER"
+                currentBuild.description = "$BUILD_USER" + "<br>" + "${SEED_WORKLOAD}"
 
                 replacements += [
                   ['${ANDROID_BUILD_BUCKET_ROOT_NAME}', "${ANDROID_BUILD_BUCKET_ROOT_NAME}"],
@@ -154,7 +154,7 @@ pipeline {
           steps {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
               script {
-                currentBuild.description = "$BUILD_USER"
+                currentBuild.description = "$BUILD_USER" + "<br>" + "${SEED_WORKLOAD}"
 
                 replacements += [
                   ['${OPENBSW_BUILD_BUCKET_ROOT_NAME}', "${OPENBSW_BUILD_BUCKET_ROOT_NAME}"],

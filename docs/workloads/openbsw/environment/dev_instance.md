@@ -1,4 +1,4 @@
-# Delete Cuttlefish VM Instance
+# Development Build Instance
 
 ## Table of contents
 - [Introduction](#introduction)
@@ -8,24 +8,42 @@
 
 ## Introduction <a name="introduction"></a>
 
-During developing the Android workload and test workflow/pipelines, sometimes it may be necessary to delete VM instances created for Cuttlefish related test jobs that may have been left in place.
+During developing the OpenBSW workload and workflow/pipelines, sometimes it may be necessary to gain access to a VM build instance in order to develop build jobs.
 
-This is not intended for everyday usage, simply a tool when developing tests to ensure that resources can be removed if errors occur during development.
+Users may gain access via MTK Connect HOST interface by selecting `MTK_CONNECT_ENABLE`, alternatively via `bastion` host and accessing the pod using `kubectl`, e.g.
+
+```
+kubectl exec -it -n jenkins <pod name> -- bash
+```
+
+- These instances only remain active for a limited time, defined by `INSTANCE_MAX_UPTIME`.
+- User can find `<pod name>` from either the Jenkins UI console log or from the Jenkins Build Executor nodes.
+- Users are responsible for managing their work and saving to their own storage, that's beyond the purpose of this job.
 
 ## Prerequisites<a name="prerequisites"></a>
 
 One-time setup requirements.
 
 - Before running this pipeline job, ensure that the following template has been created by running the corresponding job:
-  - Docker image template: ``Android Workflows/Environment/Docker Image Template`
+  - Docker image template: `OpenBSW/Environment/Docker Image Template`
 
 ## Environment Variables/Parameters <a name="environment-variables"></a>
 
 **Jenkins Parameters:** Defined in the groovy job definition `groovy/job.groovy`.
 
-### `VM_INSTANCE_NAME`
+### `IMAGE_TAG`
 
-The name of the VM instance to terminate and delete, but it is restricted to those prefixed with `cuttlefish-vm` to avoid accidental termination and removal of other unrelated VMs.
+Specifies the name of the Docker image to be used when running this job.
+
+The default value is defined by the `Seed Workloads` pipeline job. Users may override to provide a unique tag that describes the Linux distribution and tool chain versions.
+
+### `INSTANCE_MAX_UPTIME`
+
+This is the maximum time that the instance may be running before it is automatically terminated and deleted. This is important to avoid leaving expensive instances in running state.
+
+### `MTK_CONNECT_ENABLE`
+
+Enable if user wishes to connect to the HOST via MTK Connect.
 
 ## SYSTEM VARIABLES <a name="system-variables"></a>
 
@@ -35,7 +53,7 @@ These are defined in Jenkins CasC `jenkins.yaml` and can be viewed in Jenkins UI
 
 These are as follows:
 
--   `ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME`
+-   `OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME`
     - Defines the registry path where the Docker image used by builds, tests and environments is stored.
 
 -   `CLOUD_PROJECT`
@@ -44,8 +62,8 @@ These are as follows:
 -   `CLOUD_REGION`
     - The GCP project region. Important for bucket, registry paths used in pipelines.
 
--   `CLOUD_ZONE`
-    - The GCP project zone. Important for bucket, registry paths used in pipelines.
+-   `HORIZON_DOMAIN`
+    - The URL domain which is required by pipeline jobs to derive URL for tools and GCP.
 
 -   `HORIZON_GITHUB_URL`
     - The URL to the Horizon SDV GitHub repository.

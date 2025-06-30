@@ -81,8 +81,9 @@ pipeline {
     )
 
     string(name: 'OPENBSW_IMAGE_TAG',
-           defaultValue: 'latest-debian.12',
-           description: '''<p>Name of the build image tag used for OpenBSW pipelines.</p>''',
+           defaultValue: 'latest-ubuntu.22.04',
+           description: '''<p>Name of the build image tag used for OpenBSW pipelines.</p>
+             <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''',
            trim: true)
   }
 

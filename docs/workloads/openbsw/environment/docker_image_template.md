@@ -8,12 +8,18 @@
 
 ## Introduction <a name="introduction"></a>
 
-This pipeline builds the container image used on Kubernetes for building Android targets and miscellaneous environment pipelines.
+This pipeline builds the container image used on Kubernetes for building and testing OpenBSW targets, together with miscellaneous environment pipelines.
 
 This need only be run once, or when Dockerfile is updated. There is an option not to push the resulting image to the registry, so that devs can test their changes before committing the image.
 
+### Dockerfile Overview
+
+The Dockerfile used in this project is based on the [Eclipse Foundation OpenBSW Dockerfile](https://github.com/eclipse-openbsw/openbsw/blob/main/docker/Dockerfile.dev), but has been customized for Horizon-SDV and Google Cloud Platform. Additionally, the job provide a flexible mechanism for users to update the tools and Linux distribution used to create the Docker image, which is utilized for builds and tests jobs.
+
 ### References
 - [Kaniko](https://github.com/GoogleContainerTools/kaniko)
+- [Welcome to Eclipse OpenBSW](https://eclipse-openbsw.github.io/openbsw/sphinx_docs/doc/index.html) GitHub repo.
+- [Eclipse Foundation OpenBSW](https://github.com/eclipse-openbsw/openbsw) documentation.
 
 ## Prerequisites<a name="prerequisites"></a>
 
@@ -25,12 +31,37 @@ This depends only on [`kaniko`](https://github.com/GoogleContainerTools/kaniko) 
 
 ### `IMAGE_TAG`
 
-This is the tag that will be applied when the container image is pushed to the registry. For the current release we
-simply use `latest` because all pipelines that depend on this container image are using `latest`.
+This is the tag that will be applied when the container image is pushed to the registry. The default value is defined by
+the `Seed Workloads` pipeline job. Users may override to provide a unique tag that describes the Linux distribution and
+tool chain versions.
 
 ### `NO_PUSH`
 
 Build the container image but don't push to the registry.
+
+### `ARM_TOOLCHAIN_URL`
+
+User may override the default ARM GNU toolchain that will be installed in the Docker image and used for builds. Available toolchains are provided under [Arm GNU Toolchain Downloads](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads).
+
+### `CLANG_TOOLS_URL`
+
+URL of the CLANG tools to install in the Docker image.
+
+### `CMAKE_URL`
+
+URL of the CMAKE shell script to install in the Docker image.
+
+### `LINUX_DISTRIBUTION`
+
+Define the Linux Distribution to create the Docker image from. Values must be supported by the Dockerfile `FROM` instruction.
+
+### `NODEJS_VERSION`
+
+The NodeJS version to install in the Docker image. This is required in order to use MTK Connect with the container.
+
+### `TREEFMT_URL`
+
+URL of the treefmt tools to install in the Docker image.
 
 ## SYSTEM VARIABLES <a name="system-variables"></a>
 
@@ -40,7 +71,7 @@ These are defined in Jenkins CasC `jenkins.yaml` and can be viewed in Jenkins UI
 
 These are as follows:
 
--   `ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME`
+-   `OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME`
     - Defines the registry path where the Docker image used by builds, tests and environments is stored.
 
 -   `CLOUD_PROJECT`

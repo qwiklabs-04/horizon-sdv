@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-pipelineJob('OpenBSW/Builds/BSW_Builder') {
+pipelineJob('OpenBSW/Builds/BSW Builder') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">OpenBSW Build Job</h3>
     <p>This job is used to build the <a href="https://github.com/eclipse-openbsw/openbsw/tree/main" target="_blank">Eclipse Foundation OpenBSW.</a>.</p>

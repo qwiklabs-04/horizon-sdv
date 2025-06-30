@@ -67,12 +67,11 @@ To run pipeline jobs, users must have access to Jenkins and be granted permissio
 ### Jenkins Pipeline Job Organization
 Each Jenkins Pipeline Job is defined in a separate Groovy file, stored within its own dedicated job directory, e.g.:
 - `workloads/android/pipelines/builds/aaos_builder/groovy/job.groovy`
-- `workloads/android/pipelines/environment/cf_instance_template/groovy/job.groovy`
-- `workloads/android/pipelines/tests/cvd_launcher/groovy/job.groovy`
-- `workloads/android/pipelines/tests/cts_execution/groovy/job.groovy`
+- `workloads/openbsw/pipelines/builds/bsw_builder/groovy/job.groovy`
 
 There are also Groovy files that define the folder structure within Jenkins, e.g
-- `workloads/android/pipelines/groovy/folders.groovy`
+- `Android Workflows` → `Builds` → `AAOS Builder`
+- `OpenBSW Workflows` → `Builds` → `BSW Builder`
 
 ### Initial Jenkins Configuration
 
@@ -101,7 +100,7 @@ Each folder is defined with the following properties:
 - **displayName**: The display name of the folder.
 - **description**: A brief HTML description of the folder.
 
-Here is an example of how folders are defined:
+Here is an example of how folders are defined for Android:
 
 ```
 	folder('Android') {
@@ -113,8 +112,11 @@ Here is an example of how folders are defined:
 	  description('<p>This sub-folder contains jobs to build Android targets.</p>')
 	}
 ```
+
+The format is much the same across all workloads.
+
 The resulting folder and subfolder structure in Jenkins will be:
-<br><img src="images/jenkins_folder.png" width="300" />
+`Android Workflows` → `Builds`
 
 
 ### Jobs
@@ -159,8 +161,8 @@ To make any changes to pipeline jobs (or folders):
 > The folder location and name of a job are specified together in the groovy definition.
 > - `pipelineJob('<folders>/<jobname>')`
 > - e.g.:
->   - `pipelineJob('Android/Builds/CTS Builder')`
->   - `pipelineJob('Android/Tests/CVD Launcher')`
+>   - `pipelineJob('Android/Builds/AAOS Builder')`
+>   - `pipelineJob('OpenBSW/Builds/BSW Builder')`
 
 ### Delete a Job:
 

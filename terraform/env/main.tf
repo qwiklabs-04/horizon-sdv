@@ -110,7 +110,8 @@ module "base" {
         "roles/container.admin",
         "roles/iap.tunnelResourceAccessor",
         "roles/iam.serviceAccountUser",
-        "roles/compute.instanceAdmin.v1"
+        "roles/compute.instanceAdmin.v1",
+        "roles/workstations.admin"
       ])
     },
     sa2 = {

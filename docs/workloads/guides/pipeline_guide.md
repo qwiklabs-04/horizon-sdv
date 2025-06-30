@@ -2,6 +2,7 @@
 
 ## Table of contents
 - [Overview](#overview)
+- [Prerequisites](#prerequisites)
 - [Groovy Definitions](#definitions)
 - [Creating / Editing Job](#editing)
 - [Seed Job](#seed)
@@ -13,6 +14,55 @@ Immediately after initial launch, Jenkins contains a single job - _Seed Workload
 The _Seed Workloads_ job uses the groovy definitions to initialise the jobs required for each workload.
 <br>It also allows users to update Jenkins to pull in any changes made to the groovy definitions - these can be new job definitions and/or changes to existing jobs.
 
+## Prerequisites<a name="prerequisites"></a>
+
+To run pipeline jobs, users must have access to Jenkins and be granted permissions to access jobs in the workloads.
+
+- Users given appropriate Keycloak Group access as per the instructions detailed in [Jenkins Access via Keycloak Groups](../../deployment_guide.md#section-5d---jenkins-access-via-keycloak-groups), i.e. `docs/deployment_guide.md`.
+- Jenkins must be updated to provide the users permissions to seed jobs:
+  - In `Jenkins` → `Manage Jenkins` → `Manage and Assign Roles` → `Assign Roles`.
+    - Those roles are:
+      - `Global:`
+        - `horizon-jenkins-administrators`
+        - `horizon-jenkins-workloads-developers`
+        - `horizon-jenkins-workloads-users`
+      - `Items:`
+        - `workloads-developers`
+        - `workloads-users`
+  - Add the user to appropriate Global and Item Roles:
+    - In `Global Roles` select `Add User`, enter the email address of the user and select the appropriate Keycloak Group.
+    - In `Item Roles` select `Add User`, enter the email address of the user and select the appropriate Jenkins Item Role.
+    - Select `Save`
+
+> [!IMPORTANT]
+> **Persistence**
+>
+> These manually updated permissions do not persist across a Jenkins restart. To ensure persistence, we recommend adding users to the `gitops/env/stage2/templates/jenkins.yaml` file, e.g..
+> - Update `authorizationStrategy` → `roleBased` → `roles` → `global`:
+>   - Add the user to the respective group entry, e.g.
+> ```
+>     - user: "john.example.doe@accenture.com"
+> ```
+> - Update `authorizationStrategy` → `roleBased` → `roles` → `items`:
+>   - Add the user to the respective group entry, e.g.
+> ```
+>     - user: "jane.example.doe@accenture.com"
+> ```
+
+> [!NOTE]
+> **Disabling the plugin**
+>
+> If user wishes to disable the plugin, then remove the plugin and configuration from `gitops/env/stage2/templates/jenkins.yaml`:
+> - Remove the plugin from the `additionalPlugins` section:
+>   - `role-strategy:743.v142ea_b_d5f1d3`
+>
+> - Replace all within `authorizationStrategy` with the following default values:
+> ```
+>            authorizationStrategy: |-
+>              loggedInUsersCanDoAnything:
+>                allowAnonymousRead: false
+> ```
+> Sync Jenkins using ArgoCD restart Jenkins.
 
 ### Jenkins Pipeline Job Organization
 Each Jenkins Pipeline Job is defined in a separate Groovy file, stored within its own dedicated job directory, e.g.:
@@ -87,7 +137,7 @@ For more detailed information on each of these components, refer to existing Gro
 > [!IMPORTANT]
 > Environment variables can be referenced in Groovy files, but they are replaced with their actual values before the Groovy files are executed by the seed job. This approach avoids the need for explicit script approval, which is required when using the `getProperty` Groovy method to resolve environment variables.
 > The replacement of environment variables with their actual values is performed in the _"Prepare Groovy files"_ stage of the seed job. Therefore, it is crucial to update the replacements list in the Jenkinsfile whenever new environment variables are added to Groovy scripts.
-> To ensure that environment variables are properly replaced, please refer to the [Seed Workloads](seed.md#groovymethods) documentation for more information on how to update the replacements list in the Jenkinsfile.
+> To ensure that environment variables are properly replaced, please refer to the [Seed Workloads](../seed.md#groovymethods) documentation for more information on how to update the replacements list in the Jenkinsfile.
 > Environment variables are defined in the `gitops/env/stage2/templates/jenkins.yaml` file (CasC).
 
 
@@ -129,4 +179,4 @@ If a job is renamed in its groovy definition (`pipelineJob('<folders>/<jobname>'
 
 ## Seed Job <a name="seed"></a>
 
-For additional information on the seed job refer to [Seed Workloads](seed.md).
+For additional information on the seed job refer to [Seed Workloads](../seed.md).

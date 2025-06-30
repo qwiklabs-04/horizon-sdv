@@ -238,7 +238,7 @@ spec:
                             entries:
                               - group: "horizon-jenkins-administrators"
                               # Example user
-                              # - user: "dave.m.smith@accenture.com"
+                              # - user: "john.example.doe@accenture.com"
                           - name: "horizon-jenkins-workloads-developers"
                             description: "Jenkins workloads developers role for workload usage and configuration."
                             permissions:
@@ -248,7 +248,7 @@ spec:
                             entries:
                               - group: "horizon-jenkins-workloads-developers"
                               # Example user
-                              # - user: "dave.m.smith@accenture.com"
+                              # - user: "jane.example.doe@accenture.com"
                           - name: "horizon-jenkins-workloads-users"
                             description: "Jenkins workloads users role with restricted access to workloads."
                             permissions:
@@ -256,7 +256,7 @@ spec:
                             entries:
                               - group: "horizon-jenkins-workloads-users"
                               # Example user
-                              # - user: "dave.m.smith@accenture.com"
+                              # - user: "john.example.doe@accenture.com"
                         items:
                           - name: "workloads-developers" 
                             description: "Workloads developers item role with unrestricted access." 
@@ -265,13 +265,15 @@ spec:
                             entries:
                               - group: "horizon-jenkins-workloads-developers"
                               # Example user
-                              # - user: "dave.m.smith@accenture.com"
+                              # - user: "jane.example.doe@accenture.com"
                           - name: "workloads-users" 
                             description: "Workloads user item role with restricted access." 
                             pattern: ".*"
                             templateName: "horizon-jenkins-workload-users"
                             entries:
                               - group: "horizon-jenkins-workloads-users"
+                              # Example user
+                              # - user: "john.example.doe@accenture.com"
                   clouds:
                     - computeEngine:
                         cloudName: cuttlefish-vm-main

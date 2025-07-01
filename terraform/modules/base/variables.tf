@@ -180,7 +180,7 @@ variable "sdv_abfs_build_node_pool_node_count" {
 variable "sdv_abfs_build_node_pool_machine_type" {
   description = "Type fo the machine for the ABFS build node pool"
   type        = string
-  default     = "n2-standard-2"
+  default     = "n2-standard-64"
 }
 
 variable "sdv_abfs_build_node_pool_min_node_count" {

@@ -19,14 +19,14 @@
 
 data "google_project" "project" {}
 
-resource "terraform_data" "debug_google_project" {
-  input = data.google_project.project
-}
+#resource "terraform_data" "debug_google_project" {
+#  input = data.google_project.project
+#}
 
 resource "null_resource" "execute_bash_commands" {
-  #triggers = {
-  #  always_run = "${timestamp()}"
-  #}
+  triggers = {
+    always_run = "${timestamp()}"
+  }
 
   provisioner "local-exec" {
     command = <<EOT

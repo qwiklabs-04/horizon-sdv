@@ -35,9 +35,9 @@ resource "google_storage_bucket_object" "copy_file_to_storage" {
 }
 
 resource "null_resource" "copy_from_storage_to_bastion_host" {
-  #  triggers = {
-  #  always_run = "${timestamp()}"
-  #}
+  triggers = {
+    always_run = "${timestamp()}"
+  }
 
   provisioner "local-exec" {
     command = <<EOT

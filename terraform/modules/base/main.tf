@@ -264,20 +264,6 @@ module "sdv_iam_service_account_user" {
 
 }
 
-#module "sdv_abfs" {
-#  source = "../sdv-abfs"
-
-#  project_id   = data.google_project.project.project_id
-#  sdv_network  = var.sdv_network
-#  subnetwork   = var.sdv_subnetwork
-#  abfs_license = base64decode(var.sdv_gh_abfs_license_b64)
-#  zone         = var.sdv_zone
-
-#  depends_on = [
-#    module.sdv_network
-#  ]
-#}
-
 # defininion for custom VPN Firewall to to and from the instances.
 # All traffic to instances, even from other instances, is blocked by the firewall unless firewall rules are created to allow it.
 # allow tcp port 22 for computer_sa

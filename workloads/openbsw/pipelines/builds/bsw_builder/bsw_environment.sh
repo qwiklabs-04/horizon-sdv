@@ -48,14 +48,16 @@ else
     # shellcheck disable=SC2034
     ORIG_WORKSPACE="${WORKSPACE}"
 fi
-WORKSPACE=${WORKSPACE:-$(pwd)}
+# Do not build in Jenkins workspace because these can contain spaces and will
+# break the build tools.
+WORKSPACE="${HOME}"/bsw-builds
 
 # Build info file name
 BUILD_INFO_FILE="${WORKSPACE}/build_info.txt"
 
 # Test list and result artifacts.
 UNIT_TESTS_RESULTS_FILE="${WORKSPACE}/unit_test_results.txt"
-UNIT_TESTS_LIST_FILE="${WORKSPACE}/unit_test_list.txt"
+UNIT_TESTS_LIST_FILE="${ORIG_WORKSPACE}/unit_test_list.txt"
 
 # Post git clone commands
 # shellcheck disable=SC2034
@@ -95,9 +97,14 @@ declare -a OPENBSW_ARTIFACT_LIST=(
     "${BUILD_INFO_FILE}"
 )
 
+# Ensure artifacts are accessible for storage and Jenkins workspace
+# has access for those stored with jobs.
 if ${RUN_UNIT_TESTS}; then
     OPENBSW_ARTIFACT_LIST+=(
         "${UNIT_TESTS_RESULTS_FILE}"
+    )
+    POST_BUILD_COMMANDS+=(
+        "cp -f ${UNIT_TESTS_RESULTS_FILE} \"${ORIG_WORKSPACE}\""
     )
 fi
 
@@ -129,7 +136,9 @@ if ${CODE_COVERAGE}; then
         "lcov --remove ${WORKSPACE}/coverage_unfiltered.info '*libs/3rdparty/googletest/*' '*/mock/*' '*/gmock/*' --output-file ${WORKSPACE}/coverage.info"
         "genhtml ${WORKSPACE}/coverage.info --output-directory cmake-build-unit-tests/coverage"
         "cd cmake-build-unit-tests && cp -rf coverage ${WORKSPACE} && cd -"
-        "cd ${WORKSPACE} && tar -zcf ${WORKSPACE}/coverage.html.tgz coverage && cd -"
+        "cd ${WORKSPACE} && tar -zcf coverage.html.tgz coverage && cd -"
+        "cp -rf ${WORKSPACE}/coverage \"${ORIG_WORKSPACE}\""
+        "cp -f ${WORKSPACE}/coverage.html.tgz \"${ORIG_WORKSPACE}\""
     )
     OPENBSW_ARTIFACT_LIST+=(
         "${WORKSPACE}/coverage_unfiltered.info"
@@ -184,6 +193,7 @@ esac
 
 VARIABLES+="
         WORKSPACE=${WORKSPACE}
+        ORIG_WORKSPACE=\"${ORIG_WORKSPACE}\"
 "
 
 # Add to build info for storage.

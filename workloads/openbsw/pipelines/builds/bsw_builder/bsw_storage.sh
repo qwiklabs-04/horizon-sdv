@@ -76,6 +76,8 @@ function gcs_bucket() {
                 # shellcheck disable=SC2086
                 filename=$(echo ${file} | awk -F / '{print $NF}')
                 echo "    gcloud storage ${copycmd} ${destination}/${filename} ." | tee -a "${artifacts_summary}"
+            else
+                echo "WARNING: File $file ignored!"
             fi
         done
     done

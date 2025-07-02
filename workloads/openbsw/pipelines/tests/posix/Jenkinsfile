@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // Description:
-// Connect to OpenBSW build host to run the POSIX executable.
+// Connect to an OpenBSW host to execute and test the POSIX target application.
 
 pipeline {
 

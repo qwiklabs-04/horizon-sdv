@@ -11,6 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+// Description:
+// Groovy file for defining a Jenkins Pipeline Job for creating a
+// temporary build instance that can be used to aid development and testing.
 pipelineJob('OpenBSW/Environment/Development Instance') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">Development Build Instance Creation Job</h3>

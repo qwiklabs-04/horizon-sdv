@@ -15,6 +15,35 @@
 # limitations under the License.
 
 # Description:
+#   This script defines common environment variables, functions, and build
+#   configurations for the OpenBSW builder pipeline. It is intended to be
+#   sourced by other scripts in the build process to ensure consistent
+#   environment setup, artifact management, and build command definitions.
+#
+# Features:
+#   - Sets default values for key environment variables such as git repository
+#     URL, branch, build directories, and artifact storage solutions.
+#   - Defines command lines for cloning the repository and building various
+#     targets (unit tests, POSIX, NXP S32K148).
+#   - Manages artifact lists and post-build commands for copying and storing
+#     build outputs and test results.
+#   - Supports code coverage collection and reporting if enabled.
+#   - Handles workspace setup to avoid issues with spaces in Jenkins
+#     workspaces.
+#   - Outputs environment variable values for debugging and traceability.
+#   - Provides a utility function to create and switch to the build workspace.
+#
+# Usage:
+#   Source this script in your build, test, or storage scripts to inherit the
+#   environment and functions. The script automatically sets up the workspace
+#   and outputs build information to a file for later reference.
+#
+# Note:
+#   - Some variables and arrays are conditionally populated based on build
+#     flags.
+#   - The script is designed to be compatible with Jenkins and local
+#     environments.
+
 # Common environment functions and variables for OpenBSW builder.
 JOB_NAME=${JOB_NAME:-BSW_BUILD}
 

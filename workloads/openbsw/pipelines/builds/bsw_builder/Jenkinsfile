@@ -14,8 +14,41 @@
 // limitations under the License.
 
 // Description:
-// OpenBSW builder.
-
+// Jenkins Pipeline for OpenBSW Build and Test Automation
+//
+// This pipeline orchestrates the build, test, and artifact storage processes
+// for the OpenBSW project.
+// It is run on Kubernetes agents using a dynamically generated pod template,
+// allowing for flexible configuration of build environments via environment
+// variables.
+//
+// Pipeline Overview:
+// - Utilizes a Kubernetes pod with a custom builder container for all build
+//   and test steps.
+// - Supports conditional execution of stages based on environment variables
+//   and build results.
+// - Handles initialization, unit test listing, building, running, code
+//   coverage, and target-specific builds.
+// - Archives relevant artifacts and publishes code coverage reports.
+// - Provides a mechanism for artifact storage and optional instance retention
+//   for debugging or inspection.
+//
+// Stages:
+// 1. Start VM Instance: Initializes the build environment and sets build description.
+// 2. Initialise: Runs project-specific initialization scripts.
+// 3. List Unit Tests: Optionally lists available unit tests.
+// 4. Build Unit Tests: Optionally builds unit tests.
+// 5. Run Unit Tests: Optionally runs unit tests and archives results.
+// 6. Code Coverage: Optionally generates and publishes code coverage reports.
+// 7. Build POSIX Target: Optionally builds the POSIX target.
+// 8. Build NXP S32K148 Target: Optionally builds the NXP S32K148 target.
+// 9. Storage: Optionally stores build artifacts.
+// 10. Retain instance: Optionally retains the build instance for a specified time.
+//
+// Note:
+// - Parameters for the pipeline are defined externally in 'groovy/job.groovy'.
+// - The pipeline is designed for extensibility and can be adapted for additional
+//   build targets or test types.
 pipeline {
 
   // Parameters defined in groovy/job.groovy

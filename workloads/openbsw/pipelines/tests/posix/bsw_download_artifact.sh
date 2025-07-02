@@ -15,7 +15,7 @@
 # limitations under the License.
 
 # Description
-# Download the OpenBSW POSIX binary ready for test.
+# Download the OpenBSW POSIX application ready for test.
 
 # Include common functions and variables.
 # shellcheck disable=SC1091

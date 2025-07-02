@@ -11,6 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+// Description:
+// Groovy file for defining a Jenkins Pipeline Job for building the Eclipse
+// Foundation OpenBSW project.
 pipelineJob('OpenBSW/Builds/BSW Builder') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">OpenBSW Build Job</h3>

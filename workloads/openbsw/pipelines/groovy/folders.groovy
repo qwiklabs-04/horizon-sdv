@@ -11,6 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+// Description:
+// Groovy file for creating folders in Jenkins for organizing OpenBSW
+// pipelines and jobs.
 folder('OpenBSW') {
   displayName('OpenBSW Workflows')
   description('<p>This folder contains pipelines and jobs related to environment administration, building, testing, and deploying the Eclipse Foundation OpenBSW applications.<br/>It includes workflows for administration, building and test tasks.</p>')

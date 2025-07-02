@@ -27,7 +27,8 @@
 #  - MTK_CONNECT_TESTBENCH: the name of the testbench to create in mtk-connect.
 #  - MTK_CONNECT_TEST_ARTIFACT: what is being tested.
 #  - MTK_CONNECT_TESTBENCH_USER: users email address limiting access to test
-#      benches.
+#  - MTK_CONNECT_CONTAINER_HOST_ONLY: if true, then only container will be used
+#    and access only to the host machine will be allowed.
 #
 # Example Usage:
 # sudo \

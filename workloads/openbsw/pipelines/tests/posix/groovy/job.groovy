@@ -11,6 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+// Description:
+// Groovy file for defining a Jenkins Pipeline Job for testing the OpenBSW
+// POSIX application.
 pipelineJob('OpenBSW/Tests/POSIX') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">OpenBSW POSIX Test Job</h3>

@@ -12,6 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Description:
+# Dockerfile for building a container image that can be used to build
+# the Eclipse Foundation OpenBSW project. This image includes all the
+# necessary tools and dependencies required for building OpenBSW targets,
+# such as the ARM toolchain, CMake, Clang tools, and other utilities.
+
 # Allow user to choose distribution, e.g. ubuntu:22.04
 ARG LINUX_DISTRIBUTION
 FROM --platform=linux/amd64 ${LINUX_DISTRIBUTION}

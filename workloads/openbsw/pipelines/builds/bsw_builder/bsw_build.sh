@@ -14,6 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Description:
+# This script automates the build process for the OpenBSW project, supporting
+# multiple targets and unit testing workflows. It sources the environment
+# configuration, defines functions for building and testing, and executes
+# steps based on the parameters/environment variables.
+#
+# Features:
+# - Builds POSIX and NXP S32K148 targets.
+# - Builds, lists, and runs unit tests.
+# - Supports post-build command execution.
+#
+# Usage:
+#   This script is intended to be invoked as part of a CI/CD pipeline or
+#   manually to perform builds and tests for OpenBSW.
+#
 # Include common functions and variables.
 # shellcheck disable=SC1091
 source "$(dirname "${BASH_SOURCE[0]}")"/bsw_environment.sh "$0"

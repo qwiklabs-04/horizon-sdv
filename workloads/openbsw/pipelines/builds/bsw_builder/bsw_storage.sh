@@ -15,7 +15,7 @@
 # limitations under the License.
 
 # Description:
-# Store OpenBSW targets to artifact area.
+# Store OpenBSW targets to cloud artifact storage.
 #
 # Optional variables:
 #  - OPENBSW_ARTIFACT_STORAGE_SOLUTION: the persistent storage location for

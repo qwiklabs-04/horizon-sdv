@@ -15,8 +15,7 @@
 # limitations under the License.
 
 # Description:
-# Common environment functions and variables for POSIX virtualisation
-# tests.
+# Common environment functions and variables for POSIX target tests.
 
 POSIX_KEEP_ALIVE_TIME=$(echo "${POSIX_KEEP_ALIVE_TIME}" | xargs)
 POSIX_KEEP_ALIVE_TIME=${POSIX_KEEP_ALIVE_TIME:-20}

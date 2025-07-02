@@ -11,12 +11,18 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+// Description:
+// Groovy file for defining a Jenkins Pipeline Job for creating a
+// the Docker image template that is used by other pipeline jobs
+// in the OpenBSW project.
 pipelineJob('OpenBSW/Environment/Docker Image Template') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">Container Image Builder</h3>
     <p>This job builds the container image that serves as a dependency for other pipeline jobs.</p>
     <h4 style="margin-bottom: 10px;">Image Configuration</h4>
-    <p>The Dockerfile specifies the installed packages and tools required by these jobs.</p>
+    <p>The Dockerfile specifies the installed packages and tools required by these jobs.<br/>
+    Parameters are provided to support customization of OpenBSW build environment/tools.</p>
     <h4 style="margin-bottom: 10px;">Pushing Changes to the Registry</h4>
     <p>To push changes to the registry, set the parameter <code>NO_PUSH=false</code>.</p>
     <p>The image will be pushed to ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}</p>
@@ -48,7 +54,7 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
     stringParam {
       name('CLANG_TOOLS_URL')
       defaultValue('https://github.com/muttleyxd/clang-tools-static-binaries/releases/download/master-32d3ac78/clang-format-17_linux-amd64')
-      description('''<p>Clang tools URL</p>''')
+      description('''<p>Clang tools URL.</p>''')
       trim(true)
     }
     stringParam {

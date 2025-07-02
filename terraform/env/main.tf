@@ -82,6 +82,7 @@ module "base" {
   sdv_ssl_certificate_name   = "horizon-sdv"
   sdv_ssl_certificate_domain = "${var.sdv_gh_env_name}.${var.sdv_gh_domain_name}"
 
+  sdv_gh_abfs_license_b64 = var.sdv_gh_abfs_license_b64
   #
   # To create a new SA with access from GKE to GC, add a new saN block.
   #
@@ -313,6 +314,19 @@ module "base" {
     s12 = {
       secret_id        = "jenkinsCuttlefishVmSshPrivateKey"
       value            = var.sdv_gh_cuttlefish_vm_ssh_private_key
+      use_github_value = true
+      gke_access = [
+        {
+          ns = "jenkins"
+          sa = "jenkins-sa"
+        }
+      ]
+    }
+    # GCP secret name:  gh_abfs_license_b64
+    # WI to GKE at ns/jenkins/sa/jenkins-sa.
+    s13 = {
+      secret_id        = "jenkinsABFSLicenseB64"
+      value            = var.sdv_gh_abfs_license_b64
       use_github_value = true
       gke_access = [
         {

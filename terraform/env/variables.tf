@@ -71,6 +71,11 @@ variable "sdv_gh_cuttlefish_vm_ssh_private_key" {
   type        = string
 }
 
+variable "sdv_gh_abfs_license_b64" {
+  description = "The secret Github ABFS_LICENSE_B64 value"
+  type        = string
+}
+
 variable "sdv_gh_access_token" {
   description = "Github access token"
   type        = string

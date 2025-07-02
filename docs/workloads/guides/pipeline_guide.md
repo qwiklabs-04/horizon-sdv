@@ -16,7 +16,7 @@ The _Seed Workloads_ job uses the groovy definitions to initialise the jobs requ
 
 ## Prerequisites<a name="prerequisites"></a>
 
-### Role Based Strategy
+### Role Based Strategy<a name="rolebasedstrategy"></a>
 To run pipeline jobs, users must have access to Jenkins and be granted permissions to access jobs in the workloads.
 
 - Users given appropriate Keycloak Group access as per the instructions detailed in [Jenkins Access via Keycloak Groups](../../deployment_guide.md#section-5d---jenkins-access-via-keycloak-groups), i.e. `docs/deployment_guide.md`.

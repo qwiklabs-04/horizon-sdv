@@ -1,4 +1,4 @@
-# <span style="color:#335bff">Horizon SDV Developer Guide</span>
+# <span style="color:#335bff">Horizon SDV Android Developer Guide</span>
 
 ## <span style="color:#335bff">1. Overview<a name="1-overview"></a></span>
 This page offers a set of suggested exercises and projects for developers to work on in order to gain an understanding of the Horizon SDV pipeline jobs.

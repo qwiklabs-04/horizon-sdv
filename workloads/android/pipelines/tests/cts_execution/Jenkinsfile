@@ -49,8 +49,31 @@ pipeline {
       agent { label params.JENKINS_GCE_CLOUD_LABEL }
 
       stages {
+        stage ('List Tests') {
+          when { expression { env.CTS_TEST_LISTS_ONLY == 'true' } }
+          steps {
+            script {
+              currentBuild.description = "${params.JENKINS_GCE_CLOUD_LABEL}" + "<br/>" + "$BUILD_USER"
+            }
+            sh '''
+              ANDROID_VERSION=${ANDROID_VERSION} \
+              CTS_DOWNLOAD_URL="${CTS_DOWNLOAD_URL}" \
+              ./workloads/android/pipelines/tests/cts_execution/cts_initialise.sh
+              CTS_TEST_LISTS_ONLY="$CTS_TEST_LISTS_ONLY}" \
+              ./workloads/android/pipelines/tests/cts_execution/cts_execution.sh
+            '''
+            archiveArtifacts artifacts: 'cts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+          }
+        }
+
         stage ('Launch Virtual Devices') {
-          when { expression { env.CUTTLEFISH_DOWNLOAD_URL } }
+          when {
+            allOf {
+              expression { env.CUTTLEFISH_DOWNLOAD_URL }
+              expression { env.CTS_TEST_LISTS_ONLY == 'false' }
+              expression { currentBuild.currentResult == 'SUCCESS' }
+            }
+          }
           steps {
             script {
               currentBuild.description = "${params.JENKINS_GCE_CLOUD_LABEL}" + "<br/>" + "$BUILD_USER"
@@ -76,6 +99,7 @@ pipeline {
           when {
             allOf {
               expression { env.MTK_CONNECT_ENABLE == 'true' }
+              expression { env.CTS_TEST_LISTS_ONLY == 'false' }
               expression { env.CUTTLEFISH_DOWNLOAD_URL }
               expression { currentBuild.currentResult == 'SUCCESS' }
             }
@@ -106,6 +130,7 @@ pipeline {
           when {
             allOf {
               expression { env.CUTTLEFISH_DOWNLOAD_URL }
+              expression { env.CTS_TEST_LISTS_ONLY == 'false' }
               expression { currentBuild.currentResult == 'SUCCESS' }
             }
           }
@@ -135,6 +160,7 @@ pipeline {
             allOf {
               expression { env.CUTTLEFISH_DOWNLOAD_URL }
               expression { env.MTK_CONNECT_ENABLE == 'true' }
+              expression { env.CTS_TEST_LISTS_ONLY == 'false' }
               expression { env.CTS_STAGE == 'true' }
             }
           }
@@ -148,7 +174,12 @@ pipeline {
         }
 
         stage ('Stop Virtual Devices') {
-          when { expression { env.CUTTLEFISH_DOWNLOAD_URL } }
+          when {
+            allOf {
+              expression { env.CUTTLEFISH_DOWNLOAD_URL }
+              expression { env.CTS_TEST_LISTS_ONLY == 'false' }
+            }
+          }
           steps {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
               withCredentials([usernamePassword(credentialsId: 'jenkins-mtk-connect-apikey', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
@@ -169,7 +200,6 @@ pipeline {
                   '''
                   sh 'echo "Stopping Cuttlefish"'
                   sh './workloads/android/pipelines/tests/cvd_launcher/cvd_start_stop.sh --stop || true'
-
                 }
                 archiveArtifacts artifacts: 'cvd*.log', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
                 archiveArtifacts artifacts: 'cuttlefish*.tgz', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true

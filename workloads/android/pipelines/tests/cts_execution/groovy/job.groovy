@@ -48,6 +48,15 @@ pipelineJob('Android/Tests/CTS Execution') {
       trim(true)
     }
 
+    booleanParam {
+      name('CTS_TEST_LISTS_ONLY')
+      defaultValue(false)
+      description('''<p>Skip tests and only generate the test plan and test module lists.<br/>
+        You can use the following optional arguments to customize the listing:<br/>
+        <ul><li><code>ANDROID_VERSION:</code> Specify the Android version to retrieve the correct listing.</li>
+            <li><code>CTS_DOWNLOAD_URL:</code> Provide the URL for the CTS package if using your own version.</li></ul></p>''')
+    }
+
     stringParam {
       name('CUTTLEFISH_DOWNLOAD_URL')
       defaultValue('')

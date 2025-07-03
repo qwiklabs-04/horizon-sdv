@@ -80,14 +80,15 @@ URL is of the form `gs://<ANDROID_BUILD_BUCKET_ROOT_NAME>/Android/Builds/CTS_Bui
 
 ### `CTS_TESTPLAN`
 
-This defines the CTS test plan that will be run. Default is: `cts-virtual-device-stable`.
+This defines the CTS test plan that will be run. Default is: `cts-system-virtual`.
+Note: `cts-virtual-device-stable` was the previous default and takes less time than `cts-system-virtual`.
 
 ### `CTS_MODULE`
 
 Optional.
 
-This defines the CTS test module that will be run. Default is: `CtsHostsideNumberBlockingTestCases` but if field is left
-empty, all CTS test modules will be run.
+This defines the CTS test module that will be run. Default is: `CtsDeqpTestCases` but if field is left empty, all CTS test modules will be run.
+Note: `CtsHostsideNumberBlockingTestCases` is the previous default simply because it was quick.
 
 ### `CUTTLEFISH_MAX_BOOT_TIME`
 
@@ -136,8 +137,8 @@ Refer to `docs/workloads/android/tests/cvd_launcher.md` for an example of how to
 ```
 ANDROID_VERSION=14 \
 ./workloads/android/pipelines/tests/cts_execution/cts_initialise.sh
-CTS_TESTPLAN="cts-virtual-device-stable" \
-CTS_MODULE="CtsHostsideNumberBlockingTestCases" \
+CTS_TESTPLAN="cts-system-virtual" \
+CTS_MODULE="CtsDeqpTestCases" \
 CTS_TIMEOUT=240 \
 SHARD_COUNT=1 \
 ./workloads/android/pipelines/tests/cts_execution/cts_execution.sh

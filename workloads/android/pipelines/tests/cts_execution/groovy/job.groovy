@@ -80,15 +80,14 @@ pipelineJob('Android/Tests/CTS Execution') {
 
     stringParam {
       name('CTS_TESTPLAN')
-      defaultValue('cts-virtual-device-stable')
-      description('''<p>Test plan.<br/>
-        The cts-virtual-device-stable test plan tracks the latest of what is stable on the virtual platform.</p>''')
+      defaultValue('cts-system-virtual')
+      description('''<p>CTS Test plan to execute, e.g. cts-system-virtual, cts-virtual-device-stable etc.</p>''')
       trim(true)
     }
 
     stringParam {
       name('CTS_MODULE')
-      defaultValue('CtsHostsideNumberBlockingTestCases')
+      defaultValue('CtsDeqpTestCases')
       description('''<p>CTS module to test, or leave empty if all modules are to be tested.</p>''')
       trim(true)
     }

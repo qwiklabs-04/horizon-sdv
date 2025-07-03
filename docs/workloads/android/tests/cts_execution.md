@@ -47,6 +47,9 @@ This is the label that identifies the GCE Cloud label which will be used to iden
 
 Note: The value provided must correspond to a cloud instance or the job will hang.
 
+### `CTS_TEST_LISTS_ONLY`
+Skip running tests and simply list the available test plans and test modules.
+
 ### `CUTTLEFISH_DOWNLOAD_URL`
 
 This is the Cuttlefish Virtual Device image that is to be tested. It is built from `AAOS Builder` for the `aosp_cf` build targets.

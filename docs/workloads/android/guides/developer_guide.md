@@ -1450,13 +1450,13 @@ This next stage demonstrates the `Compatibility Test Suite` test job.
 
     <img src="images/section.6/6.1.3_cts_execution.png" width="300" />
 
-    - By default we will run a single test module using the default `CtsHostsideNumberBlockingTestCases` value specified for the `CTS Module` parameter:
+    - By default we will run a single test module using the default `CtsDeqpTestCases` value specified for the `CTS Module` parameter:
 
       <img src="images/section.6/6.1.3_cts_execution_modules.png" width="300" />
 
     - The `CTS Test Plan` is set to `cts-virtual-device-stable` by default:
 
-      <img src="images/section.6/6.1.3_cts_execution_plan.png" width="150" />
+      <img src="images/section.6/6.1.3_cts_execution_plan.png" width="300" />
 
     - User may later decide to change the test module and plans to suit their needs.
 

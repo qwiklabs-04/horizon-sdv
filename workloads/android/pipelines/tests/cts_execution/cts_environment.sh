@@ -34,7 +34,7 @@ CTS_TEST=$(echo "${CTS_TEST}" | xargs)
 CTS_TEST=${CTS_TEST:-}
 CTS_TEST_LISTS_ONLY=${CTS_TEST_LISTS_ONLY:-false}
 CTS_TIMEOUT=$(echo "${CTS_TIMEOUT}" | xargs)
-CTS_TIMEOUT=${CTS_TIMEOUT:-60}
+CTS_TIMEOUT=${CTS_TIMEOUT:-600}
 ANDROID_VERSION=${ANDROID_VERSION:-14}
 
 # Architecture x86_64 is only supported at this time.

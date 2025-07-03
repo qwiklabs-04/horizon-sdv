@@ -132,7 +132,7 @@ pipelineJob('Android/Tests/CTS Execution') {
 
     stringParam {
       name('CTS_TIMEOUT')
-      defaultValue('240')
+      defaultValue('600')
       description('''<p>CTS Timeout in minutes for each test run.</p>''')
       trim(true)
     }

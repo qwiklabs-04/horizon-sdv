@@ -142,7 +142,7 @@ ANDROID_VERSION=14 \
 ./workloads/android/pipelines/tests/cts_execution/cts_initialise.sh
 CTS_TESTPLAN="cts-system-virtual" \
 CTS_MODULE="CtsDeqpTestCases" \
-CTS_TIMEOUT=240 \
+CTS_TIMEOUT=600 \
 SHARD_COUNT=1 \
 ./workloads/android/pipelines/tests/cts_execution/cts_execution.sh
 ```

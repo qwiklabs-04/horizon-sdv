@@ -46,7 +46,7 @@
 #        Default: jenkins_rsa.pub
 #  - MACHINE_TYPE: The machine type to create instance templates for. Default:
 #        n1-standard-64
-#  - MAX_RUN_DURATION: Limits how long this VM instance can run. Default: 4h
+#  - MAX_RUN_DURATION: Limits how long this VM instance can run. Default: 10h
 #  - NETWORK: The name of the VPC network. Default: sdv-network
 #  - NODEJS_VERSION: The version of nodejs to install. Default: 20.9.0
 #  - PROJECT: The GCP project. Default: derived from gcloud config.
@@ -106,7 +106,7 @@ JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME:-jenkins-cuttlefish-
 JENKINS_SSH_PUB_KEY_FILE=${JENKINS_SSH_PUB_KEY_FILE:-jenkins_rsa.pub}
 MACHINE_TYPE=${MACHINE_TYPE:-n1-standard-64}
 MACHINE_TYPE=$(echo "${MACHINE_TYPE}" | xargs)
-MAX_RUN_DURATION=${MAX_RUN_DURATION:-4h}
+MAX_RUN_DURATION=${MAX_RUN_DURATION:-10h}
 NETWORK=${NETWORK:-sdv-network}
 NODEJS_VERSION=${NODEJS_VERSION:-20.9.0}
 NODEJS_VERSION=$(echo "${NODEJS_VERSION}" | xargs)

@@ -35,7 +35,7 @@ def kubernetesPodTemplate = """
       command:
       - sleep
       args:
-      - 4h
+      - 10h
 """.stripIndent()
 
 pipeline {

@@ -71,7 +71,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('MAX_RUN_DURATION')
-      defaultValue('4h')
+      defaultValue('10h')
       description('''<p>Limits how long this VM instance can run.<br/>
         Useful to avoid excessive costs. Set to 0 to disable limit.<br/>
         Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instances/create" target="_blank">gcloud compute instances create</a>, i.e. <i>--max-run-duration=MAX_RUN_DURATION</i></p>''')

@@ -143,6 +143,7 @@ following the instructions below.
 
 ```
 # Start MTK Connect (use the credentials from earlier)
+cd ./workloads/common/mtk-connect/
 sudo \
 MTK_CONNECT_DOMAIN="dev.horizon-sdv.com" \
 MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
@@ -150,16 +151,19 @@ MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
 MTK_CONNECTED_DEVICES=1 \
 MTK_CONNECT_TESTBENCH="Example-Testbench" \
 MTK_CONNECT_TESTBENCH_USER="joeb@company.com" \
-./workloads/android/pipelines/tests/cvd_launcher/cvd_mtk_connect.sh --start
+./mtk_connect.sh --start
+cd -
 
 # When complete, stop MTK Connect and delete the testbench.
+cd ./workloads/common/mtk-connect/
 sudo \
 MTK_CONNECT_DOMAIN="dev.horizon-sdv.com" \
 MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
 MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
 MTK_CONNECTED_DEVICES=1 \
 MTK_CONNECT_TESTBENCH="Example-Testbench" \
-./workloads/android/pipelines/tests/cvd_launcher/cvd_mtk_connect.sh --stop || true
+./mtk_connect.sh --stop || true
+cd -
 ```
 
 When testing is complete, it is advisable to stop the instance, e.g.

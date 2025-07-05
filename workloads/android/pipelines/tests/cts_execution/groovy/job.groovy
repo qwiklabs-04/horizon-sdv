@@ -90,7 +90,7 @@ pipelineJob('Android/Tests/CTS Execution') {
     stringParam {
       name('CTS_TESTPLAN')
       defaultValue('cts-system-virtual')
-      description('''<p>CTS Test plan to execute, e.g. cts-system-virtual, cts-virtual-device-stable etc.</p>''')
+      description('''<p>CTS Test plan to execute, e.g. cts-system-virtual (Android 15), cts-virtual-device-stable (Android 14) etc.</p>''')
       trim(true)
     }
 
@@ -111,7 +111,7 @@ pipelineJob('Android/Tests/CTS Execution') {
 
     stringParam {
       name('NUM_INSTANCES')
-      defaultValue('8')
+      defaultValue('10')
       description('''<p>Number of guest instances to launch (num-instances option)</p>''')
       trim(true)
     }

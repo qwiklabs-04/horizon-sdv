@@ -72,6 +72,7 @@ case "$0" in
         VM_MEMORY_MB=${VM_MEMORY_MB} (--memory_mb ${VM_MEMORY_MB})
 
         ARCHITECTURE=${ARCHITECTURE}
+
         "
         ;;
     *)

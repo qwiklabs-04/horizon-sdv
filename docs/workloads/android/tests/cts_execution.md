@@ -83,7 +83,10 @@ URL is of the form `gs://<ANDROID_BUILD_BUCKET_ROOT_NAME>/Android/Builds/CTS_Bui
 
 ### `CTS_TESTPLAN`
 
-This defines the CTS test plan that will be run. Default is: `cts-system-virtual`.
+This defines the CTS test plan that will be run. Default is: `cts-system-virtual` which is only available in Android 15.
+
+Android 14 users should pick a test plan that is compatible with their version of Cuttlefish.
+
 Note: `cts-virtual-device-stable` was the previous default and takes less time than `cts-system-virtual`.
 
 ### `CTS_MODULE`

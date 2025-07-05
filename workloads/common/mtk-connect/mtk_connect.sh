@@ -60,13 +60,6 @@ declare -r app_path="/usr/src/app"
 declare -r config_path="/usr/src/config"
 declare -r mtkc_config_path="/opt/mtk-connect-agent/config"
 
-# Adjust devices based on true number of active devices.
-function mtkc_max_devices() {
-    # If devices less than num_instances aka shards, then reduce.
-    MTK_CONNECTED_DEVICES=$(adb devices | grep -c -E '0.+device$')
-    echo "MTK_CONNECTED_DEVICES = ${MTK_CONNECTED_DEVICES}"
-}
-
 # Start MTK Connect agent and create testbench.
 function mtkc_start() {
 
@@ -200,9 +193,6 @@ case "${1}" in
         RESULT=0
         ;;
     --start|*)
-        if [ "${MTK_CONNECT_CONTAINER_HOST_ONLY}" == "false" ]; then
-            mtkc_max_devices
-	    fi
         # Start
         mtkc_start
         mtkc_create_testbench

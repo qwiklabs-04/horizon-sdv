@@ -65,7 +65,7 @@ pipeline {
               MTK_CONNECT_NATIVE_LINUX_INSTALL=false \
               MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH} \
               MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES=true \
-              MTK_CONNECT_CONTAINER_HOST_ONLY="true" \
+              MTK_CONNECT_CONTAINER_ONLY="true" \
               timeout 15m ./mtk_connect.sh --delete
               cd - || true
             '''

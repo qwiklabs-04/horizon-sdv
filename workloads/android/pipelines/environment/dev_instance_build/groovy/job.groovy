@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-pipelineJob('Android/Environment/Development Instance') {
+pipelineJob('Android/Environment/Development Build Instance') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">Development Build Instance Creation Job</h3>
     <p>This job allows creation of a temporary build instance that can be used to aid development and testing of builds.<br/>
@@ -20,6 +20,7 @@ pipelineJob('Android/Environment/Development Instance') {
     <h4 style="margin-bottom: 10px;">Accessing the Instance</h4>
     <p>Access the instance via <code>bastion</code> host and <code>kubectl</code> command line tool. Example command:</p>
     <p><code>kubectl exec -it -n jenkins &lt;pod name&gt; -- bash</code></p>
+    <p>Alternatively access Host via MTK Connect by enabling MTK_CONNECT_ENABLE.</p>
     <h4 style="margin-bottom: 10px;">Important Notes</h4>
     <p>Users are responsible for saving their own work to persistent storage before expiry.</p>
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
@@ -39,7 +40,7 @@ pipelineJob('Android/Environment/Development Instance') {
 
     choiceParam {
       name('INSTANCE_MAX_UPTIME')
-      choices(['0', '1', '2', '4', '8'])
+      choices(['1', '2', '4', '8'])
       description('''<p>Time in hours to keep instance alive.</p>''')
     }
 
@@ -67,7 +68,7 @@ pipelineJob('Android/Environment/Development Instance') {
           branch("*/${HORIZON_GITHUB_BRANCH}")
         }
       }
-      scriptPath('workloads/android/pipelines/environment/dev_instance/Jenkinsfile')
+      scriptPath('workloads/android/pipelines/environment/dev_instance_build/Jenkinsfile')
     }
   }
 }

@@ -16,6 +16,8 @@ Those that require access must be able to connect to the `bastion` host and then
 kubectl exec -it -n jenkins <pod name> -- bash
 ```
 
+Alternatively access Host via MTK Connect by enabling MTK_CONNECT_ENABLE.
+
 - These instances only remain active for a limited time, defined by `INSTANCE_MAX_UPTIME`.
 - User can find `<pod name>` from either the Jenkins UI console log or from the Jenkins Build Executor nodes.
 - Users are responsible for managing their work and saving to their own storage, that's beyond the purpose of this job.
@@ -39,6 +41,10 @@ This specifies which build disk pool to use for the development instance.
 
 This is the maximum time that the instance may be running before it is automatically terminated and deleted. This is important to avoid leaving expensive instances in running state.
 
+### `MTK_CONNECT_ENABLE`
+
+Enable if wishing to use MTK Connect to connect to the host instance rather than kubectl.
+
 ## SYSTEM VARIABLES <a name="system-variables"></a>
 
 There are a number of system environment variables that are unique to each platform but required by Jenkins build, test and environment pipelines.
@@ -58,6 +64,9 @@ These are as follows:
 
 -   `CLOUD_ZONE`
     - The GCP project zone. Important for bucket, registry paths used in pipelines.
+
+-   `HORIZON_DOMAIN`
+    - The URL domain which is required by pipeline jobs to derive URL for tools and GCP.
 
 -   `HORIZON_GITHUB_URL`
     - The URL to the Horizon SDV GitHub repository.

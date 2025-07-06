@@ -50,7 +50,7 @@ const _ = require("lodash");
  * Sets up the Axios configuration with a base URL and authentication
  * credentials from environment variables.
  */
-const { MTK_CONNECT_DOMAIN, MTK_CONNECT_USERNAME, MTK_CONNECT_PASSWORD, MTK_CONNECT_REGISTRATION, MTK_CONNECT_TESTBENCH, MTK_CONNECT_TESTBENCH_USER, MTK_CONNECT_DEVICES, MTK_CONNECT_HOST, MTK_CONNECT_LAUNCH_APPLICATION_NAME, MTK_CONNECT_CONTAINER_HOST_ONLY} = process.env;
+const { MTK_CONNECT_DOMAIN, MTK_CONNECT_USERNAME, MTK_CONNECT_PASSWORD, MTK_CONNECT_REGISTRATION, MTK_CONNECT_TESTBENCH, MTK_CONNECT_TESTBENCH_USER, MTK_CONNECT_DEVICES, MTK_CONNECT_HOST, MTK_CONNECT_LAUNCH_APPLICATION_NAME, MTK_CONNECT_HOST_ONLY, MTK_CONNECT_DEVICE_PREFIX} = process.env;
 const registration = MTK_CONNECT_REGISTRATION || fs.readFileSync('/usr/src/config/registration.name', 'utf-8');
 
 axios.defaults.baseURL = `https://${MTK_CONNECT_DOMAIN}/mtk-connect`;
@@ -128,18 +128,12 @@ async function configureDevice(i) {
     console.log(`device ${index} already exists`);
   } else {
     console.log(`creating device ${index}`);
-    if (MTK_CONNECT_CONTAINER_HOST_ONLY == 'false') {
-      await axios.post(`/api/v1/agents/${agent.id}/devices`, {
-        name: `AAOS ${index}`
-      });
-    } else {
-      await axios.post(`/api/v1/agents/${agent.id}/devices`, {
-        name: `BSW POSIX ${index}`
-      });
-    }
+    await axios.post(`/api/v1/agents/${agent.id}/devices`, {
+      name: `${MTK_CONNECT_DEVICE_PREFIX} ${index}`
+    });
   }
 
-  if (MTK_CONNECT_CONTAINER_HOST_ONLY == 'false') {
+  if (MTK_CONNECT_HOST_ONLY == 'false') {
     const data = {
       interface: {
         'adb': {
@@ -230,7 +224,7 @@ async function configureDevice(i) {
               'name': 'HOST',
               'driver': 'spawn',
               'command': 'bash',
-              'args': ['-c', 'cd /home/builder; su builder; bash --login;', '']
+              'args': ['-c', '[ -d /home/builder ] && { cd /home/builder; su builder; bash --login; } || { cd /home/jenkins; su jenkins; bash --login; }', '']
             }
           ]
         }

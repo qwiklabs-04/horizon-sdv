@@ -11,31 +11,25 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-// Description:
-// Groovy file for defining a Jenkins Pipeline Job for creating a
-// temporary build instance that can be used to aid development and testing.
-pipelineJob('OpenBSW/Environment/Development Instance') {
+pipelineJob('Android/Environment/Development Test Instance') {
   description("""
-    <br/><h3 style="margin-bottom: 10px;">Development Build Instance Creation Job</h3>
-    <p>This job allows creation of a temporary build instance that can be used to aid development and testing of builds.<br/>
+    <br/><h3 style="margin-bottom: 10px;">Development Test Instance Creation Job</h3>
+    <p>This job allows creation of a temporary GCE VM instance that can be used to aid development of test instances.<br/>
     <h4 style="margin-bottom: 10px;">Instance Details</h4>
     <p>Instances can be expensive and therefore there is a maximum up-time before the instance will automatically be terminated.</p>
-    <h4 style="margin-bottom: 10px;">Accessing the Instance</h4>
-    <p>Access the instance via <code>bastion</code> host and <code>kubectl</code> command line tool. Example command:</p>
-    <p><code>kubectl exec -it -n jenkins &lt;pod name&gt; -- bash</code></p>
-    <p>Alternatively access Host via MTK Connect by enabling MTK_CONNECT_ENABLE.</p>
     <h4 style="margin-bottom: 10px;">Important Notes</h4>
     <p>Users are responsible for saving their own work to persistent storage before expiry.</p>
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
   parameters {
-
     stringParam {
-      name('IMAGE_TAG')
-      defaultValue("${OPENBSW_IMAGE_TAG}")
-      description('''<p>Docker image template to use.<p>
-        <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''')
+      name('JENKINS_GCE_CLOUD_LABEL')
+      defaultValue("${JENKINS_GCE_CLOUD_LABEL}")
+      description('''<p>The Jenkins GCE Clouds label for the VM instance template, e.g.<br/></p>
+        <ul>
+          <li>cuttlefish-vm-main</li>
+          <li>cuttlefish-vm-v170</li>
+        </ul>''')
       trim(true)
     }
 
@@ -43,12 +37,6 @@ pipelineJob('OpenBSW/Environment/Development Instance') {
       name('INSTANCE_MAX_UPTIME')
       choices(['1', '2', '4', '8'])
       description('''<p>Time in hours to keep instance alive.</p>''')
-    }
-
-    booleanParam {
-      name('MTK_CONNECT_ENABLE')
-      defaultValue(false)
-      description('''<p>Enable if wishing to use MTK Connect to connect to the host instance.</p>''')
     }
   }
 
@@ -69,7 +57,7 @@ pipelineJob('OpenBSW/Environment/Development Instance') {
           branch("*/${HORIZON_GITHUB_BRANCH}")
         }
       }
-      scriptPath('workloads/openbsw/pipelines/environment/dev_instance/Jenkinsfile')
+      scriptPath('workloads/android/pipelines/environment/dev_instance_test/Jenkinsfile')
     }
   }
 }

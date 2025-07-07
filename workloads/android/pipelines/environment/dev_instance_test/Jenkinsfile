@@ -54,8 +54,10 @@ pipeline {
 
         stage ('Retain instance') {
           steps {
-            script {
-              sleep(time: "${INSTANCE_MAX_UPTIME}", unit: 'HOURS')
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+              script {
+                sleep(time: "${INSTANCE_MAX_UPTIME}", unit: 'HOURS')
+              }
             }
           }
         }

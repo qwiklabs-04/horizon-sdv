@@ -122,8 +122,10 @@ pipeline {
           when { expression { env.INSTANCE_MAX_UPTIME } }
           steps {
             container(name: 'builder') {
-              script {
-                sleep(time: "${INSTANCE_MAX_UPTIME}", unit: 'HOURS')
+              catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                script {
+                  sleep(time: "${INSTANCE_MAX_UPTIME}", unit: 'HOURS')
+                }
               }
             }
           }

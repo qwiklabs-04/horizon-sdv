@@ -127,7 +127,7 @@ metadata:
 type: Opaque
 stringData:
   id: "gce-creds"
-  projectId: { { .Values.config.projectID } }
+  projectId: {{ .Values.config.projectID }}
 ---
 apiVersion: v1
 kind: Secret
@@ -153,10 +153,10 @@ metadata:
 spec:
   provider:
     gcpsm:
-      projectID: { { .Values.config.projectID } }
+      projectID: {{ .Values.config.projectID }}
       auth:
         workloadIdentity:
-          clusterLocation: { { .Values.config.region } }
+          clusterLocation: {{ .Values.config.region }}
           clusterName: sdv-cluster
           serviceAccountRef:
             name: jenkins-sa

@@ -49,7 +49,6 @@ MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH// /_}
 MTK_CONNECT_TESTBENCH=$(echo "${MTK_CONNECT_TESTBENCH}" | xargs)
 MTK_CONNECT_TESTBENCH_USER=${MTK_CONNECT_TESTBENCH_USER:-everyone}
 MTK_CONNECT_TESTBENCH_USER=$(echo "${MTK_CONNECT_TESTBENCH_USER}" | xargs)
-MTK_CONNECT_HOST=$(hostname -I | sed 's/ .*//')
 MTK_CONNECT_TEST_ARTIFACT=${MTK_CONNECT_TEST_ARTIFACT:-N/A}
 MTK_CONNECT_TEST_ARTIFACT=$(echo "${MTK_CONNECT_TEST_ARTIFACT}" | xargs)
 MTK_CONNECT_FILE_PATH="$(dirname "${BASH_SOURCE[0]}")"
@@ -63,6 +62,19 @@ declare -r scripts_path="/usr/src/scripts"
 declare -r app_path="/usr/src/app"
 declare -r config_path="/usr/src/config"
 declare -r mtkc_config_path="/opt/mtk-connect-agent/config"
+
+# Get the host and port from adb if MTK Connect is using adb.
+# If devices don't exist then the defaults will be used from
+# the environment.
+if dpkg -s adb > /dev/null 2>&1; then
+    # Retrieve a list of the devices host ip and port numbers.
+    adb start-server || true
+    sleep 20
+    MTK_CONNECT_HOST_LIST=$(adb devices | grep -E '0.+device$' | cut -d: -f1 | awk '{print $1","}' | tr -d '\n' | sed 's/,$//' | head -1)
+    MTK_CONNECT_HOST_PORT_LIST=$(adb devices | grep -E '0.+device$' | cut -d: -f2 | awk '{print $1","}' | tr -d '\n' | sed 's/,$//' | head -1)
+fi
+MTK_CONNECT_HOST_LIST=${MTK_CONNECT_HOST_LIST:-$(hostname -I | sed 's/ .*//')}
+MTK_CONNECT_HOST_PORT_LIST=${MTK_CONNECT_HOST_PORT_LIST:-6520}
 
 # Start MTK Connect agent and create testbench.
 function mtkc_start() {
@@ -80,7 +92,8 @@ function mtkc_start() {
         echo "MTK_CONNECT_DEVICES=${MTK_CONNECTED_DEVICES}"
         echo "MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH}"
         echo "MTK_CONNECT_TESTBENCH_USER=${MTK_CONNECT_TESTBENCH_USER}"
-        echo "MTK_CONNECT_HOST=${MTK_CONNECT_HOST}"
+        echo "MTK_CONNECT_HOST_LIST=${MTK_CONNECT_HOST_LIST}"
+        echo "MTK_CONNECT_HOST_PORT_LIST=${MTK_CONNECT_HOST_PORT_LIST}"
         echo "MTK_CONNECT_DELETE_OFFLINE=${MTK_CONNECT_DELETE_OFFLINE}"
         echo "MTK_CONNECT_LAUNCH_APPLICATION_NAME=${MTK_CONNECT_LAUNCH_APPLICATION_NAME}"
         echo "MTK_CONNECT_HOST_ONLY=${MTK_CONNECT_HOST_ONLY}"
@@ -177,7 +190,8 @@ Environment:
     MTK_CONNECTED_DEVICES=${MTK_CONNECTED_DEVICES}
     MTK_CONNECT_TESTBENCH=${MTK_CONNECT_TESTBENCH}
     MTK_CONNECT_TESTBENCH_USER=${MTK_CONNECT_TESTBENCH_USER}
-    MTK_CONNECT_HOST=${MTK_CONNECT_HOST}
+    MTK_CONNECT_HOST_LIST=${MTK_CONNECT_HOST_LIST}
+    MTK_CONNECT_HOST_PORT_LIST=${MTK_CONNECT_HOST_PORT_LIST}
     MTK_CONNECT_LAUNCH_APPLICATION_NAME=${MTK_CONNECT_LAUNCH_APPLICATION_NAME}
     MTK_CONNECT_TEST_ARTIFACT=${MTK_CONNECT_TEST_ARTIFACT}
     MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES=${MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES}

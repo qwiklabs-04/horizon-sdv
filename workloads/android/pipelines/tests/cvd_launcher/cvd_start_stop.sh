@@ -78,6 +78,24 @@ function cuttlefish_extract_artifacts() {
     rm -f cvd-host_package.tar.gz
 }
 
+# Adjust cuttlefish resources
+function cuttlefish_adjust_resources() {
+    if (( NUM_INSTANCES > 10 )); then
+        # Modify the resource file to support > 10 devices
+        sudo echo num_cvd_accounts="${NUM_INSTANCES}" | sudo tee -a /etc/default/cuttlefish-host-resources
+        # Restart resource
+        sudo systemctl restart cuttlefish-host-resources
+
+        # Check how many are available
+        INTERFACES=$(ip -c a | grep -c cvd-wtap)
+        if (( NUM_INSTANCES == INTERFACES )); then
+            echo "Cuttlefish updated for $NUM_INSTANCES instances"
+        else
+            echo "Warning: resources $INTERFACES != $NUM_INSTANCES"
+        fi
+    fi
+}
+
 # Start Cuttlefish Virtual Device (CVD) host.
 function cuttlefish_start() {
     echo "cuttlefish_start"
@@ -203,6 +221,8 @@ case "${1}" in
         cuttlefish_nuclear
         ;;
     --start|*)
+        # Adjust resources based on instances requested
+        cuttlefish_adjust_resources
         # Start
         cuttlefish_cleanup
         cuttlefish_extract_artifacts

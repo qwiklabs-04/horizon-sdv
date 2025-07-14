@@ -37,7 +37,7 @@ pipelineJob('Android/Builds/AAOS Builder') {
 
     stringParam {
       name('AAOS_REVISION')
-      defaultValue('horizon/android-15.0.0_r32')
+      defaultValue('horizon/android-15.0.0_r36')
       description('''<p>Android revision tag/branch name.</p>''')
       trim(true)
     }

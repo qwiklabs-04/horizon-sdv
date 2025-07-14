@@ -328,6 +328,8 @@ git checkout -b horizon/android-15.0.0_r20 android-15.0.0_r20
 git push -o skip-validation horizon horizon/android-15.0.0_r20
 git checkout -b horizon/android-15.0.0_r32 android-15.0.0_r32
 git push -o skip-validation horizon horizon/android-15.0.0_r32
+git checkout -b horizon/android-15.0.0_r36 android-15.0.0_r36
+git push -o skip-validation horizon horizon/android-15.0.0_r36
 cd ..
 rm -rf manifest
 </pre>
@@ -349,6 +351,8 @@ git checkout -b horizon/android-15.0.0_r20 android-15.0.0_r20
 git push -o skip-validation horizon horizon/android-15.0.0_r20
 git checkout -b horizon/android-15.0.0_r32 android-15.0.0_r32
 git push -o skip-validation horizon horizon/android-15.0.0_r32
+git checkout -b horizon/android-15.0.0_r36 android-15.0.0_r36
+git push -o skip-validation horizon horizon/android-15.0.0_r36
 cd ..
 rm -rf native
 </pre>
@@ -371,6 +375,8 @@ git checkout -b horizon/android-15.0.0_r20 android-15.0.0_r20
 git push -o skip-validation horizon horizon/android-15.0.0_r20
 git checkout -b horizon/android-15.0.0_r32 android-15.0.0_r32
 git push -o skip-validation horizon horizon/android-15.0.0_r32
+git checkout -b horizon/android-15.0.0_r36 android-15.0.0_r36
+git push -o skip-validation horizon horizon/android-15.0.0_r36
 cd ..
 rm -rf Car
 </pre>
@@ -393,6 +399,8 @@ git checkout -b horizon/android-15.0.0_r20 android-15.0.0_r20
 git push -o skip-validation horizon horizon/android-15.0.0_r20
 git checkout -b horizon/android-15.0.0_r32 android-15.0.0_r32
 git push -o skip-validation horizon horizon/android-15.0.0_r32
+git checkout -b horizon/android-15.0.0_r36 android-15.0.0_r36
+git push -o skip-validation horizon horizon/android-15.0.0_r36
 cd ..
 rm -rf platform_testing
 </pre>
@@ -415,6 +423,8 @@ git checkout -b horizon/android-15.0.0_r20 android-15.0.0_r20
 git push -o skip-validation horizon horizon/android-15.0.0_r20
 git checkout -b horizon/android-15.0.0_r32 android-15.0.0_r32
 git push -o skip-validation horizon horizon/android-15.0.0_r32
+git checkout -b horizon/android-15.0.0_r36 android-15.0.0_r36
+git push -o skip-validation horizon horizon/android-15.0.0_r36
 cd ..
 rm -rf interfaces
 </pre>
@@ -437,6 +447,8 @@ git checkout -b horizon/android-15.0.0_r20 android-15.0.0_r20
 git push -o skip-validation horizon horizon/android-15.0.0_r20
 git checkout -b horizon/android-15.0.0_r32 android-15.0.0_r32
 git push -o skip-validation horizon horizon/android-15.0.0_32
+git checkout -b horizon/android-15.0.0_r36 android-15.0.0_r36
+git push -o skip-validation horizon horizon/android-15.0.0_36
 cd ..
 rm -rf Launcher
 </pre>
@@ -614,7 +626,38 @@ Repeat the steps for the following branches:
 </code></pre>
 <li>Commit: <code>git commit -am "Update android-15.0.0_r32 manifest"</code></li>
 <li>Update commit-id: <code>git commit --amend --no-edit</code></li>
-<li>Push for review: <code>git push origin HEAD:refs/for/horizon/android-15.0.0_r20</code></li>
+<li>Push for review: <code>git push origin HEAD:refs/for/horizon/android-15.0.0_r32</code></li>
+<li>Review and Submit change in Gerrit:</li>
+<ul><li>In Gerrit, select <code>CHANGES</code> → <code>OPEN</code> and click on the change or open the CLI link reported in the console after <code>push</code>.</li>
+<li>Review and submit the change: <code>REPLY</code> → <code>CODE-REVIEW+2</code> → <code>SUBMIT</code> → <code>CONTINUE</code></li></ul></ul>
+</details>
+
+<details><summary><code>android-15.0.0_r36</code></summary>
+<ul>
+<li>Update <code>android-15.0.0_r36</code></li>
+  <pre>
+     git checkout horizon/android-15.0.0_r36</pre>
+<li>Update <code>default.xml</code> remotes as follows and add the <code>gerrit</code> remote and ensure the URL  matches your domain:</li>
+  <pre>
+      &lt;remote name="aosp"
+              fetch="https://android.googlesource.com"
+              review="https://android-review.googlesource.com/" /&gt;
+      &lt;remote name="gerrit"
+              fetch="https://example.horizon-sdv.com/gerrit"
+              review="https://example.horizon-sdv.com/gerrit/" /&gt;
+      &lt;default revision="refs/tags/android-15.0.0_r36"
+               remote="aosp"
+               sync-j="4" /&gt; </pre>
+<li>Change the following <code>&lt;project path</code> entries: update <code>name</code> to include <code>android</code> prefix and add <code>gerrit</code> <code>remote</code> and <code>revision</code> in <code>default.xml</code>, e.g.:</li>
+<pre><code>&lt;project path="frameworks/native" name="android/platform/frameworks/native" groups="pdk" remote="gerrit" revision="horizon/android-15.0.0_r36" /&gt;
+&lt;project path="hardware/interfaces" name="android/platform/hardware/interfaces" groups="pdk,sysui- studio" remote="gerrit" revision="horizon/android-15.0.0_r36" /&gt;
+&lt;project path="packages/apps/Car/Launcher" name="android/platform/packages/apps/Car/Launcher" groups="pdk-fs" remote="gerrit" revision="horizon/android-15.0.0_r36" /&gt;
+&lt;project path="packages/services/Car" name="android/platform/packages/services/Car" groups="pdk-cw- fs,pdk-fs" remote="gerrit" revision="horizon/android-15.0.0_r36" /&gt;
+&lt;project path="platform_testing" name="android/platform/platform_testing" groups="pdk-fs,pdk-cw- fs,cts,sysui-studio" remote="gerrit" revision="horizon/android-15.0.0_r36" /&gt;
+</code></pre>
+<li>Commit: <code>git commit -am "Update android-15.0.0_r36 manifest"</code></li>
+<li>Update commit-id: <code>git commit --amend --no-edit</code></li>
+<li>Push for review: <code>git push origin HEAD:refs/for/horizon/android-15.0.0_r36</code></li>
 <li>Review and Submit change in Gerrit:</li>
 <ul><li>In Gerrit, select <code>CHANGES</code> → <code>OPEN</code> and click on the change or open the CLI link reported in the console after <code>push</code>.</li>
 <li>Review and submit the change: <code>REPLY</code> → <code>CODE-REVIEW+2</code> → <code>SUBMIT</code> → <code>CONTINUE</code></li></ul></ul>
@@ -979,7 +1022,7 @@ Cloning / editing of code should be performed as per usual methods - it is not i
 - Save and push the change for review:
   - Commit: `git commit -am "Car Launcher weather app update"`
   - Update Change ID if one was not automatically generated in your commit: `git commit --amend --no-edit`
-  - Push for Review: `git push origin HEAD:refs/for/horizon/android-15.0.0_r32`
+  - Push for Review: `git push origin HEAD:refs/for/horizon/android-15.0.0_r36`
     - The remote should report success and provide a link back to the Gerrit review, e.g.
       - `https://example.horizon-sdv.com/gerrit/c/android/platform/packages/apps/Car/Launcher/+/182 Car Launcher weather app update [NEW]`
 
@@ -1542,7 +1585,7 @@ ___
 - Save and push the change for review:
   - Commit: `git commit -am "Surface Flinger basic test"`
   - Update Change ID if one was not automatically generated in your commit: `git commit --amend --no-edit`
-  - Push for Review: `git push origin HEAD:refs/for/horizon/android-15.0.0_r32`
+  - Push for Review: `git push origin HEAD:refs/for/horizon/android-15.0.0_r36`
     - The remote should report success and provide a link back to the Gerrit review, e.g.
       - `https://example.horizon-sdv.com/gerrit/c/android/platform/frameworks/native/+/184 Surface Flinger basic test [NEW]`
 
@@ -1899,7 +1942,7 @@ ___
 > **Note:**
 > This is optional. Included if developer is interested in changing the Android Boot Animation.
 >
-> Refer to Google [README](https://android.googlesource.com/platform/packages/services/Car/+/refs/tags/android-15.0.0_r32/car_product/car_ui_portrait/bootanimation/README) and [FORMAT.md](https://android.googlesource.com/platform/frameworks/base/+/master/cmds/bootanimation/FORMAT.md) for further details.
+> Refer to Google [README](https://android.googlesource.com/platform/packages/services/Car/+/refs/tags/android-15.0.0_r36/car_product/car_ui_portrait/bootanimation/README) and [FORMAT.md](https://android.googlesource.com/platform/frameworks/base/+/master/cmds/bootanimation/FORMAT.md) for further details.
 
 **_Clone Repo:_**
 
@@ -2015,6 +2058,7 @@ The default manifest used is that of the Horizon SDV Gerrit and that supports th
 - `horizon/android-15.0.0_r4`
 - `horizon/android-15.0.0_r20`
 - `horizon/android-15.0.0_r32`
+- `horizon/android-15.0.0_r36`
 
 If you wish to host additional repos, or use different versions using the default Horizon SDV manifest, then refer to section 7.3.
 
@@ -2059,6 +2103,7 @@ And those forks have the following branches hosted:
 - `android-15.0.0_r4`
 - `android-15.0.0_r20`
 - `android-15.0.0_r32`
+- `android-15.0.0_r36`
 
 Note: Horizon SDV add `horizon` as a prefix to the branch name, e.g. `android-14.0.0_r30` becomes `horizon/android-14.0.0_r30`.
 
@@ -2309,7 +2354,7 @@ Users will require roles/permissions setup to utilise these facilities. To do so
 The builds support Raspberry Pi targets. This is based on [Raspberry Vanilla](https://github.com/raspberry-vanilla).
 
 - Select `Android Workflows` → `Builds` → `AAOS Builder` → `Build with Parameters` and define the following:
-  - `AAOS_REVISION` `horizon/android-15.0.0_r32`
+  - `AAOS_REVISION` `horizon/android-15.0.0_r36`
   - `AAOS_LUNCH_TARGET` `aosp_rpi5_car-bp1a-userdebug` or `aosp_rpi4_car-bp1a-userdebug`
   - Select `Build`
 

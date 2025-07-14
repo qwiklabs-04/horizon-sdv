@@ -31,7 +31,7 @@ pipelineJob('Android/Environment/Warm Build Caches') {
 
     stringParam {
       name('AAOS_REVISION')
-      defaultValue('horizon/android-15.0.0_r32')
+      defaultValue('horizon/android-15.0.0_r36')
       description('''<p>Android revision tag/branch name.</p>''')
       trim(true)
     }

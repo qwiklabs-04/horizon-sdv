@@ -72,7 +72,7 @@ unset BUILD_NUMBER
 # hostname: jenkins-aaos-build-pod
 
 AAOS_DEFAULT_REVISION=$(echo "${AAOS_DEFAULT_REVISION}" | xargs)
-AAOS_DEFAULT_REVISION=${AAOS_DEFAULT_REVISION:-android-15.0.0_r32}
+AAOS_DEFAULT_REVISION=${AAOS_DEFAULT_REVISION:-android-15.0.0_r36}
 
 # Android branch/tag:
 AAOS_REVISION=${AAOS_REVISION:-${AAOS_DEFAULT_REVISION}}
@@ -272,7 +272,7 @@ case "${AAOS_LUNCH_TARGET}" in
                 )
                 ;;
             *)
-                # bp1a fallthrough: android-15.0.0_r32 / android-15.0.0_r20
+                # bp1a fallthrough: android-15.0.0_r36 / android-15.0.0_r32 / android-15.0.0_r20
                 POST_REPO_INITIALISE_COMMANDS_LIST=(
                     "curl -o .repo/local_manifests/manifest_brcm_rpi.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-15.0/manifest_brcm_rpi.xml --create-dirs"
                     "curl -o .repo/local_manifests/remove_projects.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-15.0/remove_projects.xml"
@@ -365,7 +365,7 @@ case "${AAOS_LUNCH_TARGET}" in
                 )
                 ;;
             *)
-                # android-15.0.0_r32: https://developers.google.com/android/drivers (same as bp1a above)
+                # android-15.0.0_r32/r36: https://developers.google.com/android/drivers (same as bp1a above)
                 POST_REPO_SYNC_COMMANDS_LIST=(
                     "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-bp1a.250505.005-fb23c626.tgz | tar -xzvf - "
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"

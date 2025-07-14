@@ -53,12 +53,14 @@ The Android revision, i.e. branch or tag to build. Tested versions are below:
 - `horizon/android-14.0.0_r74` (ap2a - refer to Known Issues)
 - `horizon/android-15.0.0_r4` (ap3a)
 - `horizon/android-15.0.0_r20` (bp1a)
-- `horizon/android-15.0.0_r32` (bp1a - default)
+- `horizon/android-15.0.0_r32` (bp1a)
+- `horizon/android-15.0.0_r36` (bp1a - default)
 - `android-14.0.0_r30` (ap1a)
 - `android-14.0.0_r74` (ap2a, refer to Known Issues)
 - `android-15.0.0_r4` (ap3a)
 - `android-15.0.0_r20` (bp1a)
 - `android-15.0.0_r32` (bp1a)
+- `android-15.0.0_r36` (bp1a)
 
 ### `AAOS_LUNCH_TARGET` <a name="targets"></a>
 
@@ -93,8 +95,8 @@ Examples:
 -   Raspberry Pi:
     -   `aosp_rpi4_car-ap1a-userdebug` (`android-14.0.0_r30`)
     -   `aosp_rpi5_car-ap1a-userdebug` (`android-14.0.0_r30`)
-    -   `aosp_rpi4_car-bp1a-userdebug` (`android-15.0.0_r32`)
-    -   `aosp_rpi5_car-bp1a-userdebug` (`android-15.0.0_r32`)
+    -   `aosp_rpi4_car-bp1a-userdebug` (`android-15.0.0_r32` | `android-15.0.0_r36` )
+    -   `aosp_rpi5_car-bp1a-userdebug` (`android-15.0.0_r32` | `android-15.0.0_r36` )
 
 ### `ANDROID_VERSION`
 
@@ -180,7 +182,7 @@ Some targets have their own definitions for `POST_REPO_INITIALISE_COMMAND` and `
 Example 1: Initialise the repos for `aosp_cf_x86_64_auto-bp1a-userdebug`
 ```
 AAOS_GERRIT_MANIFEST_URL=https://dev.horizon-sdv.com/gerrit/android/platform/manifest \
-AAOS_REVISION=horizon/android-15.0.0_r32 \
+AAOS_REVISION=horizon/android-15.0.0_r36 \
 AAOS_LUNCH_TARGET=aosp_cf_x86_64_auto-bp1a-userdebug \
 ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
 ```
@@ -188,7 +190,7 @@ AAOS_LUNCH_TARGET=aosp_cf_x86_64_auto-bp1a-userdebug \
 Example 2: Initialise the repos for `aosp_tangorpro_car-bp1a-userdebug` with Gerrit patch set.
 ```
 AAOS_GERRIT_MANIFEST_URL=https://dev.horizon-sdv.com/gerrit/android/platform/manifest \
-AAOS_REVISION=horizon/android-15.0.0_r32 \
+AAOS_REVISION=horizon/android-15.0.0_r36 \
 AAOS_LUNCH_TARGET=aosp_tangorpro_car-bp1a-userdebug \
 GERRIT_SERVER_URL=https://dev.horizon-sdv.com/gerrit \
 GERRIT_CHANGE_NUMBER=82 \

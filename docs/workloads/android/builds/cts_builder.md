@@ -40,12 +40,14 @@ The Android revision, i.e. branch or tag to build. Tested versions are below:
 - `horizon/android-14.0.0_r74` (ap2a - refer to Known Issues)
 - `horizon/android-15.0.0_r4` (ap3a)
 - `horizon/android-15.0.0_r20` (bp1a)
-- `horizon/android-15.0.0_r32` (bp1a - default)
+- `horizon/android-15.0.0_r32` (bp1a)
+- `horizon/android-15.0.0_r36` (bp1a - default)
 - `android-14.0.0_r30` (ap1a)
 - `android-14.0.0_r74` (ap2a, refer to Known Issues)
 - `android-15.0.0_r4` (ap3a)
 - `android-15.0.0_r20` (bp1a)
 - `android-15.0.0_r32` (bp1a)
+- `android-15.0.0_r36` (bp1a)
 
 ### `AAOS_LUNCH_TARGET` <a name="targets"></a>
 

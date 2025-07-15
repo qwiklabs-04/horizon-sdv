@@ -40,7 +40,7 @@ spec:
         controller:
           sidecars:
             configAutoReload:
-              enabled: true
+              enabled: false
           jenkinsUriPrefix: /jenkins
           numExecutors: 1
           executorMode: "EXCLUSIVE"

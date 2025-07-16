@@ -60,7 +60,7 @@ pipeline {
     )
 
     string(name: 'REPO_SYNC_JOBS',
-           defaultValue: '2',
+           defaultValue: '3',
            description: '''<p>Number of parallel sync jobs for <i>repo sync</i>.</p>''',
            trim: true)
 

@@ -39,6 +39,8 @@
 #        repo sync.
 #  - DISK_SPACE_WATERMARK: percentage watermark to clean out old buids
 #        to retain space for current build.
+#  - AAOS_PARALLEL_BUILD_JOBS: define the number of parallel build jobs. Default
+#        let the build run as many jobs in parallel,  otherwise define max number.
 #
 # For Gerrit review change sets:
 #  - GERRIT_SERVER_URL: URL of Gerrit server.
@@ -90,6 +92,8 @@ MAX_REPO_SYNC_JOBS=${MAX_REPO_SYNC_JOBS:-24}
 # Set up the parallel sync job argument based on value.
 # Min 1, Max 24.
 REPO_SYNC_JOBS_ARG="-j$(( REPO_SYNC_JOBS < 1 ? 1 : REPO_SYNC_JOBS > MAX_REPO_SYNC_JOBS ? MAX_REPO_SYNC_JOBS : REPO_SYNC_JOBS ))"
+# If empty let the build system decide otherwise override with -j<NUMBER>, e.g. -j64
+AAOS_PARALLEL_BUILD_JOBS=${AAOS_PARALLEL_BUILD_JOBS:-}
 
 # Check we have a target defined.
 AAOS_LUNCH_TARGET=$(echo "${AAOS_LUNCH_TARGET}" | xargs)
@@ -246,7 +250,7 @@ declare -a POST_STORAGE_COMMANDS=(
 # to build the image.
 case "${AAOS_LUNCH_TARGET}" in
     aosp_rpi*)
-        AAOS_MAKE_CMDLINE="m bootimage systemimage vendorimage"
+        AAOS_MAKE_CMDLINE="m bootimage systemimage vendorimage -j${AAOS_PARALLEL_BUILD_JOBS}"
         # FIXME: we can build full flashable image but may require special
         # permissions, for now host the individual parts.
         # ${VERSION}-${DATE}-rpi5.img # rpi5-mkimg.sh
@@ -287,7 +291,7 @@ case "${AAOS_LUNCH_TARGET}" in
         )
         ;;
     sdk_car*)
-        AAOS_MAKE_CMDLINE="m && m emu_img_zip && m sbom"
+        AAOS_MAKE_CMDLINE="m -j${AAOS_PARALLEL_BUILD_JOBS}&& m emu_img_zip -j${AAOS_PARALLEL_BUILD_JOBS}&& m sbom -j${AAOS_PARALLEL_BUILD_JOBS}"
         AAOS_ARTIFACT_LIST+=(
             "${OUT_DIR}/target/product/emulator_car64_${AAOS_ARCH}/sbom.spdx.json"
             "${OUT_DIR}/target/product/emulator_car64_${AAOS_ARCH}/${AAOS_SDK_SYSTEM_IMAGE_PREFIX}*.zip"
@@ -299,7 +303,7 @@ case "${AAOS_LUNCH_TARGET}" in
         )
         ;;
     aosp_cf*)
-        AAOS_MAKE_CMDLINE="m dist"
+        AAOS_MAKE_CMDLINE="m dist -j${AAOS_PARALLEL_BUILD_JOBS}"
 
         WIFI_APK_NAME="WifiUtil.apk"
 
@@ -320,7 +324,7 @@ case "${AAOS_LUNCH_TARGET}" in
 
         # If the AAOS_BUILD_CTS variable is set, build only the cts image.
         if [[ "$AAOS_BUILD_CTS" -eq 1 ]]; then
-            AAOS_MAKE_CMDLINE="m cts -j16"
+            AAOS_MAKE_CMDLINE="m cts -j32"
             AAOS_ARTIFACT_LIST+=("${OUT_DIR}/host/linux-x86/cts/android-cts.zip")
         fi
         POST_STORAGE_COMMANDS+=(
@@ -331,7 +335,7 @@ case "${AAOS_LUNCH_TARGET}" in
         AAOS_ARTIFACT_LIST+=(
             "${OUT_DIR}.tgz"
         )
-        AAOS_MAKE_CMDLINE="m && m android.hardware.automotive.vehicle@2.0-default-service android.hardware.automotive.audiocontrol-service.example"
+        AAOS_MAKE_CMDLINE="m -j${AAOS_PARALLEL_BUILD_JOBS} && m android.hardware.automotive.vehicle@2.0-default-service android.hardware.automotive.audiocontrol-service.example -j${AAOS_PARALLEL_BUILD_JOBS}"
         # Pixel Tablet binaries for Android ap1a/ap2a/ap3a/ap4a/bp1a
         case "${AAOS_LUNCH_TARGET}" in
             *ap1a*)
@@ -406,7 +410,7 @@ case "${AAOS_LUNCH_TARGET}" in
         # If the target is not one of the above, print an error message
         # but continue as best so people can play with builds.
         echo "WARNING: unknown target ${LUNCH_TARGET}"
-        AAOS_MAKE_CMDLINE="m"
+        AAOS_MAKE_CMDLINE="m -j${AAOS_PARALLEL_BUILD_JOBS}"
         echo "Artifacts will not be stored!"
         ;;
 esac
@@ -479,6 +483,8 @@ case "$0" in
         AAOS_CLEAN=${AAOS_CLEAN}
 
         AAOS_BUILD_CTS=${AAOS_BUILD_CTS}
+
+        AAOS_PARALLEL_BUILD_JOBS=${AAOS_PARALLEL_BUILD_JOBS}
         "
         ;;
     *avd_sdk.sh)

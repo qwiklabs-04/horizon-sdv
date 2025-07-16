@@ -203,6 +203,7 @@ GERRIT_PROJECT=android/platform/packages/services/Car \
 This script is responsible for building the given target.
 ```
 AAOS_LUNCH_TARGET=sdk_car_x86_64-bp1a-userdebug \
+AAOS_PARALLEL_BUILD_JOBS=64 \
 ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
 ```
 

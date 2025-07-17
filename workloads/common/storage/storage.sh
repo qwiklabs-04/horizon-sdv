@@ -22,7 +22,7 @@
 #
 # Convert string back to a list.
 read -r -a ARTIFACT_LIST <<< "${ARTIFACT_LIST}"
-read -r -a POST_STORAGE_COMMANDS <<< "${POST_STORAGE_COMMANDS}"
+IFS=$'\n' read -r -d '' -a POST_CLEANUP_COMMANDS <<< "$POST_CLEANUP_STRING"
 
 # shellcheck disable=SC2317
 function gcs_bucket() {
@@ -123,7 +123,7 @@ fi
 
 # Post storage commands.
 echo "Post storage commands:"
-for command in "${POST_STORAGE_COMMANDS[@]}"; do
+for command in "${POST_CLEANUP_COMMANDS[@]}"; do
     echo "${command}"
     eval "${command}"
 done

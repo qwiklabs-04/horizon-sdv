@@ -34,6 +34,7 @@ Horizon SDV is designed to simplify the deployment and management of Android wor
    - [Section #6d - Gerrit](#section-6d---gerrit)
    - [Section #6e - Jenkins](#section-6e---jenkins)
    - [Section #6f - MTK connect](#section-6f---mtk-connect)
+   - [Section #6g - Headlamp](#section-6g---headlamp)
 - [Section #7 - Deprovisioning Infrastructure](#section-7---deprovisioning-infrastructure)
     - [Section #7a - Install Terraform](#section-7a---install-terraform)
     - [Section #7b - Terraform Destroy](#section-7b---terraform-destroy)
@@ -859,6 +860,27 @@ MTK Connect provides connectivity to remote devices for automated and manual tes
 
 Below is a view of the MTK connect homepage,   
 <img src="images/mtk-connect_homepage.png" width="750" />
+
+### Section #6g - Headlamp
+The Headlamp application in Kubernetes provides, extensible web-based user interface (UI) designed to simplify the management and visualization of Kubernetes clusters.  
+
+1. To Access Headlamp, go to the Horizon Landing page here: `https://<SUB_DOMAIN>.<HORIZON_DOMAIN>` and click on the Launch button within the Headlamp app card as below.   
+   <img src="images/headlamp_launch.png" width="325" />
+2. Login using bearer token. SSO login will be available soon.   
+   Generate token via access to bastion host with command:
+   - `kubectl create token headlamp-admin -n headlamp`.
+   - Paste generated token onto login page ( token valid 1h ).
+   Home page should be visible.
+
+Below is a view of the Headlamp homepage,   
+<img src="images/headlamp_home.png" width="750" />
+
+## Section #7 - Deprovisioning Infrastructure
+This section contains the steps to destroy the environment provisioned by Terraform workflow. 
+Follow the below steps to successfully destroy the infrastructure.
+
+>[!NOTE]
+> Only the resources provisioned by Terraform will be removed. Resources created or configured manually will not be affected.
 
 ## Section #7 - Deprovisioning Infrastructure
 This section contains the steps to destroy the environment provisioned by Terraform workflow. 

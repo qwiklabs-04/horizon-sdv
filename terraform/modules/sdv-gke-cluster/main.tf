@@ -165,6 +165,51 @@ resource "google_container_node_pool" "sdv_build_node_pool" {
 
 }
 
+resource "google_container_node_pool" "sdv_abfs_build_node_pool" {
+  name           = var.abfs_build_node_pool_name
+  location       = var.location
+  cluster        = google_container_cluster.sdv_cluster.name
+  node_count     = var.abfs_build_node_pool_node_count
+  node_locations = var.node_locations
+  node_config {
+    preemptible  = false
+    machine_type = var.abfs_build_node_pool_machine_type
+    disk_size_gb = 500
+    image_type   = "UBUNTU_CONTAINERD"
+
+    # Google recommends custom service accounts that have cloud-platform
+    # scope and permissions granted via IAM Roles.
+    service_account = var.service_account
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
+
+    labels = {
+      workloadLabel = "android-abfs"
+    }
+
+    taint {
+      key    = "workloadType"
+      value  = "android-abfs"
+      effect = "NO_SCHEDULE"
+    }
+
+    metadata = {
+      disable-legacy-endpoints = "true"
+    }
+
+    workload_metadata_config {
+      mode = "GKE_METADATA"
+    }
+  }
+
+  autoscaling {
+    min_node_count = var.abfs_build_node_pool_min_node_count
+    max_node_count = var.abfs_build_node_pool_max_node_count
+  }
+
+}
+
 resource "google_container_node_pool" "sdv_openbsw_build_node_pool" {
   name           = var.openbsw_build_node_pool_name
   location       = var.location

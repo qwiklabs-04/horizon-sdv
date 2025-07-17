@@ -46,7 +46,7 @@ spec:
             - -c
             - |
               apt update -y && \
-              apt install -y apt-transport-https ca-certificates gnupg curl kmod && \
+              apt install -y apt-transport-https ca-certificates gnupg curl kmod zip unzip rsync vim && \
               curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && \
               echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
               apt update -y && apt install -y google-cloud-cli && \
@@ -54,9 +54,12 @@ spec:
               curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
               apt update -y && apt install -y apt-transport-artifact-registry && \
               echo 'deb ar+https://us-apt.pkg.dev/projects/abfs-binaries abfs-apt-alpha-public main' | tee -a /etc/apt/sources.list.d/artifact-registry.list && \
-              apt update -y && apt install -y casfs-kmod-$(uname -r) && \
+              apt update -y && \
+              gcloud artifacts files list --project=abfs-binaries --location=us --repository=abfs-apt-alpha-public | grep -e "pool/casfs-kmod-$(uname -r)_0.0.33-2-g98f478a" | awk '{print $1}' | while read a; do gcloud artifacts files download --project=abfs-binaries --location=us --repository=abfs-apt-alpha-public --destination=. $a; done && \
+              ls pool* | while read a; do apt install "./$a"; done && \
+              depmod -a && \
+              modprobe casfs && \
               sleep infinity
-
           volumeMounts:
             - name: modules
               mountPath: /lib/modules

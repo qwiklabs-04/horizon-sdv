@@ -371,6 +371,8 @@ spec:
                           value: {{ .Values.config.projectID }}-openbsw
                         - key: "OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME"
                           value: "horizon-sdv/openbsw_builder"
+                        - key: "INFRA_DOCKER_ARTIFACT_PATH_NAME"
+                          value: "horizon-sdv/infra"
                         - key: "REPO_SYNC_JOBS"
                           value: {{ .Values.config.workloads.android.repoSyncJobs }}
                 groovy:

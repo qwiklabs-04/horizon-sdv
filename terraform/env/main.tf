@@ -112,7 +112,9 @@ module "base" {
         "roles/iap.tunnelResourceAccessor",
         "roles/iam.serviceAccountUser",
         "roles/compute.instanceAdmin.v1",
-        "roles/workstations.admin"
+        "roles/workstations.admin",
+        "roles/storage.bucketViewer",
+        "roles/spanner.admin",
       ])
     },
     sa2 = {

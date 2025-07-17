@@ -107,13 +107,9 @@ pipeline {
                   ['${ANDROID_BUILD_BUCKET_ROOT_NAME}', "${ANDROID_BUILD_BUCKET_ROOT_NAME}"],
                   ['${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
                   ['${INFRA_DOCKER_ARTIFACT_PATH_NAME}', "${INFRA_DOCKER_ARTIFACT_PATH_NAME}"],
-                  ['${CLOUD_REGION}', "${CLOUD_REGION}"],
-                  ['${CLOUD_PROJECT}', "${CLOUD_PROJECT}"],
-                  ['${HORIZON_DOMAIN}', "${HORIZON_DOMAIN}"],
-                  ['${HORIZON_GITHUB_URL}', "${HORIZON_GITHUB_URL}"],
-                  ['${HORIZON_GITHUB_BRANCH}', "${HORIZON_GITHUB_BRANCH}"],
-                  ['${REPO_SYNC_JOBS}', "${REPO_SYNC_JOBS}"]
-                ]
+                  ['${REPO_SYNC_JOBS}', "${REPO_SYNC_JOBS}"],
+                  ['${JENKINS_GCE_CLOUD_LABEL}', "${CUTTLEFISH_GCE_CLOUD_LABEL}" ]
+                 ]
 
                 def files = sh(returnStdout: true, script: "find workloads/android -name '*.groovy'").trim().split('\n')
 

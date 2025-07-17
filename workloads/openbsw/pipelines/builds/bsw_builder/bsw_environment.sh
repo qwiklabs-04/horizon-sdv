@@ -59,7 +59,9 @@ OPENBSW_CLONE_CMDLINE="git clone ${OPENBSW_GIT_URL} -b ${OPENBSW_GIT_BRANCH} ${O
 CMAKE_SYNC_JOBS=${CMAKE_SYNC_JOBS:-}
 
 # Build number and job name for artifact storage.
+# shellcheck disable=SC2034
 OPENBSW_BUILD_NUMBER=${OPENBSW_BUILD_NUMBER:-${BUILD_NUMBER}}
+unset BUILD_NUMBER
 JOB_NAME=${JOB_NAME:-openbsw}
 
 # Define artifact storage strategy and functions.
@@ -214,6 +216,9 @@ case "$0" in
     *storage.sh)
         VARIABLES+="
         OPENBSW_GIT_DIR=${OPENBSW_GIT_DIR}
+        OPENBSW_BUILD_NUMBER=${OPENBSW_BUILD_NUMBER}
+        OPENBSW_ARTIFACT_ROOT_NAME=${OPENBSW_ARTIFACT_ROOT_NAME}
+        OPENBSW_ARTIFACT_STORAGE_SOLUTION_FUNCTION=${OPENBSW_ARTIFACT_STORAGE_SOLUTION_FUNCTION}
         "
         ;;
     *)

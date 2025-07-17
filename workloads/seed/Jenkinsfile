@@ -57,6 +57,7 @@ pipeline {
                 def replacements = [
                   ['${ANDROID_BUILD_BUCKET_ROOT_NAME}', "${ANDROID_BUILD_BUCKET_ROOT_NAME}"],
                   ['${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
+                  ['${INFRA_DOCKER_ARTIFACT_PATH_NAME}', "${INFRA_DOCKER_ARTIFACT_PATH_NAME}"],
                   ['${CLOUD_REGION}', "${CLOUD_REGION}"],
                   ['${CLOUD_PROJECT}', "${CLOUD_PROJECT}"],
                   ['${HORIZON_DOMAIN}', "${HORIZON_DOMAIN}"],

@@ -30,9 +30,9 @@ RUN apt-get update -y && \
     apt-get update -y && apt install -y npm nodejs && \
     rm -rf /var/lib/apt/lists/*
 
-# The following installs gcloud sdk including gsutil required for uploading
+# The following installs gcloud sdk including gcloud storage required for uploading
 # artifacts to Google Cloud Storage. Remove if using alternative storage.
-# https://cloud.google.com/storage/docs/gsutil_install
+# https://cloud.google.com/sdk/gcloud/reference/storage
 # GCS:START
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
     gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && \

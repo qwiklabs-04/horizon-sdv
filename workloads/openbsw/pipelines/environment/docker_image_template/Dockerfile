@@ -70,7 +70,7 @@ ENV PATH="/root/.local/bin:/usr/bin:$PATH"
 
 # The following installs gcloud sdk required for uploading
 # artifacts to Google Cloud Storage. Remove if using alternative storage.
-# https://cloud.google.com/storage/docs/gsutil_install
+# https://cloud.google.com/sdk/gcloud/reference/storage
 # GCS:START
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
     gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && \

@@ -162,7 +162,7 @@ MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
 MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
 MTK_CONNECTED_DEVICES=1 \
 MTK_CONNECT_TESTBENCH="Example-Testbench" \
-./mtk_connect.sh --stop || true
+./mtk_connect.sh --stop
 cd -
 ```
 

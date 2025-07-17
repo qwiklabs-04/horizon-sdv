@@ -22,7 +22,7 @@
 # shellcheck disable=SC1091
 source "$(dirname "${BASH_SOURCE[0]}")"/cts_environment.sh "$0"
 
-# Install the CTS packages. FIXME: need to optimize
+# Install the CTS packages.
 function cts_initialise() {
     if [ -n "${CTS_DOWNLOAD_URL}" ]; then
         echo "Installing Android CTS from ${CTS_DOWNLOAD_URL}."

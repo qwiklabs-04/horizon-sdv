@@ -38,6 +38,16 @@ pipelineJob('Android/Environment/Development Build Instance') {
       choices(['15', '14', '15-rpi', '14-rpi'])
     }
 
+    stringParam {
+      name('IMAGE_TAG')
+      defaultValue('latest')
+      description('''<p>Image tag for the builder image, e.g.</p>
+        <ul><li>ABFS instance: <code>abfs-latest</code></li>
+        <li>AAOS instance: <code>latest</code></li></ul>
+        <p>Artifact registry path is determined from the tag prefix.</p>''')
+      trim(true)
+    }
+
     choiceParam {
       name('INSTANCE_MAX_UPTIME')
       choices(['1', '2', '4', '8'])

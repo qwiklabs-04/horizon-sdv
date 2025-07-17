@@ -272,6 +272,7 @@ metadata:
   labels:
     "jenkins.io/credentials-type": "secretText"
   annotations:
+    argocd.argoproj.io/sync-wave: "1"
     "jenkins.io/credentials-description": "ABFS License"
 type: Opaque
 stringData:

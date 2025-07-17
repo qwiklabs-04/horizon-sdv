@@ -25,6 +25,8 @@ pipeline {
   environment {
     STORAGE_CLASS_SUFFIX="android-${ANDROID_VERSION}"
     STORAGE_SIZE="${ANDROID_VERSION =~ "rpi" ? "500Gi" : "1000Gi"}"
+    // FIXME: align when abfs integrated
+    DOCKER_ARTIFACT_PATH_NAME = "${IMAGE_TAG =~ "abfs" ? "horizon-sdv/aaos_builder" : "${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}"}"
 
     // Define Pod Template in environment so we can override.
     def kubernetesPodTemplate = """
@@ -53,7 +55,7 @@ pipeline {
         serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
         containers:
         - name: builder
-          image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}:latest
+          image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${DOCKER_ARTIFACT_PATH_NAME}:${IMAGE_TAG}
           imagePullPolicy: IfNotPresent
           command:
           - sleep

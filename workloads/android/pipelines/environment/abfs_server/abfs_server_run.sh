@@ -33,7 +33,7 @@ function abfs_server_run() {
   export TF_VAR_zone="${CLOUD_ZONE}"
   export TF_VAR_sdv_network="sdv-network"
   export TF_VAR_abfs_server_machine_type="${SERVER_MACHINE_TYPE}"
-  export TF_VAR_abfs_docker_image_uri="${DOWNLOAD_LOCATION}-docker.pkg.dev/abfs-binaries/abfs-containers-alpha/abfs-alpha:${ABFS_IMAGE_TAG}"
+  export TF_VAR_abfs_docker_image_uri="${DOCKER_REGISTRY_NAME}"
   export TF_VAR_abfs_license
   TF_VAR_abfs_license="$(echo -n "${ABFS_LICENSE_B64}" | base64 -d)"
 

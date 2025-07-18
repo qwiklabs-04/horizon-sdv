@@ -17,38 +17,70 @@ pipelineJob('Android/Environment/ABFS Uploader') {
     """)
 
   parameters {
+
     choiceParam {
       name('ABFS_TERRAFORM_ACTION')
       choices(['APPLY', 'DESTROY', 'START', 'STOP', 'RESTART'])
     }
+
     stringParam {
       name('UPLOADER_COUNT')
       defaultValue('1')
       trim(true)
     }
+
     stringParam {
       name('UPLOADER_MACHINE_TYPE')
       defaultValue('n2d-standard-48')
       trim(true)
     }
+
     stringParam {
       name('UPLOADER_DATADISK_SIZE_GB')
       defaultValue('1024')
       trim(true)
     }
+
+    stringParam {
+      name('INFRA_IMAGE_TAG')
+      defaultValue('latest')
+      description('''<p>Image tag for the ABFS infra docker image used for server creation.</p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('DOCKER_REGISTRY_NAME')
+      defaultValue('europe-docker.pkg.dev/abfs-binaries/abfs-containers-alpha/abfs-alpha:latest')
+      trim(true)
+    }
+
     stringParam {
       name('UPLOADER_MANIFEST_SERVER')
       defaultValue('android.googlesource.com')
       trim(true)
     }
+
     stringParam {
       name('UPLOADER_GIT_BRANCH')
       defaultValue('["main"]')
       trim(true)
     }
+
     stringParam {
       name('UPLOADER_MANIFEST_FILE')
       defaultValue('default.xml')
+      trim(true)
+    }
+
+    stringParam {
+      name('TERRAFORM_GITHUB_URL')
+      defaultValue('https://github.com/terraform-google-modules/terraform-google-abfs.git')
+      trim(true)
+    }
+
+    stringParam {
+      name('TERRAFORM_GITHUB_VERSION')
+      defaultValue('961f5aa3c3be87a242597cbd4bc08821f28a7085')
       trim(true)
     }
   }

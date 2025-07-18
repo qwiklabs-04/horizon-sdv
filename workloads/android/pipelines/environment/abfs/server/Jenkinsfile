@@ -41,19 +41,22 @@ pipeline {
   }
 
   stages {
-    stage ('Start Server Instance') {
+    stage ('Start Instance') {
       agent { kubernetes { yaml kubernetesPodTemplate } }
       stages {
-        stage ('Initialise') {
+        stage ('Server Action') {
           steps {
             container(name: 'abfs-server-builder') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-               withCredentials([string(credentialsId: 'jenkins-abfs-license-b64', variable: "JENKINS_ABFS_LICENSE_B64")]) {
+                script {
+                  currentBuild.description = "Action: ${ABFS_TERRAFORM_ACTION}" + "<br/>" + "$BUILD_USER"
+                }
+                withCredentials([string(credentialsId: 'jenkins-abfs-license-b64', variable: "JENKINS_ABFS_LICENSE_B64")]) {
                   sh '''
                     cd ./workloads/android/pipelines/environment/abfs/server/
                     ABFS_TERRAFORM_ACTION="${ABFS_TERRAFORM_ACTION}" \
                     SERVER_MACHINE_TYPE="${SERVER_MACHINE_TYPE}" \
-                    ABFS_LICENSE_B64="${JENKINS_ABFS_LICENSE_B64}" \
+                    ABFS_LICENSE_B64=${ABFS_LICENSE_B64:-$JENKINS_ABFS_LICENSE_B64} \
                     ./abfs_server_run.sh
                   '''
                 }

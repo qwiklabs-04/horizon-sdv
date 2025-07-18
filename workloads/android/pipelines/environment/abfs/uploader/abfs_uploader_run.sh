@@ -14,9 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Include common functions and variables.
-# shellcheck disable=SC1091
-
 function abfs_override_tf() {
   cat > main_override.tf <<EOL
 module "abfs-uploaders" {
@@ -40,7 +37,7 @@ function abfs_uploader_run() {
   export TF_VAR_abfs_gerrit_uploader_git_branch=${UPLOADER_GIT_BRANCH}
   export TF_VAR_abfs_manifest_file=${UPLOADER_MANIFEST_FILE}
   export TF_VAR_abfs_license
-  TF_VAR_abfs_license="$(echo -n "${ABFS_LICENSE_B64}" | base64 -d)"
+  TF_VAR_abfs_license="$(echo "${ABFS_LICENSE_B64}" | base64 -d)"
 
   terraform init -backend-config bucket="${CLOUD_BACKEND_BUCKET}" -upgrade
 

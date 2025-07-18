@@ -30,7 +30,7 @@ pipeline {
         serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
         containers:
         - name: abfs-server-builder
-          image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${INFRA_DOCKER_ARTIFACT_PATH_NAME}:latest
+          image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${INFRA_DOCKER_ARTIFACT_PATH_NAME}:${INFRA_IMAGE_TAG}
           imagePullPolicy: Always
           command:
           - sleep
@@ -53,7 +53,7 @@ pipeline {
                     cd ./workloads/android/pipelines/environment/abfs_server/
                     ABFS_TERRAFORM_ACTION="${ABFS_TERRAFORM_ACTION}" \
                     SERVER_MACHINE_TYPE="${SERVER_MACHINE_TYPE}" \
-                    ABFS_LICENSE_B64=${JENKINS_ABFS_LICENSE_B64} \
+                    ABFS_LICENSE_B64="${JENKINS_ABFS_LICENSE_B64}" \
                     ./abfs_server_run.sh
                   '''
                 }

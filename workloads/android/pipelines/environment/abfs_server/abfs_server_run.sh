@@ -33,9 +33,9 @@ function abfs_server_run() {
   export TF_VAR_zone="${CLOUD_ZONE}"
   export TF_VAR_sdv_network="sdv-network"
   export TF_VAR_abfs_server_machine_type="${SERVER_MACHINE_TYPE}"
-  export TF_VAR_abfs_docker_image_uri="${DOWNLOAD_LOCATION}-docker.pkg.dev/abfs-binaries/abfs-containers-alpha/abfs-alpha:latest"
+  export TF_VAR_abfs_docker_image_uri="${DOWNLOAD_LOCATION}-docker.pkg.dev/abfs-binaries/abfs-containers-alpha/abfs-alpha:${ABFS_IMAGE_TAG}"
   export TF_VAR_abfs_license
-  TF_VAR_abfs_license=$(echo "${ABFS_LICENSE_B64}" | base64 -d)
+  TF_VAR_abfs_license="$(echo -n "${ABFS_LICENSE_B64}" | base64 -d)"
 
   terraform init -backend-config bucket="${CLOUD_BACKEND_BUCKET}" -upgrade
 
@@ -69,6 +69,8 @@ function abfs_server_update_schema() {
       yes Y | gcloud --project "${CLOUD_PROJECT}" spanner databases delete abfs --instance=abfs || true
     fi
   fi
+  cd - || true
+  rm -rf "${REPO_DIRECTORY}"
 }
 
 abfs_override_tf

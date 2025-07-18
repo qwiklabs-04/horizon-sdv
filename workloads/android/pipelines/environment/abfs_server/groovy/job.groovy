@@ -26,6 +26,30 @@ pipelineJob('Android/Environment/ABFS Server') {
       defaultValue('n2-highmem-64')
       trim(true)
     }
+
+    stringParam {
+      name('DOWNLOAD_LOCATION')
+      defaultValue('europe')
+      trim(true)
+    }
+
+    stringParam {
+      name('SPANNER_DDL_FILE')
+      defaultValue('files/schemas/0.0.31-schema.sql')
+      trim(true)
+    }
+
+    stringParam {
+      name('TERRAFORM_GITHUB_URL')
+      defaultValue('https://github.com/terraform-google-modules/terraform-google-abfs.git')
+      trim(true)
+    }
+
+    stringParam {
+      name('TERRAFORM_GITHUB_VERSION')
+      defaultValue('961f5aa3c3be87a242597cbd4bc08821f28a7085')
+      trim(true)
+    }
   }
 
   logRotator {

@@ -20,39 +20,41 @@
 function abfs_server_run() {
   echo "ABFS Server Run"
 
-  export TF_VAR_project_id=${CLOUD_PROJECT}
-  export TF_VAR_region=${CLOUD_REGION}
-  export TF_VAR_zone=${CLOUD_ZONE}
+  export TF_VAR_project_id="${CLOUD_PROJECT}"
+  export TF_VAR_region="${CLOUD_REGION}"
+  export TF_VAR_zone="${CLOUD_ZONE}"
   export TF_VAR_sdv_network="sdv-network"
-  export TF_VAR_abfs_server_machine_type=${SERVER_MACHINE_TYPE}
-  export TF_VAR_abfs_docker_image_uri="europe-docker.pkg.dev/abfs-binaries/abfs-containers-alpha/abfs-alpha:latest"
-  export TF_VAR_abfs_license=$(echo $ABFS_LICENSE_B64 | base64 -d)
+  export TF_VAR_abfs_server_machine_type="${SERVER_MACHINE_TYPE}"
+  export TF_VAR_abfs_docker_image_uri="${DOWNLOAD_LOCATION}-docker.pkg.dev/abfs-binaries/abfs-containers-alpha/abfs-alpha:latest"
+  export TF_VAR_abfs_license
+  TF_VAR_abfs_license=$(echo "${ABFS_LICENSE_B64}" | base64 -d)
 
-  terraform init -backend-config bucket=${CLOUD_BACKEND_BUCKET} -upgrade
+  terraform init -backend-config bucket="${CLOUD_BACKEND_BUCKET}" -upgrade
 
-  if [ ${ABFS_TERRAFORM_ACTION} = "APPLY" ]; then
+  if [ "${ABFS_TERRAFORM_ACTION}" = "APPLY" ]; then
     terraform plan
     terraform apply -auto-approve
-  elif [ ${ABFS_TERRAFORM_ACTION} = "DESTROY" ]; then
+  elif [ "${ABFS_TERRAFORM_ACTION}" = "DESTROY" ]; then
     terraform plan -destroy
     terraform destroy --auto-approve
-  elif [ ${ABFS_TERRAFORM_ACTION} = "START" ]; then
-    gcloud compute instances start abfs-server --zone=${CLOUD_ZONE}
-  elif [ ${ABFS_TERRAFORM_ACTION}} = "STOP" ]; then
-    gcloud compute instances stop abfs-server --zone=${CLOUD_ZONE}
-  elif [ ${ABFS_TERRAFORM_ACTION} = "RESTART" ]; then
-    gcloud compute instances reset abfs-server --zone=${CLOUD_ZONE}
+  elif [ "${ABFS_TERRAFORM_ACTION}" = "START" ]; then
+    gcloud compute instances start abfs-server --zone="${CLOUD_ZONE}"
+  elif [ "${ABFS_TERRAFORM_ACTION}" = "STOP" ]; then
+    gcloud compute instances stop abfs-server --zone="${CLOUD_ZONE}"
+  elif [ "${ABFS_TERRAFORM_ACTION}" = "RESTART" ]; then
+    gcloud compute instances reset abfs-server --zone="${CLOUD_ZONE}"
   else
     echo "WRONG ACTION"
   fi
 }
 
 function abfs_server_update_schema() {
-  git clone https://github.com/terraform-google-modules/terraform-google-abfs.git
-  cd terraform-google-abfs
-  git checkout 961f5aa3c3be87a242597cbd4bc08821f28a7085
-  if [ -z "$(gcloud --project ${CLOUD_PROJECT} spanner databases ddl describe --instance abfs abfs)" ]; then
-    gcloud --project ${CLOUD_PROJECT} spanner databases ddl update --instance abfs abfs --ddl-file files/schemas/0.0.31-schema.sql
+  git clone "${TERRAFORM_GITHUB_URL}"
+  REPO_DIRECTORY=$(basename "${TERRAFORM_GITHUB_URL}" .git)
+  cd "${REPO_DIRECTORY}" || exit
+  git checkout "${TERRAFORM_GITHUB_VERSION}"
+  if [ -z "$(gcloud --project "${CLOUD_PROJECT}" spanner databases ddl describe --instance abfs abfs)" ]; then
+    gcloud --project "${CLOUD_PROJECT}" spanner databases ddl update --instance abfs abfs --ddl-file "${SPANNER_DDL_FILE}"
   fi
 }
 

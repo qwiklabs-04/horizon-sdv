@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-pipelineJob('Android/Environment/Docker Infra Image Template') {
+pipelineJob('Android/Environment/ABFS/Docker Infra Image Template') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">Infra Builder</h3>
     <p>This job builds the container image that serves as a dependency for other pipeline jobs.</p>
@@ -57,7 +57,7 @@ pipelineJob('Android/Environment/Docker Infra Image Template') {
           branch("*/${HORIZON_GITHUB_BRANCH}")
         }
       }
-      scriptPath('workloads/android/pipelines/environment/docker_infra_template/Jenkinsfile')
+      scriptPath('workloads/android/pipelines/environment/abfs/docker_infra_template/Jenkinsfile')
     }
   }
 }

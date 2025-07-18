@@ -17,6 +17,14 @@
 # Include common functions and variables.
 # shellcheck disable=SC1091
 
+function abfs_override_tf() {
+  cat > main_override.tf <<EOL
+module "abfs-server" {
+  source = "git::${TERRAFORM_GITHUB_URL}//modules/server?ref=${TERRAFORM_GITHUB_VERSION}"
+}
+EOL
+}
+
 function abfs_server_run() {
   echo "ABFS Server Run"
 
@@ -55,8 +63,14 @@ function abfs_server_update_schema() {
   git checkout "${TERRAFORM_GITHUB_VERSION}"
   if [ -z "$(gcloud --project "${CLOUD_PROJECT}" spanner databases ddl describe --instance abfs abfs)" ]; then
     gcloud --project "${CLOUD_PROJECT}" spanner databases ddl update --instance abfs abfs --ddl-file "${SPANNER_DDL_FILE}"
+  else
+    if [ "${ABFS_TERRAFORM_ACTION}" = "DESTROY" ]; then
+      # Remove Spanner DB.
+      yes Y | gcloud --project "${CLOUD_PROJECT}" spanner databases delete abfs --instance=abfs || true
+    fi
   fi
 }
 
+abfs_override_tf
 abfs_server_run
 abfs_server_update_schema

@@ -30,7 +30,7 @@ pipeline {
         serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
         containers:
         - name: abfs-uploader-builder
-          image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${INFRA_DOCKER_ARTIFACT_PATH_NAME}:latest
+          image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${INFRA_DOCKER_ARTIFACT_PATH_NAME}:${INFRA_IMAGE_TAG}
           imagePullPolicy: Always
           command:
           - sleep

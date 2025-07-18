@@ -11,33 +11,19 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-pipelineJob('Android/Environment/ABFS Uploader') {
+pipelineJob('Android/Environment/ABFS/Server') {
   description("""
-    <br/><h3 style="margin-bottom: 10px;">ABFS Uploader</h3>
+    <br/><h3 style="margin-bottom: 10px;">Server</h3>
     """)
 
   parameters {
-
     choiceParam {
       name('ABFS_TERRAFORM_ACTION')
       choices(['APPLY', 'DESTROY', 'START', 'STOP', 'RESTART'])
     }
-
     stringParam {
-      name('UPLOADER_COUNT')
-      defaultValue('1')
-      trim(true)
-    }
-
-    stringParam {
-      name('UPLOADER_MACHINE_TYPE')
-      defaultValue('n2d-standard-48')
-      trim(true)
-    }
-
-    stringParam {
-      name('UPLOADER_DATADISK_SIZE_GB')
-      defaultValue('1024')
+      name('SERVER_MACHINE_TYPE')
+      defaultValue('n2-highmem-64')
       trim(true)
     }
 
@@ -55,20 +41,8 @@ pipelineJob('Android/Environment/ABFS Uploader') {
     }
 
     stringParam {
-      name('UPLOADER_MANIFEST_SERVER')
-      defaultValue('android.googlesource.com')
-      trim(true)
-    }
-
-    stringParam {
-      name('UPLOADER_GIT_BRANCH')
-      defaultValue('["main"]')
-      trim(true)
-    }
-
-    stringParam {
-      name('UPLOADER_MANIFEST_FILE')
-      defaultValue('default.xml')
+      name('SPANNER_DDL_FILE')
+      defaultValue('files/schemas/0.0.31-schema.sql')
       trim(true)
     }
 
@@ -86,7 +60,7 @@ pipelineJob('Android/Environment/ABFS Uploader') {
   }
 
   // Block build if certain jobs are running.
-  blockOn('Android*.*ABFS*.*Uploader.*') {
+  blockOn('Android*.*ABFS*.*Server.*') {
     // Possible values are 'GLOBAL' and 'NODE' (default).
     blockLevel('GLOBAL')
     // Possible values are 'ALL', 'BUILDABLE' and 'DISABLED' (default).
@@ -110,7 +84,7 @@ pipelineJob('Android/Environment/ABFS Uploader') {
           branch("*/${HORIZON_GITHUB_BRANCH}")
         }
       }
-      scriptPath('workloads/android/pipelines/environment/abfs_uploader/Jenkinsfile')
+      scriptPath('workloads/android/pipelines/environment/abfs/server/Jenkinsfile')
     }
   }
 }

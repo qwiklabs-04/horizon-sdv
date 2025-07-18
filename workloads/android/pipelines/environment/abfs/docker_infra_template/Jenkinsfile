@@ -63,8 +63,8 @@ pipeline {
           sh '''
             # Build the docker image and push to Artifact registry using service account configured with
             # correct roles/permissions.
-            /kaniko/executor -f workloads/android/pipelines/environment/docker_infra_template/Dockerfile \
-              -c workloads/android/pipelines/environment/docker_infra_template --skip-tls-verify-pull \
+            /kaniko/executor -f workloads/android/pipelines/environment/abfs/docker_infra_template/Dockerfile \
+              -c workloads/android/pipelines/environment/abfs/docker_infra_template --skip-tls-verify-pull \
               --insecure --skip-tls-verify "${KANIKO_OPTIONS}"
           '''
         }

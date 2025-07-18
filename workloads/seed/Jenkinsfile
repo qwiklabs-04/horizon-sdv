@@ -135,7 +135,7 @@ pipeline {
         stage ("Seed jobs") {
           steps {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-              jobDsl targets: 'workloads/android/pipelines/*/*/groovy/*.groovy', sandbox: true
+              jobDsl targets: 'workloads/android/pipelines/**/groovy/*.groovy', sandbox: true
             }
           }
         }

@@ -3,8 +3,7 @@ data "google_project" "project" {
 }
 
 module "abfs-server" {
-  source = "git::https://github.com/terraform-google-modules/terraform-google-abfs.git//modules/server?ref=961f5aa3c3be87a242597cbd4bc08821f28a7085"
-
+  source                                = "git::https://github.com/terraform-google-modules/terraform-google-abfs.git//modules/server?ref=961f5aa3c3be87a242597cbd4bc08821f28a7085"
   project_id                            = var.project_id
   zone                                  = var.zone
   service_account_email                 = "abfs-server@${var.project_id}.iam.gserviceaccount.com"

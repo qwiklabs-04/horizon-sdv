@@ -85,6 +85,14 @@ pipelineJob('Android/Environment/ABFS Uploader') {
     }
   }
 
+  // Block build if certain jobs are running.
+  blockOn('Android*.*ABFS*.*Uploader.*') {
+    // Possible values are 'GLOBAL' and 'NODE' (default).
+    blockLevel('GLOBAL')
+    // Possible values are 'ALL', 'BUILDABLE' and 'DISABLED' (default).
+    scanQueueFor('BUILDABLE')
+  }
+
   logRotator {
     daysToKeep(60)
     numToKeep(200)

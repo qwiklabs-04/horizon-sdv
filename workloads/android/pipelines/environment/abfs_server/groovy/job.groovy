@@ -28,6 +28,22 @@ pipelineJob('Android/Environment/ABFS Server') {
     }
 
     stringParam {
+      name('ABFS_IMAGE_TAG')
+      defaultValue('latest')
+      description('''<p>Image tag for the external Google ABFS packages, e.g..<br/>
+        <i>${DOWNLOAD_LOCATION}-docker.pkg.dev/abfs-binaries/abfs-containers-alpha/abfs-alpha:${ABFS_IMAGE_TAG}</i>
+        </p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('INFRA_IMAGE_TAG')
+      defaultValue('latest')
+      description('''<p>Image tag for the ABFS infra docker image used for server creation.</p>''')
+      trim(true)
+    }
+
+    stringParam {
       name('DOWNLOAD_LOCATION')
       defaultValue('europe')
       trim(true)
@@ -50,6 +66,14 @@ pipelineJob('Android/Environment/ABFS Server') {
       defaultValue('961f5aa3c3be87a242597cbd4bc08821f28a7085')
       trim(true)
     }
+  }
+
+  // Block build if certain jobs are running.
+  blockOn('Android*.*ABFS*.*Server.*') {
+    // Possible values are 'GLOBAL' and 'NODE' (default).
+    blockLevel('GLOBAL')
+    // Possible values are 'ALL', 'BUILDABLE' and 'DISABLED' (default).
+    scanQueueFor('BUILDABLE')
   }
 
   logRotator {

@@ -62,7 +62,6 @@ pipeline {
                     UPLOADER_GIT_BRANCH="${UPLOADER_GIT_BRANCH}" \
                     UPLOADER_MANIFEST_FILE="${UPLOADER_MANIFEST_FILE}" \
                     ABFS_LICENSE_B64=${ABFS_LICENSE_B64:-$JENKINS_ABFS_LICENSE_B64} \
-                    KUBERNETES_SECRET_NAME="jenkins-abfs-license-b64" \
                     ./abfs_uploader_run.sh
                   '''
                 }

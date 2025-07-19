@@ -67,6 +67,8 @@ pipeline {
               -c workloads/android/pipelines/environment/abfs/docker_image_template --skip-tls-verify-pull \
               --insecure --skip-tls-verify "${KANIKO_OPTIONS}" \
               --build-arg LINUX_DISTRIBUTION='''+LINUX_DISTRIBUTION+''' \
+              --build-arg GOOGLE_DISTRIBUTION_REGISTRY="${GOOGLE_DISTRIBUTION_REGISTRY}" \
+              --build-arg ABFS_DISTRIBUTION_REGISTRY="${ABFS_DISTRIBUTION_REGISTRY}" \
               --build-arg ABFS="true"
           '''
         }

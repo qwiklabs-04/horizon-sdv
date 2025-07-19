@@ -53,10 +53,6 @@ pipeline {
         container(name: 'builder') {
           withCredentials([usernamePassword(credentialsId: 'jenkins-mtk-connect-apikey', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
             sh '''
-              ls /usr/bin || true
-              sudo apt update -y && sudo apt install -y gettext gettext-base
-              ls /usr/local/bin || true
-              which envsubst || true
               cd ./workloads/common/mtk-connect/ || true
               sudo \
               MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \

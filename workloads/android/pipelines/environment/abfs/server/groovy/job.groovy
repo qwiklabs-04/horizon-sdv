@@ -57,6 +57,13 @@ pipelineJob('Android/Environment/ABFS/Server') {
       defaultValue('961f5aa3c3be87a242597cbd4bc08821f28a7085')
       trim(true)
     }
+
+    stringParam {
+      name('ABFS_LICENSE_B64')
+      defaultValue('')
+      trim(true)
+    }
+
   }
 
   // Block build if certain jobs are running.

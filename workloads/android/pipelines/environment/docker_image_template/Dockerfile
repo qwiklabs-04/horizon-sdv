@@ -12,8 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Latest stable.
-FROM --platform=linux/amd64 debian:12
+# Allow user to choose distribution, e.g. ubuntu:22.04
+ARG LINUX_DISTRIBUTION
+FROM --platform=linux/amd64 ${LINUX_DISTRIBUTION}
+
+# Create image for standard builds or those using ABFS.
+ARG ABFS
 
 # Install packages required for building AAOSP targets.
 RUN apt-get update -y && \
@@ -26,7 +30,8 @@ RUN apt-get update -y && \
     gettext gettext-base g++-multilib libncurses5 libssl-dev python3 python3-setuptools \
     python3-pip python3-requests python3-venv python3-virtualenv procps \
     meson bc coreutils dosfstools e2fsprogs fdisk kpartx mtools ninja-build \
-    pkg-config rsync less curl sudo vim ssh findutils gawk jq htop && \
+    pkg-config rsync less curl sudo vim ssh findutils gawk jq htop \
+    libcap2-bin psmisc && \
     apt-get update -y && apt install -y npm nodejs && \
     rm -rf /var/lib/apt/lists/*
 
@@ -43,11 +48,19 @@ RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
 # GCS:END
 
 # Install Google repo command tool
-RUN export REPO=$(mktemp /tmp/repo.XXXXXXXXX) && \
-    curl -o ${REPO} https://storage.googleapis.com/git-repo-downloads/repo && \
-    gpg --recv-key 8BB9AD793E8E6153AF0F9A4416530D5E920F5C65 && \
-    curl -s https://storage.googleapis.com/git-repo-downloads/repo.asc | \
-    gpg --verify - ${REPO} && install -m 755 ${REPO} /usr/bin/repo
+RUN if [ "$ABFS" = "false" ]; then \
+        export REPO=$(mktemp /tmp/repo.XXXXXXXXX); \
+        curl -o ${REPO} https://storage.googleapis.com/git-repo-downloads/repo; \
+        gpg --recv-key 8BB9AD793E8E6153AF0F9A4416530D5E920F5C65; \
+        curl -s https://storage.googleapis.com/git-repo-downloads/repo.asc | \
+           gpg --verify - ${REPO} && install -m 755 ${REPO} /usr/bin/repo; \
+    else \
+        echo 'deb http://packages.cloud.google.com/apt apt-transport-artifact-registry-stable main' | tee -a /etc/apt/sources.list.d/artifact-registry.list && \
+        curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
+        apt update -y && apt install -y apt-transport-artifact-registry && \
+        echo 'deb ar+https://us-apt.pkg.dev/projects/abfs-binaries abfs-apt-alpha-public main' | tee -a /etc/apt/sources.list.d/artifact-registry.list && \
+        apt update -y && apt install -y kmod; \
+    fi
 
 # Add USER and provide sudo access.
 ARG USER=builder
@@ -55,6 +68,10 @@ RUN useradd -u 1000 -ms /bin/bash ${USER} && \
     passwd -d ${USER} && \
     usermod -aG sudo ${USER} && \
     echo "${USER} ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers
+
+RUN if [ "$ABFS" = "true" ]; then \
+        mkdir /src && chown ${USER}:${USER} /src; \
+    fi
 
 # Switch to user
 USER ${USER}

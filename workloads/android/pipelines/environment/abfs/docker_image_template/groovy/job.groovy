@@ -33,6 +33,14 @@ pipelineJob('Android/Environment/ABFS/Docker Image Template') {
       description('''<p>Image tag for the builder image.</p>''')
       trim(true)
     }
+    stringParam {
+      name('LINUX_DISTRIBUTION')
+      defaultValue('ubuntu:22.04')
+      description('''<p>Define the Linux distribution to use, e.g.</p></br>
+        <ul><li>ubuntu:22.04</li>
+            <li>ubuntu:20.04</li></ul>''')
+      trim(true)
+    }
     booleanParam {
       name('NO_PUSH')
       defaultValue(true)

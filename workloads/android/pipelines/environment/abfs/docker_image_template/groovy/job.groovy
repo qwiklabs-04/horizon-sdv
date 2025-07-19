@@ -41,6 +41,18 @@ pipelineJob('Android/Environment/ABFS/Docker Image Template') {
             <li>ubuntu:20.04</li></ul>''')
       trim(true)
     }
+    stringParam {
+      name('GOOGLE_DISTRIBUTION_REGISTRY')
+      defaultValue('http://packages.cloud.google.com/apt apt-transport-artifact-registry-stable main')
+      description('''<p>Google distribution registry URL and component.</p>''')
+      trim(true)
+    }
+    stringParam {
+      name('ABFS_DISTRIBUTION_REGISTRY')
+      defaultValue('ar+https://us-apt.pkg.dev/projects/abfs-binaries abfs-apt-alpha-public main')
+      description('''<p>ABFS distribution registry URL and component.</p>''')
+      trim(true)
+    }
     booleanParam {
       name('NO_PUSH')
       defaultValue(true)

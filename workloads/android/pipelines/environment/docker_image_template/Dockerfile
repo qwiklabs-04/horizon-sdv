@@ -18,6 +18,9 @@ FROM --platform=linux/amd64 ${LINUX_DISTRIBUTION}
 
 # Create image for standard builds or those using ABFS.
 ARG ABFS
+# ABFS specific registry and category/versions.
+ARG GOOGLE_DISTRIBUTION_REGISTRY
+ARG ABFS_DISTRIBUTION_REGISTRY
 
 # Install packages required for building AAOSP targets.
 RUN apt-get update -y && \
@@ -55,10 +58,10 @@ RUN if [ "$ABFS" = "false" ]; then \
         curl -s https://storage.googleapis.com/git-repo-downloads/repo.asc | \
            gpg --verify - ${REPO} && install -m 755 ${REPO} /usr/bin/repo; \
     else \
-        echo 'deb http://packages.cloud.google.com/apt apt-transport-artifact-registry-stable main' | tee -a /etc/apt/sources.list.d/artifact-registry.list && \
+        echo "deb ${GOOGLE_DISTRIBUTION_REGISTRY}" | tee -a /etc/apt/sources.list.d/artifact-registry.list && \
         curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
         apt update -y && apt install -y apt-transport-artifact-registry && \
-        echo 'deb ar+https://us-apt.pkg.dev/projects/abfs-binaries abfs-apt-alpha-public main' | tee -a /etc/apt/sources.list.d/artifact-registry.list && \
+        echo "deb ${ABFS_DISTRIBUTION_REGISTRY}" | tee -a /etc/apt/sources.list.d/artifact-registry.list && \
         apt update -y && apt install -y kmod; \
     fi
 

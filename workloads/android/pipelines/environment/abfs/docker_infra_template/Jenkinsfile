@@ -65,7 +65,8 @@ pipeline {
             # correct roles/permissions.
             /kaniko/executor -f workloads/android/pipelines/environment/abfs/docker_infra_template/Dockerfile \
               -c workloads/android/pipelines/environment/abfs/docker_infra_template --skip-tls-verify-pull \
-              --insecure --skip-tls-verify "${KANIKO_OPTIONS}"
+              --insecure --skip-tls-verify "${KANIKO_OPTIONS}" \
+              --build-arg TERRAFORM_CATEGORY="${TERRAFORM_CATEGORY}"
           '''
         }
       }

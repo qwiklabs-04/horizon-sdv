@@ -33,6 +33,12 @@ pipelineJob('Android/Environment/ABFS/Docker Infra Image Template') {
       description('''<p>Image tag for the builder image.</p>''')
       trim(true)
     }
+    stringParam {
+      name('TERRAFORM_CATEGORY')
+      defaultValue('main')
+      description('''<p>Define the Hashicorp Terraform version.</p>''')
+      trim(true)
+    }
     booleanParam {
       name('NO_PUSH')
       defaultValue(true)

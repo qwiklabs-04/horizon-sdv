@@ -37,7 +37,9 @@ function abfs_uploader_run() {
   export TF_VAR_abfs_gerrit_uploader_git_branch=${UPLOADER_GIT_BRANCH}
   export TF_VAR_abfs_manifest_file=${UPLOADER_MANIFEST_FILE}
   export TF_VAR_abfs_license
-  TF_VAR_abfs_license="$(echo "${ABFS_LICENSE_B64}" | base64 -d)"
+  # Workaround because Jenkins is not retrieving the password correctly.
+  # TF_VAR_abfs_license="$(echo "${ABFS_LICENSE_B64}" | base64 -d)"
+  TF_VAR_abfs_license=$(kubectl get secrets -n jenkins ${KUBERNETES_SECRET_NAME}  -o json | jq -r '.data.password' | base64 -d)
 
   terraform init -backend-config bucket="${CLOUD_BACKEND_BUCKET}" -upgrade
 

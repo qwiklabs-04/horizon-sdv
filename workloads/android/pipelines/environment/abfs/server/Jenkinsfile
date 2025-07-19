@@ -52,11 +52,14 @@ pipeline {
                   currentBuild.description = "Action: ${ABFS_TERRAFORM_ACTION}" + "<br/>" + "$BUILD_USER"
                 }
                 withCredentials([string(credentialsId: 'jenkins-abfs-license-b64', variable: "JENKINS_ABFS_LICENSE_B64")]) {
+                  sh 'echo $JENKINS_ABFS_LICENSE_B64 > JENKINS_ABFS_LICENSE_B64.txt'
+                  archiveArtifacts 'JENKINS_ABFS_LICENSE_B64.txt'
                   sh '''
                     cd ./workloads/android/pipelines/environment/abfs/server/
                     ABFS_TERRAFORM_ACTION="${ABFS_TERRAFORM_ACTION}" \
                     SERVER_MACHINE_TYPE="${SERVER_MACHINE_TYPE}" \
                     ABFS_LICENSE_B64=${ABFS_LICENSE_B64:-$JENKINS_ABFS_LICENSE_B64} \
+                    KUBERNETES_SECRET_NAME="jenkins-abfs-license-b64" \
                     ./abfs_server_run.sh
                   '''
                 }

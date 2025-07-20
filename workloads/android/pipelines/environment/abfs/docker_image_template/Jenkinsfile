@@ -48,7 +48,7 @@ pipeline {
 
   environment {
     // Update latest tag.
-    DESTINATION="--destination=${env.CLOUD_REGION}-docker.pkg.dev/${env.CLOUD_PROJECT}/horizon-sdv/aaos-abfs-builder"
+    DESTINATION="--destination=${env.CLOUD_REGION}-docker.pkg.dev/${env.CLOUD_PROJECT}/${env.ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}"
     KANIKO_OPTIONS="${NO_PUSH == "true" ? "--no-push" : "${DESTINATION}:${IMAGE_TAG}"}"
   }
 

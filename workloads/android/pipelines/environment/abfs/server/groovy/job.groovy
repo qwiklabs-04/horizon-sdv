@@ -35,8 +35,15 @@ pipelineJob('Android/Environment/ABFS/Server') {
     }
 
     stringParam {
+      name('ABFS_VERSION')
+      defaultValue("${ABFS_VERSION}")
+      description('''<p>ABFS version, e.g. 0.0.33-2-ge59ffbc, latest.</p>''')
+      trim(true)
+    }
+
+    stringParam {
       name('DOCKER_REGISTRY_NAME')
-      defaultValue('europe-docker.pkg.dev/abfs-binaries/abfs-containers-alpha/abfs-alpha:latest')
+      defaultValue('europe-docker.pkg.dev/abfs-binaries/abfs-containers-alpha/abfs-alpha:${ABFS_VERSION}')
       trim(true)
     }
 

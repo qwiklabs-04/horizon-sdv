@@ -47,7 +47,7 @@ if [[ $? -eq 0 ]]; then
 echo \$0 \$@
 exit 0
 EOL
-  gcloud artifacts files list --project=abfs-binaries --location=us --repository=abfs-apt-alpha-public | grep -e "pool/abfs.*client_0.0.33-2-ge59ffbc" -e "pool/casfs-kmod-$(uname -r)_0.0.33-2-g98f478a" | awk '{print $1}' | while read a; do gcloud artifacts files download --project=abfs-binaries --location=us --repository=abfs-apt-alpha-public --destination=. $a; done
+  gcloud artifacts files list --project=abfs-binaries --location=us --repository="${ABFS_REPOSITORY}" | grep -e "pool/abfs.*client_${ABFS_VERSION}" -e "pool/casfs-kmod-$(uname -r)_${ABFS_VERSION}" | awk '{print $1}' | while read a; do gcloud artifacts files download --project=abfs-binaries --location=us --repository="${ABFS_REPOSITORY}" --destination=. $a; done
   ls pool* | while read a; do sudo apt install "./$a"; done
   sudo mv systemctl /usr/bin
   sudo chmod +x /usr/bin/systemctl

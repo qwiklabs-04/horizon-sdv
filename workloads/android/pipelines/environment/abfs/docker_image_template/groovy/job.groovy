@@ -19,7 +19,7 @@ pipelineJob('Android/Environment/ABFS/Docker Image Template') {
     <p>The Dockerfile specifies the installed packages and tools required by these jobs.</p>
     <h4 style="margin-bottom: 10px;">Pushing Changes to the Registry</h4>
     <p>To push changes to the registry, set the parameter <code>NO_PUSH=false</code>.</p>
-    <p>The image will be pushed to ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}</p>
+    <p>The image will be pushed to ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}</p>
     <h4 style="margin-bottom: 10px;">Verifying Changes</h4>
     <p>When working with new Dockerfile updates, it's recommended to set <code>NO_PUSH=true</code> to verify the changes before pushing the image to the registry.</p>
     <h4 style="margin-bottom: 10px;">Important Notes</h4>
@@ -49,7 +49,7 @@ pipelineJob('Android/Environment/ABFS/Docker Image Template') {
     }
     stringParam {
       name('ABFS_DISTRIBUTION_REGISTRY')
-      defaultValue('ar+https://us-apt.pkg.dev/projects/abfs-binaries abfs-apt-alpha-public main')
+      defaultValue('ar+https://us-apt.pkg.dev/projects/abfs-binaries ${ABFS_REPOSITORY} main')
       description('''<p>ABFS distribution registry URL and component.</p>''')
       trim(true)
     }

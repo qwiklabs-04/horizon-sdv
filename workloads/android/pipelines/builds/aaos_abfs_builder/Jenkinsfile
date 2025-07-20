@@ -77,6 +77,8 @@ pipeline {
                 sh '''
                   AAOS_REVISION="${AAOS_REVISION}" \
                   AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
+                  ABFS_VERSION="${ABFS_VERSION}" \
+                  ABFS_REPOSITORY="${ABFS_REPOSITORY}" \
                   ./workloads/android/pipelines/builds/aaos_abfs_builder/aaos_abfs_build.sh
                 '''
               }

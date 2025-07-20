@@ -41,11 +41,14 @@ pipelineJob('Android/Environment/Development Build Instance') {
     stringParam {
       name('IMAGE_TAG')
       defaultValue('latest')
-      description('''<p>Image tag for the builder image, e.g.</p>
-        <ul><li>ABFS instance: <code>abfs-latest</code></li>
-        <li>AAOS instance: <code>latest</code></li></ul>
-        <p>Artifact registry path is determined from the tag prefix.</p>''')
+      description('''<p>Image tag for the builder image.</p>''')
       trim(true)
+    }
+
+    booleanParam {
+      name('ABFS')
+      defaultValue(false)
+      description('''<p>Enable if using an ABFS instance</p>''')
     }
 
     choiceParam {

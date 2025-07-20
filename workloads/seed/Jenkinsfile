@@ -74,6 +74,23 @@ pipeline {
            trim: true)
 
     separator(
+      name: "Android ABFS Options",
+      sectionHeader: "ABFS Parameters",
+      separatorStyle: "${SEPARATOR_STYLE}",
+      sectionHeaderStyle: "${HEADER_STYLE}"
+    )
+
+    string(name: 'ABFS_VERSION',
+           defaultValue: "0.0.33-2-ge59ffbc",
+           description: '''<p>ABFS version, e.g. latest, 0.0.33-2-ge59ffbc</p>''',
+           trim: true)
+
+    string(name: 'ABFS_REPOSITORY',
+           defaultValue: "abfs-apt-alpha-public",
+           description: '''<p>ABFS aptitude repository, e.g. abfs-apt-alpha-public. </p>''',
+           trim: true)
+
+    separator(
       name: "OpenBSW Workload",
       sectionHeader: "OpenBSW Parameters",
       separatorStyle: "${SEPARATOR_STYLE}",
@@ -108,6 +125,9 @@ pipeline {
                   ['${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
                   ['${INFRA_DOCKER_ARTIFACT_PATH_NAME}', "${INFRA_DOCKER_ARTIFACT_PATH_NAME}"],
                   ['${REPO_SYNC_JOBS}', "${REPO_SYNC_JOBS}"],
+                  ['${ABFS_VERSION}', "${ABFS_VERSION}" ],
+                  ['${ABFS_REPOSITORY}', "${ABFS_REPOSITORY}" ],
+                  ['${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
                   ['${JENKINS_GCE_CLOUD_LABEL}', "${CUTTLEFISH_GCE_CLOUD_LABEL}" ]
                  ]
 

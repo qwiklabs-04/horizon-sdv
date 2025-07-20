@@ -376,6 +376,8 @@ spec:
                           value: "horizon-sdv/openbsw_builder"
                         - key: "INFRA_DOCKER_ARTIFACT_PATH_NAME"
                           value: "horizon-sdv/infra"
+                        - key: "ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME"
+                          value: "horizon-sdv/aaos-abfs-builder"
                 groovy:
                   - script: >
                       println("This is groovy !");

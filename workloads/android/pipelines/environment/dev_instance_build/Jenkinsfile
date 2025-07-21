@@ -26,7 +26,7 @@ pipeline {
     STORAGE_CLASS_SUFFIX="android-${ANDROID_VERSION}"
     STORAGE_SIZE="${ANDROID_VERSION =~ "rpi" ? "500Gi" : "1000Gi"}"
     // FIXME: align when abfs integrated
-    DOCKER_ARTIFACT_PATH_NAME = "${ABFS == "true" ? "${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}" : "${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}"}"
+    POD_TEMPLATE = "${ABFS == "true" ? kubernetesAbfsPodTemplate : kubernetesPodTemplate }"
 
     // Define Pod Template in environment so we can override.
     def kubernetesPodTemplate = """
@@ -55,7 +55,7 @@ pipeline {
         serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
         containers:
         - name: builder
-          image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${DOCKER_ARTIFACT_PATH_NAME}:${IMAGE_TAG}
+          image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}:${IMAGE_TAG}
           imagePullPolicy: IfNotPresent
           command:
           - sleep
@@ -85,19 +85,52 @@ pipeline {
         nodeSelector:
           workloadLabel: android
     """.stripIndent()
+
+    def kubernetesAbfsPodTemplate = """
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        annotations:
+          cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+        labels:
+          aaos_abfs_pod: "true"
+      spec:
+        tolerations:
+        - key: workloadType
+          operator: Equal
+          value: android-abfs
+          effect: "NoSchedule"
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: aaos_abfs_pod
+                  operator: Exists
+              topologyKey: kubernetes.io/hostname
+        hostname: jenkins-abfs-build-pod
+        serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
+        containers:
+        - name: builder
+          image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}:latest
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+          command:
+          - sleep
+          args:
+          - 5h
+        nodeSelector:
+          workloadLabel: android-abfs
+    """.stripIndent()
   }
 
   stages {
     stage ('Start VM Instance') {
-      agent { kubernetes { yaml kubernetesPodTemplate } }
+      agent { kubernetes { yaml "${POD_TEMPLATE}" } }
       stages {
         stage ('MTK Connect to Host Device') {
-          when {
-            allOf {
-              expression { env.MTK_CONNECT_ENABLE == 'true' }
-              expression { env.ABFS == 'false' }
-            }
-          }
+          when { expression { env.MTK_CONNECT_ENABLE == 'true' } }
           steps {
             script {
               currentBuild.description = "$BUILD_USER"
@@ -139,12 +172,7 @@ pipeline {
         }
 
         stage ('Stop Virtual Devices') {
-          when {
-            allOf {
-              expression { env.MTK_CONNECT_ENABLE == 'true' }
-              expression { env.ABFS == 'false' }
-            }
-          }
+          when { expression { env.MTK_CONNECT_ENABLE == 'true' } }
           steps {
             container(name: 'builder') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {

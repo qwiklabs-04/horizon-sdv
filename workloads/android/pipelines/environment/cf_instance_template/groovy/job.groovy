@@ -88,7 +88,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('NODEJS_VERSION')
-      defaultValue('20.9.0')
+      defaultValue("${NODEJS_VERSION}")
       description('''<p>NodeJS version.<br/>
         This is installed using <i>nvm</i> on the instance template to be compatible with other tooling.</p>''')
       trim(true)

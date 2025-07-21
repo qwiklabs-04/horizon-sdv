@@ -16,6 +16,8 @@
 ARG LINUX_DISTRIBUTION
 FROM --platform=linux/amd64 ${LINUX_DISTRIBUTION}
 
+# Overrides
+ARG NODEJS_VERSION
 # Create image for standard builds or those using ABFS.
 ARG ABFS
 # ABFS specific registry and category/versions.
@@ -90,3 +92,12 @@ RUN git config --global user.email "aaosp.jenkins@dummy.com" && \
 RUN virtualenv --system-site-packages venv && \
     . ${HOME}/venv/bin/activate && pip3 install --user meson==1.3.0 mako \
     jinja2 ply pyyaml dataclasses && deactivate
+
+ENV PATH="/root/.local/bin:/usr/local/bin:/usr/bin:$PATH"
+
+# Node version manager
+RUN sudo npm cache clean -f && \
+    sudo npm install -g n && \
+    sudo npm install -g wait-on && \
+    sudo n "${NODEJS_VERSION}" && \
+    sudo ln -sf /usr/local/bin/node /usr/local/bin/nodejs || true

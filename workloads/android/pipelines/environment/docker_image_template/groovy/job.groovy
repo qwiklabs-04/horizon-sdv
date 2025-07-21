@@ -27,6 +27,11 @@ pipelineJob('Android/Environment/Docker Image Template') {
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
   parameters {
+    booleanParam {
+      name('NO_PUSH')
+      defaultValue(true)
+      description('''<p>Build only, do not push to registry.</p>''')
+    }
     stringParam {
       name('IMAGE_TAG')
       defaultValue('latest')
@@ -41,10 +46,12 @@ pipelineJob('Android/Environment/Docker Image Template') {
             <li>ubuntu:22.04</li></ul>''')
       trim(true)
     }
-    booleanParam {
-      name('NO_PUSH')
-      defaultValue(true)
-      description('''<p>Build only, do not push to registry.</p>''')
+    stringParam {
+      name('NODEJS_VERSION')
+      defaultValue("${NODEJS_VERSION}")
+      description('''<p>NodeJS version.<br/>
+        This is installed using <i>nvm</i> on the instance template to be compatible with other tooling.</p>''')
+      trim(true)
     }
   }
 

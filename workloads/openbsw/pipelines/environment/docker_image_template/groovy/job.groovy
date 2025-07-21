@@ -33,17 +33,17 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
   parameters {
+    booleanParam {
+      name('NO_PUSH')
+      defaultValue(true)
+      description('''<p>Build only, do not push to registry.</p>''')
+    }
     stringParam {
       name('IMAGE_TAG')
       defaultValue("${OPENBSW_IMAGE_TAG}")
       description('''<p>Docker image template to use.<p>
         <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''')
       trim(true)
-    }
-    booleanParam {
-      name('NO_PUSH')
-      defaultValue(true)
-      description('''<p>Build only, do not push to registry.</p>''')
     }
     stringParam {
       name('ARM_TOOLCHAIN_URL')
@@ -73,7 +73,7 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
     }
     stringParam {
       name('NODEJS_VERSION')
-      defaultValue('20.9.0')
+      defaultValue("${NODEJS_VERSION}")
       description('''<p>NodeJS version.<br/>
         This is installed using <i>nvm</i> on the instance template to be compatible with other tooling.</p>''')
       trim(true)

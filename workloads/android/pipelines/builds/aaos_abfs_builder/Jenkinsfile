@@ -47,7 +47,7 @@ pipeline {
         serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
         containers:
         - name: builder
-          image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/horizon-sdv/aaos-abfs-builder:latest
+          image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}:latest
           imagePullPolicy: Always
           securityContext:
             privileged: true

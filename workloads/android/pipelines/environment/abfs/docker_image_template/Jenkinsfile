@@ -1,4 +1,4 @@
-// Copyright (c) 2024-2025 Accenture, All Rights Reserved.
+// Copyright (c) 2025 Accenture, All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // Description:
-// This pipeline builds the AAOS builder Docker image using Kaniko
+// This pipeline builds the ABFS builder Docker image using Kaniko
 // rather than use a Docker to avoid docker in docker privilege issues.
 //
 // References:

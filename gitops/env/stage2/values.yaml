@@ -14,9 +14,6 @@
 
 config:
   name: Horizon SDV
-  workloads:
-    android:
-      repoSyncJobs: 2
 spec:
   destination:
     server: https://kubernetes.default.svc

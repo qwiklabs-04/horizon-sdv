@@ -11,12 +11,18 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+// Description:
+// Groovy file for defining a Jenkins Pipeline Job for creating a
+// the Docker image template that is used by other pipeline jobs
+// in the OpenBSW project.
 pipelineJob('OpenBSW/Environment/Docker Image Template') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">Container Image Builder</h3>
     <p>This job builds the container image that serves as a dependency for other pipeline jobs.</p>
     <h4 style="margin-bottom: 10px;">Image Configuration</h4>
-    <p>The Dockerfile specifies the installed packages and tools required by these jobs.</p>
+    <p>The Dockerfile specifies the installed packages and tools required by these jobs.<br/>
+    Parameters are provided to support customization of OpenBSW build environment/tools.</p>
     <h4 style="margin-bottom: 10px;">Pushing Changes to the Registry</h4>
     <p>To push changes to the registry, set the parameter <code>NO_PUSH=false</code>.</p>
     <p>The image will be pushed to ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}</p>
@@ -27,16 +33,17 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
   parameters {
-    stringParam {
-      name('IMAGE_TAG')
-      defaultValue('latest')
-      description('''<p>Image tag for the builder image.</p>''')
-      trim(true)
-    }
     booleanParam {
       name('NO_PUSH')
       defaultValue(true)
       description('''<p>Build only, do not push to registry.</p>''')
+    }
+    stringParam {
+      name('IMAGE_TAG')
+      defaultValue("${OPENBSW_IMAGE_TAG}")
+      description('''<p>Docker image template to use.<p>
+        <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''')
+      trim(true)
     }
     stringParam {
       name('ARM_TOOLCHAIN_URL')
@@ -47,7 +54,7 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
     stringParam {
       name('CLANG_TOOLS_URL')
       defaultValue('https://github.com/muttleyxd/clang-tools-static-binaries/releases/download/master-32d3ac78/clang-format-17_linux-amd64')
-      description('''<p>Clang tools URL</p>''')
+      description('''<p>Clang tools URL.</p>''')
       trim(true)
     }
     stringParam {
@@ -57,11 +64,34 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
       trim(true)
     }
     stringParam {
+      name('LINUX_DISTRIBUTION')
+      defaultValue('ubuntu:22.04')
+      description('''<p>Define the Linux distribution to use, e.g.</p></br>
+        <ul><li>ubuntu:22.04</li>
+            <li>ubuntu:20.04</li></ul>''')
+      trim(true)
+    }
+    stringParam {
+      name('NODEJS_VERSION')
+      defaultValue("${NODEJS_VERSION}")
+      description('''<p>NodeJS version.<br/>
+        This is installed using <i>nvm</i> on the instance template to be compatible with other tooling.</p>''')
+      trim(true)
+    }
+    stringParam {
       name('TREEFMT_URL')
       defaultValue('https://github.com/numtide/treefmt/releases/download/v2.1.0/treefmt_2.1.0_linux_amd64.tar.gz')
       description('''<p>Treefmt archive URL.</p>''')
       trim(true)
     }
+  }
+
+  // Block build if certain jobs are running.
+  blockOn('OpenBSW*.*Docker.*') {
+    // Possible values are 'GLOBAL' and 'NODE' (default).
+    blockLevel('GLOBAL')
+    // Possible values are 'ALL', 'BUILDABLE' and 'DISABLED' (default).
+    scanQueueFor('BUILDABLE')
   }
 
   logRotator {

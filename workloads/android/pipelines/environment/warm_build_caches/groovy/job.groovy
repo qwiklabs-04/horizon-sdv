@@ -31,7 +31,7 @@ pipelineJob('Android/Environment/Warm Build Caches') {
 
     stringParam {
       name('AAOS_REVISION')
-      defaultValue('horizon/android-15.0.0_r32')
+      defaultValue('horizon/android-15.0.0_r36')
       description('''<p>Android revision tag/branch name.</p>''')
       trim(true)
     }
@@ -45,6 +45,14 @@ pipelineJob('Android/Environment/Warm Build Caches') {
             <li>14: Use the Android 14 disk pool.</li>
           </ul>''')
       choices(['default', '15', '14'])
+    }
+
+    stringParam {
+      name('GERRIT_REPO_SYNC_JOBS')
+      defaultValue("${REPO_SYNC_JOBS}")
+      description('''<p>Number of parallel sync jobs for <i>repo sync</i>.<br/>
+        Default value is defined by the Android Seed job</p>''')
+      trim(true)
     }
 
     booleanParam {

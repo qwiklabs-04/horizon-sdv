@@ -27,17 +27,40 @@ pipelineJob('Android/Environment/Docker Image Template') {
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
   parameters {
+    booleanParam {
+      name('NO_PUSH')
+      defaultValue(true)
+      description('''<p>Build only, do not push to registry.</p>''')
+    }
     stringParam {
       name('IMAGE_TAG')
       defaultValue('latest')
       description('''<p>Image tag for the builder image.</p>''')
       trim(true)
     }
-    booleanParam {
-      name('NO_PUSH')
-      defaultValue(true)
-      description('''<p>Build only, do not push to registry.</p>''')
+    stringParam {
+      name('LINUX_DISTRIBUTION')
+      defaultValue('debian:12')
+      description('''<p>Define the Linux distribution to use, e.g.</p></br>
+        <ul><li>debian:12</li>
+            <li>ubuntu:22.04</li></ul>''')
+      trim(true)
     }
+    stringParam {
+      name('NODEJS_VERSION')
+      defaultValue("${NODEJS_VERSION}")
+      description('''<p>NodeJS version.<br/>
+        This is installed using <i>nvm</i> on the instance template to be compatible with other tooling.</p>''')
+      trim(true)
+    }
+  }
+
+  // Block build if certain jobs are running.
+  blockOn('Android*.*Docker.*') {
+    // Possible values are 'GLOBAL' and 'NODE' (default).
+    blockLevel('GLOBAL')
+    // Possible values are 'ALL', 'BUILDABLE' and 'DISABLED' (default).
+    scanQueueFor('BUILDABLE')
   }
 
   logRotator {

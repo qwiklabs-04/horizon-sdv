@@ -40,7 +40,7 @@ spec:
         controller:
           sidecars:
             configAutoReload:
-              enabled: true
+              enabled: false
           jenkinsUriPrefix: /jenkins
           numExecutors: 1
           executorMode: "EXCLUSIVE"
@@ -142,15 +142,19 @@ spec:
             - build-blocker-plugin:166.vc82fc20b_a_ed6
             - build-user-vars-plugin:195.v8c35f9d5c3dc
             - configuration-as-code-groovy:1.1
+            - envinject:2.919.v009a_a_1067cd0
+            - envinject-api:1.199.v3ce31253ed13
             - gerrit-code-review:0.4.9
             - gerrit-trigger:2.42.0
             - github-branch-source:1810.v913311241fa_9
             - google-compute-engine:4.683.v0ce26579a_ee7
             - google-kubernetes-engine:0.430.v4cc1fa_1847a_9
+            - htmlpublisher:1.37
             - job-dsl:1.91
             - keycloak:2.3.2
             - kubernetes:4314.v5b_846cf499eb_
             - kubernetes-credentials:190.v03c305394deb_
+            - parameter-separator:258.vc2a_4c51b_de4c
             - pipeline-stage-view:2.37
             - role-strategy:743.v142ea_b_d5f1d3
             - ssh-slaves:3.1031.v72c6b_883b_869
@@ -176,10 +180,10 @@ spec:
                 - project:
                     disabledStrategies:
                     - "org.jenkinsci.plugins.authorizeproject.strategy.SystemAuthorizationStrategy"
-                    enabledStrategies:
                     - "org.jenkinsci.plugins.authorizeproject.strategy.SpecificUsersAuthorizationStrategy"
-                    - "org.jenkinsci.plugins.authorizeproject.strategy.TriggeringUsersAuthorizationStrategy"
                     - "org.jenkinsci.plugins.authorizeproject.strategy.AnonymousAuthorizationStrategy"
+                    enabledStrategies:
+                    - "org.jenkinsci.plugins.authorizeproject.strategy.TriggeringUsersAuthorizationStrategy"
             securityRealm: |-
               keycloak:
                 keycloakJson: ${jenkins-keycloak-keycloakJson}
@@ -234,8 +238,7 @@ spec:
                             entries:
                               - group: "horizon-jenkins-administrators"
                               # Example user
-                              # - user: "dave.m.smith@accenture.com"
-                              - user: "jenkins-admin"
+                              # - user: "john.example.doe@accenture.com"
                           - name: "horizon-jenkins-workloads-developers"
                             description: "Jenkins workloads developers role for workload usage and configuration."
                             permissions:
@@ -245,7 +248,7 @@ spec:
                             entries:
                               - group: "horizon-jenkins-workloads-developers"
                               # Example user
-                              # - user: "dave.m.smith@accenture.com"
+                              # - user: "jane.example.doe@accenture.com"
                           - name: "horizon-jenkins-workloads-users"
                             description: "Jenkins workloads users role with restricted access to workloads."
                             permissions:
@@ -253,7 +256,7 @@ spec:
                             entries:
                               - group: "horizon-jenkins-workloads-users"
                               # Example user
-                              # - user: "dave.m.smith@accenture.com"
+                              # - user: "john.example.doe@accenture.com"
                         items:
                           - name: "workloads-developers" 
                             description: "Workloads developers item role with unrestricted access." 
@@ -262,13 +265,15 @@ spec:
                             entries:
                               - group: "horizon-jenkins-workloads-developers"
                               # Example user
-                              # - user: "dave.m.smith@accenture.com"
+                              # - user: "jane.example.doe@accenture.com"
                           - name: "workloads-users" 
                             description: "Workloads user item role with restricted access." 
                             pattern: ".*"
                             templateName: "horizon-jenkins-workload-users"
                             entries:
                               - group: "horizon-jenkins-workloads-users"
+                              # Example user
+                              # - user: "john.example.doe@accenture.com"
                   clouds:
                     - computeEngine:
                         cloudName: cuttlefish-vm-main
@@ -305,22 +310,22 @@ spec:
                         noDelayProvisioning: true
                         projectId: {{ .Values.config.projectID }}
                     - computeEngine:
-                        cloudName: "cuttlefish-vm-v170"
+                        cloudName: "cuttlefish-vm-v1140"
                         configurations:
                         - bootDiskAutoDelete: true
                           bootDiskSizeGb: 10
                           bootDiskSizeGbStr: "10"
                           bootDiskType: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/zones/{{ .Values.config.zone }}/diskTypes/hyperdisk-balanced"
-                          description: "cuttlefish-vm-v170"
+                          description: "cuttlefish-vm-v1140"
                           javaExecPath: "/usr/bin/java"
                           labelSet:
-                          - name: "cuttlefish-vm-v170"
-                          labelString: "cuttlefish-vm-v170"
-                          labels: "cuttlefish-vm-v170"
+                          - name: "cuttlefish-vm-v1140"
+                          labelString: "cuttlefish-vm-v1140"
+                          labels: "cuttlefish-vm-v1140"
                           launchTimeoutSeconds: 300
                           launchTimeoutSecondsStr: "300"
                           mode: NORMAL
-                          namePrefix: "cuttlefish-vm-v170"
+                          namePrefix: "cuttlefish-vm-v1140"
                           numExecutors: 1
                           numExecutorsStr: "1"
                           oneShot: true
@@ -331,7 +336,7 @@ spec:
                           runAsUser: "jenkins"
                           sshConfiguration:
                             customPrivateKeyCredentialsId: "jenkins-cuttlefish-vm-ssh-private-key"
-                          template: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/global/instanceTemplates/instance-template-cuttlefish-vm-v170"
+                          template: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/global/instanceTemplates/instance-template-cuttlefish-vm-v1140"
                           useInternalAddress: true
                           zone: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/zones/{{ .Values.config.zone }}"
                         credentialsId: "gce-creds"
@@ -355,8 +360,6 @@ spec:
                           value: {{ .Values.config.backendBucket }}
                         - key: "GERRIT_CREDENTIALS_ID"
                           value: "jenkins-gerrit-http-password"
-                        - key: "GERRIT_CUTTLEFISH_INSTANCE_TEMPLATE_LABEL"
-                          value: "cuttlefish-vm-main"
                         - key: "HORIZON_DOMAIN"
                           value: {{ .Values.config.domain }}
                         - key: "HORIZON_GITHUB_URL"
@@ -373,15 +376,20 @@ spec:
                           value: "horizon-sdv/openbsw_builder"
                         - key: "INFRA_DOCKER_ARTIFACT_PATH_NAME"
                           value: "horizon-sdv/infra"
-                        - key: "REPO_SYNC_JOBS"
-                          value: {{ .Values.config.workloads.android.repoSyncJobs }}
+                        - key: "ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME"
+                          value: "horizon-sdv/aaos-abfs-builder"
                 groovy:
                   - script: >
                       println("This is groovy !");
                 jobs:
                   - script: >
                       pipelineJob('Seed Workloads') {
-                        description('''Seed all workloads and respective pipeline jobs.''')
+                        description('''<br/><h3 style="margin-bottom: 10px;">Seed Workloads Job</h3>
+                          <p>This seed job is used to to create and update the workload pipeline folders and jobs in Jenkins.</p>
+                          <h4 style="margin-bottom: 10px;">Mandatory Parameters</h4>
+                          <ul><li><code>SEED_WORKLOAD</code>: The name of the workload to populate.</li></ul>
+                          <p>Refer to the README.md in the repository for further information.</p>
+                        ''')
 
                         triggers {
                           hudsonStartupTrigger {

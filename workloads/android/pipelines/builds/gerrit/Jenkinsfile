@@ -28,6 +28,8 @@ def getAndroidVersion(revision) {
 
 pipeline {
 
+  // Environment defined in groovy/job.groovy
+
   agent none
 
   environment {
@@ -71,11 +73,11 @@ pipeline {
           - 5h
           resources:
             limits:
-              cpu: 96000m
-              memory: 160000Mi
+              cpu: 98000m
+              memory: 180000Mi
             requests:
-              cpu: 96000m
-              memory: 160000Mi
+              cpu: 98000m
+              memory: 180000Mi
           volumeMounts:
             - mountPath: /aaos-cache
               name: aaos-cache
@@ -117,6 +119,7 @@ pipeline {
                   if ( "${env.GERRIT_BRANCH}" =~ "android-15.0.0_r10" ) env.ANDROID_BUILD_ID="ap4a-"
                   if ( "${env.GERRIT_BRANCH}" =~ "android-15.0.0_r20" ) env.ANDROID_BUILD_ID="bp1a-"
                   if ( "${env.GERRIT_BRANCH}" =~ "android-15.0.0_r32" ) env.ANDROID_BUILD_ID="bp1a-"
+                  if ( "${env.GERRIT_BRANCH}" =~ "android-15.0.0_r36" ) env.ANDROID_BUILD_ID="bp1a-"
 
                   if ( "$ANDROID_BUILD_ID" =~ "ap3a" ) env.ANDROID_VERSION=15
                   if ( "$ANDROID_BUILD_ID" =~ "ap4a" ) env.ANDROID_VERSION=15
@@ -153,6 +156,7 @@ pipeline {
                   export ANDROID_VERSION="${SDK_ANDROID_VERSION}"
                   export AAOS_CLEAN="NO_CLEAN"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh || true
@@ -179,6 +183,7 @@ pipeline {
                   export ANDROID_VERSION="${SDK_ANDROID_VERSION}"
                   export AAOS_CLEAN="NO_CLEAN"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export REPO_SYNC_JOBS="${REPO_SYNC_JOBS}"
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh || true
@@ -204,6 +209,7 @@ pipeline {
                   export AAOS_BUILD_NUMBER=${BUILD_NUMBER}/${AAOS_LUNCH_TARGET}
                   export AAOS_CLEAN="NO_CLEAN"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export REPO_SYNC_JOBS="${REPO_SYNC_JOBS}"
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
@@ -228,6 +234,7 @@ pipeline {
                   export AAOS_BUILD_NUMBER=${BUILD_NUMBER}/${AAOS_LUNCH_TARGET}
                   export AAOS_CLEAN="NO_CLEAN"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export REPO_SYNC_JOBS="${REPO_SYNC_JOBS}"
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
@@ -241,7 +248,7 @@ pipeline {
     }
 
     stage ('Start Test VM Instance') {
-      agent { label "${env.GERRIT_CUTTLEFISH_INSTANCE_TEMPLATE_LABEL}" }
+      agent { label "${env.JENKINS_GCE_CLOUD_LABEL}" }
       stages {
         stage ('Test: aosp_cf_x86_64_auto') {
           when { expression { env.GERRIT_CHANGE_NUMBER } }
@@ -250,9 +257,10 @@ pipeline {
               sh '''
                 BUCKET_FOLDER=$(echo "$JOB_NAME" | tr ' ' '_')
                 export CUTTLEFISH_DOWNLOAD_URL="gs://${CLOUD_PROJECT}-aaos/$BUCKET_FOLDER/$BUILD_NUMBER/aosp_cf_x86_64_auto-${ANDROID_BUILD_ID}userdebug"
-                export NUM_INSTANCES=8
+                export NUM_INSTANCES=10
                 export VM_CPUS=6
                 export CTS_VERSION=${ANDROID_VERSION}
+                export CTS_TESTPLAN="cts-virtual-device-stable"
                 export CTS_MODULE="CtsHostsideNumberBlockingTestCases"
                 export SHARD_COUNT=${NUM_INSTANCES}
                 ./workloads/android/pipelines/tests/cvd_launcher/cvd_start_stop.sh --start

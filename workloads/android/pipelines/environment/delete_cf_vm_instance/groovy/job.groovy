@@ -33,6 +33,14 @@ pipelineJob('Android/Environment/Delete Cuttlefish VM Instance') {
     }
   }
 
+  // Block build if certain jobs are running.
+  blockOn('Android*.*Delete.*Cuttlefish.*') {
+    // Possible values are 'GLOBAL' and 'NODE' (default).
+    blockLevel('GLOBAL')
+    // Possible values are 'ALL', 'BUILDABLE' and 'DISABLED' (default).
+    scanQueueFor('BUILDABLE')
+  }
+
   logRotator {
     daysToKeep(60)
     numToKeep(200)

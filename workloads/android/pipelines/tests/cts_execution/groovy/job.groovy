@@ -39,13 +39,22 @@ pipelineJob('Android/Tests/CTS Execution') {
   parameters {
     stringParam {
       name('JENKINS_GCE_CLOUD_LABEL')
-      defaultValue('cuttlefish-vm-main')
+      defaultValue("${JENKINS_GCE_CLOUD_LABEL}")
       description('''<p>The Jenkins GCE Clouds label for the Cuttlefish instance template, e.g.<br/></p>
         <ul>
           <li>cuttlefish-vm-main</li>
-          <li>cuttlefish-vm-v170</li>
+          <li>cuttlefish-vm-v1140</li>
         </ul>''')
       trim(true)
+    }
+
+    booleanParam {
+      name('CTS_TEST_LISTS_ONLY')
+      defaultValue(false)
+      description('''<p>Skip tests and only generate the test plan and test module lists.<br/>
+        You can use the following optional arguments to customize the listing:<br/>
+        <ul><li><code>ANDROID_VERSION:</code> Specify the Android version to retrieve the correct listing.</li>
+            <li><code>CTS_DOWNLOAD_URL:</code> Provide the URL for the CTS package if using your own version.</li></ul></p>''')
     }
 
     stringParam {
@@ -80,15 +89,14 @@ pipelineJob('Android/Tests/CTS Execution') {
 
     stringParam {
       name('CTS_TESTPLAN')
-      defaultValue('cts-virtual-device-stable')
-      description('''<p>Test plan.<br/>
-        The cts-virtual-device-stable test plan tracks the latest of what is stable on the virtual platform.</p>''')
+      defaultValue('cts-system-virtual')
+      description('''<p>CTS Test plan to execute, e.g. cts-system-virtual (Android 15), cts-virtual-device-stable (Android 14) etc.</p>''')
       trim(true)
     }
 
     stringParam {
       name('CTS_MODULE')
-      defaultValue('CtsHostsideNumberBlockingTestCases')
+      defaultValue('CtsDeqpTestCases')
       description('''<p>CTS module to test, or leave empty if all modules are to be tested.</p>''')
       trim(true)
     }
@@ -103,7 +111,7 @@ pipelineJob('Android/Tests/CTS Execution') {
 
     stringParam {
       name('NUM_INSTANCES')
-      defaultValue('8')
+      defaultValue('10')
       description('''<p>Number of guest instances to launch (num-instances option)</p>''')
       trim(true)
     }
@@ -124,7 +132,7 @@ pipelineJob('Android/Tests/CTS Execution') {
 
     stringParam {
       name('CTS_TIMEOUT')
-      defaultValue('240')
+      defaultValue('600')
       description('''<p>CTS Timeout in minutes for each test run.</p>''')
       trim(true)
     }

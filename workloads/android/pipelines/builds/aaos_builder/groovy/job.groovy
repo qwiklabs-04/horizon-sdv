@@ -37,7 +37,7 @@ pipelineJob('Android/Builds/AAOS Builder') {
 
     stringParam {
       name('AAOS_REVISION')
-      defaultValue('horizon/android-15.0.0_r32')
+      defaultValue('horizon/android-15.0.0_r36')
       description('''<p>Android revision tag/branch name.</p>''')
       trim(true)
     }
@@ -100,8 +100,7 @@ pipelineJob('Android/Builds/AAOS Builder') {
       name('GERRIT_REPO_SYNC_JOBS')
       defaultValue("${REPO_SYNC_JOBS}")
       description('''<p>Number of parallel sync jobs for <i>repo sync</i>.<br/>
-        Default set to <code>REPO_SYNC_JOBS</code> environment variable value.<br/>
-        If undefined (or null), defaults to 1.</p>''')
+        Default value is defined by the Android Seed job</p>''')
       trim(true)
     }
 

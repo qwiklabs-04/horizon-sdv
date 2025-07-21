@@ -36,7 +36,7 @@ One-time setup requirements.
 
 ## Environment Variables/Parameters <a name="environment-variables"></a>
 
-**Jenkins Parameters:** Defined in the respective pipeline jobs within `gitops/env/stage2/templates/jenkins.yaml` (CasC).
+**Jenkins Parameters:** Defined in the groovy job definition `groovy/job.groovy`.
 
 ### `AAOS_GERRIT_MANIFEST_URL`
 
@@ -53,12 +53,14 @@ The Android revision, i.e. branch or tag to build. Tested versions are below:
 - `horizon/android-14.0.0_r74` (ap2a - refer to Known Issues)
 - `horizon/android-15.0.0_r4` (ap3a)
 - `horizon/android-15.0.0_r20` (bp1a)
-- `horizon/android-15.0.0_r32` (bp1a - default)
+- `horizon/android-15.0.0_r32` (bp1a)
+- `horizon/android-15.0.0_r36` (bp1a - default)
 - `android-14.0.0_r30` (ap1a)
 - `android-14.0.0_r74` (ap2a, refer to Known Issues)
 - `android-15.0.0_r4` (ap3a)
 - `android-15.0.0_r20` (bp1a)
 - `android-15.0.0_r32` (bp1a)
+- `android-15.0.0_r36` (bp1a)
 
 ### `AAOS_LUNCH_TARGET` <a name="targets"></a>
 
@@ -93,8 +95,8 @@ Examples:
 -   Raspberry Pi:
     -   `aosp_rpi4_car-ap1a-userdebug` (`android-14.0.0_r30`)
     -   `aosp_rpi5_car-ap1a-userdebug` (`android-14.0.0_r30`)
-    -   `aosp_rpi4_car-bp1a-userdebug` (`android-15.0.0_r32`)
-    -   `aosp_rpi5_car-bp1a-userdebug` (`android-15.0.0_r32`)
+    -   `aosp_rpi4_car-bp1a-userdebug` (`android-15.0.0_r32` | `android-15.0.0_r36` )
+    -   `aosp_rpi5_car-bp1a-userdebug` (`android-15.0.0_r32` | `android-15.0.0_r36` )
 
 ### `ANDROID_VERSION`
 
@@ -130,8 +132,7 @@ Option to clean the build workspace, either fully or simply for the `AAOS_LUNCH_
 
 ### `GERRIT_REPO_SYNC_JOBS`
 
-This is the value used for parallel jobs for `repo sync`, i.e. `-j <GERRIT_REPO_SYNC_JOBS>`.
-The default is defined in system environment variable: `REPO_SYNC_JOBS`.
+Defines the number of parallel sync jobs when running `repo sync`. Default provided by Seeding Android workloads.
 The minimum is 1 and the maximum is 24.
 
 ### `INSTANCE_RETENTION_TIME`
@@ -181,7 +182,7 @@ Some targets have their own definitions for `POST_REPO_INITIALISE_COMMAND` and `
 Example 1: Initialise the repos for `aosp_cf_x86_64_auto-bp1a-userdebug`
 ```
 AAOS_GERRIT_MANIFEST_URL=https://dev.horizon-sdv.com/gerrit/android/platform/manifest \
-AAOS_REVISION=horizon/android-15.0.0_r32 \
+AAOS_REVISION=horizon/android-15.0.0_r36 \
 AAOS_LUNCH_TARGET=aosp_cf_x86_64_auto-bp1a-userdebug \
 ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
 ```
@@ -189,7 +190,7 @@ AAOS_LUNCH_TARGET=aosp_cf_x86_64_auto-bp1a-userdebug \
 Example 2: Initialise the repos for `aosp_tangorpro_car-bp1a-userdebug` with Gerrit patch set.
 ```
 AAOS_GERRIT_MANIFEST_URL=https://dev.horizon-sdv.com/gerrit/android/platform/manifest \
-AAOS_REVISION=horizon/android-15.0.0_r32 \
+AAOS_REVISION=horizon/android-15.0.0_r36 \
 AAOS_LUNCH_TARGET=aosp_tangorpro_car-bp1a-userdebug \
 GERRIT_SERVER_URL=https://dev.horizon-sdv.com/gerrit \
 GERRIT_CHANGE_NUMBER=82 \
@@ -202,6 +203,7 @@ GERRIT_PROJECT=android/platform/packages/services/Car \
 This script is responsible for building the given target.
 ```
 AAOS_LUNCH_TARGET=sdk_car_x86_64-bp1a-userdebug \
+AAOS_PARALLEL_BUILD_JOBS=64 \
 ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
 ```
 
@@ -254,15 +256,17 @@ These are as follows:
 -   `HORIZON_DOMAIN`
     - The URL domain which is required by pipeline jobs to derive URL for tools and GCP.
 
+-   `HORIZON_GITHUB_URL`
+    - The URL to the Horizon SDV GitHub repository.
+
+-   `HORIZON_GITHUB_BRANCH`
+    - The branch name the job will be configured for from `HORIZON_GITHUB_URL`.
+
 -   `JENKINS_AAOS_BUILD_CACHE_STORAGE_PREFIX`
     - This identifies the Persistent Volume Claim (PVC) prefix that is used to provision persistent storage for build cache, ensuring efficient reuse of cached resources across builds.  The default is [`pd-balanced`](https://cloud.google.com/compute/docs/disks/performance), which strikes a balance between optimal performance and cost-effectiveness.
 
 -   `JENKINS_SERVICE_ACCOUNT`
     - Service account to use for pipelines. Required to ensure correct roles and permissions for GCP resources.
-
--   `REPO_SYNC_JOBS`
-    - Defines the number of parallel sync jobs when running `repo sync`. By default this is used by Gerrit build
-      pipeline but also forms the default for `GERRIT_REPO_SYNC_JOBS` parameter in build jobs.
 
 ## KNOWN ISSUES <a name="known-issues"></a>
 

@@ -23,6 +23,10 @@ folder('Android/Environment') {
   displayName('Environment')
   description('<p>This folder contains environment administrative jobs related to supporting Android workflows.</p>')
 }
+folder('Android/Environment/ABFS') {
+  displayName('ABFS')
+  description('<p>This folder contains environment administrative jobs related to supporting Android Build File System (ABFS) workflows.</p>')
+}
 folder('Android/Tests') {
   displayName('Tests')
   description('<p>This folder contains jobs used to help test and validate Android builds.</p>')

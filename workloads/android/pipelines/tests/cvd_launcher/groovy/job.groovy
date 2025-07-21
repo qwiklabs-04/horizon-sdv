@@ -32,11 +32,11 @@ pipelineJob('Android/Tests/CVD Launcher') {
   parameters {
     stringParam {
       name('JENKINS_GCE_CLOUD_LABEL')
-      defaultValue('cuttlefish-vm-main')
+      defaultValue("${JENKINS_GCE_CLOUD_LABEL}")
       description('''<p>The Jenkins GCE Clouds label for the Cuttlefish instance template, e.g.<br/></p>
         <ul>
           <li>cuttlefish-vm-main</li>
-          <li>cuttlefish-vm-v170</li>
+          <li>cuttlefish-vm-v1140</li>
         </ul>''')
       trim(true)
     }

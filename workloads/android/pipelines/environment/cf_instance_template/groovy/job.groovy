@@ -28,7 +28,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
       description('''<p>The branch/tag version of Android Cuttlefish to use, e.g.</p>
         <ul>
           <li>main</li>
-          <li>v1.7.0</li>
+          <li>v1.14.0</li>
         </ul>
         <p>Reference: <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a></p>''')
       trim(true)
@@ -37,9 +37,9 @@ pipelineJob('Android/Environment/CF Instance Template') {
     stringParam {
       name('CUTTLEFISH_INSTANCE_UNIQUE_NAME')
       defaultValue('')
-      description('''<p>Optional parameter to define the unique name used for the instance template, e.g. <i>cuttlefish-vm-instance-test-v170</i><br/>
+      description('''<p>Optional parameter to define the unique name used for the instance template, e.g.  <i>cuttlefish-vm-instance-test-v1140</i><br/>
         Name must start with <i>cuttlefish-vm</i>, refer to docs for details on regex requirements for name.<br/>
-        Default: The name will be automatically derived from ANDROID_CUTTLEFISH_REVISION., e.g. <i>cuttlefish-vm-v170</i><br/><br/></p>''')
+        Default: The name will be automatically derived from ANDROID_CUTTLEFISH_REVISION., e.g. <i>cuttlefish-vm-v1140</i><br/><br/></p>''')
       trim(true)
     }
 
@@ -71,7 +71,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('MAX_RUN_DURATION')
-      defaultValue('4h')
+      defaultValue('10h')
       description('''<p>Limits how long this VM instance can run.<br/>
         Useful to avoid excessive costs. Set to 0 to disable limit.<br/>
         Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instances/create" target="_blank">gcloud compute instances create</a>, i.e. <i>--max-run-duration=MAX_RUN_DURATION</i></p>''')
@@ -80,7 +80,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('DEBIAN_OS_VERSION')
-      defaultValue('debian-12-bookworm-v20250415')
+      defaultValue('debian-12-bookworm-v20250610')
       description('''<p>Disk image OS version.<br/>
         Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk</i></p>''')
       trim(true)
@@ -88,7 +88,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('NODEJS_VERSION')
-      defaultValue('20.9.0')
+      defaultValue("${NODEJS_VERSION}")
       description('''<p>NodeJS version.<br/>
         This is installed using <i>nvm</i> on the instance template to be compatible with other tooling.</p>''')
       trim(true)
@@ -107,6 +107,14 @@ pipelineJob('Android/Environment/CF Instance Template') {
       defaultValue(false)
       description('''<p>If enabled, job will create a Cuttlefish VM instance in a stopped state, using the final instance template.</p>''')
     }
+  }
+
+  // Block build if certain jobs are running.
+  blockOn('Android*.*Template.*') {
+    // Possible values are 'GLOBAL' and 'NODE' (default).
+    blockLevel('GLOBAL')
+    // Possible values are 'ALL', 'BUILDABLE' and 'DISABLED' (default).
+    scanQueueFor('BUILDABLE')
   }
 
   logRotator {

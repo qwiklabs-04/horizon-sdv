@@ -27,7 +27,7 @@ def getAndroidVersion(revision) {
 
 pipeline {
 
-  // Parameters defined in gitops/env/stage2/templates/jenkins.yaml (Jenkins CasC)
+  // Parameters defined in groovy/job.groovy
 
   agent none
 
@@ -72,11 +72,11 @@ pipeline {
           - 5h
           resources:
             limits:
-              cpu: 96000m
-              memory: 160000Mi
+              cpu: 98000m
+              memory: 180000Mi
             requests:
-              cpu: 96000m
-              memory: 160000Mi
+              cpu: 98000m
+              memory: 180000Mi
           volumeMounts:
             - mountPath: /aaos-cache
               name: aaos-cache

@@ -25,6 +25,20 @@ pipelineJob('Android/Builds/AAOS ABFS Builder') {
     }
 
     stringParam {
+      name('ABFS_VERSION')
+      defaultValue("${ABFS_VERSION}")
+      description('''<p>ABFS version, e.g. 0.0.33-2-ge59ffbc, latest</p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('ABFS_REPOSITORY')
+      defaultValue("${ABFS_REPOSITORY}")
+      description('''<p>ABFS aptitude repository, e.g. abfs-apt-alpha-public. </p>''')
+      trim(true)
+    }
+
+    stringParam {
       name('AAOS_LUNCH_TARGET')
       defaultValue('aosp_cf_x86_64_auto-trunk_staging-userdebug')
       description('''<p>Build Android cuttlefish (aosp_cf_x86_64_auto-trunk_staging-userdebug for main or aosp_cf_x86_64_auto-userdebug for Android QPR1).</p>''')

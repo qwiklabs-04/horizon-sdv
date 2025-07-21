@@ -30,14 +30,14 @@ One-time setup requirements.
 
 ## Environment Variables/Parameters <a name="environment-variables"></a>
 
-**Jenkins Parameters:** Defined in the respective pipeline jobs within `gitops/env/stage2/templates/jenkins.yaml` (CasC).
+**Jenkins Parameters:** Defined in the groovy job definition `groovy/job.groovy`.
 
 ### `JENKINS_GCE_CLOUD_LABEL`
 
 This is the label that identifies the GCE Cloud label which will be used to identify the Cuttlefish VM instance, e.g.
 
 - `cuttlefish-vm-main`
-- `cuttlefish-vm-v110`
+- `cuttlefish-vm-v1140`
 
 Note: The value provided must correspond to a cloud instance or the job will hang.
 
@@ -143,6 +143,7 @@ following the instructions below.
 
 ```
 # Start MTK Connect (use the credentials from earlier)
+cd ./workloads/common/mtk-connect/
 sudo \
 MTK_CONNECT_DOMAIN="dev.horizon-sdv.com" \
 MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
@@ -150,16 +151,19 @@ MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
 MTK_CONNECTED_DEVICES=1 \
 MTK_CONNECT_TESTBENCH="Example-Testbench" \
 MTK_CONNECT_TESTBENCH_USER="joeb@company.com" \
-./workloads/android/pipelines/tests/cvd_launcher/cvd_mtk_connect.sh --start
+./mtk_connect.sh --start
+cd -
 
 # When complete, stop MTK Connect and delete the testbench.
+cd ./workloads/common/mtk-connect/
 sudo \
 MTK_CONNECT_DOMAIN="dev.horizon-sdv.com" \
 MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
 MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
 MTK_CONNECTED_DEVICES=1 \
 MTK_CONNECT_TESTBENCH="Example-Testbench" \
-./workloads/android/pipelines/tests/cvd_launcher/cvd_mtk_connect.sh --stop || true
+./mtk_connect.sh --stop
+cd -
 ```
 
 When testing is complete, it is advisable to stop the instance, e.g.
@@ -197,6 +201,12 @@ These are as follows:
 
 -   `HORIZON_DOMAIN`
     - The URL domain which is required by pipeline jobs to derive URL for tools and GCP.
+
+-   `HORIZON_GITHUB_URL`
+    - The URL to the Horizon SDV GitHub repository.
+
+-   `HORIZON_GITHUB_BRANCH`
+    - The branch name the job will be configured for from `HORIZON_GITHUB_URL`.
 
 -   `JENKINS_SERVICE_ACCOUNT`
     - Service account to use for pipelines. Required to ensure correct roles and permissions for GCP resources.

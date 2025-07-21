@@ -24,7 +24,7 @@
 # From command line, such as Google Cloud Shell, create templates for all
 # versions of android-cuttlefish host tools/packages:
 #
-#  CUTTLEFISH_REVISION=v1.7.0 ./cf_create_instance_template.sh && \
+#  CUTTLEFISH_REVISION=v1.14.0 ./cf_create_instance_template.sh && \
 #  CUTTLEFISH_REVISION=main ./cf_create_instance_template.sh
 #
 # The following variables are required to run the script, choose to use
@@ -33,7 +33,7 @@
 #  - CUTTLEFISH_REVISION: the branch/tag version of Android Cuttlefish
 #        to use. Default: main
 #  - BOOT_DISK_SIZE: Disk image size in GB. Default: 200GB
-#  - DEBIAN_OS_VERSION: Default: debian-12-bookworm-v20250415}
+#  - DEBIAN_OS_VERSION: Default: debian-12-bookworm-v20250610}
 #  - JENKINS_NAMESPACE: k8s namespace. Default: jenkins
 #  - JENKINS_PRIVATE_SSH_KEY_NAME: SSH key name to extract public key from
 #        Private key would be created similar to:
@@ -46,7 +46,7 @@
 #        Default: jenkins_rsa.pub
 #  - MACHINE_TYPE: The machine type to create instance templates for. Default:
 #        n1-standard-64
-#  - MAX_RUN_DURATION: Limits how long this VM instance can run. Default: 4h
+#  - MAX_RUN_DURATION: Limits how long this VM instance can run. Default: 10h
 #  - NETWORK: The name of the VPC network. Default: sdv-network
 #  - NODEJS_VERSION: The version of nodejs to install. Default: 20.9.0
 #  - PROJECT: The GCP project. Default: derived from gcloud config.
@@ -99,14 +99,14 @@ CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION:-main}
 CUTTLEFISH_REVISION=$(echo "${CUTTLEFISH_REVISION}" | xargs)
 BOOT_DISK_SIZE=${BOOT_DISK_SIZE:-200GB}
 BOOT_DISK_SIZE=$(echo "${BOOT_DISK_SIZE}" | awk '{print toupper($0)}' | xargs)
-DEBIAN_OS_VERSION=${DEBIAN_OS_VERSION:-debian-12-bookworm-v20250415}
+DEBIAN_OS_VERSION=${DEBIAN_OS_VERSION:-debian-12-bookworm-v20250610}
 DEBIAN_OS_VERSION=$(echo "${DEBIAN_OS_VERSION}" | xargs)
 JENKINS_NAMESPACE=${JENKINS_NAMESPACE:-jenkins}
 JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME:-jenkins-cuttlefish-vm-ssh-private-key}
 JENKINS_SSH_PUB_KEY_FILE=${JENKINS_SSH_PUB_KEY_FILE:-jenkins_rsa.pub}
 MACHINE_TYPE=${MACHINE_TYPE:-n1-standard-64}
 MACHINE_TYPE=$(echo "${MACHINE_TYPE}" | xargs)
-MAX_RUN_DURATION=${MAX_RUN_DURATION:-4h}
+MAX_RUN_DURATION=${MAX_RUN_DURATION:-10h}
 NETWORK=${NETWORK:-sdv-network}
 NODEJS_VERSION=${NODEJS_VERSION:-20.9.0}
 NODEJS_VERSION=$(echo "${NODEJS_VERSION}" | xargs)

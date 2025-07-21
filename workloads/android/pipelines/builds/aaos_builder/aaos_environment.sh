@@ -35,8 +35,7 @@
 #        supported. (Default: 24).
 #  - OVERRIDE_MAKE_COMMAND: the make command line to use
 #  - POST_REPO_INITIALISE_COMMAND: additional vendor commands for repo initialisation.
-#  - POST_REPO_SYNC_COMMAND: additional vendor commands initialisation post
-#        repo sync.
+#  - POST_REPO_COMMAND: additional vendor commands initialisation post repo sync.
 #  - DISK_SPACE_WATERMARK: percentage watermark to clean out old buids
 #        to retain space for current build.
 #  - AAOS_PARALLEL_BUILD_JOBS: define the number of parallel build jobs. Default
@@ -230,7 +229,7 @@ USER=$(whoami)
 declare -a POST_REPO_INITIALISE_COMMANDS_LIST
 
 # Post repo sync commands
-declare -a POST_REPO_SYNC_COMMANDS_LIST
+declare -a POST_REPO_COMMAND_LIST
 
 # Define the make command line for given target
 AAOS_MAKE_CMDLINE=""
@@ -285,7 +284,7 @@ case "${AAOS_LUNCH_TARGET}" in
         esac
 
         # Clean up the manifests to avoid issues when versions change.
-        POST_REPO_SYNC_COMMANDS_LIST=(
+        POST_REPO_COMMAND_LIST=(
             "rm .repo/local_manifests/manifest_brcm_rpi.xml > /dev/null 2>&1"
             "rm .repo/local_manifests/remove_projects.xml > /dev/null 2>&1"
         )
@@ -339,38 +338,38 @@ case "${AAOS_LUNCH_TARGET}" in
         # Pixel Tablet binaries for Android ap1a/ap2a/ap3a/ap4a/bp1a
         case "${AAOS_LUNCH_TARGET}" in
             *ap1a*)
-                POST_REPO_SYNC_COMMANDS_LIST=(
+                POST_REPO_COMMAND_LIST=(
                     "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap1a.240405.002-8d141153.tgz | tar -xzvf - "
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
                 )
                 ;;
             *ap2a*)
-                POST_REPO_SYNC_COMMANDS_LIST=(
+                POST_REPO_COMMAND_LIST=(
                     "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap2a.240805.005-7e95f619.tgz | tar -xzvf - "
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
                 )
                 ;;
             *ap3a*)
-                POST_REPO_SYNC_COMMANDS_LIST=(
+                POST_REPO_COMMAND_LIST=(
                     "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap3a.241105.007-2bf56572.tgz | tar -xzvf - "
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
                 )
                 ;;
             *ap4a*)
-                POST_REPO_SYNC_COMMANDS_LIST=(
+                POST_REPO_COMMAND_LIST=(
                     "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap4a.250205.002-6474e704.tgz | tar -xzvf - "
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
                 )
                 ;;
             *bp1a*)
-                POST_REPO_SYNC_COMMANDS_LIST=(
+                POST_REPO_COMMAND_LIST=(
                     "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-bp1a.250505.005-fb23c626.tgz | tar -xzvf - "
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
                 )
                 ;;
             *)
                 # android-15.0.0_r32/r36: https://developers.google.com/android/drivers (same as bp1a above)
-                POST_REPO_SYNC_COMMANDS_LIST=(
+                POST_REPO_COMMAND_LIST=(
                     "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-bp1a.250505.005-fb23c626.tgz | tar -xzvf - "
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
                 )
@@ -420,8 +419,8 @@ if [ -n "${POST_REPO_INITIALISE_COMMAND}" ]; then
     POST_REPO_INITIALISE_COMMANDS_LIST=("${POST_REPO_INITIALISE_COMMAND}")
 fi
 
-if [ -n "${POST_REPO_SYNC_COMMAND}" ]; then
-    POST_REPO_SYNC_COMMANDS_LIST=("${POST_REPO_SYNC_COMMAND}")
+if [ -n "${POST_REPO_COMMAND}" ]; then
+    POST_REPO_COMMAND_LIST=("${POST_REPO_COMMAND}")
 fi
 
 # Additional build commands
@@ -464,7 +463,7 @@ case "$0" in
         AAOS_REVISION=${AAOS_REVISION}
 
         POST_REPO_INITIALISE_COMMAND=${POST_REPO_INITIALISE_COMMAND}
-        POST_REPO_SYNC_COMMAND=${POST_REPO_SYNC_COMMAND}
+        POST_REPO_COMMAND=${POST_REPO_COMMAND}
 
         REPO_SYNC_JOBS_ARG=${REPO_SYNC_JOBS_ARG}
 

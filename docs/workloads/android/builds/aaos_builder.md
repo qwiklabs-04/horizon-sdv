@@ -110,9 +110,9 @@ Some build targets already define this command, so if user updates this then the
 
 Useful for tasks such as updating manifests, such as those used to build RPi targets.
 
-### `POST_REPO_SYNC_COMMAND`
+### `POST_REPO_COMMAND`
 
-Optional parameter that allows the user to include additional commands to run after the repo has been synced.
+Optional parameter that allows the user to include additional commands to run after the repo has been synced, or cloned.
 
 Some build targets already define this command, so if user updates this then the default will be overridden. This is a single command line, so use of logical operators to execute subsequent commands is essential.
 
@@ -177,7 +177,7 @@ AAOS_CLEAN=CLEAN_ALL \
 ### `aaos_initialise.sh` <a name="aaos_initialise"></a>
 This script is responsible for initialising the repos for the given manifest, branch and target.
 
-Some targets have their own definitions for `POST_REPO_INITIALISE_COMMAND` and `POST_REPO_SYNC_COMMAND` but these can be overridden.
+Some targets have their own definitions for `POST_REPO_INITIALISE_COMMAND` and `POST_REPO_COMMAND` but these can be overridden.
 
 Example 1: Initialise the repos for `aosp_cf_x86_64_auto-bp1a-userdebug`
 ```

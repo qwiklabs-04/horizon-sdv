@@ -69,9 +69,9 @@ pipelineJob('Android/Builds/AAOS Builder') {
     }
 
     stringParam {
-      name('POST_REPO_SYNC_COMMAND')
+      name('POST_REPO_COMMAND')
       defaultValue('')
-      description('''<p>Optional additional commands post repo sync/fetch and prior to build/make.<br/>
+      description('''<p>Optional additional commands post repo sync/fetch, git clone and prior to build/make.<br/>
         <b>Note: </b>Single command line only, use logical operators to execute subsequent commands.<br/><br/></p>''')
       trim(true)
     }

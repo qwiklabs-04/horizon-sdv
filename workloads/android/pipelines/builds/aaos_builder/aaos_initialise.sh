@@ -36,8 +36,7 @@
 #  - MAX_REPO_SYNC_JOBS: the maximum number of parallel repo sync jobs
 #         supported. (Default: 24).
 #  - POST_REPO_INITIALISE_COMMAND: additional vendor commands for repo initialisation.
-#  - POST_REPO_SYNC_COMMAND: additional vendor commands initialisation post
-#        repo sync.
+#  - POST_REPO_COMMAND: additional vendor commands initialisation post repo sync.
 #
 # For Gerrit review change sets:
 #  - GERRIT_SERVER_URL: URL of Gerrit server.
@@ -137,7 +136,7 @@ if [[ -n "${GERRIT_PROJECT}" && -n "${GERRIT_CHANGE_NUMBER}" && -n "${GERRIT_PAT
 fi
 
 # Additional commands to run after repo sync.
-for command in "${POST_REPO_SYNC_COMMANDS_LIST[@]}"; do
+for command in "${POST_REPO_COMMAND_LIST[@]}"; do
     echo "${command}"
     eval "${command}"
 done

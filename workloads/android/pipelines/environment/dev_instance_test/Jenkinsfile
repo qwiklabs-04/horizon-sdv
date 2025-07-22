@@ -34,7 +34,6 @@ pipeline {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
               withCredentials([usernamePassword(credentialsId: 'jenkins-mtk-connect-apikey', passwordVariable: 'MTK_CONNECT_PASSWORD', usernameVariable: 'MTK_CONNECT_USERNAME')]) {
                 sh '''
-                  set -x
                   cd ./workloads/common/mtk-connect/ || true
                   sudo \
                   MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \

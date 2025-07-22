@@ -426,11 +426,11 @@ esac
 
 # Additional repo init/sync commands.
 if [ -n "${POST_REPO_INITIALISE_COMMAND}" ]; then
-    POST_REPO_INITIALISE_COMMANDS_LIST=("${POST_REPO_INITIALISE_COMMAND}")
+    POST_REPO_INITIALISE_COMMANDS_LIST+=("${POST_REPO_INITIALISE_COMMAND}")
 fi
 
 if [ -n "${POST_REPO_COMMAND}" ]; then
-    POST_REPO_COMMAND_LIST=("${POST_REPO_COMMAND}")
+    POST_REPO_COMMAND_LIST+=("${POST_REPO_COMMAND}")
 fi
 
 # Additional build commands

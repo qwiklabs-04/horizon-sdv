@@ -64,6 +64,36 @@ pipeline {
     stage ('Start VM Instance') {
       agent { kubernetes { yaml kubernetesPodTemplate } }
       stages {
+        stage ('Initialise') {
+          when {
+            allOf {
+              expression { env.AAOS_LUNCH_TARGET }
+              expression { currentBuild.currentResult == 'SUCCESS' }
+            }
+          }
+          steps {
+            script {
+              currentBuild.description = "${env.AAOS_LUNCH_TARGET}" + "<br>" + "${env.AAOS_REVISION}" + "<br>" + "$BUILD_USER"
+            }
+            container(name: 'builder') {
+              catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                sh '''
+                  AAOS_REVISION="${AAOS_REVISION}" \
+                  AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
+                  ABFS_VERSION="${ABFS_VERSION}" \
+                  ABFS_REPOSITORY="${ABFS_REPOSITORY}" \
+                  ABFS_BUILDER="true" \
+                  GERRIT_PROJECT="${GERRIT_PROJECT}" \
+                  GERRIT_CHANGE_NUMBER="${GERRIT_CHANGE_NUMBER}" \
+                  GERRIT_PATCHSET_NUMBER="${GERRIT_PATCHSET_NUMBER}"  \
+                  POST_REPO_COMMAND="${POST_REPO_COMMAND}" \
+                  ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
+                '''
+              }
+            }
+          }
+        }
+
         stage ('Build'){
           when {
             allOf {
@@ -79,7 +109,58 @@ pipeline {
                   AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
                   ABFS_VERSION="${ABFS_VERSION}" \
                   ABFS_REPOSITORY="${ABFS_REPOSITORY}" \
-                  ./workloads/android/pipelines/builds/aaos_abfs_builder/aaos_abfs_build.sh
+                  ABFS_BUILDER="true" \
+                  ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
+                '''
+              }
+            }
+          }
+        }
+
+        stage ('Storage') {
+          when {
+            allOf {
+              expression { env.AAOS_LUNCH_TARGET }
+              expression { env.AAOS_ARTIFACT_STORAGE_SOLUTION }
+              expression { currentBuild.currentResult == 'SUCCESS' }
+            }
+          }
+          steps {
+            container(name: 'builder') {
+              catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                sh '''
+                  AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
+                  AAOS_REVISION="${AAOS_REVISION}" \
+                  ANDROID_VERSION="${ANDROID_VERSION}" \
+                  ABFS_BUILDER="true" \
+                  ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh || true
+
+                  AAOS_ARTIFACT_ROOT_NAME="${ANDROID_BUILD_BUCKET_ROOT_NAME}" \
+                  AAOS_ARTIFACT_STORAGE_SOLUTION="${AAOS_ARTIFACT_STORAGE_SOLUTION}" \
+                  ABFS_BUILDER="true" \
+                  ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
+                '''
+                archiveArtifacts artifacts: '*artifacts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+              }
+            }
+          }
+        }
+
+        stage ('Cache Sync') {
+          when {
+            allOf {
+              expression { env.AAOS_LUNCH_TARGET }
+              expression { env.ABFS_CACHEMAN_SYNC == 'true' }
+              expression { currentBuild.currentResult == 'SUCCESS' }
+            }
+          }
+          steps {
+            container(name: 'builder') {
+              catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                sh '''
+                  echo "Waiting on cacheman to sync ..."
+                  abfs cacheman wait || true
+                  echo "Sync complete"
                 '''
               }
             }
@@ -90,8 +171,10 @@ pipeline {
           when { expression { env.AAOS_LUNCH_TARGET } }
           steps {
             container(name: 'builder') {
-              script {
-                sleep(time: "${INSTANCE_RETENTION_TIME}", unit: 'MINUTES')
+              catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                script {
+                  sleep(time: "${INSTANCE_RETENTION_TIME}", unit: 'MINUTES')
+                }
               }
             }
           }

@@ -35,8 +35,7 @@
 #        supported. (Default: 24).
 #  - OVERRIDE_MAKE_COMMAND: the make command line to use
 #  - POST_REPO_INITIALISE_COMMAND: additional vendor commands for repo initialisation.
-#  - POST_REPO_SYNC_COMMAND: additional vendor commands initialisation post
-#        repo sync.
+#  - POST_REPO_COMMAND: additional vendor commands initialisation post repo sync.
 #  - DISK_SPACE_WATERMARK: percentage watermark to clean out old buids
 #        to retain space for current build.
 #  - AAOS_PARALLEL_BUILD_JOBS: define the number of parallel build jobs. Default
@@ -86,6 +85,9 @@ AAOS_GERRIT_MANIFEST_URL=${AAOS_GERRIT_MANIFEST_URL:-https://android.googlesourc
 AAOS_GERRIT_RPI_MANIFEST_URL=$(echo "${AAOS_GERRIT_RPI_MANIFEST_URL}" | xargs)
 AAOS_GERRIT_RPI_MANIFEST_URL=${AAOS_GERRIT_RPI_MANIFEST_URL:-https://raw.githubusercontent.com/raspberry-vanilla/android_local_manifest}
 
+# ABFS Flag
+ABFS_BUILDER=${ABFS_BUILDER:-false}
+
 # Google Repo Sync parallel jobs value
 REPO_SYNC_JOBS=${REPO_SYNC_JOBS:-2}
 MAX_REPO_SYNC_JOBS=${MAX_REPO_SYNC_JOBS:-24}
@@ -128,9 +130,13 @@ AAOS_SDK_ADDON_FILE=${AAOS_SDK_ADDON_FILE:-horizon-sdv-aaos-sys-img2-1.xml}
 AAOS_SDK_SYSTEM_IMAGE_PREFIX=${AAOS_SDK_SYSTEM_IMAGE_PREFIX:-sdk-repo-linux-system-images}
 
 # Cache directory
-AAOS_CACHE_DIRECTORY=${AAOS_CACHE_DIRECTORY:-/aaos-cache}
+AAOS_CACHE_DIRECTORY=""
+AAOS_BUILDS_DIRECTORY=""
+if [[ "${ABFS_BUILDER}" == "false" ]]; then
+    AAOS_CACHE_DIRECTORY=${AAOS_CACHE_DIRECTORY:-/aaos-cache}
+    AAOS_BUILDS_DIRECTORY="aaos_builds"
+fi
 
-AAOS_BUILDS_DIRECTORY="aaos_builds"
 
 # AAOS workspace and artifact storage paths
 # Store original workspace for use later.
@@ -182,8 +188,12 @@ if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
             ;;
     esac
 else
-    # Local build or no PVC mounted, build in user home.
-    AAOS_CACHE_DIRECTORY="${HOME}"
+    if [[ "${ABFS_BUILDER}" == "false" ]]; then
+        # Local build or no PVC mounted, build in user home.
+        AAOS_CACHE_DIRECTORY="${HOME}"
+    else
+        AAOS_CACHE_DIRECTORY=${AAOS_CACHE_DIRECTORY:-/src}
+    fi
 fi
 
 CACHE_DIRECTORY="${AAOS_CACHE_DIRECTORY}"
@@ -205,7 +215,6 @@ BUILD_INFO_FILE="${WORKSPACE}/build_info.txt"
 # Override build output directory to keep builds
 # separate from each other.
 export OUT_DIR="out_sdv-${AAOS_LUNCH_TARGET}"
-
 
 # Architecture:
 AAOS_ARCH=""
@@ -230,7 +239,7 @@ USER=$(whoami)
 declare -a POST_REPO_INITIALISE_COMMANDS_LIST
 
 # Post repo sync commands
-declare -a POST_REPO_SYNC_COMMANDS_LIST
+declare -a POST_REPO_COMMAND_LIST
 
 # Define the make command line for given target
 AAOS_MAKE_CMDLINE=""
@@ -285,7 +294,7 @@ case "${AAOS_LUNCH_TARGET}" in
         esac
 
         # Clean up the manifests to avoid issues when versions change.
-        POST_REPO_SYNC_COMMANDS_LIST=(
+        POST_REPO_COMMAND_LIST=(
             "rm .repo/local_manifests/manifest_brcm_rpi.xml > /dev/null 2>&1"
             "rm .repo/local_manifests/remove_projects.xml > /dev/null 2>&1"
         )
@@ -308,7 +317,7 @@ case "${AAOS_LUNCH_TARGET}" in
         WIFI_APK_NAME="WifiUtil.apk"
 
         # Fallback Wifi APK
-        WIFI_APK_FALLBACK_CMD="git clone https://android.googlesource.com/platform/tools/tradefederation --depth=1 -b android-14.0.0_r30 horizon_wifi && cp -f horizon_wifi/res/apks/wifiutil/${WIFI_APK_NAME} . ; rm -rf horizon_wifi"
+        WIFI_APK_FALLBACK_CMD="git clone https://android.googlesource.com/platform/tools/tradefederation -b android-14.0.0_r30 ${HOME}/horizon_wifi && cp -f ${HOME}/horizon_wifi/res/apks/wifiutil/${WIFI_APK_NAME} . ; rm -rf ${HOME}/horizon_wifi"
         # Trade Federation Wifi APK from repo.
         WIFI_APK_PATH_NAME="tools/tradefederation/core/res/apks/wifiutil/${WIFI_APK_NAME}"
 
@@ -339,38 +348,38 @@ case "${AAOS_LUNCH_TARGET}" in
         # Pixel Tablet binaries for Android ap1a/ap2a/ap3a/ap4a/bp1a
         case "${AAOS_LUNCH_TARGET}" in
             *ap1a*)
-                POST_REPO_SYNC_COMMANDS_LIST=(
+                POST_REPO_COMMAND_LIST=(
                     "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap1a.240405.002-8d141153.tgz | tar -xzvf - "
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
                 )
                 ;;
             *ap2a*)
-                POST_REPO_SYNC_COMMANDS_LIST=(
+                POST_REPO_COMMAND_LIST=(
                     "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap2a.240805.005-7e95f619.tgz | tar -xzvf - "
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
                 )
                 ;;
             *ap3a*)
-                POST_REPO_SYNC_COMMANDS_LIST=(
+                POST_REPO_COMMAND_LIST=(
                     "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap3a.241105.007-2bf56572.tgz | tar -xzvf - "
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
                 )
                 ;;
             *ap4a*)
-                POST_REPO_SYNC_COMMANDS_LIST=(
+                POST_REPO_COMMAND_LIST=(
                     "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-ap4a.250205.002-6474e704.tgz | tar -xzvf - "
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
                 )
                 ;;
             *bp1a*)
-                POST_REPO_SYNC_COMMANDS_LIST=(
+                POST_REPO_COMMAND_LIST=(
                     "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-bp1a.250505.005-fb23c626.tgz | tar -xzvf - "
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
                 )
                 ;;
             *)
                 # android-15.0.0_r32/r36: https://developers.google.com/android/drivers (same as bp1a above)
-                POST_REPO_SYNC_COMMANDS_LIST=(
+                POST_REPO_COMMAND_LIST=(
                     "curl --output - https://dl.google.com/dl/android/aosp/google_devices-tangorpro-bp1a.250505.005-fb23c626.tgz | tar -xzvf - "
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
                 )
@@ -417,11 +426,11 @@ esac
 
 # Additional repo init/sync commands.
 if [ -n "${POST_REPO_INITIALISE_COMMAND}" ]; then
-    POST_REPO_INITIALISE_COMMANDS_LIST=("${POST_REPO_INITIALISE_COMMAND}")
+    POST_REPO_INITIALISE_COMMANDS_LIST+=("${POST_REPO_INITIALISE_COMMAND}")
 fi
 
-if [ -n "${POST_REPO_SYNC_COMMAND}" ]; then
-    POST_REPO_SYNC_COMMANDS_LIST=("${POST_REPO_SYNC_COMMAND}")
+if [ -n "${POST_REPO_COMMAND}" ]; then
+    POST_REPO_COMMAND_LIST+=("${POST_REPO_COMMAND}")
 fi
 
 # Additional build commands
@@ -431,7 +440,7 @@ fi
 
 # Gerrit Review environment variables: remove leading and trailing slashes.
 GERRIT_SERVER_URL=$(echo "${GERRIT_SERVER_URL}" | xargs)
-GERRIT_SERVER_URL=${GERRIT_SERVER_URL:-https://dev.horizon-sdv.com/gerrit}
+GERRIT_SERVER_URL=${GERRIT_SERVER_URL:-https://android.googlesource.com}
 # Strip any trailing slashes as this can impact on the download URL.
 GERRIT_SERVER_URL=${GERRIT_SERVER_URL%/}
 GERRIT_PROJECT=$(echo "${GERRIT_PROJECT}" | xargs)
@@ -457,21 +466,35 @@ case "$0" in
         "
         ;;
     *initialise.sh)
-        VARIABLES+="
-        AAOS_GERRIT_MANIFEST_URL=${AAOS_GERRIT_MANIFEST_URL}
-        AAOS_GERRIT_RPI_MANIFEST_URL=${AAOS_GERRIT_RPI_MANIFEST_URL}
+        if [[ "${ABFS_BUILDER}" == "false" ]]; then
+            VARIABLES+="
+            AAOS_GERRIT_MANIFEST_URL=${AAOS_GERRIT_MANIFEST_URL}
+            AAOS_GERRIT_RPI_MANIFEST_URL=${AAOS_GERRIT_RPI_MANIFEST_URL}
 
-        AAOS_REVISION=${AAOS_REVISION}
+            AAOS_REVISION=${AAOS_REVISION}
 
-        POST_REPO_INITIALISE_COMMAND=${POST_REPO_INITIALISE_COMMAND}
-        POST_REPO_SYNC_COMMAND=${POST_REPO_SYNC_COMMAND}
+            POST_REPO_INITIALISE_COMMAND=${POST_REPO_INITIALISE_COMMAND}
+            POST_REPO_COMMAND=${POST_REPO_COMMAND}
 
-        REPO_SYNC_JOBS_ARG=${REPO_SYNC_JOBS_ARG}
+            REPO_SYNC_JOBS_ARG=${REPO_SYNC_JOBS_ARG}
 
-        GERRIT_PROJECT=${GERRIT_PROJECT}
-        GERRIT_CHANGE_NUMBER=${GERRIT_CHANGE_NUMBER}
-        GERRIT_PATCHSET_NUMBER=${GERRIT_PATCHSET_NUMBER}
-        "
+            GERRIT_SERVER_URL=${GERRIT_SERVER_URL}
+            GERRIT_PROJECT=${GERRIT_PROJECT}
+            GERRIT_CHANGE_NUMBER=${GERRIT_CHANGE_NUMBER}
+            GERRIT_PATCHSET_NUMBER=${GERRIT_PATCHSET_NUMBER}
+            "
+        else
+            VARIABLES+="
+            AAOS_REVISION=${AAOS_REVISION}
+
+            GERRIT_SERVER_URL=${GERRIT_SERVER_URL}
+            GERRIT_PROJECT=${GERRIT_PROJECT}
+            GERRIT_CHANGE_NUMBER=${GERRIT_CHANGE_NUMBER}
+            GERRIT_PATCHSET_NUMBER=${GERRIT_PATCHSET_NUMBER}
+
+            POST_REPO_COMMAND=${POST_REPO_COMMAND}
+            "
+        fi
         ;;
     *build.sh)
         # Only allow cleaning the build, ensure override.
@@ -562,7 +585,10 @@ case "${AAOS_CLEAN}" in
 esac
 
 function create_workspace() {
-    mkdir -p "${WORKSPACE}" > /dev/null 2>&1
+    # ABFS will mount, don't create.
+    if [[ "${ABFS_BUILDER}" == "false" ]]; then
+        mkdir -p "${WORKSPACE}" > /dev/null 2>&1
+    fi
     cd "${WORKSPACE}" || exit
 }
 

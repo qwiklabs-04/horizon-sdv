@@ -26,6 +26,12 @@ pipelineJob('Android/Environment/Development Build Instance') {
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
   parameters {
+    booleanParam {
+      name('ABFS')
+      defaultValue(false)
+      description('''<p>Enable if using an ABFS instance</p>''')
+    }
+
     choiceParam {
       name('ANDROID_VERSION')
       description('''<p>Version of disk pool to use for the build cache:</p>
@@ -43,12 +49,6 @@ pipelineJob('Android/Environment/Development Build Instance') {
       defaultValue('latest')
       description('''<p>Image tag for the builder image.</p>''')
       trim(true)
-    }
-
-    booleanParam {
-      name('ABFS')
-      defaultValue(false)
-      description('''<p>Enable if using an ABFS instance</p>''')
     }
 
     choiceParam {

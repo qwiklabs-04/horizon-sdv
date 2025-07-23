@@ -26,9 +26,9 @@ EOL
 function abfs_clean_ssh_keys() {
   # https://cloud.google.com/compute/docs/troubleshooting/troubleshoot-os-login#invalid_argument
   echo -e "Remove old SSH keys"
-  gcloud compute os-login describe-profile | \
-      awk -v username="$(whoami)" '/fingerprint:/{f=$2} $0 ~ username && /instance/{print f}' | \
-      xargs -I {} gcloud compute os-login ssh-keys remove --key={} || true
+  for k in $(gcloud compute os-login ssh-keys list --format="table[no-heading](value.fingerprint)"); do
+    gcloud compute os-login ssh-keys remove --key "${k}" || true
+  done
 }
 
 function abfs_uploader_run() {

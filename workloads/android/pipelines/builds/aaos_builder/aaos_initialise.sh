@@ -112,18 +112,36 @@ function fetch_patchset() {
             # Use standard git fetch to retrieve the change.
             # Find the project name from the manifest.
             PROJECT_PATH=$(repo list -p "${GERRIT_PROJECT}")
-
-            # Derive the Gerrit URL from the manifest URL.
-            #   Horizon SDV uses path based URL whereas Google Android does not.
-            PROJECT_URL=$(echo "${AAOS_GERRIT_MANIFEST_URL}" | cut -d'/' -f1-3)/"${GERRIT_PROJECT}"
-            if ! curl -s -f -o /dev/null "${PROJECT_URL}"; then
-                # Use default.
-                PROJECT_URL="${GERRIT_SERVER_URL}/${GERRIT_PROJECT}"
-            fi
         else
-            # FIXME: Strip the leading. This is a fudge for now, need to derive from a manifest.
+            # Find the path from manifest
+            mkdir -p "${HOME}"/manifest
+            cd "${HOME}"/manifest || exit
+
+            # FIXME: fix branch (demo only)
+            if [[ "${AAOS_GERRIT_MANIFEST_URL}" =~ "horizon" ]]; then
+                if [[ ! "${AAOS_REVISION}" =~ "horizon" ]]; then
+                    AAOS_REVISION=horizon/"${AAOS_REVISION}"
+                fi
+            fi
+
+            # FIXME: will use clone in future but for now this is just convenience for commonality.
+            if ! repo init -u "${AAOS_GERRIT_MANIFEST_URL}" -b "${AAOS_REVISION}" --depth=1
+            then
+                echo "ERROR: repo init failed, exit!"
+                exit 1
+            fi
+
+            PROJECT_PATH=$(grep "name=\"${GERRIT_PROJECT}\"" .repo/manifests/default.xml | sed -r 's/.*path="([^"]+)".*/\1/')
+            rm -rf  "${HOME}"/manifest
+            cd - || exit
+        fi
+
+        # Derive the Gerrit URL from the manifest URL.
+        #   Horizon SDV uses path based URL whereas Google Android does not.
+        PROJECT_URL=$(echo "${AAOS_GERRIT_MANIFEST_URL}" | cut -d'/' -f1-3)/"${GERRIT_PROJECT}"
+        if ! curl -s -f -o /dev/null "${PROJECT_URL}"; then
+            # Use default.
             PROJECT_URL="${GERRIT_SERVER_URL}/${GERRIT_PROJECT}"
-            PROJECT_PATH="$(echo "${GERRIT_PROJECT}" | cut -d/ -f2-)"
         fi
 
         # Extract the last two digits of the change number.

@@ -33,20 +33,6 @@ pipelineJob('Android/Builds/AAOS Builder ABFS') {
       trim(true)
     }
 
-    stringParam {
-      name('ABFS_VERSION')
-      defaultValue("${ABFS_VERSION}")
-      description('''<p>ABFS version, e.g. 0.0.33-2-ge59ffbc, latest</p>''')
-      trim(true)
-    }
-
-    stringParam {
-      name('ABFS_REPOSITORY')
-      defaultValue("${ABFS_REPOSITORY}")
-      description('''<p>ABFS aptitude repository, e.g. abfs-apt-alpha-public. </p>''')
-      trim(true)
-    }
-
     choiceParam {
       name('ANDROID_VERSION')
       description('''<p>Version of Android required for SDK generation of addons and devices.</p>''')
@@ -75,32 +61,53 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/
     }
 
     stringParam {
-      name('AAOS_ARTIFACT_STORAGE_SOLUTION')
-      defaultValue('GCS_BUCKET')
-      description('''<p>Android Artifact Storage:<br/>
-        <ul><li>GCS_BUCKET will store to cloud bucket storage</li>
-        <li>Empty will result in nothing stored</li></ul></p>''')
+      name('AAOS_GERRIT_MANIFEST_URL')
+      defaultValue("https://${HORIZON_DOMAIN}/gerrit/android/platform/manifest")
+      description('''<p>Gerrit manifest URL for patchset.<br>
+        Manifest is required so project can be matched to path within the source tree.</p>''')
       trim(true)
     }
 
     stringParam {
       name('GERRIT_PROJECT')
       defaultValue('')
-      description('''<p>ABFS builder patch project.</p>''')
+      description('''<p>Optional, define Gerrit Project with open review.</p>''')
       trim(true)
     }
 
     stringParam {
       name('GERRIT_CHANGE_NUMBER')
       defaultValue('')
-      description('''<p>ABFS bulder patch change number.</p>''')
+      description('''<p>Optional, define Gerrit review item change number.</p>''')
       trim(true)
     }
 
     stringParam {
       name('GERRIT_PATCHSET_NUMBER')
       defaultValue('')
-      description('''<p>ABFS bulder patch set number.</p>''')
+      description('''<p>Optional, define Gerrit review item patchset number.</p>''')
+      trim(true)
+    }
+
+    choiceParam {
+      name('INSTANCE_RETENTION_TIME')
+      description('''<p>Time in minutes to retain the instance after build completion.<br/>
+        Useful for debugging build issues, reviewing target outputs etc.</p>''')
+      choices(['0', '15', '30', '45', '60', '120', '180'])
+    }
+
+
+    stringParam {
+      name('ABFS_VERSION')
+      defaultValue("${ABFS_VERSION}")
+      description('''<p>ABFS version, e.g. 0.0.33-2-ge59ffbc, latest</p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('ABFS_REPOSITORY')
+      defaultValue("${ABFS_REPOSITORY}")
+      description('''<p>ABFS aptitude repository, e.g. abfs-apt-alpha-public. </p>''')
       trim(true)
     }
 
@@ -110,11 +117,13 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/
       description('''<p>Wait on ABFS cacheman sync to complete. Disable if you don't care.</p>''')
     }
 
-    choiceParam {
-      name('INSTANCE_RETENTION_TIME')
-      description('''<p>Time in minutes to retain the instance after build completion.<br/>
-        Useful for debugging build issues, reviewing target outputs etc.</p>''')
-      choices(['0', '15', '30', '45', '60', '120', '180'])
+    stringParam {
+      name('AAOS_ARTIFACT_STORAGE_SOLUTION')
+      defaultValue('GCS_BUCKET')
+      description('''<p>Android Artifact Storage:<br/>
+        <ul><li>GCS_BUCKET will store to cloud bucket storage</li>
+        <li>Empty will result in nothing stored</li></ul></p>''')
+      trim(true)
     }
   }
 

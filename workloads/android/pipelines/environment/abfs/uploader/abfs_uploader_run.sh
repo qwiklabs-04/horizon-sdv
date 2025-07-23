@@ -22,6 +22,15 @@ module "abfs-uploaders" {
 EOL
 }
 
+# Clean old SSH keys
+function abfs_clean_ssh_keys() {
+  # https://cloud.google.com/compute/docs/troubleshooting/troubleshoot-os-login#invalid_argument
+  echo -e "Remove old SSH keys"
+  gcloud compute os-login describe-profile | \
+      awk -v username="$(whoami)" '/fingerprint:/{f=$2} $0 ~ username && /instance/{print f}' | \
+      xargs -I {} gcloud compute os-login ssh-keys remove --key={} || true
+}
+
 function abfs_uploader_run() {
   echo "ABFS Uploader Run"
 
@@ -86,5 +95,6 @@ function abfs_uploader_run() {
   fi
 }
 
+abfs_clean_ssh_keys
 abfs_override_tf
 abfs_uploader_run

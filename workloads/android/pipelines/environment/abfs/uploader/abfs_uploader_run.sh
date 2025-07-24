@@ -71,25 +71,31 @@ function abfs_uploader_run() {
     terraform destroy --auto-approve
   elif [ "${ABFS_TERRAFORM_ACTION}" = "START" ]; then
     VM_LIST=$(terraform show -json | jq -r '.values.root_module | recurse(.child_modules[]?)  | .resources[]? | select(.type == "google_compute_instance") | "\(.values.name)"' | xargs)
-    for vm in $VM_LIST; do echo "${vm}"; done
-    VM_STATUS=$(gcloud compute instances describe "${vm}" --zone="${CLOUD_ZONE}" --format='get(status)')
-    if [[ $VM_STATUS == "TERMINATED" ]]; then
-      gcloud compute instances start "${VM_LIST}" --zone="${CLOUD_ZONE}"
-    fi
+    for vm in $VM_LIST; do
+      echo "${vm}"
+      VM_STATUS=$(gcloud compute instances describe "${vm}" --zone="${CLOUD_ZONE}" --format='get(status)')
+      if [[ $VM_STATUS == "TERMINATED" ]]; then
+        gcloud compute instances start "${vm}" --zone="${CLOUD_ZONE}"
+      fi
+    done
   elif [ "${ABFS_TERRAFORM_ACTION}" = "STOP" ]; then
     VM_LIST=$(terraform show -json | jq -r '.values.root_module | recurse(.child_modules[]?)  | .resources[]? | select(.type == "google_compute_instance") | "\(.values.name)"' | xargs)
-    for vm in $VM_LIST; do echo "${vm}"; done
-    VM_STATUS=$(gcloud compute instances describe "${vm}" --zone="${CLOUD_ZONE}" --format='get(status)')
-    if [[ $VM_STATUS == "RUNNING" ]]; then
-      gcloud compute instances stop "${VM_LIST}" --zone="${CLOUD_ZONE}"
-    fi
+    for vm in $VM_LIST; do
+      echo "${vm}"
+      VM_STATUS=$(gcloud compute instances describe "${vm}" --zone="${CLOUD_ZONE}" --format='get(status)')
+      if [[ $VM_STATUS == "RUNNING" ]]; then
+        gcloud compute instances stop "${vm}" --zone="${CLOUD_ZONE}"
+      fi
+    done
   elif [ "${ABFS_TERRAFORM_ACTION}" = "RESTART" ]; then
     VM_LIST=$(terraform show -json | jq -r '.values.root_module | recurse(.child_modules[]?)  | .resources[]? | select(.type == "google_compute_instance") | "\(.values.name)"' | xargs)
-    for vm in $VM_LIST; do echo "${vm}"; done
-    VM_STATUS=$(gcloud compute instances describe "${vm}" --zone="${CLOUD_ZONE}" --format='get(status)')
-    if [[ $VM_STATUS == "RUNNING" ]]; then
-      gcloud compute instances reset "${VM_LIST}" --zone="${CLOUD_ZONE}"
-    fi
+    for vm in $VM_LIST; do
+      echo "${vm}"
+      VM_STATUS=$(gcloud compute instances describe "${vm}" --zone="${CLOUD_ZONE}" --format='get(status)')
+      if [[ $VM_STATUS == "RUNNING" ]]; then
+        gcloud compute instances reset "${vm}" --zone="${CLOUD_ZONE}"
+      fi
+    done
   else
     echo "WRONG ACTION"
   fi

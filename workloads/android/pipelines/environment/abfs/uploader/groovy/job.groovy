@@ -69,7 +69,7 @@ pipelineJob('Android/Environment/ABFS/Uploader') {
 
     stringParam {
       name('UPLOADER_GIT_BRANCH')
-      defaultValue('["main"]')
+      defaultValue('["android-15.0.0_r36"]')
       trim(true)
     }
 

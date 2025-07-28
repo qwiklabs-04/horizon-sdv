@@ -168,33 +168,6 @@ function fetch_patchset() {
     fi
 }
 
-# ABFS: Check a kernel module was loaded
-function check_module_loaded() {
-    local module_name="$1"
-    local timeout="$2"
-    local interval=1
-    local elapsed=0
-
-    echo "check_module_loaded"
-    if [[ -z "$module_name" || -z "$timeout" ]]; then
-        echo "ERROR: Usage: check_module_loaded <module_name> <timeout_seconds>"
-        exit 1
-    fi
-
-    while ((elapsed < timeout)); do
-        if lsmod | grep -qw "$module_name"; then
-            echo "Module '$module_name' is loaded."
-            return 0
-        fi
-        sleep "$interval"
-        echo "$elapsed"
-        elapsed=$((elapsed + interval))
-    done
-
-    echo "ERROR: Timeout reached. Module '$module_name' not loaded."
-    exit 1
-}
-
 # ABFS: requires systemd and thus systemctl, simply stub.
 function fake_systemd() {
     echo "fake_systemd"
@@ -213,10 +186,13 @@ EOL
 # ABFS: install aptitude binaries for abfs
 function abfs_install() {
     echo "abfs_install."
+    sudo apt update -y
     gcloud artifacts files list --project=abfs-binaries --location=us --repository="${ABFS_REPOSITORY}" | grep -e "pool/abfs.*client_${ABFS_VERSION}" -e "pool/casfs-kmod-$(uname -r)_${ABFS_VERSION}" | awk '{print $1}' | while read -r a; do gcloud artifacts files download --project=abfs-binaries --location=us --repository="${ABFS_REPOSITORY}" --destination=. "${a}"; done
     CMD="find . -maxdepth 1 -type f -name \"pool*\" -exec sudo apt install \"./{}\" \\;"
     echo "Command: ${CMD}"
     eval "${CMD}"
+    sudo depmod -a
+    sudo modprobe casfs
     # FIXME: avoid warning if installed through apt.
     sudo apt install casfs-kmod-"$(uname -r)" || true
 }
@@ -265,7 +241,6 @@ if [[ "${ABFS_BUILDER}" == "false" ]]; then
     initialise_repo
     fetch_patchset
 else
-    check_module_loaded casfs 60
     fake_systemd
     abfs_install
     abfs_initialise

@@ -100,8 +100,8 @@ pipeline {
                     POST_REPO_COMMAND="${POST_REPO_COMMAND}" \
                     ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
                   '''
+                  archiveArtifacts artifacts: '*abfs_repository*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
                 }
-                archiveArtifacts artifacts: '*abfs_repository*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
               }
             }
           }

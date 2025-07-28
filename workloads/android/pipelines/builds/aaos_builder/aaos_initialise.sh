@@ -199,7 +199,6 @@ function abfs_install() {
     sudo modprobe casfs
     # FIXME: avoid warning if installed through apt.
     sudo apt install casfs-kmod-"$(uname -r)" || true
-    ls "$ORIG_WORKSPACE"
 }
 
 # ABFS: initialise

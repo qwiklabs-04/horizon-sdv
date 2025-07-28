@@ -38,11 +38,7 @@ RUN apt-get update -y && \
     pkg-config rsync less curl sudo vim ssh findutils gawk jq htop \
     libcap2-bin psmisc && \
     apt-get update -y && apt install -y npm nodejs && \
-    rm -rf /var/lib/apt/lists/* && \
-    systemctl status unattended-upgrades || true && \
-    apt remove -y --purge unattended-upgrades || true && \
-    apt autoremove -y && \
-    rm -rf /var/log/unattended-upgrades
+    rm -rf /var/lib/apt/lists/*
 
 # The following installs gcloud sdk including gcloud storage required for uploading
 # artifacts to Google Cloud Storage. Remove if using alternative storage.

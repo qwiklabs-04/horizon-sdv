@@ -38,7 +38,7 @@ spec:
       serviceAccountName: jenkins-sa
       containers:
         - name: abfs-module
-          image: ubuntu:24.04
+          image: ubuntu:22.04
           securityContext:
             privileged: true
           command:

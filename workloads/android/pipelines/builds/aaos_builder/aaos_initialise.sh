@@ -187,7 +187,10 @@ EOL
 function abfs_install() {
     echo "abfs_install."
     sudo apt update -y
-    gcloud artifacts files list --project=abfs-binaries --location=us --repository="${ABFS_REPOSITORY}" | grep -e "pool/abfs.*client_${ABFS_CLIENT_VERSION}" -e "pool/casfs-kmod-$(uname -r)_${ABFS_VERSION}" | awk '{print $1}' | while read -r a; do gcloud artifacts files download --project=abfs-binaries --location=us --repository="${ABFS_REPOSITORY}" --destination=. "${a}"; done
+    declare -r abfs_artifacts="${ORIG_WORKSPACE}"/abfs_repository_list.txt
+    gcloud artifacts files list --project=abfs-binaries --location=us --repository="${ABFS_REPOSITORY}" | tee -a "${abfs_artifacts}"
+    # shellcheck disable=SC2002
+    cat "${abfs_artifacts}" | grep -e "pool/abfs.*client_${ABFS_CLIENT_VERSION}" -e "pool/casfs-kmod-$(uname -r)_${ABFS_VERSION}" | awk '{print $1}' | while read -r a; do gcloud artifacts files download --project=abfs-binaries --location=us --repository="${ABFS_REPOSITORY}" --destination=. "${a}"; done
     CMD="find . -maxdepth 1 -type f -name \"pool*\" -exec sudo apt install \"./{}\" \\;"
     echo "Command: ${CMD}"
     eval "${CMD}"

@@ -40,7 +40,7 @@ RUN apt-get update -y && \
     apt-get update -y && apt install -y npm nodejs && \
     rm -rf /var/lib/apt/lists/* && \
     systemctl status unattended-upgrades || true && \
-    apt remove -y --purge unattended-upgrades && \
+    apt remove -y --purge unattended-upgrades || true && \
     apt autoremove -y && \
     rm -rf /var/log/unattended-upgrades
 

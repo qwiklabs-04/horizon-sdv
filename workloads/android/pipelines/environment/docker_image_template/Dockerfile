@@ -25,7 +25,9 @@ ARG GOOGLE_DISTRIBUTION_REGISTRY
 ARG ABFS_DISTRIBUTION_REGISTRY
 
 # Install packages required for building AAOSP targets.
-RUN apt-get update -y && \
+RUN apt-get update -y && apt-get install -y unattended-upgrade && \
+    unattended-upgrade --disable && \
+    apt-get update -y && \
     apt-get install -y --no-install-recommends apt-utils && \
     apt-get -y upgrade && \
     apt-get install -y --no-install-recommends \

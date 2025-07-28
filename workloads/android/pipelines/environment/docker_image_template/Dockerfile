@@ -25,9 +25,7 @@ ARG GOOGLE_DISTRIBUTION_REGISTRY
 ARG ABFS_DISTRIBUTION_REGISTRY
 
 # Install packages required for building AAOSP targets.
-RUN apt-get update -y && apt-get install -y unattended-upgrade && \
-    unattended-upgrade --disable && \
-    apt-get update -y && \
+RUN apt-get update -y && \
     apt-get install -y --no-install-recommends apt-utils && \
     apt-get -y upgrade && \
     apt-get install -y --no-install-recommends \
@@ -40,7 +38,11 @@ RUN apt-get update -y && apt-get install -y unattended-upgrade && \
     pkg-config rsync less curl sudo vim ssh findutils gawk jq htop \
     libcap2-bin psmisc && \
     apt-get update -y && apt install -y npm nodejs && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    systemctl status unattended-upgrades || true && \
+    apt remove -y --purge unattended-upgrades && \
+    apt autoremove -y && \
+    rm -rf /var/log/unattended-upgrades
 
 # The following installs gcloud sdk including gcloud storage required for uploading
 # artifacts to Google Cloud Storage. Remove if using alternative storage.

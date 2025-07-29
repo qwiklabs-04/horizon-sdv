@@ -13,14 +13,13 @@
 // limitations under the License.
 
 // Description:
-// This pipeline builds the ABFS builder Docker image using Kaniko
-// rather than use a Docker to avoid docker in docker privilege issues.
+// This pipeline builds the ABFS builder Docker image using Kaniko.
 //
 // References:
 //   * https://github.com/GoogleContainerTools/kaniko
 pipeline {
 
-  // Parameters defined in gitops/env/stage2/templates/jenkins.yaml (Jenkins CasC)
+  // Parameters defined in groovy/job.groovy
 
   agent {
     kubernetes {

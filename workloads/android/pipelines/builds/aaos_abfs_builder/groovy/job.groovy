@@ -47,7 +47,7 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/90/
 git fetch https://android.googlesource.com/platform/build/soong refs/changes/91/3619491/1 && git cherry-pick FETCH_HEAD; \
 git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/3619492/1 && git cherry-pick FETCH_HEAD; cd -''')
       description('''<p>Optional additional commands post repo sync/fetch, git clone and prior to build/make.<br/>
-        The values here are for ABFS Android 15, if using Android 14, update the patchset accordingly.<br/>
+        The values here are for ABFS Android 15.<br/>
         <b>Note: </b>Single command line only, use logical operators to execute subsequent commands.<br/><br/></p>''')
       trim(true)
     }
@@ -64,7 +64,7 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/
       name('AAOS_GERRIT_MANIFEST_URL')
       defaultValue("https://${HORIZON_DOMAIN}/gerrit/android/platform/manifest")
       description('''<p>Gerrit manifest URL for patchset.<br>
-        Manifest is required so project can be matched to path within the source tree.</p>''')
+        Manifest is required so project can be matched to path within the source tree in order to fetch the change.</p>''')
       trim(true)
     }
 
@@ -98,15 +98,15 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/
 
     stringParam {
       name('ABFS_CLIENT_VERSION')
-      defaultValue("${ABFS_VERSION}")
-      description('''<p>ABFS Client version, if differs from standard version, e.g. 0.0.33-2-ge59ffbc, latest</p>''')
+      defaultValue("${ABFS_CLIENT_VERSION}")
+      description('''<p>ABFS Client version, if differs from standard version, e.g. 0.0.33-2-ge59ffbc</p>''')
       trim(true)
     }
 
     stringParam {
       name('ABFS_VERSION')
       defaultValue("${ABFS_VERSION}")
-      description('''<p>ABFS version, e.g. 0.0.33-8-gb8d2d6b, latest</p>''')
+      description('''<p>ABFS version, e.g. 0.0.33-8-gb8d2d6b</p>''')
       trim(true)
     }
 

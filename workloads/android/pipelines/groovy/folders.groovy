@@ -21,11 +21,21 @@ folder('Android/Builds') {
 }
 folder('Android/Environment') {
   displayName('Environment')
-  description('<p>This folder contains environment administrative jobs related to supporting Android workflows.</p>')
+  description('''<p>This folder contains environment administrative jobs related to supporting Android workflows.</p>
+    For AAOS, execute the following to ensure the environment is correctly provisioned:<br/>
+    <ol><li><b>Docker Image Template:</b> create the Docker build container used for standard builds.</li>
+    <li><b>CF Instance Template:</b> Create the Cuttlefish VM instance templates required for test jobs (dependent on Docker Image Template)</li>
+    <li><b>ABFS:</b> If using ABFS then ensure those jobs in this folder are executed accordingly.</li></ol>''')
 }
 folder('Android/Environment/ABFS') {
   displayName('ABFS')
-  description('<p>This folder contains environment administrative jobs related to supporting Android Build File System (ABFS) workflows.</p>')
+  description('''<p>This folder contains environment administrative jobs related to supporting Android Build File System (ABFS) workflows.</p>
+    Ensure you execute in the following order to ensure ABFS environment is correctly provisioned.<br/>
+    <ol><li><b>Docker Infra Image Template:</b> create the Docker infrastructure container for ABFS Server and Uploader jobs.</li>
+    <li><b>Server:</b> Create the ABFS server (dependent on Docker Infra Image Template) </li>
+    <li><b>Uploader:</b> Create the ABFS uploaders (dependent on Docker Infra Image Template) </li>
+    <li><b>Docker Image Template:</b> create the Docker build container used for ABFS builds.</li></ol>''')
+
 }
 folder('Android/Tests') {
   displayName('Tests')

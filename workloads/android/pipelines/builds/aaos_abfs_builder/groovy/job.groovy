@@ -105,7 +105,8 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/
 
     stringParam {
       name('ABFS_VERSION')
-      defaultValue("${ABFS_VERSION}")
+      // defaultValue("${ABFS_VERSION}")
+      defaultValue("0.0.33-8-gb8d2d6b")
       description('''<p>ABFS version, e.g. 0.0.33-8-gb8d2d6b</p>''')
       trim(true)
     }

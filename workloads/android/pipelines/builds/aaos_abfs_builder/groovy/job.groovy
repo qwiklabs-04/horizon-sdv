@@ -119,8 +119,8 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/
 
     booleanParam {
       name('ABFS_CACHEMAN_SYNC')
-      defaultValue(true)
-      description('''<p>Wait on ABFS cacheman sync to complete. Disable if you don't care.</p>''')
+      defaultValue(false)
+      description('''<p>Wait on ABFS cacheman sync to complete. This is for future usage.</p>''')
     }
 
     stringParam {

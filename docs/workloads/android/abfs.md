@@ -79,7 +79,7 @@ Once Google provide you the ABFS license in JSON form, you will be required to c
    - Wait for sync to complete.
 5. **Android Workload**: this next step will prepare the Jenkins CI/CD system to support ABFS.
    - Open `Seed Workloads`
-     - Review `ABFS_REPOSITORY`, `ABFS_VERSION` and `ABFS_CLIENT_VERSION` match expectation. Refer to `aaos_abfs_builder.md` for additional details.
+     - Review `ABFS_REPOSITORY`, `ABFS_VERSION` and `ABFS_CASFS_VERSION` match expectation. Refer to `aaos_abfs_builder.md` for additional details.
      - Select `SEED_WORKLOAD` `android` and `Build`
      - Wait for seed job to complete successfully.
    - Open `Android Workflows → Environment → ABFS → Docker Infra Image Template`

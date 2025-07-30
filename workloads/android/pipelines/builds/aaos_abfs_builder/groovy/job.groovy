@@ -97,17 +97,16 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/
     }
 
     stringParam {
-      name('ABFS_CLIENT_VERSION')
-      defaultValue("${ABFS_CLIENT_VERSION}")
-      description('''<p>ABFS Client version, if differs from standard version, e.g. 0.0.33-2-ge59ffbc</p>''')
+      name('ABFS_VERSION')
+      defaultValue("${ABFS_VERSION}")
+      description('''<p>ABFS version, e.g. 0.0.33-2-ge59ffbc</p>''')
       trim(true)
     }
 
     stringParam {
-      name('ABFS_VERSION')
-      // defaultValue("${ABFS_VERSION}")
-      defaultValue("0.0.33-8-gb8d2d6b")
-      description('''<p>ABFS version, e.g. 0.0.33-8-gb8d2d6b</p>''')
+      name('ABFS_CASFS_VERSION')
+      defaultValue("${ABFS_CASFS_VERSION}")
+      description('''<p>ABFS Client version, if differs from standard version, e.g. 0.0.33-8-gb8d2d6b</p>''')
       trim(true)
     }
 

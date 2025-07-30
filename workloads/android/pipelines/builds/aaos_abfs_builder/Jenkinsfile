@@ -89,7 +89,7 @@ pipeline {
                     AAOS_REVISION="${AAOS_REVISION}" \
                     AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
                     ABFS_VERSION="${ABFS_VERSION}" \
-                    ABFS_CLIENT_VERSION="${ABFS_CLIENT_VERSION}" \
+                    ABFS_CASFS_VERSION="${ABFS_CASFS_VERSION}" \
                     ABFS_REPOSITORY="${ABFS_REPOSITORY}" \
                     ABFS_BUILDER="true" \
                     AAOS_GERRIT_MANIFEST_URL="${AAOS_GERRIT_MANIFEST_URL}" \

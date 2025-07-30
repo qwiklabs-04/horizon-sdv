@@ -46,8 +46,8 @@ This value will propogate to Android pipeline jobs.
 ## `ABFS_VERSION`
 Defines the version for use with the ABFS server, uploader and build jobs.
 
-## `ABFS_CLIENT_VERSION`
-Defines the ABFS client version for use with the ABFS build jobs.
+## `ABFS_CASFS_VERSION`
+Defines the ABFS CASFS version for use with the ABFS build jobs.
 
 ## `ABFS_REPOSITORY`
 Defines the artifact repository from where to retrieve the ABFS packages.

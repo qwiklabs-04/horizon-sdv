@@ -144,7 +144,7 @@ pipeline {
                   ['${INFRA_DOCKER_ARTIFACT_PATH_NAME}', "${INFRA_DOCKER_ARTIFACT_PATH_NAME}"],
                   ['${REPO_SYNC_JOBS}', "${REPO_SYNC_JOBS}"],
                   ['${ABFS_VERSION}', "${ABFS_VERSION}" ],
-                  ['${ABFS_CLIENT_VERSION}', "${ABFS_CLIENT_VERSION}" ],
+                  ['${ABFS_CASFS_VERSION}', "${ABFS_CASFS_VERSION}" ],
                   ['${ABFS_REPOSITORY}', "${ABFS_REPOSITORY}" ],
                   ['${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
                   ['${JENKINS_GCE_CLOUD_LABEL}', "${CUTTLEFISH_GCE_CLOUD_LABEL}" ],

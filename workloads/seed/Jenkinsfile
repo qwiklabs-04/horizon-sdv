@@ -87,7 +87,7 @@ pipeline {
 
     string(name: 'ABFS_CASFS_VERSION',
            defaultValue: "0.0.33-8-gb8d2d6b",
-           description: '''<p>ABFS CAFS version may differ from ABFS_VERSION, e.g. 0.0.33-8-gb8d2d6b</p>''',
+           description: '''<p>ABFS CASFS version may differ from ABFS_VERSION, e.g. 0.0.33-8-gb8d2d6b</p>''',
            trim: true)
 
     string(name: 'ABFS_REPOSITORY',

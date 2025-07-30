@@ -34,7 +34,8 @@ folder('Android/Environment/ABFS') {
     <ol><li><b>Docker Infra Image Template:</b> create the Docker infrastructure container for ABFS Server and Uploader jobs.</li>
     <li><b>Server:</b> Create the ABFS server (dependent on Docker Infra Image Template) </li>
     <li><b>Uploader:</b> Create the ABFS uploaders (dependent on Docker Infra Image Template) </li>
-    <li><b>Docker Image Template:</b> create the Docker build container used for ABFS builds.</li></ol>''')
+    <li><b>Docker Image Template:</b> create the Docker build container used for ABFS builds.</li></ol>
+    <p>Refer to <i>docs/workloads/android/abfs.md</> for additional details.</p>''')
 
 }
 folder('Android/Tests') {

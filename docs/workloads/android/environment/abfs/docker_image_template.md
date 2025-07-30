@@ -8,7 +8,7 @@
 
 ## Introduction <a name="introduction"></a>
 
-This pipeline builds the container image used on Kubernetes for building Android targets and miscellaneous environment pipelines.
+This pipeline builds the container image used on Kubernetes for building use with Android Build File System(ABFS) targets and miscellaneous environment pipelines.
 
 This need only be run once, or when Dockerfile is updated. There is an option not to push the resulting image to the registry, so that devs can test their changes before committing the image.
 
@@ -36,6 +36,14 @@ simply use `latest` because all pipelines that depend on this container image ar
 
 Define the Linux Distribution to create the Docker image from. Values must be supported by the Dockerfile `FROM` instruction.
 
+### `GOOGLE_DISTRIBUTION_REGISTRY`
+
+Defines the artifact registry required for ABFS package installation.
+
+### `ABFS_DISTRIBUTION_REGISTRY`
+
+Defines the ABFS binaries repository.
+
 ### `NODEJS_VERSION`
 
 The version of NodeJS to install which is required by MTK Connect.
@@ -48,7 +56,7 @@ These are defined in Jenkins CasC `jenkins.yaml` and can be viewed in Jenkins UI
 
 These are as follows:
 
--   `ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME`
+-   `ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME`
     - Defines the registry path where the Docker image used by builds, tests and environments is stored.
 
 -   `CLOUD_PROJECT`

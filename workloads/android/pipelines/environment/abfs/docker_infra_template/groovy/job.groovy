@@ -13,8 +13,8 @@
 // limitations under the License.
 pipelineJob('Android/Environment/ABFS/Docker Infra Image Template') {
   description("""
-    <br/><h3 style="margin-bottom: 10px;">Infra Builder</h3>
-    <p>This job builds the container image that serves as a dependency for other pipeline jobs.</p>
+    <br/><h3 style="margin-bottom: 10px;">Infrastructure Container Builder</h3>
+    <p>This job builds the container image that serves as a dependency for creating ABFS Server and Uplodaer VM instances.</p>
     <h4 style="margin-bottom: 10px;">Image Configuration</h4>
     <p>The Dockerfile specifies the installed packages and tools required by these jobs.</p>
     <h4 style="margin-bottom: 10px;">Pushing Changes to the Registry</h4>

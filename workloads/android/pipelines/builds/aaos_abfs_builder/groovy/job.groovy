@@ -29,7 +29,7 @@ pipelineJob('Android/Builds/AAOS Builder ABFS') {
     <h4 style="margin-bottom: 10px;">Important</h4>
     <p>Regardless of the build outcome, the <code>abfs_repository_list.txt</code> file will be generated. This file is
 crucial for correlating <code>ABFS_VERSION</code> and <code>ABFS_CASFS_VERSION</code> with the build instance kernel revision.<br/>
-    Please review the output of this file and update the <code>Seed Workflow</code> values for ABFS versions accordingly. This ensures you utilize the latest versions provided by Google, as they are subject to updates.</p>
+    Please review the output of this file and update the <code>Seed Workloads</code> values for ABFS versions accordingly. This ensures you utilize the latest versions provided by Google, as they are subject to updates.</p>
     <h4 style="margin-bottom: 10px;">Prerequisites</h4>
     <p>Refer to abfs.md for setting up ABFS for the GCP project.</p>
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")

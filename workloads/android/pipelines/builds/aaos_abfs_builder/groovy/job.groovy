@@ -26,6 +26,10 @@ pipelineJob('Android/Builds/AAOS Builder ABFS') {
     <h4 style="margin-bottom: 10px;">Viewing Artifacts on Google Cloud</h4>
     <p><a href="https://cloud.google.com/docs/authentication/gcloud" target="_blank">Sign in to Google Cloud</a> and run the following command: <br/>
     <code>gcloud storage ls gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/AAOS_Builder_ABFS/&lt;BUILD_NUMBER&gt;</code></p>
+    <h4 style="margin-bottom: 10px;">Important</h4>
+    <p>Regardless of the build outcome, the <code>abfs_repository_list.txt</code> file will be generated. This file is
+crucial for correlating <code>ABFS_VERSION</code> and <code>ABFS_CASFS_VERSION</code> with the build instance kernel revision.<br/>
+    Please review the output of this file and update the <code>Seed Workflow</code> values for ABFS versions accordingly. This ensures you utilize the latest versions provided by Google, as they are subject to updates.</p>
     <h4 style="margin-bottom: 10px;">Prerequisites</h4>
     <p>Refer to abfs.md for setting up ABFS for the GCP project.</p>
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")

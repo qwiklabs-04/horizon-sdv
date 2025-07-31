@@ -19,7 +19,8 @@ This pipeline/scripts supports builds for:
 - [Pixel Tablets](https://source.android.com/docs/automotive/start/pixelxl) Reference hardware platforms.
 
 The following provides examples of the environment variables and Jenkins build parameters that are required.
-It also demonstrates how to run the scripts standalone on build instances.
+
+**Note:** the build, whether successful or not, will create the file `abfs_repository_list.txt` which can be used to correlate `ABFS_VERSION` and `ABFS_CASFS_VERSION` based on the build instance kernel revision. Versions do get updated and therefore it is best that users pay attention to the output of this file and update the `Seed Workflow` values for ABFS versions so as to utilise the latest provided by Google.
 
 ## Prerequisites<a name="prerequisites"></a>
 

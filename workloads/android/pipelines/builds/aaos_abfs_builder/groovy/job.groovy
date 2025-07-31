@@ -13,8 +13,22 @@
 // limitations under the License.
 pipelineJob('Android/Builds/AAOS Builder ABFS') {
   description("""
-    <br/><h3 style="margin-bottom: 10px;">AAOS Builder - ABFS</h3>
-    """)
+    <br/><h3 style="margin-bottom: 10px;">Android Build Filesystem Builder</h3>
+    <p>This job is used to build Android Automotive virtual devices and platform targets using the source and build caches from the Android Build Filesystem.</p>
+    <h4 style="margin-bottom: 10px;">Supported Builds</h4>
+    <ul>
+      <li><a href="https://source.android.com/docs/automotive/start/avd/android_virtual_device" target="_blank">Android Virtual Devices</a> for use with <a href="https://source.android.com/docs/automotive/start/avd/android_virtual_device#share-an-avd-image-with-android-studio-users" target="_blank">Android Studio</a></li>
+      <li><a href="https://source.android.com/docs/devices/cuttlefish" target="_blank">Cuttlefish Virtual Devices</a> for use with <a href="https://source.android.com/docs/compatibility/cts" target="_blank">CTS</a></li>
+      <li>Reference hardware platforms such as <a href="https://source.android.com/docs/automotive/start/pixelxl" target="_blank">Pixel Tablets</a></li>
+    </ul>
+    <h4 style="margin-bottom: 10px;">Build Outputs</h4>
+    <p>Build outputs are stored in a Google Cloud Storage bucket (refer to build artifact for location).</p>
+    <h4 style="margin-bottom: 10px;">Viewing Artifacts on Google Cloud</h4>
+    <p><a href="https://cloud.google.com/docs/authentication/gcloud" target="_blank">Sign in to Google Cloud</a> and run the following command: <br/>
+    <code>gcloud storage ls gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/AAOS_Builder_ABFS/&lt;BUILD_NUMBER&gt;</code></p>
+    <h4 style="margin-bottom: 10px;">Prerequisites</h4>
+    <p>Refer to abfs.md for setting up ABFS for the GCP project.</p>
+    <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
   parameters {
     stringParam {
@@ -106,7 +120,7 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/
     stringParam {
       name('ABFS_CASFS_VERSION')
       defaultValue("${ABFS_CASFS_VERSION}")
-      description('''<p>ABFS Client version, if differs from standard version, e.g. 0.0.33-8-gb8d2d6b</p>''')
+      description('''<p>ABFS CASFS version, if differs from ABFS version, e.g. 0.0.33-8-gb8d2d6b</p>''')
       trim(true)
     }
 

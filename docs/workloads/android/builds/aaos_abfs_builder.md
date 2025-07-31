@@ -114,9 +114,10 @@ Note: this can change, so the `Seed Workloads` job supports this parameter to al
 
 The ABFS aptitude repository to fetch the ABFS client artifacts, e.g. abfs-apt-alpha-public.
 
-### `ABFS_CACHEMAN_SYNC`
+### `ABFS_CACHEMAN_TIMEOUT`
 
-This is for future use, being able to sync the build cache post build. Currently the cache is stored on a non-persistent disk.
+Timeout in seconds for cacheman to wait on sync. If zero, don't use cacheman.
+
 ### `AAOS_ARTIFACT_STORAGE_SOLUTION`
 
 Define storage solution used to push artifacts.

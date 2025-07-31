@@ -163,7 +163,7 @@ pipeline {
           when {
             allOf {
               expression { env.AAOS_LUNCH_TARGET }
-              expression { env.ABFS_CACHEMAN_SYNC == 'true' }
+              expression { env.ABFS_CACHEMAN_TIMEOUT != '0' }
               expression { currentBuild.currentResult == 'SUCCESS' }
             }
           }
@@ -172,7 +172,7 @@ pipeline {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                 sh '''
                   echo "Waiting on cacheman to sync ..."
-                  abfs cacheman wait -t 180 || true
+                  abfs cacheman wait -t ${ABFS_CACHEMAN_TIMEOUT} || true
                   echo "Sync complete"
                 '''
               }

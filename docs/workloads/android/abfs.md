@@ -100,4 +100,8 @@ Users can now build from the ABFS seeded source/cache, see `Android Workflows â†
 
 ## Known issues<a name="knownissues"></a>
 
-ABFS is still improving and there are limitations at this time. Please reach out to your Google representative for details.
+ABFS is still evolving and there are limitations at this time. Please reach out to your Google representative for details.
+
+**Important**: Regardless of build outcomes, the `abfs_repository_list.txt` file will be generated. This file is crucial for correlating `ABFS_VERSION` and `ABFS_CASFS_VERSION` with the build instance kernel revision.
+
+**Action Required**: Please review the output of this file and update the `Seed Workload` values for ABFS versions accordingly. This ensures you utilize the latest versions provided by Google, as they are subject to updates. Should a compatible version not exist, reach out to Google to request a new build be created and hosted.

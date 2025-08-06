@@ -90,6 +90,16 @@ resource "google_container_cluster" "sdv_cluster" {
     autoscaling_profile = "OPTIMIZE_UTILIZATION"
   }
 
+  # monitoring configuration
+  monitoring_config {
+    enable_components = ["APISERVER", "SCHEDULER", "CONTROLLER_MANAGER", "CADVISOR", "KUBELET"]
+    # DISABLED monitoring for Kube state metrics : STORAGE, POD, DEPLOYMENT, STATEFULSET, DAEMONSET, JOBSET
+
+  # Control Plane Metrics enabled
+    managed_prometheus {
+      enabled = true
+    }
+  }
 }
 
 

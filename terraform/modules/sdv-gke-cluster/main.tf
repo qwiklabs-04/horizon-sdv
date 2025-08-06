@@ -92,7 +92,7 @@ resource "google_container_cluster" "sdv_cluster" {
 
   # monitoring configuration
   monitoring_config {
-    enable_components = ["APISERVER", "SCHEDULER", "CONTROLLER_MANAGER", "CADVISOR", "KUBELET"]
+    enable_components = ["SYSTEM_COMPONENTS", "APISERVER", "SCHEDULER", "CONTROLLER_MANAGER", "CADVISOR", "KUBELET"]
     # DISABLED monitoring for Kube state metrics : STORAGE, POD, DEPLOYMENT, STATEFULSET, DAEMONSET, JOBSET
 
   # Control Plane Metrics enabled

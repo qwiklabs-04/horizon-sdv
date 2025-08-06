@@ -543,6 +543,7 @@ VARIABLES+="
         hostname=$(hostname)
 
         Storage Usage (${AAOS_CACHE_DIRECTORY}): $(df -h "${AAOS_CACHE_DIRECTORY}" | tail -1 | awk '{print "Used " $3 " of " $2}')
+        Kernel Revision: $(uname -r)
 "
 # Add to build info for storage.
 echo "$0 Build Info:" | tee -a "${BUILD_INFO_FILE}"

@@ -43,6 +43,15 @@ This value will propogate to Android pipeline jobs.
 This is the label that identifies the GCE Cloud label which will be used to identify the Cuttlefish VM instance.
 This value will propogate to Android pipeline jobs.
 
+## `ABFS_VERSION`
+Defines the version for use with the ABFS server, uploader and build jobs.
+
+## `ABFS_CASFS_VERSION`
+Defines the ABFS CASFS version for use with the ABFS build jobs.
+
+## `ABFS_REPOSITORY`
+Defines the artifact repository from where to retrieve the ABFS packages.
+
 ### `OPENBSW_IMAGE_TAG`
 Defines the name of the build image tag used for OpenBSW pipelines.
 This value will propogate to OpenBSW pipeline jobs.

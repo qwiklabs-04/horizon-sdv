@@ -33,7 +33,7 @@
 #  - CUTTLEFISH_REVISION: the branch/tag version of Android Cuttlefish
 #        to use. Default: main
 #  - BOOT_DISK_SIZE: Disk image size in GB. Default: 200GB
-#  - DEBIAN_OS_VERSION: Default: debian-12-bookworm-v20250610}
+#  - DEBIAN_OS_VERSION: Default: debian-12-bookworm-v20250709
 #  - JENKINS_NAMESPACE: k8s namespace. Default: jenkins
 #  - JENKINS_PRIVATE_SSH_KEY_NAME: SSH key name to extract public key from
 #        Private key would be created similar to:
@@ -99,7 +99,7 @@ CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION:-main}
 CUTTLEFISH_REVISION=$(echo "${CUTTLEFISH_REVISION}" | xargs)
 BOOT_DISK_SIZE=${BOOT_DISK_SIZE:-200GB}
 BOOT_DISK_SIZE=$(echo "${BOOT_DISK_SIZE}" | awk '{print toupper($0)}' | xargs)
-DEBIAN_OS_VERSION=${DEBIAN_OS_VERSION:-debian-12-bookworm-v20250610}
+DEBIAN_OS_VERSION=${DEBIAN_OS_VERSION:-debian-12-bookworm-v20250709}
 DEBIAN_OS_VERSION=$(echo "${DEBIAN_OS_VERSION}" | xargs)
 JENKINS_NAMESPACE=${JENKINS_NAMESPACE:-jenkins}
 JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME:-jenkins-cuttlefish-vm-ssh-private-key}
@@ -298,9 +298,9 @@ function install_host_tools() {
     # https://cloud.google.com/compute/docs/troubleshooting/troubleshoot-os-login#invalid_argument
     # Clean old SSH keys
     echo -e "${ORANGE}Remove old SSH keys${NC}"
-    gcloud compute os-login describe-profile | \
-        awk -v username="$(whoami)" '/fingerprint:/{f=$2} $0 ~ username && /instance/{print f}' | \
-        xargs -I {} gcloud compute os-login ssh-keys remove --key={} || true
+    for k in $(gcloud compute os-login ssh-keys list --format="table[no-heading](value.fingerprint)"); do
+        gcloud compute os-login ssh-keys remove --key "${k}" || true
+    done
 
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" \
         --command='mkdir -p cf' >/dev/null &

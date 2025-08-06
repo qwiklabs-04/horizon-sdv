@@ -14,7 +14,7 @@
 pipelineJob('Android/Environment/ABFS/Docker Image Template') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">Container Image Builder</h3>
-    <p>This job builds the container image that serves as a dependency for other pipeline jobs.</p>
+    <p>This job builds the container image that serves as a dependency for ABFS build jobs.</p>
     <h4 style="margin-bottom: 10px;">Image Configuration</h4>
     <p>The Dockerfile specifies the installed packages and tools required by these jobs.</p>
     <h4 style="margin-bottom: 10px;">Pushing Changes to the Registry</h4>

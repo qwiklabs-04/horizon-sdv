@@ -112,18 +112,36 @@ function fetch_patchset() {
             # Use standard git fetch to retrieve the change.
             # Find the project name from the manifest.
             PROJECT_PATH=$(repo list -p "${GERRIT_PROJECT}")
-
-            # Derive the Gerrit URL from the manifest URL.
-            #   Horizon SDV uses path based URL whereas Google Android does not.
-            PROJECT_URL=$(echo "${AAOS_GERRIT_MANIFEST_URL}" | cut -d'/' -f1-3)/"${GERRIT_PROJECT}"
-            if ! curl -s -f -o /dev/null "${PROJECT_URL}"; then
-                # Use default.
-                PROJECT_URL="${GERRIT_SERVER_URL}/${GERRIT_PROJECT}"
-            fi
         else
-            # FIXME: Strip the leading. This is a fudge for now, need to derive from a manifest.
+            # Find the path from manifest
+            mkdir -p "${HOME}"/manifest
+            cd "${HOME}"/manifest || exit
+
+            # FIXME: fix branch (demo only)
+            if [[ "${AAOS_GERRIT_MANIFEST_URL}" =~ "horizon" ]]; then
+                if [[ ! "${AAOS_REVISION}" =~ "horizon" ]]; then
+                    AAOS_REVISION=horizon/"${AAOS_REVISION}"
+                fi
+            fi
+
+            # FIXME: will use clone in future but for now this is just convenience for commonality.
+            if ! repo init -u "${AAOS_GERRIT_MANIFEST_URL}" -b "${AAOS_REVISION}" --depth=1
+            then
+                echo "ERROR: repo init failed, exit!"
+                exit 1
+            fi
+
+            PROJECT_PATH=$(grep "name=\"${GERRIT_PROJECT}\"" .repo/manifests/default.xml | sed -r 's/.*path="([^"]+)".*/\1/')
+            rm -rf  "${HOME}"/manifest
+            cd - || exit
+        fi
+
+        # Derive the Gerrit URL from the manifest URL.
+        #   Horizon SDV uses path based URL whereas Google Android does not.
+        PROJECT_URL=$(echo "${AAOS_GERRIT_MANIFEST_URL}" | cut -d'/' -f1-3)/"${GERRIT_PROJECT}"
+        if ! curl -s -f -o /dev/null "${PROJECT_URL}"; then
+            # Use default.
             PROJECT_URL="${GERRIT_SERVER_URL}/${GERRIT_PROJECT}"
-            PROJECT_PATH="$(echo "${GERRIT_PROJECT}" | cut -d/ -f2-)"
         fi
 
         # Extract the last two digits of the change number.
@@ -150,33 +168,6 @@ function fetch_patchset() {
     fi
 }
 
-# ABFS: Check a kernel module was loaded
-function check_module_loaded() {
-    local module_name="$1"
-    local timeout="$2"
-    local interval=1
-    local elapsed=0
-
-    echo "check_module_loaded"
-    if [[ -z "$module_name" || -z "$timeout" ]]; then
-        echo "ERROR: Usage: check_module_loaded <module_name> <timeout_seconds>"
-        exit 1
-    fi
-
-    while ((elapsed < timeout)); do
-        if lsmod | grep -qw "$module_name"; then
-            echo "Module '$module_name' is loaded."
-            return 0
-        fi
-        sleep "$interval"
-        echo "$elapsed"
-        elapsed=$((elapsed + interval))
-    done
-
-    echo "ERROR: Timeout reached. Module '$module_name' not loaded."
-    exit 1
-}
-
 # ABFS: requires systemd and thus systemctl, simply stub.
 function fake_systemd() {
     echo "fake_systemd"
@@ -195,10 +186,24 @@ EOL
 # ABFS: install aptitude binaries for abfs
 function abfs_install() {
     echo "abfs_install."
-    gcloud artifacts files list --project=abfs-binaries --location=us --repository="${ABFS_REPOSITORY}" | grep -e "pool/abfs.*client_${ABFS_VERSION}" -e "pool/casfs-kmod-$(uname -r)_${ABFS_VERSION}" | awk '{print $1}' | while read -r a; do gcloud artifacts files download --project=abfs-binaries --location=us --repository="${ABFS_REPOSITORY}" --destination=. "${a}"; done
+    sudo apt update -y
+    declare -r abfs_artifacts="${ORIG_WORKSPACE}"/abfs_repository_list.txt
+    rm -f "${abfs_artifacts}"
+
+    {
+        echo "Build Parameters:"
+        echo "Kernel Version: $(uname -r)"
+        echo "ABFS_VERSION: ${ABFS_VERSION}"
+        echo "ABFS_CASFS_VERSION: ${ABFS_CASFS_VERSION}"
+    } >> "${abfs_artifacts}"
+
+    gcloud artifacts files list --project=abfs-binaries --location=us --repository="${ABFS_REPOSITORY}" >> "${abfs_artifacts}" 2>&1
+    grep -e "pool/abfs.*client_${ABFS_VERSION}" -e "pool/casfs-kmod-$(uname -r)_${ABFS_CASFS_VERSION}" "${abfs_artifacts}" | awk '{print $1}' | while read -r a; do gcloud artifacts files download --project=abfs-binaries --location=us --repository="${ABFS_REPOSITORY}" --destination=. "${a}"; done
     CMD="find . -maxdepth 1 -type f -name \"pool*\" -exec sudo apt install \"./{}\" \\;"
     echo "Command: ${CMD}"
     eval "${CMD}"
+    sudo depmod -a
+    sudo modprobe casfs
     # FIXME: avoid warning if installed through apt.
     sudo apt install casfs-kmod-"$(uname -r)" || true
 }
@@ -247,7 +252,6 @@ if [[ "${ABFS_BUILDER}" == "false" ]]; then
     initialise_repo
     fetch_patchset
 else
-    check_module_loaded casfs 60
     fake_systemd
     abfs_install
     abfs_initialise

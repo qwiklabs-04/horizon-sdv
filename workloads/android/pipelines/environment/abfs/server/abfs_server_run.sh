@@ -22,6 +22,15 @@ module "abfs-server" {
 EOL
 }
 
+# Clean old SSH keys
+function abfs_clean_ssh_keys() {
+  # https://cloud.google.com/compute/docs/troubleshooting/troubleshoot-os-login#invalid_argument
+  echo -e "Remove old SSH keys"
+  for k in $(gcloud compute os-login ssh-keys list --format="table[no-heading](value.fingerprint)"); do
+    gcloud compute os-login ssh-keys remove --key "${k}" || true
+  done
+}
+
 function abfs_server_run() {
   echo "ABFS Server Run"
 
@@ -70,6 +79,7 @@ function abfs_server_update_schema() {
   rm -rf "${REPO_DIRECTORY}"
 }
 
+abfs_clean_ssh_keys
 abfs_override_tf
 abfs_server_run
 abfs_server_update_schema

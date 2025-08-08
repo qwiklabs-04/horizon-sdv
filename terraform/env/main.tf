@@ -167,7 +167,58 @@ module "base" {
         "roles/secretmanager.secretAccessor",
         "roles/iam.serviceAccountTokenCreator",
       ])
-    }
+    },
+    sa5 = {
+      account_id   = "prometheus-ui"
+      display_name = "prometheus-ui"
+      description  = "prometheus-ui/prometheus-ui in GKE cluster makes use of this account through WI"
+
+      gke_sas = [
+        {
+          gke_ns = "monitoring"
+          gke_sa = "prometheus-ui"
+        }
+      ]
+
+      roles = toset([
+        "roles/monitoring.viewer"
+      ])
+    },
+    sa6 = {
+      account_id   = "monitoring"
+      display_name = "monitoring-sa"
+      description  = "monitoring/monitoring-sa in GKE cluster makes use of this account through WI"
+
+      gke_sas = [
+        {
+          gke_ns = "monitoring"
+          gke_sa = "monitoring-sa"
+        }
+      ]
+
+      roles = toset([
+        "roles/iam.workloadIdentityUser"
+      ])
+    },
+    sa7 = {
+      account_id   = "kube-state-metrics"
+      display_name = "kube-state-metrics-sa"
+      description  = "kube-state-metrics/kube-state-metrics-sa in GKE cluster makes use of this account through WI"
+
+      gke_sas = [
+        {
+          gke_ns = "kube-state-metrics"
+          gke_sa = "gmp-public"
+        }
+      ]
+      roles = toset([
+        #"roles/monitoring.metricWriter",
+        "roles/monitoring.viewer",
+        #"roles/iam.serviceAccountTokenCreator",
+        #"roles/iam.serviceAccountUser",
+        "roles/iam.workloadIdentityUser"
+      ])
+    },
   }
 
   #

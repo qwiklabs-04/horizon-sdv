@@ -43,7 +43,7 @@ One-time setup requirements.
 This is the label that identifies the GCE Cloud label which will be used to identify the Cuttlefish VM instance, e.g.
 
 - `cuttlefish-vm-main`
-- `cuttlefish-vm-v1140`
+- `cuttlefish-vm-v1180`
 
 Note: The value provided must correspond to a cloud instance or the job will hang.
 

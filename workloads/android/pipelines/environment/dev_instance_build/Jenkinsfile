@@ -25,8 +25,11 @@ pipeline {
   environment {
     STORAGE_CLASS_SUFFIX="android-${ANDROID_VERSION}"
     STORAGE_SIZE="${ANDROID_VERSION =~ "rpi" ? "500Gi" : "1000Gi"}"
-    // FIXME: align when abfs integrated
+
     POD_TEMPLATE = "${ABFS == "true" ? kubernetesAbfsPodTemplate : kubernetesPodTemplate }"
+
+    ABFS_STORAGE_CLASS_SUFFIX="android-abfs"
+    ABFS_STORAGE_SIZE="500Gi"
 
     // Define Pod Template in environment so we can override.
     def kubernetesPodTemplate = """
@@ -120,6 +123,20 @@ pipeline {
           - sleep
           args:
           - 5h
+          volumeMounts:
+            - mountPath: /aaos-cache
+              name: aaos-cache
+        volumes:
+          - name: aaos-cache
+            ephemeral:
+              volumeClaimTemplate:
+                spec:
+                  storageClassName: ${JENKINS_AAOS_BUILD_CACHE_STORAGE_PREFIX}-${ABFS_STORAGE_CLASS_SUFFIX}
+                  resources:
+                    requests:
+                      storage: ${ABFS_STORAGE_SIZE}
+                  accessModes:
+                    - ReadWriteOnce
         nodeSelector:
           workloadLabel: android-abfs
     """.stripIndent()

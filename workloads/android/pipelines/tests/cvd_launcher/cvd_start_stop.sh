@@ -187,7 +187,7 @@ function cuttlefish_wait_for_device_booted() {
 function cuttlefish_cleanup() {
     echo "cuttlefish_cleanup"
     cd "${HOME}" || exit
-    rm -rf "${HOME}"/cf > /dev/null 2>&1
+    sudo rm -rf cf > /dev/null 2>&1
 }
 
 function cuttlefish_nuclear() {

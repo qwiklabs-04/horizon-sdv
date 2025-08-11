@@ -33,6 +33,10 @@ One-time setup requirements.
 
 **Jenkins Parameters:** Defined in the groovy job definition `groovy/job.groovy`.
 
+### `ABFS`
+
+Enable if using an ABFS instance. This does not require a disk pool, simply allows user to work with ABFS on a build instance.
+
 ### `ANDROID_VERSION`
 
 This specifies which build disk pool to use for the development instance.

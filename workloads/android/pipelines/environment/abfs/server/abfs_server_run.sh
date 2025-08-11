@@ -15,7 +15,7 @@
 # limitations under the License.
 
 function abfs_override_tf() {
-  cat > main_override.tf <<EOL
+  cat >main_override.tf <<EOL
 module "abfs-server" {
   source = "git::${TERRAFORM_GITHUB_URL}//modules/server?ref=${TERRAFORM_GITHUB_VERSION}"
 }

@@ -32,6 +32,9 @@ spec:
         clusterName: "gke_{{ .Values.config.projectID }}_{{ .Values.config.region }}_sdv-cluster"
         persistence:
           storageClass: "horizon-rwo"
+        storage:
+          mtls:
+            enabled: false
   destination:
     server: https://kubernetes.default.svc
     namespace: kubescape

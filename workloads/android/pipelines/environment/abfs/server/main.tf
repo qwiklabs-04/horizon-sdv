@@ -57,3 +57,22 @@ resource "google_compute_firewall" "abfs-server-allow-all-from-internal" {
 
   target_service_accounts = ["abfs-server@${var.project_id}.iam.gserviceaccount.com"]
 }
+
+resource "google_logging_project_bucket_config" "basic" {
+  project        = var.project_id
+  location       = "global"
+  retention_days = 1
+  bucket_id      = "_Default"
+}
+
+resource "google_logging_project_sink" "log-bucket" {
+  name        = "_Default"
+  destination = "logging.googleapis.com/projects/${var.project_id}/locations/global/buckets/_Default"
+
+  exclusions {
+    name   = "no-spanner"
+    filter = "resource.type=\"spanner_instance\" OR resource.type=\"spanner_database\" OR logName:(\"cloudaudit.googleapis.com\" OR \"spanner.googleapis.com\")"
+  }
+
+  unique_writer_identity = true
+}

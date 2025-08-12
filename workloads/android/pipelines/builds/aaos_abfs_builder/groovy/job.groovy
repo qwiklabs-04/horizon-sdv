@@ -159,7 +159,7 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/
     stringParam {
       name('UPLOADER_MANIFEST_SERVER')
       defaultValue("${UPLOADER_MANIFEST_SERVER}")
-      description('''<p>Gerrit manifest server f.</p>''')
+      description('''<p>Gerrit manifest server.</p>''')
       trim(true)
     }
 

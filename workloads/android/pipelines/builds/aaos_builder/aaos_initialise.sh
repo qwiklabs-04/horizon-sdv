@@ -63,6 +63,7 @@
 # shellcheck disable=SC1091
 source "$(dirname "${BASH_SOURCE[0]}")"/aaos_environment.sh "$0"
 
+set -x
 # Initialise the repository
 function initialise_repo() {
     # Retry 4 times, on 3rd fail, clean workspace and retry once more.
@@ -197,8 +198,23 @@ function abfs_install() {
         echo "ABFS_CASFS_VERSION: ${ABFS_CASFS_VERSION}"
     } >> "${abfs_artifacts}"
 
+    ABFS_CLIENT_FILE="abfs-client_${ABFS_VERSION}"
+    ABFS_CASFS_FILE="casfs-kmod-$(uname -r)_${ABFS_CASFS_VERSION}"
+
+    ABFS_FILES=(
+        "${ABFS_CLIENT_FILE}"
+        "${ABFS_CASFS_FILE}"
+      )
+
     gcloud artifacts files list --project=abfs-binaries --location=us --repository="${ABFS_REPOSITORY}" >> "${abfs_artifacts}" 2>&1
-    grep -e "pool/abfs.*client_${ABFS_VERSION}" -e "pool/casfs-kmod-$(uname -r)_${ABFS_CASFS_VERSION}" "${abfs_artifacts}" | awk '{print $1}' | while read -r a; do gcloud artifacts files download --project=abfs-binaries --location=us --repository="${ABFS_REPOSITORY}" --destination=. "${a}"; done
+    grep -e "pool/${ABFS_CLIENT_FILE}" -e "pool/${ABFS_CASFS_FILE}" "${abfs_artifacts}" | awk '{print $1}' | while read -r a; do gcloud artifacts files download --project=abfs-binaries --location=us --repository="${ABFS_REPOSITORY}" --destination=. "${a}"; done
+    for f in "${ABFS_FILES[@]}"; do
+        if ! ls ./*"${f}"* 1> /dev/null 2>&1; then
+            echo "ERROR: $f does not exist. Review ${abfs_artifacts} for supported versions."
+            exit 1
+        fi
+    done
+
     CMD="find . -maxdepth 1 -type f -name \"pool*\" -exec sudo apt install \"./{}\" \\;"
     echo "Command: ${CMD}"
     eval "${CMD}"
@@ -211,25 +227,32 @@ function abfs_install() {
 # ABFS: initialise
 function abfs_initialise() {
     echo "abfs_initialise."
-    if ! abfs init
+    # shellcheck disable=SC2086
+    if ! abfs ${ABFS_CMD_FLAGS} init -c
     then
         echo "ERROR: failed on abfs init"
         exit 1
     fi
-    abfs --remote-servers abfs-server:50051 --tunnel-ports 0 --manifest-server android.googlesource.com config -w
-    abfs cacheman run -l /home/builder/.abfs/logs/cacheman &
+    # FIXME: demagic android.googlesource.com
+    # shellcheck disable=SC2086
+    abfs ${ABFS_CMD_FLAGS} --remote-servers abfs-server:50051 --tunnel-ports 0 --manifest-server android.googlesource.com config -w
+    # shellcheck disable=SC2086
+    abfs ${ABFS_CMD_FLAGS} cacheman run -l /home/builder/.abfs/logs/cacheman &
     sleep 5
 
     # FIXME: Avoid ACTION REQUIRED!
-    abfs cacheman restart
+    # shellcheck disable=SC2086
+    abfs ${ABFS_CMD_FLAGS} cacheman restart
 
-    if ! abfs mount -b "${AAOS_REVISION}" "${WORKSPACE}"
+    # shellcheck disable=SC2086
+    if ! abfs ${ABFS_CMD_FLAGS} mount -b "${AAOS_REVISION}" "${WORKSPACE}"
     then
         echo "ERROR: failed on abfs mount"
         exit 1
     fi
     cd "${WORKSPACE}" || exit 1
-    if ! abfs setup .
+    # shellcheck disable=SC2086
+    if ! abfs ${ABFS_CMD_FLAGS} setup .
     then
         echo "ERROR: failed on abfs setup"
         exit 1

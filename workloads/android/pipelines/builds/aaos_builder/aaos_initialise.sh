@@ -63,7 +63,6 @@
 # shellcheck disable=SC1091
 source "$(dirname "${BASH_SOURCE[0]}")"/aaos_environment.sh "$0"
 
-set -x
 # Initialise the repository
 function initialise_repo() {
     # Retry 4 times, on 3rd fail, clean workspace and retry once more.

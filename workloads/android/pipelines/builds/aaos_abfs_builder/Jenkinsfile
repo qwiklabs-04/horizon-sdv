@@ -59,6 +59,13 @@ pipeline {
           - sleep
           args:
           - 5h
+          resources:
+            limits:
+              cpu: 98000m
+              memory: 180000Mi
+            requests:
+              cpu: 98000m
+              memory: 180000Mi
         nodeSelector:
           workloadLabel: android-abfs
     """.stripIndent()
@@ -97,6 +104,13 @@ pipeline {
           - sleep
           args:
           - 5h
+          resources:
+            limits:
+              cpu: 98000m
+              memory: 180000Mi
+            requests:
+              cpu: 98000m
+              memory: 180000Mi
           volumeMounts:
             - mountPath: /aaos-cache
               name: aaos-cache

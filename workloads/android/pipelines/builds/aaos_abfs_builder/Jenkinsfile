@@ -236,6 +236,7 @@ pipeline {
                 sh '''
                   echo "Waiting on cacheman to sync ..."
                   abfs cacheman wait -t ${ABFS_CACHEMAN_TIMEOUT} || true
+                  sync
                   echo "Sync complete"
                 '''
               }

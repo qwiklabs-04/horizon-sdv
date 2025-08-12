@@ -161,19 +161,23 @@ if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
             ABFS_CMD_FLAGS="--cache-dir ${AAOS_CACHE_DIRECTORY}/cache"
             mkdir -p "${AAOS_CACHE_DIRECTORY}/cache"
 
-            USAGE=$(df -h "${AAOS_CACHE_DIRECTORY}" | tail -1 | awk '{print "Used " $3 " of " $2}')
-            USED_PERCENTAGE=$(df "${AAOS_CACHE_DIRECTORY}" | tail -1 | awk '{print ($3/$2)*100}' | cut -d '.' -f 1)
-            if [ "${USED_PERCENTAGE}" -lt "${DISK_SPACE_WATERMARK}" ]; then
-                echo "Disk space - ${USED_PERCENTAGE}% (${USAGE})"
-            else
-                echo "WARNING: Insufficient disk space - ${USED_PERCENTAGE}% (${USAGE})"
-                echo "WARNING: Removing ${AAOS_CACHE_DIRECTORY}/cache} ..."
-                find "${AAOS_CACHE_DIRECTORY}/cache" -delete
-            fi
         fi
-    else
-        case "$0" in
+    fi
+    case "$0" in
         *initialise.sh | *build.sh)
+            if [[ "${ABFS_BUILDER}" == "true" ]]; then
+                if [[ "${ABFS_PERSIST_CACHE}" = "true" ]]; then
+                    USAGE=$(df -h "${AAOS_CACHE_DIRECTORY}" | tail -1 | awk '{print "Used " $3 " of " $2}')
+                    USED_PERCENTAGE=$(df "${AAOS_CACHE_DIRECTORY}" | tail -1 | awk '{print ($3/$2)*100}' | cut -d '.' -f 1)
+                    if [ "${USED_PERCENTAGE}" -lt "${DISK_SPACE_WATERMARK}" ]; then
+                        echo "Disk space - ${USED_PERCENTAGE}% (${USAGE})"
+                    else
+                        echo "WARNING: Insufficient disk space - ${USED_PERCENTAGE}% (${USAGE})"
+                        echo "WARNING: Removing ${AAOS_CACHE_DIRECTORY}/cache} ..."
+                        find "${AAOS_CACHE_DIRECTORY}/cache" -delete
+                    fi
+                fi
+            else
                 # Remove unwanted directories that may have been created for dev.
                 # Retain the official cache directories.
                 find "${AAOS_CACHE_DIRECTORY}" -mindepth 1 -maxdepth 1 -type d ! -name "${AAOS_BUILDS_DIRECTORY}" ! \
@@ -197,11 +201,11 @@ if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
                     echo "WARNING: Removing ${OLDEST_DIR} ..."
                     find "${OLDEST_DIR}" -delete
                 done
-                ;;
-            *)
-                ;;
-        esac
-    fi
+            fi
+            ;;
+        *)
+            ;;
+    esac
 else
     AAOS_CACHE_DIRECTORY="${HOME}"
 fi

@@ -234,7 +234,7 @@ function abfs_initialise() {
     fi
     # FIXME: demagic android.googlesource.com
     # shellcheck disable=SC2086
-    abfs ${ABFS_CMD_FLAGS} --remote-servers abfs-server:50051 --tunnel-ports 0 --manifest-server android.googlesource.com config -w
+    abfs ${ABFS_CMD_FLAGS} --remote-servers abfs-server:50051 --tunnel-ports 0 --manifest-server ${UPLOADER_MANIFEST_SERVER} config -w
     # shellcheck disable=SC2086
     abfs ${ABFS_CMD_FLAGS} cacheman run -l /home/builder/.abfs/logs/cacheman &
     sleep 5

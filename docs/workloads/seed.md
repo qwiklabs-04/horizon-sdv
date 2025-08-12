@@ -52,6 +52,10 @@ Defines the ABFS CASFS version for use with the ABFS build jobs.
 ## `ABFS_REPOSITORY`
 Defines the artifact repository from where to retrieve the ABFS packages.
 
+## `UPLOADER_MANIFEST_SERVER`
+
+ABFS manifest source URL. Used for seeding ABFS builds, blobs/objects.
+
 ### `OPENBSW_IMAGE_TAG`
 Defines the name of the build image tag used for OpenBSW pipelines.
 This value will propogate to OpenBSW pipeline jobs.

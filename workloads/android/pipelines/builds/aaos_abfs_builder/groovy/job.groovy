@@ -157,6 +157,13 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/
     }
 
     stringParam {
+      name('UPLOADER_MANIFEST_SERVER')
+      defaultValue("${UPLOADER_MANIFEST_SERVER}")
+      description('''<p>Gerrit manifest server f.</p>''')
+      trim(true)
+    }
+
+    stringParam {
       name('AAOS_ARTIFACT_STORAGE_SOLUTION')
       defaultValue('GCS_BUCKET')
       description('''<p>Android Artifact Storage:<br/>

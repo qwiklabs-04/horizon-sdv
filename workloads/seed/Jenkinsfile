@@ -95,6 +95,11 @@ pipeline {
            description: '''<p>ABFS aptitude repository, e.g. abfs-apt-alpha-public. </p>''',
            trim: true)
 
+    string(name: 'UPLOADER_MANIFEST_SERVER',
+           defaultValue: "android.googlesource.com",
+           description: '''<p>Gerrit manifest server f.</p>''',
+           trim: true)
+
     separator(
       name: "OpenBSW Workload",
       sectionHeader: "OpenBSW Parameters",
@@ -147,6 +152,7 @@ pipeline {
                   ['${ABFS_CASFS_VERSION}', "${ABFS_CASFS_VERSION}" ],
                   ['${ABFS_REPOSITORY}', "${ABFS_REPOSITORY}" ],
                   ['${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
+                  ['${UPLOADER_MANIFEST_SERVER}', "${UPLOADER_MANIFEST_SERVER}"],
                   ['${JENKINS_GCE_CLOUD_LABEL}', "${CUTTLEFISH_GCE_CLOUD_LABEL}" ],
                   ['${NODEJS_VERSION}', "${NODEJS_VERSION}"]
                  ]

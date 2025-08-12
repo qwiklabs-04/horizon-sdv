@@ -127,6 +127,10 @@ Note: this can change, so the `Seed Workloads` job supports this parameter to al
 
 The ABFS aptitude repository to fetch the ABFS client artifacts, e.g. abfs-apt-alpha-public.
 
+### `UPLOADER_MANIFEST_SERVER`
+
+ABFS manifest source URL. Used for seeding ABFS builds, blobs/objects.
+
 ### `AAOS_ARTIFACT_STORAGE_SOLUTION`
 
 Define storage solution used to push artifacts.

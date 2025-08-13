@@ -143,7 +143,7 @@ pipeline {
           }
           steps {
             script {
-              currentBuild.description = "${env.AAOS_LUNCH_TARGET}" + "<br>" + "${env.AAOS_REVISION}" + "<br>" + "$BUILD_USER"
+              currentBuild.description = "${env.AAOS_LUNCH_TARGET}" + "<br/>" + "${env.AAOS_REVISION}" + "<br/>" +"ABFS_PERSIST_CACHE: ${env.ABFS_PERSIST_CACHE}" + <br/> + "$BUILD_USER"
             }
             container(name: 'builder') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {

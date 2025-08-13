@@ -232,7 +232,6 @@ function abfs_initialise() {
         echo "ERROR: failed on abfs init"
         exit 1
     fi
-    # FIXME: demagic android.googlesource.com
     # shellcheck disable=SC2086
     abfs ${ABFS_CMD_FLAGS} --remote-servers abfs-server:50051 --tunnel-ports 0 --manifest-server ${UPLOADER_MANIFEST_SERVER} config -w
     # shellcheck disable=SC2086

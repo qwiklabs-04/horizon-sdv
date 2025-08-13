@@ -216,6 +216,31 @@ pipeline {
           }
         }
 
+        stage ('Build: aosp_cf_arm64_auto') {
+          steps {
+            container(name: 'builder') {
+              withCredentials([usernamePassword(credentialsId: 'jenkins-gerrit-http-password', passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {
+                sh '''
+                  export AAOS_GERRIT_MANIFEST_URL="${AAOS_GERRIT_MANIFEST_URL}"
+                  export AAOS_REVISION="${AAOS_REVISION}"
+                  export AAOS_LUNCH_TARGET="aosp_cf_arm64_auto-${ANDROID_BUILD_ID}userdebug"
+                  export AAOS_ARTIFACT_ROOT_NAME="${ANDROID_BUILD_BUCKET_ROOT_NAME}"
+                  export CLOUD_REGION="${CLOUD_REGION}"
+                  export AAOS_BUILD_NUMBER=${BUILD_NUMBER}/${AAOS_LUNCH_TARGET}
+                  export AAOS_CLEAN="NO_CLEAN"
+                  export AAOS_ARTIFACT_STORAGE_SOLUTION="${ARTIFACT_STORAGE_SOLUTION}"
+                  export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
+                  ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
+                  ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
+                  ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
+                '''
+                archiveArtifacts artifacts: '*artifacts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+              }
+            }
+          }
+        }
+
         stage ('Build: aosp_tangorpro_car') {
           steps {
             container(name: 'builder') {

@@ -100,6 +100,12 @@ function initialise_repo() {
         else
             break
         fi
+        # Remove any changes others may have left in place on PV.
+        if ! repo forall -c 'git checkout -- .; git clean -fdx'
+        then
+            echo "ERROR: git clean failed, giving up."
+            exit 1
+        fi
     done
 
     echo "SUCCESS: repo sync complete."

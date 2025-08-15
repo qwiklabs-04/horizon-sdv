@@ -242,7 +242,11 @@ BUILD_INFO_FILE="${WORKSPACE}/build_info.txt"
 
 # Override build output directory to keep builds
 # separate from each other.
-export OUT_DIR="out_sdv-${AAOS_LUNCH_TARGET}"
+if [[ "${ABFS_BUILDER}" == "false" ]]; then
+    export OUT_DIR="out_sdv-${AAOS_LUNCH_TARGET}"
+else
+    export OUT_DIR="out"
+fi
 
 # Architecture:
 AAOS_ARCH=""

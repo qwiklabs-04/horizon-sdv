@@ -29,7 +29,7 @@ pipeline {
     POD_TEMPLATE = "${ABFS == "true" ? kubernetesAbfsPodTemplate : kubernetesPodTemplate }"
 
     ABFS_STORAGE_CLASS_SUFFIX="android-abfs"
-    ABFS_STORAGE_SIZE="500Gi"
+    ABFS_STORAGE_SIZE="750Gi"
 
     // Define Pod Template in environment so we can override.
     def kubernetesPodTemplate = """

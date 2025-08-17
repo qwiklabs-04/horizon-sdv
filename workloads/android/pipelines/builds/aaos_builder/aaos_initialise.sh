@@ -225,8 +225,6 @@ function abfs_install() {
     eval "${CMD}"
     sudo depmod -a
     sudo modprobe casfs
-    # FIXME: avoid warning if installed through apt.
-    sudo apt install casfs-kmod-"$(uname -r)" || true
 }
 
 # ABFS: initialise
@@ -243,10 +241,6 @@ function abfs_initialise() {
     # shellcheck disable=SC2086
     abfs ${ABFS_CMD_FLAGS} cacheman run -l /home/builder/.abfs/logs/cacheman &
     sleep 5
-
-    # FIXME: Avoid ACTION REQUIRED!
-    # shellcheck disable=SC2086
-    abfs ${ABFS_CMD_FLAGS} cacheman restart
 
     # shellcheck disable=SC2086
     if ! abfs ${ABFS_CMD_FLAGS} mount -b "${AAOS_REVISION}" "${WORKSPACE}"

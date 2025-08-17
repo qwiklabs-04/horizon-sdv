@@ -307,7 +307,7 @@ spec:
                             zone: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/zones/{{ .Values.config.zone }}"
                         credentialsId: "gce-creds"
                         instanceCapStr: "20"
-                        noDelayProvisioning: true
+                        noDelayProvisioning: false
                         projectId: {{ .Values.config.projectID }}
                     - computeEngine:
                         cloudName: "cuttlefish-vm-v1180"
@@ -341,7 +341,7 @@ spec:
                           zone: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/zones/{{ .Values.config.zone }}"
                         credentialsId: "gce-creds"
                         instanceCapStr: "20"
-                        noDelayProvisioning: true
+                        noDelayProvisioning: false
                         projectId: {{ .Values.config.projectID }}
                   globalNodeProperties:
                     - envVars:

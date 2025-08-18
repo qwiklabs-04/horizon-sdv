@@ -21,7 +21,7 @@ pipeline {
 
   environment {
     GERRIT_API_URL="https://${env.HORIZON_DOMAIN}/gerrit"
-    POD_TEMPLATE = "${ABFS_PERSIST_CACHE == "true" ? kubernetesPVPodTemplate : kubernetesBasicPodTemplate}"
+    POD_TEMPLATE = "${ABFS_CACHED_BUILD == "true" ? kubernetesPVPodTemplate : kubernetesBasicPodTemplate}"
     ABFS_STORAGE_CLASS_SUFFIX="android-abfs"
     ABFS_STORAGE_SIZE="750Gi"
 
@@ -143,13 +143,13 @@ pipeline {
           }
           steps {
             script {
-              currentBuild.description = "${env.AAOS_LUNCH_TARGET}" + "<br/>" + "${env.AAOS_REVISION}" + "<br/>" + "Persist: ${env.ABFS_PERSIST_CACHE}" + "<br/>" + "$BUILD_USER"
+              currentBuild.description = "${env.AAOS_LUNCH_TARGET}" + "<br/>" + "${env.AAOS_REVISION}" + "<br/>" + "Persist: ${env.ABFS_CACHED_BUILD}" + "<br/>" + "$BUILD_USER"
             }
             container(name: 'builder') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                 withCredentials([usernamePassword(credentialsId: env.GERRIT_CREDENTIALS_ID, passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {
                   sh '''
-                    if [ "${ABFS_PERSIST_CACHE}" = "true" ]; then
+                    if [ "${ABFS_CACHED_BUILD}" = "true" ]; then
                         echo "AAOS CACHE Persistent Volume Claim: ${NODE_NAME}-aaos-cache" | tee -a build_cache_volume.txt
                         /usr/bin/kubectl get pod ${NODE_NAME} -n jenkins -o=jsonpath='{.spec.nodeName}' | xargs -I {} gcloud compute instances describe {} --zone=${CLOUD_ZONE} | grep 'deviceName: pvc' | awk '{print "AAOS CACHE Persistent Volume: " $2}' | tee -a build_cache_volume.txt || true
                     fi
@@ -165,7 +165,7 @@ pipeline {
                     ABFS_VERSION="${ABFS_VERSION}" \
                     ABFS_CASFS_VERSION="${ABFS_CASFS_VERSION}" \
                     ABFS_REPOSITORY="${ABFS_REPOSITORY}" \
-                    ABFS_PERSIST_CACHE="${ABFS_PERSIST_CACHE}" \
+                    ABFS_CACHED_BUILD="${ABFS_CACHED_BUILD}" \
                     ABFS_CLEAN_CACHE="${ABFS_CLEAN_CACHE}" \
                     AAOS_GERRIT_MANIFEST_URL="${AAOS_GERRIT_MANIFEST_URL}" \
                     UPLOADER_MANIFEST_SERVER="${UPLOADER_MANIFEST_SERVER}" \

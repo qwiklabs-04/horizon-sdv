@@ -95,7 +95,7 @@ Once Google provide you the ABFS license in JSON form, you will be required to c
       - This task can take ~24 hours per branch/tag and the only way of knowing it is complete is to monitor the docker
         logs on the uploader instances to ensure all repositories have been seeded fully. Discuss with Google for details.
 
-Users can now build from the ABFS seeded source/cache, see `Android Workflows → Builds → AAOS Builder ABFS`. Enable `ABFS_PERSIST_CACHE` if wishing to store the cacheman cache in persistent storage in order to improve build times.
+Users can now build from the ABFS seeded source/cache, see `Android Workflows → Builds → AAOS Builder ABFS`. Enable `ABFS_CACHED_BUILD` if wishing to store the cacheman cache and ABFS source mount path in persistent storage in order to improve build times.
 
 ## Known issues<a name="knownissues"></a>
 

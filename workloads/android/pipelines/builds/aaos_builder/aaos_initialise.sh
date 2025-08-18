@@ -225,6 +225,9 @@ function abfs_install() {
     eval "${CMD}"
     sudo depmod -a
     sudo modprobe casfs
+    CMD="find . -maxdepth 1 -type f -name \"pool*\" -exec sudo rm -rf \"./{}\" \\;"
+    echo "Command: ${CMD}"
+    eval "${CMD}"
 }
 
 # ABFS: initialise

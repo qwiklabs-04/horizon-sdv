@@ -21,7 +21,7 @@ pipelineJob('Android/Builds/AAOS Builder ABFS') {
       <li><a href="https://source.android.com/docs/devices/cuttlefish" target="_blank">Cuttlefish Virtual Devices</a> for use with <a href="https://source.android.com/docs/compatibility/cts" target="_blank">CTS</a></li>
       <li>Reference hardware platforms such as <a href="https://source.android.com/docs/automotive/start/pixelxl" target="_blank">Pixel Tablets</a></li>
     </ul>
-    <p>Users have the ability to retain the ABFS cache in persistent storage, this may improve build times. Simply enable <code>ABFS_PERSIST_CACHE</code> and a persistent volume will be created to store the cache.</p>
+    <p>Users have the ability to retain the ABFS cache and ABFS source mount point in persistent storage, this may improve build times. Simply enable <code>ABFS_CACHED_BUILD</code> and a persistent volume will be created to store the cache and source mount path.</p>
     <h4 style="margin-bottom: 10px;">Build Outputs</h4>
     <p>Build outputs are stored in a Google Cloud Storage bucket (refer to build artifact for location).</p>
     <h4 style="margin-bottom: 10px;">Viewing Artifacts on Google Cloud</h4>
@@ -59,16 +59,16 @@ crucial for correlating <code>ABFS_VERSION</code> and <code>ABFS_CASFS_VERSION</
     }
 
     booleanParam {
-      name('ABFS_PERSIST_CACHE')
+      name('ABFS_CACHED_BUILD')
       defaultValue(false)
-      description('''<p>The ABFS cache will be stored in a persistent volume for other builds to use.<br>
+      description('''<p>The ABFS cache and source mount path will be stored in a persistent volume for other builds to use.<br>
         Used in conjunction with <code>ABFS_CACHEMAN_TIMEOUT</code> and may improve future build times.</p>''')
     }
 
     stringParam {
       name('ABFS_CACHEMAN_TIMEOUT')
       defaultValue('180')
-      description('''<p>Cacheman timeout in seconds. Only applicable if <code>ABFS_PERSIST_CACHE</code>.</p>''')
+      description('''<p>Cacheman timeout in seconds. Only applicable if <code>ABFS_CACHED_BUILD</code>.</p>''')
       trim(true)
     }
 

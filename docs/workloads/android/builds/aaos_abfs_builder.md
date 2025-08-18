@@ -61,14 +61,14 @@ Examples:
 
 Only applicable for sdk AVD targets, this is used to derive the Android API version for the SDK addons and device files.
 
-### `ABFS_PERSIST_CACHE`
+### `ABFS_CACHED_BUILD`
 
-The ABFS cache will be stored in a persistent volume for other builds to share.
+The ABFS cache and ABFS source mount path will be stored in a persistent volume for other builds to share.
 Used in conjunction with `ABFS_CACHEMAN_TIMEOUT` and may improve future build times but at the cost of additional persistent volume storage.
 
 ### `ABFS_CACHEMAN_TIMEOUT`
 
-Timeout in seconds for cacheman to wait on sync. Only effective when `ABFS_PERSIST_CACHE` is enabled, so the cache can sync to persistent storage.
+Timeout in seconds for cacheman to wait on sync. Only effective when `ABFS_CACHED_BUILD` is enabled, so the cache can sync to persistent storage.
 
 ### `ABFS_CLEAN_CACHE`
 

@@ -87,8 +87,9 @@ AAOS_GERRIT_RPI_MANIFEST_URL=${AAOS_GERRIT_RPI_MANIFEST_URL:-https://raw.githubu
 
 # ABFS Flag
 ABFS_BUILDER=${ABFS_BUILDER:-false}
-ABFS_PERSIST_CACHE=${ABFS_PERSIST_CACHE:-false}
+ABFS_CACHED_BUILD=${ABFS_CACHED_BUILD:-false}
 ABFS_CACHEMAN_DIRECTORY=${ABFS_CACHEMAN_DIRECTORY:-}
+ABFS_MOUNT_POINT="abfs"
 UPLOADER_MANIFEST_SERVER=${UPLOADER_MANIFEST_SERVER:-android.googlesource.com}
 
 # Google Repo Sync parallel jobs value
@@ -157,16 +158,19 @@ if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
     sudo chmod g+s /"${AAOS_CACHE_DIRECTORY}"
 
     if [[ "${ABFS_BUILDER}" == "true" ]]; then
-        if [[ "${ABFS_PERSIST_CACHE}" = "true" ]]; then
+        if [[ "${ABFS_CACHED_BUILD}" = "true" ]]; then
             ABFS_CMD_FLAGS="--cache-dir ${AAOS_CACHE_DIRECTORY}/cache"
             mkdir -p "${AAOS_CACHE_DIRECTORY}/cache"
-
+            mkdir -p "${AAOS_CACHE_DIRECTORY}/${ABFS_MOUNT_POINT}"
+        else
+            sudo mkdir -p "/${ABFS_MOUNT_POINT}"
+            sudo chown builder:builder "/${ABFS_MOUNT_POINT}"
         fi
     fi
     case "$0" in
         *initialise.sh | *build.sh)
             if [[ "${ABFS_BUILDER}" == "true" ]]; then
-                if [[ "${ABFS_PERSIST_CACHE}" = "true" ]]; then
+                if [[ "${ABFS_CACHED_BUILD}" = "true" ]]; then
                     USAGE=$(df -h "${AAOS_CACHE_DIRECTORY}" | tail -1 | awk '{print "Used " $3 " of " $2}')
                     USED_PERCENTAGE=$(df "${AAOS_CACHE_DIRECTORY}" | tail -1 | awk '{print ($3/$2)*100}' | cut -d '.' -f 1)
                     if [ "${USED_PERCENTAGE}" -lt "${DISK_SPACE_WATERMARK}" ]; then
@@ -219,13 +223,14 @@ if [[ "${ABFS_BUILDER}" == "false" ]]; then
         "${AAOS_CACHE_DIRECTORY}"/"${AAOS_BUILDS_DIRECTORY}"
     )
 else
-    if [[ "${ABFS_PERSIST_CACHE}" = "true" ]]; then
+    if [[ "${ABFS_CACHED_BUILD}" = "true" ]]; then
         DIRECTORY_LIST+=(
             "${AAOS_CACHE_DIRECTORY}/cache"
         )
+        WORKSPACE="${AAOS_CACHE_DIRECTORY}/${ABFS_MOUNT_POINT}"
+    else
+        WORKSPACE="/${ABFS_MOUNT_POINT}"
     fi
-    # FIXME: only /src works at this time for mount.
-	WORKSPACE="/src"
 fi
 
 # Clean commands
@@ -519,7 +524,7 @@ case "$0" in
             VARIABLES+="
             AAOS_REVISION=${AAOS_REVISION}
             AAOS_CLEAN=${AAOS_CLEAN}
-            ABFS_PERSIST_CACHE=${ABFS_PERSIST_CACHE}
+            ABFS_CACHED_BUILD=${ABFS_CACHED_BUILD}
             ABFS_CMD_FLAGS=${ABFS_CMD_FLAGS}
 
             UPLOADER_MANIFEST_SERVER=${UPLOADER_MANIFEST_SERVER}
@@ -631,10 +636,6 @@ function create_workspace() {
     # ABFS will mount, don't create.
     if [[ "${ABFS_BUILDER}" == "false" ]]; then
         mkdir -p "${WORKSPACE}" > /dev/null 2>&1
-    else
-        if [[ "${ABFS_PERSIST_CACHE}" == "true" ]]; then
-            mkdir -p "${AAOS_CACHE_DIRECTORY}/cache" > /dev/null 2>&1
-        fi
     fi
     cd "${WORKSPACE}" || true
 }

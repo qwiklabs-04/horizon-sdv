@@ -162,9 +162,6 @@ if [ -d "${AAOS_CACHE_DIRECTORY}" ]; then
             ABFS_CMD_FLAGS="--cache-dir ${AAOS_CACHE_DIRECTORY}/cache"
             mkdir -p "${AAOS_CACHE_DIRECTORY}/cache"
             mkdir -p "${AAOS_CACHE_DIRECTORY}/${ABFS_MOUNT_POINT}"
-        else
-            sudo mkdir -p "/${ABFS_MOUNT_POINT}"
-            sudo chown builder:builder "/${ABFS_MOUNT_POINT}"
         fi
     fi
     case "$0" in
@@ -636,6 +633,11 @@ function create_workspace() {
     # ABFS will mount, don't create.
     if [[ "${ABFS_BUILDER}" == "false" ]]; then
         mkdir -p "${WORKSPACE}" > /dev/null 2>&1
+    else
+        if [[ "${ABFS_CACHED_BUILD}" = "false" ]]; then
+            sudo mkdir -p "/${ABFS_MOUNT_POINT}"
+            sudo chown builder:builder "/${ABFS_MOUNT_POINT}"
+        fi
     fi
     cd "${WORKSPACE}" || true
 }

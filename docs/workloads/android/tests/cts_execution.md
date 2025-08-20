@@ -135,9 +135,9 @@ minutes, gives the tester time to keep the instance alive so they may work with 
 
 It is only applicable when `MTK_CONNECT_ENABLE` is enabled.
 
-### `CVD_ADDITIONAL_ARGS`
+### `CVD_ADDITIONAL_FLAGS`
 
-Append additional arguments to `cvd` command, e.g. --display0=width=1920,height=1080,dpi=160
+Append additional flags to `cvd` command, e.g. --display0=width=1920,height=1080,dpi=160
 
 ## Example Usage <a name="examples"></a>
 

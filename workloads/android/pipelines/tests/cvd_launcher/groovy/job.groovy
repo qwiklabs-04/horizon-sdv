@@ -93,9 +93,9 @@ pipelineJob('Android/Tests/CVD Launcher') {
     }
 
     stringParam {
-      name('CVD_ADDITIONAL_ARGS')
+      name('CVD_ADDITIONAL_FLAGS')
       defaultValue('')
-      description('''<p>Append additional arguments to `cvd` command, e.g. --display0=width=1920,height=1080,dpi=160</p>''')
+      description('''<p>Append additional flags to `cvd` command, e.g. --display0=width=1920,height=1080,dpi=160</p>''')
       trim(true)
     }
   }

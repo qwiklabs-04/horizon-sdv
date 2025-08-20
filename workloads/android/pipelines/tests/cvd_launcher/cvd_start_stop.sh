@@ -117,7 +117,7 @@ function cuttlefish_start() {
     CVD_CMD="sudo HOME=\"${PWD}\" /usr/bin/cvd create --noresume -config=auto \
         -report_anonymous_usage_stats=no --num_instances=\"${NUM_INSTANCES}\" \
         --cpus=\"${VM_CPUS}\" --memory_mb=\"${VM_MEMORY_MB}\" --console=true \
-        ${CVD_ADDITIONAL_ARGS} >> \"${logfile}\" 2>&1 &"
+        ${CVD_ADDITIONAL_FLAGS} >> \"${logfile}\" 2>&1 &"
     echo "Running ${CVD_CMD} in background."
     if ! eval "${CVD_CMD}"
     then

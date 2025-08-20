@@ -349,7 +349,7 @@ spec:
                         - key: "ANDROID_BUILD_BUCKET_ROOT_NAME"
                           value: {{ .Values.config.projectID }}-aaos
                         - key: "ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME"
-                          value: "horizon-sdv/aaos_builder"
+                          value: "horizon-sdv/aaos-builder"
                         - key: "CLOUD_REGION"
                           value: {{ .Values.config.region }}
                         - key: "CLOUD_ZONE"
@@ -373,9 +373,9 @@ spec:
                         - key: "OPENBSW_BUILD_BUCKET_ROOT_NAME"
                           value: {{ .Values.config.projectID }}-openbsw
                         - key: "OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME"
-                          value: "horizon-sdv/openbsw_builder"
+                          value: "horizon-sdv/openbsw-builder"
                         - key: "INFRA_DOCKER_ARTIFACT_PATH_NAME"
-                          value: "horizon-sdv/infra"
+                          value: "horizon-sdv/abfs-infra"
                         - key: "ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME"
                           value: "horizon-sdv/aaos-abfs-builder"
                 groovy:

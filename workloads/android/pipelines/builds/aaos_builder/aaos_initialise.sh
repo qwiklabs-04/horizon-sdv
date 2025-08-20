@@ -84,7 +84,7 @@ function initialise_repo() {
             fi
         done
 
-        # This will automatically clean any previous downloaded changes.
+        # This will automatically clean any previous staged/fetched/downloaded changes.
         if ! repo sync --no-tags --optimized-fetch --prune --retry-fetches=3 --auto-gc --no-clone-bundle --fail-fast --force-sync "${REPO_SYNC_JOBS_ARG}"
         then
             echo "WARNING: repo sync failed, sleep 60s and retrying..."
@@ -98,13 +98,13 @@ function initialise_repo() {
                 exit 1
             fi
         else
+            # Remove any unstaged changes others may have left in place on PV.
+            if ! repo forall -c 'git checkout -- .; git clean -fdx'
+            then
+                echo "ERROR: git clean failed, giving up."
+                exit 1
+            fi
             break
-        fi
-        # Remove any changes others may have left in place on PV.
-        if ! repo forall -c 'git checkout -- .; git clean -fdx'
-        then
-            echo "ERROR: git clean failed, giving up."
-            exit 1
         fi
     done
 

@@ -287,6 +287,7 @@ declare -a AAOS_ARTIFACT_LIST=(
 # Post storage commands
 declare -a POST_STORAGE_COMMANDS=(
     "rm -f ${BUILD_INFO_FILE}"
+    "rm -rf vendor"
 )
 
 # This is a dictionary mapping the target names to the command line
@@ -445,7 +446,6 @@ case "${AAOS_LUNCH_TARGET}" in
         )
         POST_STORAGE_COMMANDS+=(
             "rm -f ${OUT_DIR}.tgz"
-            "rm -rf vendor"
             "rm -f extract-google_devices-tangorpro.sh"
         )
         ;;

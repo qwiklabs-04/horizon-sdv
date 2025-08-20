@@ -30,7 +30,8 @@ def replacements = [
  ['${HORIZON_DOMAIN}', "${HORIZON_DOMAIN}"],
  ['${HORIZON_GITHUB_URL}', "${HORIZON_GITHUB_URL}"],
  ['${HORIZON_GITHUB_BRANCH}', "${HORIZON_GITHUB_BRANCH}"],
- ['${SEPARATOR_STYLE}', "${SEPARATOR_STYLE}"]]
+ ['${SEPARATOR_STYLE}', "${SEPARATOR_STYLE}"],
+ ['${CLOUD_BACKEND_BUCKET}', "${CLOUD_BACKEND_BUCKET}"]]
 
 pipeline {
 
@@ -43,13 +44,14 @@ pipeline {
 
   parameters {
     choice(name: 'SEED_WORKLOAD',
-           choices: ['none', 'all', 'android', 'openbsw'],
+           choices: ['none', 'all', 'android', 'openbsw', 'cloud-workstations'],
            description: '''<p>Workload to seed:</p>
              <ul>
              <li>none: seed nothing, derisk triggering by accident.</li>
              <li>all: seed all workloads.</li>
              <li>android: seed the Android workload.</li>
              <li>openbsw: seed the OpenBSW workload.</li>
+             <li>cloud-workstations: seed the Cloud Workstations workload.</li>
            </ul>''')
 
     separator(
@@ -229,6 +231,62 @@ pipeline {
           steps {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
               jobDsl targets: 'workloads/openbsw/pipelines/*/*/groovy/*.groovy', sandbox: true
+            }
+          }
+        }
+      }
+    }
+
+    stage ('Workload: Seed Cloud Workstations') {
+      when {
+        anyOf {
+          expression { env.SEED_WORKLOAD == 'cloud-workstations' }
+          expression { env.SEED_WORKLOAD == 'all' }
+        }
+      }
+
+      stages {
+        stage ("Prepare Groovy files") {
+          steps {
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+              script {
+                replacements += [
+                  ['${CLOUD_BACKEND_BUCKET}', "${CLOUD_BACKEND_BUCKET}"],
+                  ['${CLOUD_WS_WORKLOADS_ENV_IMAGE_NAME}', "${CLOUD_WS_WORKLOADS_ENV_IMAGE_NAME}"],
+                  ['${CLOUD_WS_CLUSTER_PRESET_NAME}', "${CLOUD_WS_CLUSTER_PRESET_NAME}"],
+                  ['${CLOUD_WS_CLUSTER_PRESET_NETWORK_NAME}', "${CLOUD_WS_CLUSTER_PRESET_NETWORK_NAME}"],
+                  ['${CLOUD_WS_CLUSTER_PRESET_SUBNETWORK_NAME}', "${CLOUD_WS_CLUSTER_PRESET_SUBNETWORK_NAME}"],
+                  ['${CLOUD_WS_CLUSTER_PRESET_PRIVATE_CLUSTER}', "${CLOUD_WS_CLUSTER_PRESET_PRIVATE_CLUSTER}"],
+                  ['${CLOUD_WS_HORIZON_CODE_OSS_IMAGE_NAME}', "${CLOUD_WS_HORIZON_CODE_OSS_IMAGE_NAME}"],
+                  ['${CLOUD_WS_HORIZON_ASFP_IMAGE_NAME}', "${CLOUD_WS_HORIZON_ASFP_IMAGE_NAME}"],
+                  ['${CLOUD_WS_HORIZON_ANDROID_STUDIO_IMAGE_NAME}', "${CLOUD_WS_HORIZON_ANDROID_STUDIO_IMAGE_NAME}"]
+                ]
+
+                def files = sh(returnStdout: true, script: "find workloads/cloud-workstations -name '*.groovy'").trim().split('\n')
+
+                files.each { file ->
+                  replacements.each { replacement ->
+                    def escapedValue = replacement[1].replace('/', '\\/')
+                    sh "sed -i 's/${replacement[0]}/${escapedValue}/g' ${file}"
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        stage ("Seed folders") {
+          steps {
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+              jobDsl targets: 'workloads/cloud-workstations/pipelines/groovy/folders.groovy', sandbox: true
+            }
+          }
+        }
+
+        stage ("Seed jobs") {
+          steps {
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+              jobDsl targets: 'workloads/cloud-workstations/pipelines/*/*/groovy/*.groovy', sandbox: true
             }
           }
         }

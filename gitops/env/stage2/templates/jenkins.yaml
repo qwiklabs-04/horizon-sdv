@@ -26,7 +26,7 @@ spec:
   source:
     chart: jenkins
     repoURL: https://charts.jenkins.io
-    targetRevision: 5.8.2
+    targetRevision: 5.8.31
     helm:
       values: |
         persistence:
@@ -54,13 +54,13 @@ spec:
           installPlugins:
             - antisamy-markup-formatter:173.v680e3a_b_69ff3
             - apache-httpcomponents-client-4-api:4.5.14-269.vfa_2321039a_83
-            - asm-api:9.8-135.vb_2239d08ee90
+            - asm-api:9.8-163.vb_2a_96d3f9c3c
             - authentication-tokens:1.144.v5ff4a_5ec5c33
             - bootstrap5-api:5.3.3-2
             - bouncycastle-api:2.30.1.81-264.v95c79c0e772c
             - branch-api:2.1229.ve86b_d02b_5e56
             - caffeine-api:3.2.2-178.v353b_8428ed56
-            - checks-api:370.vb_61a_c57328f3
+            - checks-api:373.vfe7645102093
             - cloudbees-folder:6.1026.ve06dfa_cf31c3
             - commons-lang3-api:3.18.0-98.v3a_674c06072d
             - commons-text-api:1.14.0-194.v804a_dc3a_1b_d8
@@ -78,7 +78,7 @@ spec:
             - github-api:1.321-488.v9b_c0da_9533f8
             - github:1.43.0
             - google-oauth-plugin:1.335.ve6de40e2db_18
-            - gson-api:2.13.1-139.v4569c2ef303f
+            - gson-api:2.13.1-153.vb_3d0c48a_a_b_4a_
             - instance-identity:203.v15e81a_1b_7a_38
             - ionicons-api:88.va_4187cb_eddf1
             - jackson2-api:2.19.2-408.v18248a_324cfe
@@ -89,16 +89,16 @@ spec:
             - jaxb:2.3.9-133.vb_ec76a_73f706
             - jdk-tool:83.v417146707a_3d
             - jjwt-api:0.11.5-120.v0268cf544b_89
-            - joda-time-api:2.14.0-127.v7d9da_295a_d51
+            - joda-time-api:2.14.0-149.v1c3ce991d1b_9
             - jquery3-api:3.7.1-594.vb_3864f326cf0
             - jsch:0.2.16-95.v3eecb_55fa_b_78
-            - json-api:20250517-153.vc8a_a_d87c0ce3
-            - json-path-api:2.9.0-148.v22a_7ffe323ce
+            - json-api:20250517-163.v1c5da_e99c775
+            - json-path-api:2.9.0-178.vca_b_c71881321
             - junit:1335.v6b_a_a_e18534e1
             - kubernetes-client-api:7.3.1-256.v788a_0b_787114
             - kubernetes-credentials:203.v85b_9836a_f44b_
             - mailer:489.vd4b_25144138f
-            - matrix-project:849.v0cd64ed7e531
+            - matrix-project:856.v4c352b_3a_b_23e
             - metrics:4.2.32-476.v5042e1c1edd7
             - mina-sshd-api-common:2.15.0-161.vb_200831a_c15b_
             - mina-sshd-api-core:2.15.0-161.vb_200831a_c15b_
@@ -124,7 +124,7 @@ spec:
             - ssh-credentials:361.vb_f6760818e8c
             - sshd:3.374.v19b_d59ce6610
             - structs:353.v261ea_40a_80fb_
-            - token-macro:444.v52de7e9c573d
+            - token-macro:477.vd4f0dc3cb_cf1
             - trilead-api:2.209.v0e69b_c43c245
             - variant:70.va_d9f17f859e0
             - workflow-aggregator:608.v67378e9d3db_1
@@ -154,7 +154,7 @@ spec:
             - keycloak:2.3.2
             - kubernetes:4358.vcfd9c5a_0a_f51
             - kubernetes-credentials-provider:1.276.v99a_de03cb_076
-            - parameter-separator:276.v7b_5328f5c7a_d
+            - parameter-separator:296.v9b_a_90c81160d
             - pipeline-stage-view:2.38
             - role-strategy:799.v5b_e7b_ecc231e
             - ssh-slaves:3.1071.v0d059c7b_c555

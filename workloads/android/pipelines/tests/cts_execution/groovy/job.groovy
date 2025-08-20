@@ -149,6 +149,13 @@ pipelineJob('Android/Tests/CTS Execution') {
       description('''<p>Time in minutes, to keep CVD alive before stopping the devices and instance.</br>.
         Only applicable when <i>MTK_CONNECT_ENABLE</i> enabled so as to connect via HOST.</p>''')
     }
+
+    stringParam {
+      name('CVD_ADDITIONAL_ARGS')
+      defaultValue('')
+      description('''<p>Append additional arguments to `cvd` command, e.g. --display0=width=1920,height=1080,dpi=160</p>''')
+      trim(true)
+    }
   }
 
   logRotator {

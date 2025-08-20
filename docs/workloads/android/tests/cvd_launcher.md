@@ -85,6 +85,10 @@ Defines total memory available to guest.
 
 This applies to CVD `memory_mb` parameter.
 
+### `CVD_ADDITIONAL_ARGS`
+
+Append additional arguments to `cvd` command, e.g. --display0=width=1920,height=1080,dpi=160
+
 ## Example Usage <a name="examples"></a>
 
 The following examples show how the scripts may be used standalone on a test instance.

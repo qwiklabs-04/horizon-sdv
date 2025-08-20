@@ -91,6 +91,13 @@ pipelineJob('Android/Tests/CVD Launcher') {
       description('''<p>total memory available to guest (memory_mb option)</p>''')
       trim(true)
     }
+
+    stringParam {
+      name('CVD_ADDITIONAL_ARGS')
+      defaultValue('')
+      description('''<p>Append additional arguments to `cvd` command, e.g. --display0=width=1920,height=1080,dpi=160</p>''')
+      trim(true)
+    }
   }
 
   logRotator {

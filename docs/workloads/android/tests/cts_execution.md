@@ -135,6 +135,10 @@ minutes, gives the tester time to keep the instance alive so they may work with 
 
 It is only applicable when `MTK_CONNECT_ENABLE` is enabled.
 
+### `CVD_ADDITIONAL_ARGS`
+
+Append additional arguments to `cvd` command, e.g. --display0=width=1920,height=1080,dpi=160
+
 ## Example Usage <a name="examples"></a>
 
 Refer to `docs/workloads/android/tests/cvd_launcher.md` for an example of how to create and set up a test instance and boot the Cuttlefish Virtual Devices. Once the devices are booted, CTS tests can be run as follows:

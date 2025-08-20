@@ -50,6 +50,9 @@ VM_CPUS=${VM_CPUS:-8}
 VM_MEMORY_MB=$(echo "${VM_MEMORY_MB}" | xargs)
 VM_MEMORY_MB=${VM_MEMORY_MB:-16384}
 
+# Resolutions
+CVD_ADDITIONAL_ARGS=${CVD_ADDITIONAL_ARGS:-}
+
 WORKSPACE=${WORKSPACE:-$(pwd)}
 
 # Show variables.
@@ -70,6 +73,8 @@ case "$0" in
         NUM_INSTANCES=${NUM_INSTANCES} (--num_instances=${NUM_INSTANCES})
         VM_CPUS=${VM_CPUS} (--cpu ${VM_CPUS})
         VM_MEMORY_MB=${VM_MEMORY_MB} (--memory_mb ${VM_MEMORY_MB})
+
+        CVD_ADDITIONAL_ARGS=${CVD_ADDITIONAL_ARGS}
 
         ARCHITECTURE=${ARCHITECTURE}
 

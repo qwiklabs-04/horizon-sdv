@@ -171,7 +171,6 @@ resource "google_container_node_pool" "sdv_build_node_pool" {
   autoscaling {
     min_node_count = var.build_node_pool_min_node_count
     max_node_count = var.build_node_pool_max_node_count
-    autoscaling_profile = "OPTIMIZE_UTILIZATION"
   }
 
 }
@@ -217,7 +216,6 @@ resource "google_container_node_pool" "sdv_abfs_build_node_pool" {
   autoscaling {
     min_node_count = var.abfs_build_node_pool_min_node_count
     max_node_count = var.abfs_build_node_pool_max_node_count
-    autoscaling_profile = "OPTIMIZE_UTILIZATION"
   }
 
 }

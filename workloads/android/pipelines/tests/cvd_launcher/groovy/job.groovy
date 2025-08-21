@@ -67,7 +67,7 @@ pipelineJob('Android/Tests/CVD Launcher') {
 
     choiceParam {
       name('CUTTLEFISH_KEEP_ALIVE_TIME')
-      choices(['0', '5', '15', '30', '60', '90', '120', '180'])
+      choices(['0', '5', '15', '30', '60', '90', '120', '180', '240', '300', '480'])
       description('''<p>Time in minutes, to keep CVD alive before stopping.</p>''')
     }
 

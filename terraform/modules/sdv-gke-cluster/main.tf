@@ -138,11 +138,6 @@ resource "google_container_node_pool" "sdv_build_node_pool" {
   cluster        = google_container_cluster.sdv_cluster.name
   node_count     = var.build_node_pool_node_count
   node_locations = var.node_locations
-
-  queued_provisioning {
-    enabled = true
-  }
-
   node_config {
     preemptible  = false
     machine_type = var.build_node_pool_machine_type
@@ -170,10 +165,6 @@ resource "google_container_node_pool" "sdv_build_node_pool" {
 
     workload_metadata_config {
       mode = "GKE_METADATA"
-    }
-
-    reservation_affinity {
-      consume_reservation_type = "NO_RESERVATION"
     }
   }
 

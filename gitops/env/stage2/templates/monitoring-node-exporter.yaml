@@ -17,6 +17,8 @@ kind: DaemonSet
 metadata:
   namespace: gmp-public
   name: node-exporter
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
   labels:
     app.kubernetes.io/name: node-exporter
     app.kubernetes.io/version: 1.8.2
@@ -96,6 +98,8 @@ kind: PodMonitoring
 metadata:
   namespace: gmp-public
   name: node-exporter
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
   labels:
     app.kubernetes.io/name: node-exporter
     app.kubernetes.io/part-of: google-cloud-managed-prometheus

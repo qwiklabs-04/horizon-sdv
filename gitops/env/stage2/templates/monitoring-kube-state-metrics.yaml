@@ -20,6 +20,8 @@ metadata:
     app.kubernetes.io/version: 2.12.0
   namespace: gmp-public
   name: kube-state-metrics
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   replicas: 1
   selector:
@@ -104,6 +106,8 @@ metadata:
     app.kubernetes.io/version: 2.12.0
   namespace: gmp-public
   name: kube-state-metrics
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   clusterIP: None
   ports:
@@ -121,6 +125,8 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: kube-state-metrics
   namespace: gmp-public
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   maxReplicas: 10
   minReplicas: 1

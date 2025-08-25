@@ -3,20 +3,21 @@ set -eo pipefail
 
 # Capture the arguments passed to the script
 TF_BACKEND_BUCKET="$1"
-TFVARS_JSON_FILE_PATH="$2"
+WS_CONFIGS_TFVARS_JSON_FILE_PATH="$2"
 
 # Import shared utils
 source "$(dirname "$0")/../../utils/terraform-utils.sh"
 
 # Temporary file used to store tfstate JSON of WS Configs
 WS_CONFIGS_TFSTATE_JSON_FILE="ws_configs_tfstate.json"
-# Temporary file used to store extracted workstation configs and their IAM bindings JSON
+# Temporary file used to store extracted workstation configs and their corresponding IAM bindings (user emails) JSON
 EXISTING_WS_CONFIGS_WITH_WS_ADMINS_JSON_FILE="existing_ws_configs_with_ws_admins.json"
 
 
 # ------Functions------
 
 # Function to get list of WS Configs from tfstate that match given regex pattern
+# Returns (output to stdout) each matching config name in its own line, as plain text (due to -r option in jq). If nothing matches, output is empty.
 get_ws_configs_matching_regex() {
   local ws_configs_tfstate_json_file="$1"
   local ws_config_name_regex_pattern="$2"
@@ -35,12 +36,12 @@ get_ws_configs_matching_regex() {
 
 # ------Initial Checks and Setup------
 
-validate_bucket_and_tfvars_args "$TF_BACKEND_BUCKET" "$TFVARS_JSON_FILE_PATH"
+validate_bucket_and_tfvars_args "$TF_BACKEND_BUCKET" "$WS_CONFIGS_TFVARS_JSON_FILE_PATH"
 
 # Extract terraform directory path
-TF_DIR=$(dirname "${TFVARS_JSON_FILE_PATH}")
-# Extract tfvars file name
-TFVARS_JSON_FILE=$(basename "$TFVARS_JSON_FILE_PATH")
+TF_DIR=$(dirname "${WS_CONFIGS_TFVARS_JSON_FILE_PATH}")
+# Extract Config tfvars file name
+WS_CONFIGS_TFVARS_JSON_FILE=$(basename "$WS_CONFIGS_TFVARS_JSON_FILE_PATH")
 
 # ---Check WS Cluster exists before proceeding---
 # Extract Workstation Cluster terraform directory path
@@ -64,7 +65,7 @@ export_tfstate_to_file "$WS_CONFIGS_TFSTATE_JSON_FILE"
 log_info "Exported WS Config tfstate JSON to file: '${WS_CONFIGS_TFSTATE_JSON_FILE}'."
 
 # Extract input WS Config name regex pattern from tfvars file
-input_ws_config_name_regex_pattern=$(get_json_value_by_key_at_path "$TFVARS_JSON_FILE" "." "sdv_cloud_ws_input_config_name")
+input_ws_config_name_regex_pattern=$(get_json_value_by_key_at_path "$WS_CONFIGS_TFVARS_JSON_FILE" "." "sdv_cloud_ws_input_config_name")
 
 # Get list of WS Configs that match provided regex pattern
 matching_configs_list=$(get_ws_configs_matching_regex "$WS_CONFIGS_TFSTATE_JSON_FILE" "$input_ws_config_name_regex_pattern")
@@ -79,6 +80,6 @@ else
   echo "$matching_configs_list" | print_result
 fi
 
-# Exit terraform directory
+# Exit Config terraform directory
 popd > /dev/null || log_error "Failed to return to the original working directory."
 exit 0

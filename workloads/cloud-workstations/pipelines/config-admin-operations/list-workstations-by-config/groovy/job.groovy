@@ -35,7 +35,7 @@ pipelineJob('Cloud-Workstations/Config-Admin-Operations/List Workstations by Con
   }
 
   parameters {
-    stringParam('CLOUD_WS_CONFIG_NAME', '', 'REQUIRED: Enter the exact name of the workstation configuration to list its associated workstations.')
+    stringParam('CLOUD_WS_CONFIG_NAME', '', '<strong>REQUIRED</strong>: Enter the exact name of the workstation configuration to list its associated workstations.')
   }
 
   definition {

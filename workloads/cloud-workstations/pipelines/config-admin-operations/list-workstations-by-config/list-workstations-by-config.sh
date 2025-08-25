@@ -3,8 +3,8 @@ set -eo pipefail
 
 # Capture the arguments passed to the script
 TF_BACKEND_BUCKET="$1"
-TFVARS_JSON_FILE_PATH="$2"
-WORKSTATION_TF_DIR="$3"
+WS_CONFIGS_TFVARS_JSON_FILE_PATH="$2"
+WORKSTATIONS_TF_DIR="$3"
 
 # Import shared utils
 source "$(dirname "$0")/../../utils/terraform-utils.sh"
@@ -13,7 +13,7 @@ source "$(dirname "$0")/../../utils/terraform-utils.sh"
 WS_CONFIGS_TFSTATE_JSON_FILE="ws_configs_tfstate.json"
 # Temporary file used to store tfstate JSON of Workstations
 WORKSTATIONS_TFSTATE_JSON_FILE="workstations_tfstate.json"
-# Temporary file used to store extracted workstation configs and their IAM bindings JSON
+# Temporary file used to store extracted workstation configs and their corresponding IAM bindings (user emails) JSON
 EXISTING_WS_CONFIGS_WITH_WS_ADMINS_JSON_FILE="existing_ws_configs_with_ws_admins.json"
 
 
@@ -38,16 +38,16 @@ get_workstations_by_config() {
 
 # ------Initial Checks and Setup------
 
-validate_bucket_and_tfvars_args "$TF_BACKEND_BUCKET" "$TFVARS_JSON_FILE_PATH"
+validate_bucket_and_tfvars_args "$TF_BACKEND_BUCKET" "$WS_CONFIGS_TFVARS_JSON_FILE_PATH"
 
 # Extract WS Config terraform directory path
-CONFIG_TF_DIR=$(dirname "${TFVARS_JSON_FILE_PATH}")
-# Extract tfvars file name
-TFVARS_JSON_FILE=$(basename "$TFVARS_JSON_FILE_PATH")
+WS_CONFIGS_TF_DIR=$(dirname "${WS_CONFIGS_TFVARS_JSON_FILE_PATH}")
+# Extract Config tfvars file name
+WS_CONFIGS_TFVARS_JSON_FILE=$(basename "$WS_CONFIGS_TFVARS_JSON_FILE_PATH")
 
 # ---Check WS Cluster exists before proceeding---
 # Extract Workstation Cluster terraform directory path
-WS_CLUSTER_TF_DIR="${CONFIG_TF_DIR}/../cluster"
+WS_CLUSTER_TF_DIR="${WS_CONFIGS_TF_DIR}/../cluster"
 if ! check_ws_cluster_exists "$WS_CLUSTER_TF_DIR" "$TF_BACKEND_BUCKET"; then
   log_error "Workstation Cluster must exist before any operation of Workstation Config. Please run 'Create Cluster' job first."
 fi
@@ -58,7 +58,7 @@ print_header "CLOUD WORKSTATION: LIST WORKSTATIONS BY CONFIG"
 # ------Extract WS Config------
 
 log_info "Changing directory to WS Configs terraform..."
-pushd "$CONFIG_TF_DIR" > /dev/null || log_error "Cannot cd to ${CONFIG_TF_DIR}"
+pushd "$WS_CONFIGS_TF_DIR" > /dev/null || log_error "Cannot cd to ${WS_CONFIGS_TF_DIR}"
 
 run_terraform_init "$TF_BACKEND_BUCKET"
 
@@ -71,7 +71,7 @@ get_existing_ws_configs_with_ws_admins "$WS_CONFIGS_TFSTATE_JSON_FILE" > "$EXIST
 log_info "Exported existing WS Configs and their WS Admins to file: '${EXISTING_WS_CONFIGS_WITH_WS_ADMINS_JSON_FILE}'."
 
 # Extract input WS Config name from tfvars file
-input_ws_config_name=$(get_json_value_by_key_at_path "$TFVARS_JSON_FILE" "." "sdv_cloud_ws_input_config_name")
+input_ws_config_name=$(get_json_value_by_key_at_path "$WS_CONFIGS_TFVARS_JSON_FILE" "." "sdv_cloud_ws_input_config_name")
 
 # Check for non-existent input WS Config among existing WS Configs
 if ! check_key_exists_in_json_at_path "$EXISTING_WS_CONFIGS_WITH_WS_ADMINS_JSON_FILE" "." "${input_ws_config_name}"; then
@@ -79,14 +79,14 @@ if ! check_key_exists_in_json_at_path "$EXISTING_WS_CONFIGS_WITH_WS_ADMINS_JSON_
 fi
 log_info "Input WS Config: '${input_ws_config_name}' found in existing WS Configs."
 
-# Exit config terraform directory
+# Exit Config terraform directory
 popd > /dev/null || log_error "Failed to return to the original working directory."
 
 
 # ------Extract Workstations by config------
 
 log_info "Changing directory to Workstations terraform..."
-pushd "$WORKSTATION_TF_DIR" > /dev/null || log_error "Cannot cd to ${WORKSTATION_TF_DIR}"
+pushd "$WORKSTATIONS_TF_DIR" > /dev/null || log_error "Cannot cd to ${WORKSTATIONS_TF_DIR}"
 
 run_terraform_init "$TF_BACKEND_BUCKET"
 
@@ -96,9 +96,6 @@ log_info "Exported Workstations tfstate JSON to file: '${WORKSTATIONS_TFSTATE_JS
 
 # Get list of workstations created using input config name
 workstations_list=$(get_workstations_by_config "$WORKSTATIONS_TFSTATE_JSON_FILE" "$input_ws_config_name")
-
-# Exit workstation terraform directory
-popd > /dev/null || log_error "Failed to return to the original working directory."
 
 
 # ------Show list of Workstations------
@@ -110,4 +107,6 @@ else
   echo "$workstations_list" | print_result
 fi
 
+# Exit Workstation terraform directory
+popd > /dev/null || log_error "Failed to return to the original working directory."
 exit 0

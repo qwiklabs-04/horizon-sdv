@@ -45,6 +45,7 @@ convert_json_object_path_to_jq_path_array() {
 }
 
 # Function to check if a key exists at a given object path in input json file
+# Returns boolean
 check_key_exists_in_json_at_path() {
   local json_file="$1"
   local json_object_path="$2"
@@ -75,6 +76,7 @@ check_key_exists_in_json_at_path() {
 }
 
 # Function to extract value for given key at a given object path in input json file
+# Returns (output to stdout) a JSON object value. If value is string, then its returned without quotes
 get_json_value_by_key_at_path() {
   local json_file="$1"
   local json_object_path="$2"
@@ -104,6 +106,7 @@ get_json_value_by_key_at_path() {
 }
 
 # Function to remove a key at a given object path from input json file
+# Returns nothing, just modifies input json_file
 remove_key_from_json_at_path() {
   local json_file="$1"
   local json_object_path="$2"
@@ -129,6 +132,7 @@ remove_key_from_json_at_path() {
 }
 
 # Function to merge a JSON file into another JSON file at a given JSON object path
+# Returns nothing, just modifies input target_json_file
 merge_json_into_path() {
   local target_json_file="$1"
   local json_object_path="$2"
@@ -155,7 +159,11 @@ merge_json_into_path() {
   log_error "Failed moving ${target_json_file}.merged file contents into original ${target_json_file} post 'merge json into path' operation."
 }
 
+
 # ------Validation Functions------
+
+# Function to validate common args for all scripts
+# Returns boolean
 validate_bucket_and_tfvars_args() {
   local tf_backend_bucket="$1"
   local tfvars_json_file_path="$2"
@@ -175,6 +183,7 @@ validate_bucket_and_tfvars_args() {
 # ------Common tfstate functions------
 
 # Function to fetch the entire tfstate and store it in a file
+# Returns nothing
 export_tfstate_to_file() {
   local output_tfstate_file="$1"
 
@@ -187,6 +196,7 @@ export_tfstate_to_file() {
 # ------Workstation CLUSTER Functions------
 
 # Function to filter existing workstation cluster details from tfstate
+# Returns (output to stdout) a JSON object
 get_existing_ws_cluster() {
   local ws_cluster_tfstate_json_file="$1"
 
@@ -215,6 +225,7 @@ get_existing_ws_cluster() {
 }
 
 # Function to check if the WS Cluster exists
+# Returns boolean
 check_ws_cluster_exists() {
   local ws_cluster_tf_dir="$1"
   local tf_backend_bucket="$2"
@@ -251,6 +262,7 @@ check_ws_cluster_exists() {
 # ------Workstation CONFIG Functions-------
 
 # Function to filter and combine - existing ws configs and their corresponding ws admins from tfstate
+# Returns (output to stdout) a JSON object
 get_existing_ws_configs_with_ws_admins() {
   local ws_configs_tfstate_json_file="$1"
 
@@ -338,6 +350,7 @@ get_existing_ws_configs_with_ws_admins() {
 # ------WORKSTATION Functions-------
 
 # Function to filter list of existing workstations from tfstate
+# Returns (output to stdout) a JSON object
 get_existing_workstations_with_ws_users() {
   local workstations_tfstate_json_file="$1"
 
@@ -382,6 +395,7 @@ get_existing_workstations_with_ws_users() {
 }
 
 # Function to fetch current workstation state via gcloud
+# Returns (output to stdout) a string
 get_current_workstation_state() {
   local workstation="$1"
   local workstation_config="$2"
@@ -399,13 +413,14 @@ get_current_workstation_state() {
   )
 
   if [[ -z "$state" || "$state" == "null" ]]; then
-      log_error "Failed to fetch state of Workstation '${workstation}' from GCP using gcloud."
+    log_error "Failed to fetch state of Workstation '${workstation}' from GCP using gcloud."
   fi
 
   echo "$state"
 }
 
 # Function to fetch URL of the workstation via gcloud
+# Returns (output to stdout) a string
 get_workstation_url() {
   local workstation="$1"
   local workstation_config="$2"
@@ -423,7 +438,7 @@ get_workstation_url() {
   )
 
   if [[ -z "$workstation_url" || "$workstation_url" == "null" ]]; then
-      log_error "Failed to fetch the URL of the Workstation $workstation_url from GCP using gcloud."
+    log_error "Failed to fetch the URL of the Workstation $workstation_url from GCP using gcloud."
   fi
 
   echo "$workstation_url"
@@ -588,8 +603,11 @@ list_detailed_workstations() {
 
 # ------Terraform workflow Functions-------
 
+export TF_IN_AUTOMATION=1
+
 run_terraform_init() {
   local backend_bucket=$1
+
   log_info "Initializing Terraform..."
   terraform init -backend-config="bucket=${backend_bucket}" || log_error "Terraform init failed"
 }
@@ -605,6 +623,7 @@ run_terraform_empty_state_check() {
 
 run_terraform_apply() {
   local tfvars_file=$1
+
   log_info "Applying changes..."
   terraform apply -auto-approve -var-file="${tfvars_file}" || log_error "Terraform apply failed."
 }

@@ -64,7 +64,7 @@ def buildTfvarsMap(params, env) {
 
         ws_allowed_ports: params.WS_ALLOWED_PORTS?.trim() ? new groovy.json.JsonSlurper().parseText(params.WS_ALLOWED_PORTS) : null,
 
-        ws_admin_iam_members: params.WS_CONFIG_ADMIN_IAM_MEMBERS?.trim() ? params.WS_CONFIG_ADMIN_IAM_MEMBERS.split(',').collect { it.trim() }.findAll {it} : []
+        ws_admin_iam_members: params.WS_ADMIN_IAM_MEMBERS?.trim() ? params.WS_ADMIN_IAM_MEMBERS.split(',').collect { it.trim() }.findAll {it} : []
       ]
     ]
   ]

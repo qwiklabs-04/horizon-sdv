@@ -153,7 +153,7 @@ remove_key_from_json_at_path() {
   [[ -z "$key_to_remove" ]] && log_error "Key to remove from JSON not provided as argument."
 
   log_info "Removing key: '${key_to_remove}' at path '${json_object_path}' in JSON file '${json_file}'..."
-  
+
   jq --arg key "$key_to_remove" '
     '"${json_object_path}"' |= del(.[$key])
   ' "$json_file" > "${json_file}.tmp"
@@ -426,6 +426,34 @@ get_existing_workstations_with_ws_users() {
       })
     | from_entries
   ' "${workstations_tfstate_json_file}" || log_error "Failed to run jq: invalid JSON while filtering list of existing Workstations and their corresponding WS User members from tfstate JSON file '${workstations_tfstate_json_file}'..."
+}
+
+# Function to filter list of existing workstations for a specific user from existing workstations
+# Returns (output to stdout) a JSON object
+get_existing_workstations_for_user() {
+  local workstations_tfstate_json_file="$1"
+  local workstation_user="$2"
+
+  [[ -z "$workstations_tfstate_json_file" ]] && log_error "Workstations tfstate JSON file not provided to as argument."
+  [[ ! -f "$workstations_tfstate_json_file" ]] && log_error "File ${workstations_tfstate_json_file} does not exist."
+  [[ -z "$workstation_user" ]] && log_error "Workstation user email not provided to as argument."
+
+  # Fetch all existing workstations and their corresponding ws users
+  local existing_workstations_with_ws_users_json_file
+  existing_workstations_with_ws_users_json_file=$(mktemp) || log_error "Failed to create temp file for existing workstations"
+
+  trap "rm -f '$existing_workstations_with_ws_users_json_file'" EXIT
+
+  get_existing_workstations_with_ws_users "$workstations_tfstate_json_file" > "$existing_workstations_with_ws_users_json_file"
+
+  log_info "Filtering list of existing Workstations for a specific user from tfstate JSON file '${workstations_tfstate_json_file}'..."
+
+  # Filter workstations only for the input workstation_user
+  jq --arg workstation_user "$workstation_user" '
+    to_entries
+    | map(select(.value.ws_user_iam_members | index($workstation_user)))
+    | from_entries
+  ' "$existing_workstations_with_ws_users_json_file" || log_error "Failed to run jq: invalid JSON while filtering list of existing Workstations for specific user '${workstation_user}' from tfstate JSON file '${workstations_tfstate_json_file}'..."
 }
 
 # Function to fetch current workstation state via gcloud

@@ -31,7 +31,7 @@ pipelineJob('Cloud-Workstations/Workstation-User-Operations/Stop Workstation') {
   ''')
 
   parameters {
-    stringParam('CLOUD_WS_WORKSTATION_NAME', '', 'The exact name of the workstation to stop.')
+    stringParam('CLOUD_WS_WORKSTATION_NAME', '', '<strong>REQUIRED</strong>: The exact name of the workstation to stop.')
   }
 
   logRotator {

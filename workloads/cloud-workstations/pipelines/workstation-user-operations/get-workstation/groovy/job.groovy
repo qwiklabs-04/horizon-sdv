@@ -31,7 +31,7 @@ pipelineJob('Cloud-Workstations/Workstation-User-Operations/Get Workstation Deta
   ''')
 
   parameters {
-    stringParam('CLOUD_WS_WORKSTATION_NAME', '', 'The exact name of the workstation for which to retrieve details.')
+    stringParam('CLOUD_WS_WORKSTATION_NAME', '', '<strong>REQUIRED</strong>: The exact name of the workstation for which to retrieve details.')
   }
 
   logRotator {

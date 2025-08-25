@@ -43,7 +43,7 @@ pipelineJob('Android/Tests/CTS Execution') {
       description('''<p>The Jenkins GCE Clouds label for the Cuttlefish instance template, e.g.<br/></p>
         <ul>
           <li>cuttlefish-vm-main</li>
-          <li>cuttlefish-vm-v1140</li>
+          <li>cuttlefish-vm-v1180</li>
         </ul>''')
       trim(true)
     }
@@ -148,6 +148,13 @@ pipelineJob('Android/Tests/CTS Execution') {
       choices(['0', '5', '15', '30', '60', '90', '120', '180'])
       description('''<p>Time in minutes, to keep CVD alive before stopping the devices and instance.</br>.
         Only applicable when <i>MTK_CONNECT_ENABLE</i> enabled so as to connect via HOST.</p>''')
+    }
+
+    stringParam {
+      name('CVD_ADDITIONAL_FLAGS')
+      defaultValue('')
+      description('''<p>Append additional flags to `cvd` command, e.g. --display0=width=1920,height=1080,dpi=160</p>''')
+      trim(true)
     }
   }
 

@@ -21,9 +21,11 @@ pipeline {
 
   environment {
     GERRIT_API_URL="https://${env.HORIZON_DOMAIN}/gerrit"
+    POD_TEMPLATE = "${ABFS_CACHED_BUILD == "true" ? kubernetesPVPodTemplate : kubernetesBasicPodTemplate}"
+    ABFS_STORAGE_CLASS_SUFFIX="android-abfs"
+    ABFS_STORAGE_SIZE="750Gi"
 
-    // Define Pod Template in environment so we can override storageClassName.
-    def kubernetesPodTemplate = """
+    def kubernetesBasicPodTemplate = """
       apiVersion: v1
       kind: Pod
       metadata:
@@ -57,6 +59,72 @@ pipeline {
           - sleep
           args:
           - 5h
+          resources:
+            limits:
+              cpu: 98000m
+              memory: 180000Mi
+            requests:
+              cpu: 98000m
+              memory: 180000Mi
+        nodeSelector:
+          workloadLabel: android-abfs
+    """.stripIndent()
+
+    def kubernetesPVPodTemplate = """
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        annotations:
+          cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+        labels:
+          aaos_abfs_pod: "true"
+      spec:
+        tolerations:
+        - key: workloadType
+          operator: Equal
+          value: android-abfs
+          effect: "NoSchedule"
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: aaos_abfs_pod
+                  operator: Exists
+              topologyKey: kubernetes.io/hostname
+        hostname: jenkins-abfs-build-pod
+        serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
+        containers:
+        - name: builder
+          image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}:latest
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+          command:
+          - sleep
+          args:
+          - 5h
+          resources:
+            limits:
+              cpu: 98000m
+              memory: 180000Mi
+            requests:
+              cpu: 98000m
+              memory: 180000Mi
+          volumeMounts:
+            - mountPath: /aaos-cache
+              name: aaos-cache
+        volumes:
+          - name: aaos-cache
+            ephemeral:
+              volumeClaimTemplate:
+                spec:
+                  storageClassName: ${JENKINS_AAOS_BUILD_CACHE_STORAGE_PREFIX}-${ABFS_STORAGE_CLASS_SUFFIX}
+                  resources:
+                    requests:
+                      storage: ${ABFS_STORAGE_SIZE}
+                  accessModes:
+                    - ReadWriteOnce
         nodeSelector:
           workloadLabel: android-abfs
     """.stripIndent()
@@ -64,7 +132,7 @@ pipeline {
 
   stages {
     stage ('Start VM Instance') {
-      agent { kubernetes { yaml kubernetesPodTemplate } }
+      agent { kubernetes { yaml "${POD_TEMPLATE}" } }
       stages {
         stage ('Initialise') {
           when {
@@ -75,24 +143,32 @@ pipeline {
           }
           steps {
             script {
-              currentBuild.description = "${env.AAOS_LUNCH_TARGET}" + "<br>" + "${env.AAOS_REVISION}" + "<br>" + "$BUILD_USER"
+              currentBuild.description = "${env.AAOS_LUNCH_TARGET}" + "<br/>" + "${env.AAOS_REVISION}" + "<br/>" + "Persist: ${env.ABFS_CACHED_BUILD}" + "<br/>" + "$BUILD_USER"
             }
             container(name: 'builder') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                 withCredentials([usernamePassword(credentialsId: env.GERRIT_CREDENTIALS_ID, passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {
                   sh '''
+                    if [ "${ABFS_CACHED_BUILD}" = "true" ]; then
+                        echo "AAOS CACHE Persistent Volume Claim: ${NODE_NAME}-aaos-cache" | tee -a build_cache_volume.txt
+                        /usr/bin/kubectl get pod ${NODE_NAME} -n jenkins -o=jsonpath='{.spec.nodeName}' | xargs -I {} gcloud compute instances describe {} --zone=${CLOUD_ZONE} | grep 'deviceName: pvc' | awk '{print "AAOS CACHE Persistent Volume: " $2}' | tee -a build_cache_volume.txt || true
+                    fi
+                  '''
+                  sh '''
                     git config --global credential.helper store
                     git config --global url."https://${GERRIT_USERNAME}@${HORIZON_DOMAIN}/gerrit".insteadOf "https://${HORIZON_DOMAIN}/gerrit"
                     echo https://"${GERRIT_USERNAME}":"${GERRIT_PASSWORD}"@"${HORIZON_DOMAIN}/gerrit" > ~/.git-credentials
-                  '''
-                  sh '''
+
                     AAOS_REVISION="${AAOS_REVISION}" \
                     AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
+                    ABFS_BUILDER="true" \
                     ABFS_VERSION="${ABFS_VERSION}" \
                     ABFS_CASFS_VERSION="${ABFS_CASFS_VERSION}" \
                     ABFS_REPOSITORY="${ABFS_REPOSITORY}" \
-                    ABFS_BUILDER="true" \
+                    ABFS_CACHED_BUILD="${ABFS_CACHED_BUILD}" \
+                    ABFS_CLEAN_CACHE="${ABFS_CLEAN_CACHE}" \
                     AAOS_GERRIT_MANIFEST_URL="${AAOS_GERRIT_MANIFEST_URL}" \
+                    UPLOADER_MANIFEST_SERVER="${UPLOADER_MANIFEST_SERVER}" \
                     GERRIT_SERVER_URL="${GERRIT_API_URL}" \
                     GERRIT_PROJECT="${GERRIT_PROJECT}" \
                     GERRIT_CHANGE_NUMBER="${GERRIT_CHANGE_NUMBER}" \
@@ -103,6 +179,7 @@ pipeline {
                 }
               }
               archiveArtifacts artifacts: '*abfs*', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+              archiveArtifacts artifacts: 'build_cache*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
             }
           }
         }
@@ -173,6 +250,7 @@ pipeline {
                 sh '''
                   echo "Waiting on cacheman to sync ..."
                   abfs cacheman wait -t ${ABFS_CACHEMAN_TIMEOUT} || true
+                  sync
                   echo "Sync complete"
                 '''
               }

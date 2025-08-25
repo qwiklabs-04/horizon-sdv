@@ -113,13 +113,17 @@ function cuttlefish_start() {
     # num_instances: number of guest instances to launch.
     # cpus: virtual CPU count.
     # memory_mb: total memory available to guest.
-    # shellcheck disable=SC2024
-    sudo HOME="${PWD}" /usr/bin/cvd create --noresume -config=auto \
-        -report_anonymous_usage_stats=no \
-        --num_instances="${NUM_INSTANCES}" --cpus="${VM_CPUS}" \
-        --memory_mb="${VM_MEMORY_MB}" \
-        -console=true  >> "${logfile}" 2>&1 &
-    echo "cvd running in background"
+    # console: enable serial console
+    CVD_CMD="sudo HOME=\"${PWD}\" /usr/bin/cvd create --noresume -config=auto \
+        -report_anonymous_usage_stats=no --num_instances=\"${NUM_INSTANCES}\" \
+        --cpus=\"${VM_CPUS}\" --memory_mb=\"${VM_MEMORY_MB}\" --console=true \
+        ${CVD_ADDITIONAL_FLAGS} >> \"${logfile}\" 2>&1 &"
+    echo "Running ${CVD_CMD} in background."
+    if ! eval "${CVD_CMD}"
+    then
+        echo "ERROR: command ${CVD_CMD} failed, exit!"
+        exit 1
+    fi
 }
 
 # Install WiFi
@@ -187,7 +191,7 @@ function cuttlefish_wait_for_device_booted() {
 function cuttlefish_cleanup() {
     echo "cuttlefish_cleanup"
     cd "${HOME}" || exit
-    rm -rf "${HOME}"/cf > /dev/null 2>&1
+    sudo rm -rf cf > /dev/null 2>&1
 }
 
 function cuttlefish_nuclear() {

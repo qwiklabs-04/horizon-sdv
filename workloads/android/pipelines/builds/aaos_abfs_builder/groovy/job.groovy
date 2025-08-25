@@ -21,6 +21,7 @@ pipelineJob('Android/Builds/AAOS Builder ABFS') {
       <li><a href="https://source.android.com/docs/devices/cuttlefish" target="_blank">Cuttlefish Virtual Devices</a> for use with <a href="https://source.android.com/docs/compatibility/cts" target="_blank">CTS</a></li>
       <li>Reference hardware platforms such as <a href="https://source.android.com/docs/automotive/start/pixelxl" target="_blank">Pixel Tablets</a></li>
     </ul>
+    <p>Users have the ability to retain the ABFS cache and ABFS source mount point in persistent storage, this may improve build times. Simply enable <code>ABFS_CACHED_BUILD</code> and a persistent volume will be created to store the cache and source mount path.</p>
     <h4 style="margin-bottom: 10px;">Build Outputs</h4>
     <p>Build outputs are stored in a Google Cloud Storage bucket (refer to build artifact for location).</p>
     <h4 style="margin-bottom: 10px;">Viewing Artifacts on Google Cloud</h4>
@@ -55,6 +56,26 @@ crucial for correlating <code>ABFS_VERSION</code> and <code>ABFS_CASFS_VERSION</
       name('ANDROID_VERSION')
       description('''<p>Version of Android required for SDK generation of addons and devices.</p>''')
       choices(['15', '14'])
+    }
+
+    booleanParam {
+      name('ABFS_CACHED_BUILD')
+      defaultValue(false)
+      description('''<p>The ABFS cache and source mount path will be stored in a persistent volume for other builds to use.<br>
+        Used in conjunction with <code>ABFS_CACHEMAN_TIMEOUT</code> and may improve future build times.</p>''')
+    }
+
+    stringParam {
+      name('ABFS_CACHEMAN_TIMEOUT')
+      defaultValue('180')
+      description('''<p>Cacheman timeout in seconds. Only applicable if <code>ABFS_CACHED_BUILD</code>.</p>''')
+      trim(true)
+    }
+
+    booleanParam {
+      name('ABFS_CLEAN_CACHE')
+      defaultValue(false)
+      description('''<p>Clean the ABFS cache directory</p>''')
     }
 
     stringParam {
@@ -124,7 +145,7 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/
     stringParam {
       name('ABFS_CASFS_VERSION')
       defaultValue("${ABFS_CASFS_VERSION}")
-      description('''<p>ABFS CASFS version, if differs from ABFS version, e.g. 0.0.33-8-gb8d2d6b</p>''')
+      description('''<p>ABFS CASFS version, if differs from ABFS version, e.g. 0.0.33-10-g654e659</p>''')
       trim(true)
     }
 
@@ -136,9 +157,9 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/
     }
 
     stringParam {
-      name('ABFS_CACHEMAN_TIMEOUT')
-      defaultValue('0')
-      description('''<p>Cacheman timeout in seconds. Set to 0 to disable cacheman.</p>''')
+      name('UPLOADER_MANIFEST_SERVER')
+      defaultValue("${UPLOADER_MANIFEST_SERVER}")
+      description('''<p>Gerrit manifest server.</p>''')
       trim(true)
     }
 

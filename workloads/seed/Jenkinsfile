@@ -71,7 +71,7 @@ pipeline {
            description: '''<p>The Jenkins GCE Clouds label for jobs dependent on the Cuttlefish instance template, e.g.<br/></p>
                         <ul>
                           <li>cuttlefish-vm-main</li>
-                          <li>cuttlefish-vm-v1140</li>
+                          <li>cuttlefish-vm-v1180</li>
                         </ul>''',
            trim: true)
 
@@ -88,13 +88,18 @@ pipeline {
            trim: true)
 
     string(name: 'ABFS_CASFS_VERSION',
-           defaultValue: "0.0.33-8-gb8d2d6b",
-           description: '''<p>ABFS CASFS version may differ from ABFS_VERSION, e.g. 0.0.33-8-gb8d2d6b</p>''',
+           defaultValue: "0.0.33-19-gd8f7000",
+           description: '''<p>ABFS CASFS version may differ from ABFS_VERSION, e.g. 0.0.33-10-g654e659</p>''',
            trim: true)
 
     string(name: 'ABFS_REPOSITORY',
            defaultValue: "abfs-apt-alpha-public",
            description: '''<p>ABFS aptitude repository, e.g. abfs-apt-alpha-public. </p>''',
+           trim: true)
+
+    string(name: 'UPLOADER_MANIFEST_SERVER',
+           defaultValue: "android.googlesource.com",
+           description: '''<p>Gerrit manifest server f.</p>''',
            trim: true)
 
     separator(
@@ -149,6 +154,7 @@ pipeline {
                   ['${ABFS_CASFS_VERSION}', "${ABFS_CASFS_VERSION}" ],
                   ['${ABFS_REPOSITORY}', "${ABFS_REPOSITORY}" ],
                   ['${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
+                  ['${UPLOADER_MANIFEST_SERVER}', "${UPLOADER_MANIFEST_SERVER}"],
                   ['${JENKINS_GCE_CLOUD_LABEL}', "${CUTTLEFISH_GCE_CLOUD_LABEL}" ],
                   ['${NODEJS_VERSION}', "${NODEJS_VERSION}"]
                  ]

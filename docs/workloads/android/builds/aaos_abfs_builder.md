@@ -61,6 +61,19 @@ Examples:
 
 Only applicable for sdk AVD targets, this is used to derive the Android API version for the SDK addons and device files.
 
+### `ABFS_CACHED_BUILD`
+
+The ABFS cache and ABFS source mount path will be stored in a persistent volume for other builds to share.
+Used in conjunction with `ABFS_CACHEMAN_TIMEOUT` and may improve future build times but at the cost of additional persistent volume storage.
+
+### `ABFS_CACHEMAN_TIMEOUT`
+
+Timeout in seconds for cacheman to wait on sync. Only effective when `ABFS_CACHED_BUILD` is enabled, so the cache can sync to persistent storage.
+
+### `ABFS_CLEAN_CACHE`
+
+Delete the ABFS cache directory prior to build.
+
 ### `POST_REPO_COMMAND`
 
 Optional parameter that allows the user to include additional commands to run after the repo has been synced, or cloned.
@@ -114,9 +127,9 @@ Note: this can change, so the `Seed Workloads` job supports this parameter to al
 
 The ABFS aptitude repository to fetch the ABFS client artifacts, e.g. abfs-apt-alpha-public.
 
-### `ABFS_CACHEMAN_TIMEOUT`
+### `UPLOADER_MANIFEST_SERVER`
 
-Timeout in seconds for cacheman to wait on sync. If zero, don't use cacheman.
+ABFS manifest source URL. Used for seeding ABFS builds, blobs/objects.
 
 ### `AAOS_ARTIFACT_STORAGE_SOLUTION`
 

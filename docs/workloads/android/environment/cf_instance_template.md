@@ -39,6 +39,7 @@ One-time setup requirements.
 
 - Before running this pipeline job, ensure that the following template has been created by running the corresponding job:
   - Docker image template: ``Android Workflows/Environment/Docker Image Template`
+- The Google Compute Engine is configured with `noDelayProvisioning: false` in `gitops/env/stage2/templates/jenkins.yaml` to help reduce costs. With this setting, multiple VM instances are not started immediately, which lowers expenses for each run. However, disabling immediate provisioning may slightly increase VM startup times. This trade-off allows users to choose between faster VM availability and lower operational costs.
 
 ## Environment Variables/Parameters <a name="environment-variables"></a>
 

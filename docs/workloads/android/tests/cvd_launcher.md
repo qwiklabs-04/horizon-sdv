@@ -37,7 +37,7 @@ One-time setup requirements.
 This is the label that identifies the GCE Cloud label which will be used to identify the Cuttlefish VM instance, e.g.
 
 - `cuttlefish-vm-main`
-- `cuttlefish-vm-v1140`
+- `cuttlefish-vm-v1180`
 
 Note: The value provided must correspond to a cloud instance or the job will hang.
 
@@ -84,6 +84,10 @@ This applies to CVD `cpus` parameter.
 Defines total memory available to guest.
 
 This applies to CVD `memory_mb` parameter.
+
+### `CVD_ADDITIONAL_FLAGS`
+
+Append additional flags to `cvd` command, e.g. --display0=width=1920,height=1080,dpi=160
 
 ## Example Usage <a name="examples"></a>
 

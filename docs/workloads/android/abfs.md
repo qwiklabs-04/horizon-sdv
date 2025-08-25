@@ -49,10 +49,7 @@ To create the `abfs-server` service account, do the following:
 
 ### ABFS License<a name="license"></a>
 
-Reach out to your Google representative for access to ABFS, and then fill in the appropriate forms.
-
-1. <a href=https://docs.google.com/forms/d/e/1FAIpQLSe-nqkIEADve-JqOlJEZf4E1hOyx6FXUXeH6Y64vrW3qj45Ng/viewform>Android Build File System - EAP</a>: Google may request you complete this form.
-2. <a href=https://docs.google.com/forms/d/e/1FAIpQLScYhuzf6nXuBku8HGcd442sX7Eeb17CQuZWjyvk7-jt5flZFQ/viewform>ABFS License Request Form</a>: You must submit all fields, including the `abfs-server` service account details from previous step.
+Android Build File System - EAP</a>: Android Build File System is currently available to selected partners in an early access program. If you are interested in ABFS, please <a href=https://docs.google.com/forms/d/e/1FAIpQLSe-nqkIEADve-JqOlJEZf4E1hOyx6FXUXeH6Y64vrW3qj45Ng/viewform>submit this form</a>.
 
 ### Horizon-SDV Setup<a name="horizonsetup"></a>
 
@@ -95,8 +92,10 @@ Once Google provide you the ABFS license in JSON form, you will be required to c
    - **Note**:
       - There are additional parameters, currently set to defaults, e.g. `UPLOADER_GIT_BRANCH` is set to seed `android-15.0.0_r36`
       - Refer to specific README files and parameter descriptions for additional details.
+      - This task can take ~24 hours per branch/tag and the only way of knowing it is complete is to monitor the docker
+        logs on the uploader instances to ensure all repositories have been seeded fully. Discuss with Google for details.
 
-Users can now build from the ABFS seeded source/cache, see `Android Workflows → Builds → AAOS Builder ABFS`.
+Users can now build from the ABFS seeded source/cache, see `Android Workflows → Builds → AAOS Builder ABFS`. Enable `ABFS_CACHED_BUILD` if wishing to store the cacheman cache and ABFS source mount path in persistent storage in order to improve build times.
 
 ## Known issues<a name="knownissues"></a>
 

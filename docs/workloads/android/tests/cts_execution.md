@@ -43,7 +43,7 @@ One-time setup requirements.
 This is the label that identifies the GCE Cloud label which will be used to identify the Cuttlefish VM instance, e.g.
 
 - `cuttlefish-vm-main`
-- `cuttlefish-vm-v1140`
+- `cuttlefish-vm-v1180`
 
 Note: The value provided must correspond to a cloud instance or the job will hang.
 
@@ -134,6 +134,10 @@ If wishing to debug HOST using MTK Connect, Cuttlefish VM instance must be allow
 minutes, gives the tester time to keep the instance alive so they may work with the host via MTK Connect.
 
 It is only applicable when `MTK_CONNECT_ENABLE` is enabled.
+
+### `CVD_ADDITIONAL_FLAGS`
+
+Append additional flags to `cvd` command, e.g. --display0=width=1920,height=1080,dpi=160
 
 ## Example Usage <a name="examples"></a>
 

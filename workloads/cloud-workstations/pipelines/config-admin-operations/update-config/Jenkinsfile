@@ -31,7 +31,7 @@ def buildTfvarsMap(params, env) {
       "${params.CLOUD_WS_CONFIG_NAME}": [
         ws_idle_timeout: params.WS_IDLE_TIMEOUT?.trim() ? params.WS_IDLE_TIMEOUT.trim().toInteger() : null,
         ws_running_timeout: params.WS_RUNNING_TIMEOUT?.trim() ? params.WS_RUNNING_TIMEOUT.trim().toInteger() : null,
-        ws_replica_zones: params.WS_REPLICA_ZONES?.trim() ? params.WS_REPLICA_ZONES.trim().split(',') as List : null,
+        ws_replica_zones: params.WS_REPLICA_ZONES?.trim() ? params.WS_REPLICA_ZONES.trim().split(',').collect { it.trim() }.findAll {it} as List : null,
 
         host_machine_type: params.HOST_MACHINE_TYPE?.trim() ? params.HOST_MACHINE_TYPE.trim() : null,
         host_quickstart_pool_size: params.HOST_QUICK_START_POOL_SIZE?.trim() ? params.HOST_QUICK_START_POOL_SIZE.trim().toInteger() : null,
@@ -50,20 +50,21 @@ def buildTfvarsMap(params, env) {
 
         ed_required: params.ED_REQUIRED?.toBoolean() ?: null,
         ed_mount_path: params.ED_MOUNT_PATH?.trim() ? params.ED_MOUNT_PATH.trim() : null,
+        ed_disk_type: params.ED_DISK_TYPE.trim() ? params.ED_DISK_TYPE.trim() : null,
         ed_source_snapshot: params.ED_SOURCE_SNAPSHOT?.trim() ? params.ED_SOURCE_SNAPSHOT.trim() : null,
         ed_source_image: params.ED_SOURCE_IMAGE?.trim() ? params.ED_SOURCE_IMAGE.trim() : null,
         ed_read_only: params.ED_READ_ONLY?.toBoolean() ?: null,
 
         container_image: params.CONTAINER_IMAGE?.trim() ? params.CONTAINER_IMAGE.trim() : null,
-        container_entrypoint_commands: params.CONTAINER_ENTRYPOINT_COMMANDS?.trim() ? params.CONTAINER_ENTRYPOINT_COMMANDS.split(',') as List : [],
-        container_entrypoint_args: params.CONTAINER_ENTRYPOINT_ARGS?.trim() ? params.CONTAINER_ENTRYPOINT_ARGS.split(',') as List : [],
+        container_entrypoint_commands: params.CONTAINER_ENTRYPOINT_COMMANDS?.trim() ? params.CONTAINER_ENTRYPOINT_COMMANDS.split(',').collect { it.trim() }.findAll {it} as List : [],
+        container_entrypoint_args: params.CONTAINER_ENTRYPOINT_ARGS?.trim() ? params.CONTAINER_ENTRYPOINT_ARGS.split(',').collect { it.trim() }.findAll {it} as List : [],
         container_working_dir: params.CONTAINER_WORKING_DIR?.trim() ? params.CONTAINER_WORKING_DIR.trim() : null,
         container_env_vars: params.CONTAINER_ENV_VARS?.trim() ? new groovy.json.JsonSlurper().parseText(params.CONTAINER_ENV_VARS) : null,
         container_user: params.CONTAINER_USER?.trim() ? params.CONTAINER_USER.trim() : null,
 
         ws_allowed_ports: params.WS_ALLOWED_PORTS?.trim() ? new groovy.json.JsonSlurper().parseText(params.WS_ALLOWED_PORTS) : null,
 
-        ws_admin_iam_members: params.WS_ADMIN_IAM_MEMBERS?.trim() ? params.WS_ADMIN_IAM_MEMBERS.split(',') : []
+        ws_admin_iam_members: params.WS_ADMIN_IAM_MEMBERS?.trim() ? params.WS_ADMIN_IAM_MEMBERS.split(',').collect { it.trim() }.findAll {it} : []
       ]
     ]
   ]

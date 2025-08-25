@@ -105,6 +105,40 @@ get_json_value_by_key_at_path() {
   echo "$value"
 }
 
+# Function to update a value of a specified key at a given object path from input json file
+# Returns nothing, just modifies input json_file
+update_json_value_by_key_at_path() {
+  local json_file="$1"
+  local json_object_path="$2"
+  local key_to_update="$3"
+  local new_value="$4"
+
+  # Validate all args
+  [[ -z "$json_file" ]] && log_error "Input JSON file not provided as argument."
+  [[ ! -f "$json_file" ]] && log_error "File ${json_file} does not exist."
+  [[ -z "$json_object_path" ]] && log_error "JSON object path of key not provided as argument."
+  [[ -z "$key_to_update" ]] && log_error "Key who's value need to be updated in JSON was not provided as argument."
+  [[ -z ${new_value+x} ]] && log_error "New value to be updated not provided as argument."
+
+  log_info "Updating value for key: '${key_to_update}' at path '${json_object_path}' in JSON file '${json_file}'..."
+  
+  jq_path_array=$(convert_json_object_path_to_jq_path_array "$json_object_path")
+
+  jq --argjson path_array "$jq_path_array" --arg key "$key_to_update" --argjson val "$new_value" '
+    (. as $root
+    | getpath($path_array) as $parent
+    | $root
+    | setpath($path_array; $parent | .[$key] = $val)
+    )
+  ' "$json_file" > "${json_file}.tmp"
+
+  if [[ $? -ne 0 ]]; then
+    log_error "Failed to update ${json_file} while updating value for key: ${key_to_update}"
+  fi
+  
+  mv "${json_file}.tmp" "$json_file" || log_error "Failed moving ${json_file}.tmp file contents into original ${json_file} post 'update value by key in json at path' operation."
+}
+
 # Function to remove a key at a given object path from input json file
 # Returns nothing, just modifies input json_file
 remove_key_from_json_at_path() {

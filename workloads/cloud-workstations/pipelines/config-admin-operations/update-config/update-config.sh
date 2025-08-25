@@ -10,8 +10,36 @@ source "$(dirname "$0")/../../utils/terraform-utils.sh"
 
 # Temporary file used to store tfstate JSON of WS Configs
 WS_CONFIGS_TFSTATE_JSON_FILE="ws_configs_tfstate.json"
-# Temporary file used to store extracted workstation configs and their IAM bindings JSON
+# Temporary file used to store extracted workstation configs and their corresponding IAM bindings (user emails) JSON
 EXISTING_WS_CONFIGS_WITH_WS_ADMINS_JSON_FILE="existing_ws_configs_with_ws_admins.json"
+
+
+# ------Functions------
+
+# Function to update param value of WS_REPLICA_ZONES in the input tfvars json file, with value from existing config data in order to retain its original value on update operation. (This is done as WS_REPLICA_ZONES cannot be updated)
+retain_existing_ws_config_replica_zones() {
+  local ws_configs_tfvars_json_file="$1"
+  local input_ws_config_name="$2"
+  local existing_ws_configs_with_ws_admins="$3"
+
+  log_info "Updating file '${ws_configs_tfvars_json_file}' to retain existing WS Replica Zones..."
+
+  # Get existing WS_REPLICA_ZONES JSON string
+  local existing_ws_replica_zones_json
+  existing_ws_replica_zones_json=$(get_json_value_by_key_at_path "$existing_ws_configs_with_ws_admins" ".${input_ws_config_name}" "ws_replica_zones")
+
+  # Initialize bash array
+  local existing_ws_replica_zones=()
+  # Convert JSON array string into bash array
+  readarray -t existing_ws_replica_zones < <(jq -r '.[]' <<< "$existing_ws_replica_zones_json")
+
+  # Convert bash array back to JSON string before passing
+  local replica_zones_json
+  replica_zones_json=$(printf '%s\n' "${existing_ws_replica_zones[@]}" | jq -R . | jq -s .)
+
+  # Update zones in input tfvars json file (retain original value)
+  update_json_value_by_key_at_path "$ws_configs_tfvars_json_file" ".sdv_cloud_ws_configs.${input_ws_config_name}" "ws_replica_zones" "$replica_zones_json"
+}
 
 
 # ------Initial Checks and Setup------
@@ -20,7 +48,7 @@ validate_bucket_and_tfvars_args "$TF_BACKEND_BUCKET" "$WS_CONFIGS_TFVARS_JSON_FI
 
 # Extract terraform directory path
 TF_DIR=$(dirname "${WS_CONFIGS_TFVARS_JSON_FILE_PATH}")
-# Extract tfvars file name
+# Extract Config tfvars file name
 WS_CONFIGS_TFVARS_JSON_FILE=$(basename "$WS_CONFIGS_TFVARS_JSON_FILE_PATH")
 
 # ---Check WS Cluster exists before proceeding---
@@ -30,7 +58,7 @@ if ! check_ws_cluster_exists "$WS_CLUSTER_TF_DIR" "$TF_BACKEND_BUCKET"; then
   log_error "Workstation Cluster must exist before any operation of Workstation Config. Please run 'Create Cluster' job first."
 fi
 
-# Change directory temporarily (for terraform)
+# Change directory temporarily to WS Config terraform
 pushd "$TF_DIR" > /dev/null || log_error "Cannot cd to ${TF_DIR}"
 
 print_header "CLOUD WORKSTATION: UPDATE CONFIGURATION"
@@ -57,11 +85,14 @@ if ! check_key_exists_in_json_at_path "$EXISTING_WS_CONFIGS_WITH_WS_ADMINS_JSON_
 fi
 log_info "Input WS Config: '${input_ws_config_name}' found in existing WS Configs."
 
-# Remove input WS Config key inside its object path from existing configs file
+# Retain existing list of WS_REPLICA_ZONES
+retain_existing_ws_config_replica_zones "$WS_CONFIGS_TFVARS_JSON_FILE" "$input_ws_config_name" "$EXISTING_WS_CONFIGS_WITH_WS_ADMINS_JSON_FILE"
+
+# Remove existing (older) WS Config object from existing WS Configs file
 remove_key_from_json_at_path "$EXISTING_WS_CONFIGS_WITH_WS_ADMINS_JSON_FILE" "." "$input_ws_config_name"
 log_info "Removed original WS Config key '${input_ws_config_name}' from existing WS Configs - to be replaced by new input WS Config key and data."
 
-# Merge existing configs into input tfvars json
+# Create a combined tfvars.json file with new input and existing configs data
 merge_json_into_path "$WS_CONFIGS_TFVARS_JSON_FILE" ".sdv_cloud_ws_configs" "$EXISTING_WS_CONFIGS_WITH_WS_ADMINS_JSON_FILE"
 log_info "Final '${WS_CONFIGS_TFVARS_JSON_FILE}' file containing updated WS config + existing WS Configs along with their corresponding WS Admins is READY!"
 

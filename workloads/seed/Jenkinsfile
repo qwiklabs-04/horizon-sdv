@@ -86,7 +86,7 @@ pipeline {
            trim: true)
 
     string(name: 'ABFS_CASFS_VERSION',
-           defaultValue: "0.0.33-10-g654e659",
+           defaultValue: "0.0.33-19-gd8f7000",
            description: '''<p>ABFS CASFS version may differ from ABFS_VERSION, e.g. 0.0.33-10-g654e659</p>''',
            trim: true)
 

@@ -378,6 +378,24 @@ spec:
                           value: "horizon-sdv/abfs-infra"
                         - key: "ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME"
                           value: "horizon-sdv/aaos-abfs-builder"
+
+                        - key: "CLOUD_WS_WORKLOADS_ENV_IMAGE_NAME"
+                          value: {{ .Values.config.workloads.cloudWorkstations.workloadEnv.image }}
+                        - key: "CLOUD_WS_CLUSTER_PRESET_NAME"
+                          value: {{ .Values.config.workloads.cloudWorkstations.clusterPresets.name }}
+                        - key: "CLOUD_WS_CLUSTER_PRESET_NETWORK_NAME"
+                          value: {{ .Values.config.workloads.cloudWorkstations.clusterPresets.network }}
+                        - key: "CLOUD_WS_CLUSTER_PRESET_SUBNETWORK_NAME"
+                          value: {{ .Values.config.workloads.cloudWorkstations.clusterPresets.subnetwork }}
+                        - key: "CLOUD_WS_CLUSTER_PRESET_PRIVATE_CLUSTER"
+                          value: {{ .Values.config.workloads.cloudWorkstations.clusterPresets.privateCluster }}
+                        - key: "CLOUD_WS_HORIZON_CODE_OSS_IMAGE_NAME"
+                          value: {{ .Values.config.workloads.cloudWorkstations.workstationPresets.wsImages.horizonCodeOSS.image }}
+                        - key: "CLOUD_WS_HORIZON_ASFP_IMAGE_NAME"
+                          value: {{ .Values.config.workloads.cloudWorkstations.workstationPresets.wsImages.horizonASFP.image }}
+                        - key: "CLOUD_WS_HORIZON_ANDROID_STUDIO_IMAGE_NAME"
+                          value: {{ .Values.config.workloads.cloudWorkstations.workstationPresets.wsImages.horizonAndroidStudio.image }}
+
                 groovy:
                   - script: >
                       println("This is groovy !");

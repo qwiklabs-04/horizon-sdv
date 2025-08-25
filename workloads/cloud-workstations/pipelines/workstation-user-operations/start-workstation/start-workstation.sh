@@ -1,0 +1,108 @@
+#!/bin/bash
+set -eo pipefail
+
+# Capture the arguments passed to the script
+TF_BACKEND_BUCKET="$1"
+TFVARS_JSON_FILE_PATH="$2"
+
+# Import shared utils
+source "$(dirname "$0")/../../utils/terraform-utils.sh"
+
+# Temporary file used to store tfstate JSON of Workstations
+WORKSTATIONS_TFSTATE_JSON_FILE="workstations_tfstate.json"
+# Temporary file used to store extracted workstations and their IAM bindings JSON
+EXISTING_WORKSTATIONS_WITH_WS_USERS_JSON_FILE="existing_workstations_with_ws_users.json"
+
+
+# ------Functions------
+
+# Function to get start the Workstation via gcloud
+start_workstation() {
+  local workstation="$1"
+  local workstation_config="$2"
+  local workstation_cluster="$3"
+  local workstation_region="$4"
+
+  log_info "Starting Workstation '${workstation}' on GCP using gcloud..."
+
+  gcloud workstations start "${workstation}"\
+    --config="${workstation_config}"\
+    --cluster="${workstation_cluster}"\
+    --region="${workstation_region}"\
+  || log_error "Failed starting Workstation '${workstation}' on GCP using gcloud..."
+}
+
+
+# ------Initial Checks and Setup------
+
+validate_bucket_and_tfvars_args "$TF_BACKEND_BUCKET" "$TFVARS_JSON_FILE_PATH"
+
+# Extract terraform directory path
+WORKSTATION_TF_DIR=$(dirname "${TFVARS_JSON_FILE_PATH}")
+# Extract tfvars file name
+TFVARS_JSON_FILE=$(basename "$TFVARS_JSON_FILE_PATH")
+
+# ---Check WS Cluster exists before proceeding---
+# Extract Workstation Cluster terraform directory path
+WS_CLUSTER_TF_DIR="${WORKSTATION_TF_DIR}/../cluster"
+if ! check_ws_cluster_exists "$WS_CLUSTER_TF_DIR" "$TF_BACKEND_BUCKET"; then
+  log_error "Workstation Cluster must exist before any operation of Workstations. Please run 'Create Cluster' job first."
+fi
+
+# Change to workstation terraform directory temporarily
+pushd "$WORKSTATION_TF_DIR" > /dev/null || log_error "Cannot cd to ${WORKSTATION_TF_DIR}"
+
+print_header "CLOUD WORKSTATION: START WORKSTATION"
+
+run_terraform_init "$TF_BACKEND_BUCKET"
+
+
+# ------Extract Workstation------
+
+# Store WS tfstate in a file
+export_tfstate_to_file "$WORKSTATIONS_TFSTATE_JSON_FILE"
+log_info "Exported WS Workstations tfstate JSON to file: '${WORKSTATIONS_TFSTATE_JSON_FILE}'."
+
+# Extract existing Workstations
+get_existing_workstations_with_ws_users "$WORKSTATIONS_TFSTATE_JSON_FILE" > "$EXISTING_WORKSTATIONS_WITH_WS_USERS_JSON_FILE" || log_error "Failed exporting existing Workstations and WS Users as JSON to file $EXISTING_WORKSTATIONS_WITH_WS_USERS_JSON_FILE"
+log_info "Exported existing Workstations and WS Users data to file: '${EXISTING_WORKSTATIONS_WITH_WS_USERS_JSON_FILE}' - will now be used for further operations."
+
+# Extract input Workstation name from tfvars file
+input_workstation_name=$(get_json_value_by_key_at_path "$TFVARS_JSON_FILE" "." "sdv_cloud_ws_input_workstation_name")
+
+# Prevent starting a non-existent input Workstation by checking it among existing workstations
+if ! check_key_exists_in_json_at_path "$EXISTING_WORKSTATIONS_WITH_WS_USERS_JSON_FILE" "." "${input_workstation_name}"; then
+  log_error "Please enter a workstation name that exists. Aborting..."
+fi
+log_info "Input Workstation: '${input_workstation_name}' found in existing Workstations."
+
+# ------Start workstation------
+
+# Extract WS Config name for input workstation name from existing WS Workstations file
+ws_config_name=$(get_json_value_by_key_at_path "$EXISTING_WORKSTATIONS_WITH_WS_USERS_JSON_FILE" ".${input_workstation_name}" "ws_config_name")
+
+# Extract input cluster name from tfvars file
+ws_cluster_name=$(get_json_value_by_key_at_path "$TFVARS_JSON_FILE" "." "sdv_cloud_ws_cluster_name")
+
+# Extract input region name from tfvars file
+ws_region=$(get_json_value_by_key_at_path "$TFVARS_JSON_FILE" "." "sdv_cloud_ws_region")
+
+# Extract URL of WS
+workstation_url=$(get_workstation_url "$input_workstation_name" "$ws_config_name" "$ws_cluster_name" "$ws_region")
+
+# Get current state of workstation
+current_workstation_state=$(get_current_workstation_state "$input_workstation_name" "$ws_config_name" "$ws_cluster_name" "$ws_region")
+
+if [[ "${current_workstation_state}" == "STATE_RUNNING" ]]; then
+  log_warning "The workstation '${input_workstation_name}' is already in RUNNING state."
+else
+  # Start workstation
+  start_workstation "$input_workstation_name" "$ws_config_name" "$ws_cluster_name" "$ws_region"
+  log_success "Workstation '${input_workstation_name}' is now RUNNING!"
+fi
+
+log_success "URL to access Workstation: https://80-${workstation_url}"
+
+# Exit workstation terraform directory
+popd > /dev/null || log_error "Failed to return to the original working directory."
+exit 0

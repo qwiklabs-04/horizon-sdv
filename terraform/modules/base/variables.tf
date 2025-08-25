@@ -63,7 +63,7 @@ variable "sdv_cluster_node_pool_name" {
 variable "sdv_cluster_node_pool_machine_type" {
   description = "Define the machine type of the node pool"
   type        = string
-  default     = "n1-standard-4"
+  default     = "n1-standard-16"
 }
 
 variable "sdv_cluster_node_pool_count" {
@@ -210,7 +210,7 @@ variable "sdv_openbsw_build_node_pool_node_count" {
 variable "sdv_openbsw_build_node_pool_machine_type" {
   description = "Type of the machine for the OpenBSW build node pool"
   type        = string
-  default     = "n1-standard-8"
+  default     = "n1-standard-16"
 }
 
 variable "sdv_openbsw_build_node_pool_min_node_count" {

@@ -39,10 +39,8 @@ pipeline {
             tty: true
             resources:
               limits:
-                cpu: 800m
                 memory: 8Gi
               requests:
-                cpu: 800m
                 memory: 8Gi
       """.stripIndent()
     }

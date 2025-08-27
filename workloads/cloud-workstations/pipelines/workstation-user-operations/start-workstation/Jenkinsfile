@@ -58,6 +58,9 @@ pipeline {
     // Define the .tfvars.json file name where cloud-workstation tf directory is located
     // this file is populated in pipeline stage below
     def tfvarsJsonFilePath = "./workloads/cloud-workstations/terraform/workstation/workstation.tfvars.json"
+
+    // Define user who triggered current build
+    def currentBuildUser = "$BUILD_USER"
   }
 
   options {
@@ -88,7 +91,7 @@ pipeline {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
               sh """
                 chmod +x "${scriptPath}"
-                ${scriptPath} ${tfBackendBucket} ${tfvarsJsonFilePath}
+                ${scriptPath} ${tfBackendBucket} ${tfvarsJsonFilePath} ${currentBuildUser}
               """
             }
           }

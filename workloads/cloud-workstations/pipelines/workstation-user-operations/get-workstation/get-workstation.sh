@@ -3,35 +3,36 @@ set -eo pipefail
 
 # Capture the arguments passed to the script
 TF_BACKEND_BUCKET="$1"
-TFVARS_JSON_FILE_PATH="$2"
+WORKSTATIONS_TFVARS_JSON_FILE_PATH="$2"
+CURRENT_USER="$3"
 
 # Import shared utils
 source "$(dirname "$0")/../../utils/terraform-utils.sh"
 
 # Temporary file used to store tfstate JSON of Workstations
 WORKSTATIONS_TFSTATE_JSON_FILE="workstations_tfstate.json"
-# Temporary file used to store extracted workstations and their IAM bindings JSON
-EXISTING_WORKSTATIONS_WITH_WS_USERS_JSON_FILE="existing_workstations_with_ws_users.json"
+# Temporary file used to store extracted workstations for specified user as JSON
+EXISTING_WORKSTATIONS_FOR_USER_JSON_FILE="existing_workstations_for_user.json"
 
 
 # ------Initial Checks and Setup------
 
-validate_bucket_and_tfvars_args "$TF_BACKEND_BUCKET" "$TFVARS_JSON_FILE_PATH"
+validate_bucket_and_tfvars_args "$TF_BACKEND_BUCKET" "$WORKSTATIONS_TFVARS_JSON_FILE_PATH"
 
-# Extract terraform directory path
-WORKSTATION_TF_DIR=$(dirname "${TFVARS_JSON_FILE_PATH}")
-# Extract tfvars file name
-TFVARS_JSON_FILE=$(basename "$TFVARS_JSON_FILE_PATH")
+# Extract workstations terraform directory path
+WORKSTATIONS_TF_DIR=$(dirname "${WORKSTATIONS_TFVARS_JSON_FILE_PATH}")
+# Extract workstations tfvars file name
+WORKSTATIONS_TFVARS_JSON_FILE=$(basename "$WORKSTATIONS_TFVARS_JSON_FILE_PATH")
 
 # ---Check WS Cluster exists before proceeding---
 # Extract Workstation Cluster terraform directory path
-WS_CLUSTER_TF_DIR="${WORKSTATION_TF_DIR}/../cluster"
+WS_CLUSTER_TF_DIR="${WORKSTATIONS_TF_DIR}/../cluster"
 if ! check_ws_cluster_exists "$WS_CLUSTER_TF_DIR" "$TF_BACKEND_BUCKET"; then
-  log_error "Workstation Cluster must exist before any operation of Workstations. Please run 'Create Cluster' job first."
+  log_error "Workstation Cluster must exist before any operation of Workstations. Please ask your admin to run 'Create Cluster' job and then 'Create Configuration' job."
 fi
 
-# Change to workstation terraform directory temporarily
-pushd "$WORKSTATION_TF_DIR" > /dev/null || log_error "Cannot cd to ${WORKSTATION_TF_DIR}"
+# Change to workstations terraform directory temporarily
+pushd "$WORKSTATIONS_TF_DIR" > /dev/null || log_error "Cannot cd to ${WORKSTATIONS_TF_DIR}"
 
 print_header "CLOUD WORKSTATION: GET WORKSTATION DETAILS"
 
@@ -44,24 +45,21 @@ run_terraform_init "$TF_BACKEND_BUCKET"
 export_tfstate_to_file "$WORKSTATIONS_TFSTATE_JSON_FILE"
 log_info "Exported WS Workstations tfstate JSON to file: '${WORKSTATIONS_TFSTATE_JSON_FILE}'."
 
-# Extract existing Workstations
-get_existing_workstations_with_ws_users "$WORKSTATIONS_TFSTATE_JSON_FILE" > "$EXISTING_WORKSTATIONS_WITH_WS_USERS_JSON_FILE" || log_error "Failed exporting existing Workstations and WS Users as JSON to file $EXISTING_WORKSTATIONS_WITH_WS_USERS_JSON_FILE"
-log_info "Exported existing Workstations and WS Users data to file: '${EXISTING_WORKSTATIONS_WITH_WS_USERS_JSON_FILE}' - will now be used for further operations."
+# Extract existing Workstations for the current user
+get_existing_workstations_for_user "$WORKSTATIONS_TFSTATE_JSON_FILE" "$CURRENT_USER" > "$EXISTING_WORKSTATIONS_FOR_USER_JSON_FILE" || log_error "Failed exporting existing Workstations for current user '${CURRENT_USER}' as JSON to file $EXISTING_WORKSTATIONS_FOR_USER_JSON_FILE"
+log_info "Exported existing Workstations data for current user '${CURRENT_USER}' to file: '${EXISTING_WORKSTATIONS_FOR_USER_JSON_FILE}' - will now be used for further operations."
 
 # Extract input Workstation name from tfvars file
-input_workstation_name=$(get_json_value_by_key_at_path "$TFVARS_JSON_FILE" "." "sdv_cloud_ws_input_workstation_name")
+input_workstation_name=$(get_json_value_by_key_at_path "$WORKSTATIONS_TFVARS_JSON_FILE" "." "sdv_cloud_ws_input_workstation_name")
 
-# Prevent getting details of non-existent input Workstation among existing workstations
-if ! check_key_exists_in_json_at_path "$EXISTING_WORKSTATIONS_WITH_WS_USERS_JSON_FILE" "." "${input_workstation_name}"; then
-  log_error "Please enter a workstation name that exists. Aborting..."
+# Prevent getting details of non-existent input Workstation among existing workstations for the user
+if ! check_key_exists_in_json_at_path "$EXISTING_WORKSTATIONS_FOR_USER_JSON_FILE" "." "${input_workstation_name}"; then
+  log_error "Please enter a workstation name that exists and has access enabled for the current user '${CURRENT_USER}'. Aborting..."
 fi
 log_info "Input Workstation: '${input_workstation_name}' found in existing Workstations."
 
 # Extract Workstation object for input workstation name from existing Workstations file
-workstation_details_json=$(get_json_value_by_key_at_path "$EXISTING_WORKSTATIONS_WITH_WS_USERS_JSON_FILE" "." "$input_workstation_name")
-
-# Exit workstation terraform directory
-popd > /dev/null || log_error "Failed to return to the original working directory."
+workstation_details_json=$(get_json_value_by_key_at_path "$EXISTING_WORKSTATIONS_FOR_USER_JSON_FILE" "." "$input_workstation_name")
 
 
 # ------Show Details of Workstation------
@@ -73,4 +71,6 @@ else
   echo "$workstation_details_json" | jq -C | print_result
 fi
 
+# Exit workstation terraform directory
+popd > /dev/null || log_error "Failed to return to the original working directory."
 exit 0

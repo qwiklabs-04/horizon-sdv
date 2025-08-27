@@ -116,6 +116,7 @@ module "base" {
         "roles/storage.bucketViewer",
         "roles/spanner.admin",
         "roles/logging.admin",
+        "roles/storage.admin",
       ])
     },
     sa2 = {

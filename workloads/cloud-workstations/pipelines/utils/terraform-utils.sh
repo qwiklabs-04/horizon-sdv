@@ -417,6 +417,7 @@ get_existing_workstations_with_ws_users() {
             ws_config_name: ($workstation.workstation_config_id // null),
             ws_name: ($workstation.workstation_id // null),
             ws_display_name: ($workstation.display_name // null),
+            ws_url: (if $workstation.host == null then null else "https://80-\($workstation.host)" end),
             ws_user_iam_members: (
               ($iam_map[.index] // [])
               | unique

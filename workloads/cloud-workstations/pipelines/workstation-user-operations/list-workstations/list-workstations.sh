@@ -17,16 +17,22 @@ EXISTING_WORKSTATIONS_FOR_USER_JSON_FILE="existing_workstations_for_user.json"
 
 # ------Functions------
 
-# Function to get list (names) of all Workstations from existing Workstations data for current user
-get_workstations_list() {
+# Function to get names and urls of all Workstations from existing Workstations data for current user
+get_workstation_names_and_urls() {
   local existing_workstations_for_user_json_file="$1"
 
   [[ -z "$existing_workstations_for_user_json_file" ]] && log_error "Existing workstations for current user JSON file NOT provided as argument."
   [[ ! -f "$existing_workstations_for_user_json_file" ]] && log_error "File ${existing_workstations_for_user_json_file} does not exist."
 
-  log_info "Filtering list of all Workstation names from existing Workstations data for current user '${CURRENT_USER}' from JSON file '${existing_workstations_for_user_json_file}'..."
+  log_info "Filtering Workstation names and their urls from existing Workstations data for current user '${CURRENT_USER}' from JSON file '${existing_workstations_for_user_json_file}'..."
 
-  jq -r 'keys[]' "$existing_workstations_for_user_json_file" || log_error "Failed to run jq: invalid JSON while filtering Workstation names."
+  jq '
+    to_entries
+    | map({
+        workstation_name: .value.ws_name,
+        workstation_url: .value.ws_url
+      })
+  ' "$existing_workstations_for_user_json_file" || log_error "Failed to run jq: invalid JSON while extracting workstation names and URLs."
 }
 
 
@@ -64,16 +70,16 @@ log_info "Exported WS Workstations tfstate JSON to file: '${WORKSTATIONS_TFSTATE
 get_existing_workstations_for_user "$WORKSTATIONS_TFSTATE_JSON_FILE" "$CURRENT_USER" > "$EXISTING_WORKSTATIONS_FOR_USER_JSON_FILE" || log_error "Failed exporting existing Workstations for current user '${CURRENT_USER}' as JSON to file $EXISTING_WORKSTATIONS_FOR_USER_JSON_FILE"
 log_info "Exported existing Workstations data for current user '${CURRENT_USER}' to file: '${EXISTING_WORKSTATIONS_FOR_USER_JSON_FILE}' - will now be used for further operations."
 
-# Extract just Workstation names as list from existing Workstations data for the current user
-workstations_list=$(get_workstations_list "$EXISTING_WORKSTATIONS_FOR_USER_JSON_FILE")
+# Extract Workstation names and their urls from existing Workstations data for the current user
+workstation_names_and_urls=$(get_workstation_names_and_urls "$EXISTING_WORKSTATIONS_FOR_USER_JSON_FILE")
 
 # ------Show Details of Workstation------
 
-if [[ -z "$workstations_list" || "$workstations_list" == "{}" || "$workstations_list" == "null" ]]; then
+if [[ -z "$workstation_names_and_urls" || "$workstation_names_and_urls" == "{}" || "$workstation_names_and_urls" == "null" ]]; then
   log_warning "NO Workstations found."
 else
   log_success "Workstations found. --- List of Workstations:"
-  echo "$workstations_list" | print_result
+  echo "$workstation_names_and_urls" | jq -C | print_result
 fi
 
 # Exit workstation terraform directory

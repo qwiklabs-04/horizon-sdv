@@ -33,9 +33,40 @@ pipelineJob('Cloud-Workstations/Cluster-Admin-Operations/Delete Existing Cluster
       <li>PRIVATE_CLUSTER: <code>${CLOUD_WS_CLUSTER_PRESET_PRIVATE_CLUSTER}</code></li>
     </ul>
 
-    <h4 style="margin-bottom: 10px;">Notes</h4>
-    <p>Ensure no active workstations or critical dependencies are relying on this cluster before proceeding.</p>
-
+    <h4 style="margin-bottom: 10px;">Steps to Delete Cluster</h4>
+    <p>Follow below steps in order to delete Cloud Workstation Cluster:</p>
+    <ol>
+      <li>
+        Delete All Workstations
+        <ol>
+          <li>
+            Run the job <strong><code>'Workstation Admin Operations > List Workstations'</code></strong>
+            to get the list of all existing workstations.
+          </li>
+          <li>
+            Run the job <strong><code>'Workstation Admin Operations > Delete Existing Workstation'</code></strong>
+            for every Cloud Workstation present in the list you got in the previous step.
+          </li>
+        </ol>
+      </li>
+      <li>
+        Delete All Configurations
+        <ol>
+          <li>
+            Run the job <strong><code>'Config Admin Operations > List Configurations'</code></strong>
+            to get the list of all existing configurations.
+          </li>
+          <li>
+            Run the job <strong><code>'Config Admin Operations > Delete Existing Configuration'</code></strong>
+            for every configuration present in the list you got in the previous step.
+          </li>
+        </ol>
+      </li>
+      <li>
+        Delete Cluster by running this pipeline, finally.
+      </li>
+    </ol>
+    
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>
   ''')
 

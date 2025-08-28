@@ -56,9 +56,6 @@ pipeline {
     // Define the .tfvars.json file name where cloud-ws config tf directory is located
     // this file is populated in pipeline stage below
     def tfvarsJsonFilePath = "./workloads/cloud-workstations/terraform/config/config.tfvars.json"
-
-    // Path for workstations terraform directory (to retrieve workstations by config from workstations' tfstate)
-    def workstationTfDir = "./workloads/cloud-workstations/terraform/workstation"
   }
   
   options {
@@ -89,7 +86,7 @@ pipeline {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
               sh """
                 chmod +x "${scriptPath}"
-                ${scriptPath} ${tfBackendBucket} ${tfvarsJsonFilePath} ${workstationTfDir}
+                ${scriptPath} ${tfBackendBucket} ${tfvarsJsonFilePath}
               """
             }
           }

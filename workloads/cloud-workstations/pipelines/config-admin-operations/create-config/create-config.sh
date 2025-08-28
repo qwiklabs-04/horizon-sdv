@@ -19,19 +19,19 @@ EXISTING_WS_CONFIGS_WITH_WS_ADMINS_JSON_FILE="existing_ws_configs_with_ws_admins
 validate_bucket_and_tfvars_args "$TF_BACKEND_BUCKET" "$WS_CONFIGS_TFVARS_JSON_FILE_PATH"
 
 # Extract Workstation Config terraform directory path
-TF_DIR=$(dirname "${WS_CONFIGS_TFVARS_JSON_FILE_PATH}")
+WS_CONFIGS_TF_DIR=$(dirname "${WS_CONFIGS_TFVARS_JSON_FILE_PATH}")
 # Extract Config tfvars file name
 WS_CONFIGS_TFVARS_JSON_FILE=$(basename "$WS_CONFIGS_TFVARS_JSON_FILE_PATH")
 
 # ---Check WS Cluster exists before proceeding---
 # Extract Workstation Cluster terraform directory path
-WS_CLUSTER_TF_DIR="${TF_DIR}/../cluster"
+WS_CLUSTER_TF_DIR="${WS_CONFIGS_TF_DIR}/../cluster"
 if ! check_ws_cluster_exists "$WS_CLUSTER_TF_DIR" "$TF_BACKEND_BUCKET"; then
   log_error "Workstation Cluster must exist before any operation of Workstation Config. Please run 'Create Cluster' job first."
 fi
 
 # Change directory temporarily to WS Config terraform
-pushd "$TF_DIR" > /dev/null || log_error "Cannot cd to ${TF_DIR}"
+pushd "$WS_CONFIGS_TF_DIR" > /dev/null || log_error "Cannot cd to ${WS_CONFIGS_TF_DIR}"
 
 print_header "CLOUD WORKSTATION: CREATE CONFIGURATION"
 

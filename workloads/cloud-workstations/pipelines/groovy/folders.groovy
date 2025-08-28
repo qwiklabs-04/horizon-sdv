@@ -20,7 +20,33 @@
 
 folder('Cloud-Workstations') {
   displayName('Cloud Workstations')
-  description('<p>This folder contains jobs related to administration of GCP Cloud Workstations.</p>')
+  description('''
+    <br/><h3 style="margin-bottom: 10px;">Manage and Work with GCP Cloud Workstations</h3>
+
+    <p>Follow below steps in order to provision and start using Cloud Workstations:</p>
+    <ol>
+      <li>
+        Run the job <strong><code>'Environment > Docker Image Template'</code></strong> to setup the environment to be used by Cloud Workstation operation pipelines.
+      </li>
+      <li>
+        Run any job of your choice under <strong><code>'Workstation Images'</code></strong> folder to build and publish pre-defined container images to be used by Cloud Workstations.
+      </li>
+      <li>
+        Run the job <strong><code>'Cluster Admin Operations > Create Cluster'</code></strong> to create the Workstation Cluster with pre-set properties.
+      </li>
+      <li>
+        Run the job <strong><code>'Config Admin Operations > Create New Configuration'</code></strong> to create a Workstation Configuration.
+      </li>
+      <li>
+        Run the job <strong><code>'Workstation Admin Operations > Create New Workstation'</code></strong> to create a Workstation using Config created in previous step.
+      </li>
+      <li>
+        Run the job <strong><code>'Workstation User Operations > Start Workstation'</code></strong> to start the Workstation created in previous step.
+      </li>
+    </ol>
+
+    <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>
+  ''')
 }
 
 folder('Cloud-Workstations/Cluster-Admin-Operations') {

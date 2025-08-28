@@ -1,6 +1,10 @@
+locals {
+  deleted_cluster_output = "[DELETED CLUSTER] ${var.sdv_cloud_ws_cluster_name}"
+}
+
 output "cluster_name" {
   description = "Name of the created Cloud Workstations cluster"
-  value       = google_workstations_workstation_cluster.sdv_cloud_ws_cluster.name
+  value       = try(google_workstations_workstation_cluster.sdv_cloud_ws_cluster.name, local.deleted_cluster_output)
 }
 
 output "project_id" {
@@ -10,15 +14,15 @@ output "project_id" {
 
 output "location" {
   description = "Region (Location) of the Cloud Workstations cluster"
-  value       = google_workstations_workstation_cluster.sdv_cloud_ws_cluster.location
+  value       = var.sdv_cloud_ws_region
 }
 
 output "network_name" {
   description = "GCP network (VPC) name where Cloud Workstations is deployed."
-  value       = google_workstations_workstation_cluster.sdv_cloud_ws_cluster.network
+  value       = var.sdv_cloud_ws_network_name
 }
 
 output "subnetwork_name" {
   description = "GCP subnetwork (VPC subnet) name where Cloud Workstations is deployed."
-  value       = google_workstations_workstation_cluster.sdv_cloud_ws_cluster.subnetwork
+  value       = var.sdv_cloud_ws_subnetwork_name
 }

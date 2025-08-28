@@ -211,6 +211,8 @@ RUN ln -s /etc/systemd/system/tigervnc.service /etc/systemd/system/multi-user.ta
   # can potentially customize gnome in future updates.
   dconf update && \
   # Update desktop entry to canary if applicable
-  if [ $ASFP_VERSION = "canary" ]; then sed -i 's/android-studio-for-platform/android-studio-for-platform-canary/g' /usr/share/applications/jetbrains-studio.desktop; fi
+  if [ $ASFP_VERSION = "canary" ]; then sed -i 's/android-studio-for-platform/android-studio-for-platform-canary/g' /usr/share/applications/jetbrains-studio.desktop; fi && \
+  # Provide execute permission to entrypoint script
+  chmod +x /google/scripts/entrypoint.sh
 
 ENTRYPOINT ["/google/scripts/entrypoint.sh"]

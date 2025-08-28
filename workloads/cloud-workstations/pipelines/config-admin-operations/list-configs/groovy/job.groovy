@@ -18,7 +18,7 @@
 // References:
 //
 
-pipelineJob('Cloud-Workstations/Config-Admin-Operations/List Workstation Configurations') {
+pipelineJob('Cloud-Workstations/Config-Admin-Operations/List Configurations') {
   description('''
     <br/><h3 style="margin-bottom: 10px;">List GCP Cloud Workstation Configurations</h3>
     <p>This job retrieves and displays a list of all existing Configurations of Cloud Workstations.</p>

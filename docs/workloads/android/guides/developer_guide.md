@@ -2287,7 +2287,7 @@ The table below shows the templates and machine types used for the Android workf
 | `Android Workflows / Tests / CTS Execution`                       |     | ✅ <sup>1</sup>| ✅ <sup>3</sup> |
 | `Android Workflows / Tests / CVD Launcher`                        |     | ✅ <sup>1</sup>| ✅ <sup>3</sup> |
 
-<sup>1: Uses any available node: Horizon standard nodes are `n1-standard-16` shared across tools and platform.</sup><br/>
+<sup>1: Uses any available node: Horizon standard nodes are `n1-standard-4` shared across tools and platform.</sup><br/>
 <sup>2: Uses build nodes: `c2d-highcpu-112`</sup><br/>
 <sup>3: Uses test nodes: `n1-standard-64`</sup>
 

@@ -22,24 +22,7 @@
 pipeline {
   // Parameters defined in workloads/cloud-workstations/pipelines/workstation-images/horizon-asfp/groovy/job.groovy
 
-  agent {
-    kubernetes {
-      yaml """\
-        apiVersion: v1
-        kind: Pod
-        spec:
-          hostname: jenkins-cloud-ws-image-build-pod
-          serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
-          containers:
-          - name: kaniko
-            image: gcr.io/kaniko-project/executor:debug
-            imagePullPolicy: IfNotPresent
-            command:
-            - /busybox/cat
-            tty: true
-      """.stripIndent()
-    }
-  }
+  agent none
 
   // Block concurrent builds to avoid clashing.
   options {
@@ -50,10 +33,63 @@ pipeline {
     // Update latest tag.
     DESTINATION="--destination=${env.CLOUD_REGION}-docker.pkg.dev/${env.CLOUD_PROJECT}/${env.CLOUD_WS_HORIZON_ASFP_IMAGE_NAME}"
     KANIKO_OPTIONS="${NO_PUSH == "true" ? "--no-push" : "${DESTINATION}:${IMAGE_TAG}"}"
+
+    def kubernetesPodTemplate = """
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        annotations:
+          cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+        labels:
+          cloud_ws_horizon_asfp_build_pod: "true"
+      spec:
+        tolerations:
+          - key: workloadType
+            operator: Equal
+            value: android
+            effect: "NoSchedule"
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: aaos_pod
+                  operator: Exists
+              topologyKey: kubernetes.io/hostname
+            - labelSelector:
+                matchExpressions:
+                - key: cloud_ws_horizon_asfp_build_pod
+                  operator: Exists
+              topologyKey: kubernetes.io/hostname
+            - labelSelector:
+                matchExpressions:
+                - key: cloud_ws_horizon_android_studio_build_pod
+                  operator: Exists
+              topologyKey: kubernetes.io/hostname
+        hostname: jenkins-cloud-ws-image-build-pod
+        serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
+        containers:
+        - name: kaniko
+          image: gcr.io/kaniko-project/executor:debug
+          imagePullPolicy: IfNotPresent
+          command:
+          - /busybox/cat
+          tty: true
+          resources:
+            limits:
+              cpu: 98000m
+              memory: 180000Mi
+            requests:
+              cpu: 98000m
+              memory: 180000Mi
+        nodeSelector:
+          workloadLabel: android
+    """.stripIndent()
   }
 
   stages {
     stage ('Create Docker Image'){
+      agent { kubernetes { yaml kubernetesPodTemplate } }
       when { expression { env.IMAGE_TAG } }
       steps {
         container(name: 'kaniko') {

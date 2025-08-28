@@ -4,7 +4,6 @@ set -eo pipefail
 # Capture the arguments passed to the script
 TF_BACKEND_BUCKET="$1"
 WS_CONFIGS_TFVARS_JSON_FILE_PATH="$2"
-WORKSTATIONS_TF_DIR="$3"
 
 # Import shared utils
 source "$(dirname "$0")/../../utils/terraform-utils.sh"
@@ -85,6 +84,8 @@ popd > /dev/null || log_error "Failed to return to the original working director
 
 # ------Extract Workstations by config------
 
+# Change to workstation terraform directory temporarily
+WORKSTATIONS_TF_DIR="${WS_CONFIGS_TF_DIR}/../workstation"
 log_info "Changing directory to Workstations terraform..."
 pushd "$WORKSTATIONS_TF_DIR" > /dev/null || log_error "Cannot cd to ${WORKSTATIONS_TF_DIR}"
 

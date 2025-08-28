@@ -121,6 +121,11 @@ update_json_value_by_key_at_path() {
   [[ -z ${new_value+x} ]] && log_error "New value to be updated not provided as argument."
 
   log_info "Updating value for key: '${key_to_update}' at path '${json_object_path}' in JSON file '${json_file}'..."
+
+  local tmp_json_file
+  tmp_json_file=$(mktemp) || log_error "Failed to create temp file for operation function '${FUNCNAME[0]}'."
+
+  trap "rm -f '$tmp_json_file'" EXIT
   
   jq_path_array=$(convert_json_object_path_to_jq_path_array "$json_object_path")
 
@@ -130,13 +135,13 @@ update_json_value_by_key_at_path() {
     | $root
     | setpath($path_array; $parent | .[$key] = $val)
     )
-  ' "$json_file" > "${json_file}.tmp"
+  ' "$json_file" > "$tmp_json_file"
 
   if [[ $? -ne 0 ]]; then
     log_error "Failed to update ${json_file} while updating value for key: ${key_to_update}"
   fi
   
-  mv "${json_file}.tmp" "$json_file" || log_error "Failed moving ${json_file}.tmp file contents into original ${json_file} post 'update value by key in json at path' operation."
+  mv "$tmp_json_file" "$json_file" || log_error "Failed moving ${tmp_json_file} file contents into original ${json_file} post operation of function '${FUNCNAME[0]}'."
 }
 
 # Function to remove a key at a given object path from input json file
@@ -154,18 +159,27 @@ remove_key_from_json_at_path() {
 
   log_info "Removing key: '${key_to_remove}' at path '${json_object_path}' in JSON file '${json_file}'..."
 
-  jq --arg key "$key_to_remove" '
-    '"${json_object_path}"' |= del(.[$key])
-  ' "$json_file" > "${json_file}.tmp"
+
+  local tmp_json_file
+  tmp_json_file=$(mktemp) || log_error "Failed to create temp file for operation function '${FUNCNAME[0]}'."
+
+  trap "rm -f '$tmp_json_file'" EXIT
+
+  jq_path_array=$(convert_json_object_path_to_jq_path_array "$json_object_path")
+
+  jq --argjson path_array "$jq_path_array" --arg key "$key_to_remove" '
+    getpath($path_array) |= del(.[$key])
+  ' "$json_file" > "$tmp_json_file"
 
   if [[ $? -ne 0 ]]; then
     log_error "Failed to update ${json_file} while removing key: ${key_to_remove}"
   fi
   
-  mv "${json_file}.tmp" "$json_file" || log_error "Failed moving ${json_file}.tmp file contents into original ${json_file} post 'remove key from json at path' operation."
+  mv "$tmp_json_file" "$json_file" || log_error "Failed moving '${tmp_json_file}' file contents into original '${json_file}' post operation of function '${FUNCNAME[0]}'."
 }
 
-# Function to merge a JSON file into another JSON file at a given JSON object path
+# Function to merge a JSON file (object) into another JSON file (object) at a given JSON object path.
+# Merge attempts only if both are objects.
 # Returns nothing, just modifies input target_json_file
 merge_json_into_path() {
   local target_json_file="$1"
@@ -180,17 +194,31 @@ merge_json_into_path() {
 
   log_info "Updating file ${target_json_file} at object path ${json_object_path} with JSON data from file ${source_json_file}..."
 
+  local tmp_target_json_file
+  tmp_target_json_file=$(mktemp) || log_error "Failed to create temp file for operation function '${FUNCNAME[0]}'."
+
+  trap "rm -f '$tmp_target_json_file'" EXIT
+
+  jq_path_array=$(convert_json_object_path_to_jq_path_array "$json_object_path")
+
   local source_json
   source_json=$(jq '.' "$source_json_file") || log_error "Failed to parse source JSON"
 
-  jq --argjson src "$source_json" \
-    "$json_object_path |= (. + \$src)" \
-    "$target_json_file" > "${target_json_file}.merged" || \
+  jq --argjson path_array "$jq_path_array" --argjson src "$source_json" '
+    (
+      if (getpath($path_array) | type) == "object" and ($src | type) == "object" then
+        getpath($path_array) + $src
+      else
+        error("Merge failed: both target and source must be JSON objects")
+      end
+    ) as $merged_objects
+    | setpath($path_array; $merged_objects)
+  ' "$target_json_file" > "$tmp_target_json_file" || \
   log_error "Failed merger of JSON file ${source_json_file} into file ${target_json_file} at object path ${json_object_path}"
 
   # Replace original file with merged content
-  mv "${target_json_file}.merged" "$target_json_file" || \
-  log_error "Failed moving ${target_json_file}.merged file contents into original ${target_json_file} post 'merge json into path' operation."
+  mv "$tmp_target_json_file" "$target_json_file" || \
+  log_error "Failed moving ${tmp_target_json_file} file contents into original ${target_json_file} post operation of function '${FUNCNAME[0]}'"
 }
 
 

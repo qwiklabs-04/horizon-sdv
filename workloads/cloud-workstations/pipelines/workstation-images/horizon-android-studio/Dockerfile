@@ -166,6 +166,8 @@ RUN ln -s /etc/systemd/system/tigervnc.service /etc/systemd/system/multi-user.ta
   systemctl enable novnc
 
 # Automatically start android studio
-RUN ln -s /usr/share/applications/jetbrains-studio.desktop /etc/xdg/autostart/jetbrains-studio.desktop
+RUN ln -s /usr/share/applications/jetbrains-studio.desktop /etc/xdg/autostart/jetbrains-studio.desktop && \
+  # Provide execute permission to entrypoint script
+  chmod +x /google/scripts/entrypoint.sh
 
 ENTRYPOINT ["/google/scripts/entrypoint.sh"]

@@ -27,18 +27,18 @@ data "google_workstations_workstation_config_iam_policy" "ws_config_admin_iam_me
   workstation_config_id  = each.key
 }
 
-# // Service Account for use in Cloud Workstations Host VM
-# resource "google_service_account" "sdv_cloud_ws_service_account" {
-#   account_id   = "sdv-cloud-ws-host-vm-sa"
-#   display_name = "Service Account for Cloud Workstations Host VM"
-# }
-# resource "google_project_iam_member" "sdv_cloud_ws_sa_roles" {
-#   for_each = toset(local.sdv_cloud_ws_host_vm_roles)
+// Service Account for use in Cloud Workstations Host VM
+resource "google_service_account" "sdv_cloud_ws_service_account" {
+  account_id   = "sdv-cloud-ws-host-vm-sa"
+  display_name = "Service Account for Cloud Workstations Host VM"
+}
+resource "google_project_iam_member" "sdv_cloud_ws_sa_roles" {
+  for_each = toset(local.sdv_cloud_ws_host_vm_roles)
 
-#   project = var.sdv_cloud_ws_project_id
-#   role    = each.key
-#   member  = "serviceAccount:${google_service_account.sdv_cloud_ws_service_account.email}"
-# }
+  project = var.sdv_cloud_ws_project_id
+  role    = each.key
+  member  = "serviceAccount:${google_service_account.sdv_cloud_ws_service_account.email}"
+}
 
 
 resource "google_workstations_workstation_config" "sdv_cloud_ws_config" {
@@ -56,7 +56,7 @@ resource "google_workstations_workstation_config" "sdv_cloud_ws_config" {
   host {
     gce_instance {
       machine_type                 = each.value.host_machine_type
-      service_account              = "gke-jenkins-sa@${var.sdv_cloud_ws_project_id}.iam.gserviceaccount.com"
+      service_account              = google_service_account.sdv_cloud_ws_service_account.email
       pool_size                    = each.value.host_quickstart_pool_size
       boot_disk_size_gb            = each.value.host_boot_disk_size_gb
       disable_public_ip_addresses  = each.value.host_disable_public_ip_addresses

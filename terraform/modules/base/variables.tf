@@ -63,7 +63,7 @@ variable "sdv_cluster_node_pool_name" {
 variable "sdv_cluster_node_pool_machine_type" {
   description = "Define the machine type of the node pool"
   type        = string
-  default     = "n1-standard-16"
+  default     = "n1-standard-4"
 }
 
 variable "sdv_cluster_node_pool_count" {

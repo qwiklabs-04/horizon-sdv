@@ -55,7 +55,7 @@ module "base" {
 
   sdv_cluster_name                   = "sdv-cluster"
   sdv_cluster_node_pool_name         = "sdv-node-pool"
-  sdv_cluster_node_pool_machine_type = "n1-standard-16"
+  sdv_cluster_node_pool_machine_type = "n1-standard-4"
   sdv_cluster_node_pool_count        = 3
   sdv_cluster_node_locations = [
     "${var.sdv_gcp_cloud_zone}"
@@ -117,6 +117,8 @@ module "base" {
         "roles/spanner.admin",
         "roles/logging.admin",
         "roles/editor",
+        "roles/iam.serviceAccountAdmin",
+        "roles/resourcemanager.projectIamAdmin"
       ])
     },
     sa2 = {

@@ -56,7 +56,7 @@ Android Build File System - EAP</a>: Android Build File System is currently avai
 Once Google provide you the ABFS license in JSON form, you will be required to create a new secret in the Horizon-SDV GitHub environment secrets, e.g.
 
 1. **Base64 encode the license** Ensure there are no stray spaces in the license nor new lines. Then:
-   ```echo -n “<LICENSE STRING>" | base64```
+   ```echo -n '<LICENSE STRING>' | base64```
 2. **GitHub secret**: the secret now needs to be added to the GitHub environment.
    - Open ```https://github.com/<your horizon sdv fork>/settings → Environment```
    - Select your environment, e.g. `main`

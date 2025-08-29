@@ -106,6 +106,7 @@ It is required to replace them with actual values as you follow the setup instru
    - Service Usage API
    - Secret Manager API
    - Certificate Manager API
+   - Cloud Workstations API
 * IAM Roles to be granted to new user accounts added by the owner of the project 
    You can either assign a basic role or a fine-grained permission.
    - Basic: Editor

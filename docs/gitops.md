@@ -151,7 +151,7 @@ https://<ENV_NAME>.<HORIZON_DOMAIN>/jenkins
 Ex: https://demo.horizon-sdv.com/jenkins
 
 ####  Purpose
-Jenkins provides a CI/CD pipeline execution environment for workloads, currently supporting Android workloads.
+Jenkins provides a CI/CD pipeline execution environment for workloads, currently supporting Android and Cloud Workstations workloads.
 
 ####  Installation
 Jenkins is installed using the official OpenSource Helm chart, with custom configurations specific to the Horizon SDV project.

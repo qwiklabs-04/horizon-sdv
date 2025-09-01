@@ -71,7 +71,7 @@ folder('Cloud-Workstations/Workstation-User-Operations') {
 
 folder('Cloud-Workstations/Environment') {
   displayName('Environment')
-  description('<p>This folder contains a job that builds Docker image which will be used as environement for GCP Cloud Workstations pipeline jobs.</p>')
+  description('<p>This folder contains a job that builds Docker image which will be used as environment for GCP Cloud Workstations pipeline jobs.</p>')
 }
 
 folder('Cloud-Workstations/Workstation-Images') {

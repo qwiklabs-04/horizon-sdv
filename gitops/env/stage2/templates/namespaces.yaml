@@ -74,10 +74,3 @@ metadata:
   name: headlamp
   annotations:
     argocd.argoproj.io/sync-wave: "0"
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: monitoring
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"

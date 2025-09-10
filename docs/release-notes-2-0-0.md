@@ -103,7 +103,7 @@ This feature automates the entire provisioning and management process through a 
 * **Browser-Based Development Environments**
   * You can now build and launch standardized IDEs directly in your browser.
   * The following environments are now available:
-    * **Horizon Code OSS**: A lightweight, general-purpose IDE based on open-source VS Code. The container image for this environment extends the public base image available [here](us-central1-docker.pkg.dev/cloud-workstations-images/predefined/code-oss:latest).
+    * **Horizon Code OSS**: A lightweight, general-purpose IDE based on open-source VS Code. The container image for this environment extends the public base image available [here](https://us-central1-docker.pkg.dev/cloud-workstations-images/predefined/code-oss:latest).
     * **Horizon Android Studio (AS)**: The standard IDE for developing Android applications. The container image for this environment extends the public image template provided by Google [here](https://github.com/GoogleCloudPlatform/cloud-workstations-custom-image-examples/tree/main/examples/images/android-open-source-project/android-studio-for-platform).
     * **Horizon Android Studio for Platform (ASfP)**: The specialized IDE for AOSP and core Android OS development. The container image for this environment extends the public image template provided by Google [here](https://github.com/GoogleCloudPlatform/cloud-workstations-custom-image-examples/tree/main/examples/images/android/android-studio).
 

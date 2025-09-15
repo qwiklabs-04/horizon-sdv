@@ -147,17 +147,11 @@ $(gcloud info --format="value(basic.python_location)") -m pip install numpy --no
 export CLOUDSDK_PYTHON_SITEPACKAGES=1
 
 # Colours for logging.
-if [ -z "${WORKSPACE}" ]; then
-    GREEN='\033[0;32m'
-    ORANGE='\033[0;33m'
-    RED='\033[0;31m'
-    NC='\033[0m'
-else
-    GREEN=''
-    ORANGE=''
-    RED=''
-    NC=''
-fi
+GREEN='\033[0;32m'
+ORANGE='\033[0;33m'
+RED='\033[0;31m'
+NC='\033[0m'
+
 SCRIPT_NAME=$(basename "$0")
 
 # Catch Ctrl+C and terminate all

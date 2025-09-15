@@ -99,7 +99,7 @@ It is required to replace them with actual values as you follow the setup instru
    Go to APIs & Services, Enabled APIs & services and click on ENABLE APIS AND SERVCIES and enable the below APIs.
    - IAM Service Account Credentials API
    - Kubernetes Engine API
-   - Compute Engine API v1
+   - Compute Engine API
    - Cloud Filestore API
    - Artifact Registry API
    - Cloud Storage API
@@ -107,6 +107,7 @@ It is required to replace them with actual values as you follow the setup instru
    - Secret Manager API
    - Certificate Manager API
    - Cloud Workstations API
+   - Cloud Spanner API
 * IAM Roles to be granted to new user accounts added by the owner of the project 
    You can either assign a basic role or a fine-grained permission.
    - Basic: Editor
@@ -517,6 +518,8 @@ Create Github Environment
       - You can create your desired strong password.
    * **KEYCLOAK_INITIAL_PASSWORD**   
       - You can create your desired strong password.
+   * **ABFS_LICENSE_B64**
+      - Refer [abfs.md](workloads/android/abfs.md) for detailed setup guide.
 4. Once the Environment secrets have been created, it will be visible as shown below   
    <img src="images/github_environment_secrets_list.png" width="750" />
 

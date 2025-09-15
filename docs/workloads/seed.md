@@ -34,6 +34,7 @@ Specifies which workload(s) to seed
 - `all` seed all workloads.
 - `android` seed the Android workload.
 - `openbsw` seed the OpenBSW workload.
+- `cloud-workstations` seed the Cloud Workstations workload.
 
 ### `REPO_SYNC_JOBS`
 Defines the number of parallel sync jobs when running `repo sync`.
@@ -76,7 +77,7 @@ This job uses the "Authorize Project" plugin to set an authorization property, a
 
 In conjunction with the sandbox protection utility for Job DSL, this setup ensures that explicit script approval is not required every time a change is made to a Groovy script. The Job DSL targets are specified as follows:
 
-	`jobDsl targets: 'workloads/android/pipelines/*/*/groovy/*.groovy', sandbox: true`
+	`jobDsl targets: 'workloads/<workload_name>/pipelines/*/*/groovy/*.groovy', sandbox: true`
 
 ### Groovy Methods - Environment Variable Handling <a name="groovymethods"></a>
 

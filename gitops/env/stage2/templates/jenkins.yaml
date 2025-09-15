@@ -73,7 +73,7 @@ spec:
             - echarts-api:6.0.0-1
             - eddsa-api:0.3.0.1-19.vc432d923e5ee
             - font-awesome-api:7.0.0-840.vd6c7a_a_a_a_88e1
-            - git-client:6.2.0
+            - git-client:6.2.1
             - git:5.7.0
             - github-api:1.321-488.v9b_c0da_9533f8
             - github:1.43.0

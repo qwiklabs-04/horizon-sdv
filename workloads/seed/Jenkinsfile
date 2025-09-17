@@ -55,6 +55,23 @@ pipeline {
            </ul>''')
 
     separator(
+      name: "Common: Docker templates",
+      sectionHeader: "Common Parameters: Docker Templates",
+      separatorStyle: "${SEPARATOR_STYLE}",
+      sectionHeaderStyle: "${HEADER_STYLE}"
+    )
+
+    string(name: 'BUILDKIT_RELEASE_TAG',
+           defaultValue: 'v0.24.0',
+           description: '''<p>BuildKit tag, see <a target="_blank"  href=https://hub.docker.com/r/moby/buildkit>buildkit releases</a>.</p>''',
+           trim: true)
+
+    string(name: 'DOCKER_CREDENTIALS_URL',
+           defaultValue: 'https://github.com/GoogleCloudPlatform/docker-credential-gcr/releases/download/v2.1.29/docker-credential-gcr_linux_amd64-2.1.29.tar.gz',
+           description: '''<p>Docker credentials helper URL, e.g. <a target="_blank" href=https://cloud.google.com/artifact-registry/docs/docker/authentication#standalone-helper>credentials helper</a>.</p>''',
+           trim: true)
+
+    separator(
       name: "Android Workload",
       sectionHeader: "Android Parameters",
       separatorStyle: "${SEPARATOR_STYLE}",
@@ -156,7 +173,9 @@ pipeline {
                   ['${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
                   ['${UPLOADER_MANIFEST_SERVER}', "${UPLOADER_MANIFEST_SERVER}"],
                   ['${JENKINS_GCE_CLOUD_LABEL}', "${CUTTLEFISH_GCE_CLOUD_LABEL}" ],
-                  ['${NODEJS_VERSION}', "${NODEJS_VERSION}"]
+                  ['${NODEJS_VERSION}', "${NODEJS_VERSION}"],
+                  ['${BUILDKIT_RELEASE_TAG}', "${BUILDKIT_RELEASE_TAG}"],
+                  ['${DOCKER_CREDENTIALS_URL}', "${DOCKER_CREDENTIALS_URL}"]
                  ]
 
                 def files = sh(returnStdout: true, script: "find workloads/android -name '*.groovy'").trim().split('\n')
@@ -209,7 +228,9 @@ pipeline {
                   ['${OPENBSW_BUILD_BUCKET_ROOT_NAME}', "${OPENBSW_BUILD_BUCKET_ROOT_NAME}"],
                   ['${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
                   ['${OPENBSW_IMAGE_TAG}', "${OPENBSW_IMAGE_TAG}"],
-                  ['${NODEJS_VERSION}', "${NODEJS_VERSION}"]
+                  ['${NODEJS_VERSION}', "${NODEJS_VERSION}"],
+                  ['${BUILDKIT_RELEASE_TAG}', "${BUILDKIT_RELEASE_TAG}"],
+                  ['${DOCKER_CREDENTIALS_URL}', "${DOCKER_CREDENTIALS_URL}"]
                 ]
 
                 def files = sh(returnStdout: true, script: "find workloads/openbsw -name '*.groovy'").trim().split('\n')
@@ -265,7 +286,9 @@ pipeline {
                   ['${CLOUD_WS_CLUSTER_PRESET_PRIVATE_CLUSTER}', "${CLOUD_WS_CLUSTER_PRESET_PRIVATE_CLUSTER}"],
                   ['${CLOUD_WS_HORIZON_CODE_OSS_IMAGE_NAME}', "${CLOUD_WS_HORIZON_CODE_OSS_IMAGE_NAME}"],
                   ['${CLOUD_WS_HORIZON_ASFP_IMAGE_NAME}', "${CLOUD_WS_HORIZON_ASFP_IMAGE_NAME}"],
-                  ['${CLOUD_WS_HORIZON_ANDROID_STUDIO_IMAGE_NAME}', "${CLOUD_WS_HORIZON_ANDROID_STUDIO_IMAGE_NAME}"]
+                  ['${CLOUD_WS_HORIZON_ANDROID_STUDIO_IMAGE_NAME}', "${CLOUD_WS_HORIZON_ANDROID_STUDIO_IMAGE_NAME}"],
+                  ['${BUILDKIT_RELEASE_TAG}', "${BUILDKIT_RELEASE_TAG}"],
+                  ['${DOCKER_CREDENTIALS_URL}', "${DOCKER_CREDENTIALS_URL}"]
                 ]
 
                 def files = sh(returnStdout: true, script: "find workloads/cloud-workstations -name '*.groovy'").trim().split('\n')

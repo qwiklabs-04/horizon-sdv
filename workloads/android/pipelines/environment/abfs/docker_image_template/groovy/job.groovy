@@ -65,6 +65,32 @@ pipelineJob('Android/Environment/ABFS/Docker Image Template') {
         This is installed using <i>nvm</i> on the instance template to be compatible with other tooling.</p>''')
       trim(true)
     }
+    separator {
+      name('Common Parameters: Buildkit')
+      sectionHeader('Common Parameters: Buildkit')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
+    }
+    stringParam {
+      name('BUILDKIT_RELEASE_TAG')
+      defaultValue("${BUILDKIT_RELEASE_TAG}")
+      description('''<p>BuildKit tag, see <a target="_blank"  href=https://hub.docker.com/r/moby/buildkit>buildkit releases</a>.</p>''')
+      trim(true)
+    }
+    stringParam {
+      name('DOCKER_CREDENTIALS_URL')
+      defaultValue("${DOCKER_CREDENTIALS_URL}")
+      description('''<p>Docker credentials helper URL, e.g. <a target="_blank" href=https://cloud.google.com/artifact-registry/docs/docker/authentication#standalone-helper>credentials helper</a>.</p>''')
+      trim(true)
+    }
+  }
+
+  // Block build if certain jobs are running.
+  blockOn('Android*.*Docker.*') {
+    // Possible values are 'GLOBAL' and 'NODE' (default).
+    blockLevel('GLOBAL')
+    // Possible values are 'ALL', 'BUILDABLE' and 'DISABLED' (default).
+    scanQueueFor('BUILDABLE')
   }
 
   logRotator {

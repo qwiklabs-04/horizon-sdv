@@ -13,11 +13,11 @@ This pipeline builds the container image used on Kubernetes for building use wit
 This need only be run once, or when Dockerfile is updated. There is an option not to push the resulting image to the registry, so that devs can test their changes before committing the image.
 
 ### References
-- [Kaniko](https://github.com/GoogleContainerTools/kaniko)
+- [buildkit](https://hub.docker.com/r/moby/buildkit)
 
 ## Prerequisites<a name="prerequisites"></a>
 
-This depends only on [`kaniko`](https://github.com/GoogleContainerTools/kaniko) which should be installed by default.
+This depends only on [`buildkit`](https://hub.docker.com/r/moby/buildkit) which should be installed by default.
 
 ## Environment Variables/Parameters <a name="environment-variables"></a>
 

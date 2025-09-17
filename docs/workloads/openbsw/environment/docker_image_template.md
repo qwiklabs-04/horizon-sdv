@@ -17,13 +17,13 @@ This need only be run once, or when Dockerfile is updated. There is an option no
 The Dockerfile used in this project is based on the [Eclipse Foundation OpenBSW Dockerfile](https://github.com/eclipse-openbsw/openbsw/blob/main/docker/Dockerfile.dev), but has been customized for Horizon-SDV and Google Cloud Platform. Additionally, the job provide a flexible mechanism for users to update the tools and Linux distribution used to create the Docker image, which is utilized for builds and tests jobs.
 
 ### References
-- [Kaniko](https://github.com/GoogleContainerTools/kaniko)
+- [buildkit](https://hub.docker.com/r/moby/buildkit)
 - [Welcome to Eclipse OpenBSW](https://eclipse-openbsw.github.io/openbsw/sphinx_docs/doc/index.html) GitHub repo.
 - [Eclipse Foundation OpenBSW](https://github.com/eclipse-openbsw/openbsw) documentation.
 
 ## Prerequisites<a name="prerequisites"></a>
 
-This depends only on [`kaniko`](https://github.com/GoogleContainerTools/kaniko) which should be installed by default.
+This depends only on [`buildkit`](https://hub.docker.com/r/moby/buildkit) which should be installed by default.
 
 ## Environment Variables/Parameters <a name="environment-variables"></a>
 

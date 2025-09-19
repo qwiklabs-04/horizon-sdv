@@ -84,7 +84,7 @@ pipeline {
                    --frontend=dockerfile.v0 \
                    --local=dockerfile=. \
                    --local context=. \
-                   --opt build-arg:ABFS="false" \
+                   --opt build-arg:ABFS="true" \
                    --opt build-arg:LINUX_DISTRIBUTION=${LINUX_DISTRIBUTION} \
                    --opt build-arg:NODEJS_VERSION=${NODEJS_VERSION} \
                    --opt build-arg:GOOGLE_DISTRIBUTION_REGISTRY="${GOOGLE_DISTRIBUTION_REGISTRY}" \

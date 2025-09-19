@@ -473,6 +473,28 @@ spec:
                     allPipelines: true
                     systemTimeFormat: "'<b>'yyyy-MM-dd HH:mm:ss.SSS'</b> '"
                     elapsedTimeFormat: "'<b>'HH:mm:ss.S'</b> '"
+                  globalLibraries:
+                    libraries:
+                    - defaultVersion: "{{ .Values.config.workloads.android.branch }}"
+                      name: "cvd-pipeline-shared-library"
+                      retriever:
+                        modernSCM:
+                          libraryPath: "workloads/common/jenkins/shared-libraries/cvd-pipeline-shared-library"
+                          scm:
+                            github:
+                              configuredByUrl: true
+                              credentialsId: "jenkins-github-creds"
+                              repoOwner: "AGBG-ASG"
+                              repository: "acn-horizon-sdv"
+                              repositoryUrl: "https://github.com/AGBG-ASG/acn-horizon-sdv"
+                              traits:
+                              - gitHubBranchDiscovery:
+                                  strategyId: 3
+                              - gitHubPullRequestDiscovery:
+                                  strategyId: 2
+                              - gitHubForkDiscovery:
+                                  strategyId: 2
+                                  trust: "gitHubTrustPermissions"
   destination:
     server: https://kubernetes.default.svc
     namespace: jenkins

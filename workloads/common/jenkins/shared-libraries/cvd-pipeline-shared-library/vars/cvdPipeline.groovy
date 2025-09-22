@@ -257,7 +257,8 @@ def call(Map config = [:]) {
                     MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
                     MTK_CONNECT_TESTBENCH="${JOB_NAME}-${BUILD_NUMBER}" \
                     MTK_CONNECT_DELETE_OFFLINE_TESTBENCHES=true \
-                    timeout 10m ./mtk_connect.sh --delete || true
+                    MTK_CONNECT_CONTAINER_ONLY="true" \
+                    timeout 15m ./mtk_connect.sh --delete || true
                     cd - || true
                   '''
                 }

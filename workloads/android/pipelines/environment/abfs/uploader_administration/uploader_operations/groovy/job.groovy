@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-pipelineJob('Android/Environment/ABFS/Uploader') {
+pipelineJob('Android/Environment/ABFS/Uploader Administration/Uploader Operations') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">ABFS Uploaders</h3>
     <p>This job creates a virtual machine (VM) instance for the ABFS Uploaders, which is required for the ABFS build job to mount the ABFS source(cache).<br/>
@@ -145,7 +145,7 @@ pipelineJob('Android/Environment/ABFS/Uploader') {
           branch("*/${HORIZON_GITHUB_BRANCH}")
         }
       }
-      scriptPath('workloads/android/pipelines/environment/abfs/uploader/Jenkinsfile')
+      scriptPath('workloads/android/pipelines/environment/abfs/uploader_administration/uploader_operations/Jenkinsfile')
     }
   }
 }

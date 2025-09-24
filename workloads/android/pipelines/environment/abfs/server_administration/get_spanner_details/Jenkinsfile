@@ -1,0 +1,146 @@
+// Copyright (c) 2025 Accenture, All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//         http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Description:
+// Jenkins pipeline to retrieve ABFS Cloud Spanner environment details.
+// - Reports bucket sizes, Spanner instances, backups, and backup schedules.
+// - Optional filters: ABFS_DB_BUCKET_NAME (bucket name), ABFS_DB_NAME (instance
+//                     name substring)
+// The script uses strict mode and safe loops; gcloud must be authenticated with
+// proper IAM.
+
+pipeline {
+
+  agent none
+
+  environment {
+
+    // Define Pod Template in environment so we can override storageClassName.
+    def kubernetesPodTemplate = """
+      apiVersion: v1
+      kind: Pod
+      spec:
+        hostname: jenkins-abfs-spanner-details-pod
+        serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
+        containers:
+        - name: abfs-spanner-details
+          image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${INFRA_DOCKER_ARTIFACT_PATH_NAME}:${INFRA_IMAGE_TAG}
+          imagePullPolicy: Always
+          command:
+          - sleep
+          args:
+          - 5h
+          tty: true
+    """.stripIndent()
+  }
+
+
+
+  stages {
+    stage ('Start Instance') {
+      agent { kubernetes { yaml kubernetesPodTemplate } }
+      stages {
+        stage ('Get Spanner Details') {
+          steps {
+            script {
+              currentBuild.description = "$BUILD_USER"
+            }
+            container(name: 'abfs-spanner-details') {
+              catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                sh '''
+                  /usr/bin/env bash -euo pipefail <<'BASH'
+                  # Strict mode for safer scripts:
+                  # -e exit on error, -u error on unset vars, -o pipefail fail on pipeline errors
+
+                  cd ./workloads/android/pipelines/environment/abfs/server_administration/get_spanner_details/
+
+                  # Filter buckets: if ABFS_DB_BUCKET_NAME is set use fixed-string grep (-F),
+                  # otherwise match default ABFS pattern with extended regex (-E).
+                  if [[ -n "${ABFS_DB_BUCKET_NAME:-}" ]]; then
+                    bucket_filter="${ABFS_DB_BUCKET_NAME}"
+                    bucket_grep_opts="-F"
+                  else
+                    bucket_filter='^abfs-[0-9a-fA-F]{4}$'
+                    bucket_grep_opts="-E"
+                  fi
+
+                  # List buckets and apply filter.
+                  echo "\033[1;32mListing buckets...\033[0m"
+                  buckets=$(gcloud storage buckets list --format="value(name)" | { grep ${bucket_grep_opts} "${bucket_filter}" || true; })
+                  if [[ -z "$buckets" ]]; then
+                    echo "None"
+                  else
+                    while IFS= read -r bucket; do
+                      # Use while/read to handle names safely; always quote variables.
+                      [[ -z "$bucket" ]] && continue
+                      echo "\033[1;32mBucket $bucket details:\033[0m"; echo
+                      size=$(gcloud storage du --readable-sizes "gs://${bucket}/" --summarize)
+                      echo "Size: ${size}"; echo
+                    done <<< "$buckets"
+                  fi
+
+                  # Default database hint; may be overwritten from backups SOURCE_DATABASE below.
+                  # If an instance has no backups, this may remain "abfs" and schedules may be empty.
+                  DATABASE="abfs"
+                  instances=$(gcloud spanner instances list --format="value(name)" || true)
+                  found=0
+                  while IFS= read -r instance; do
+                    [[ -z "$instance" ]] && continue
+                    # If ABFS_DB_NAME is set, only keep instances whose name contains it (safe under set -u)
+                    if [[ -n "${ABFS_DB_NAME:-}" && "$instance" != *"${ABFS_DB_NAME}"* ]]; then
+                      echo "\033[1;33mSkipping instance $instance != ${ABFS_DB_NAME}\033[0m"
+                      continue
+                    fi
+                    found=1
+                    echo "\033[1;32mInstance $instance details:\033[0m"; echo
+                    gcloud spanner instances describe "$instance"; echo
+                    echo "\033[1;32mBackup list:\033[0m\033[0m"; echo
+                    # Enumerate backups safely; derive SOURCE_DATABASE for schedules below.
+                    backups=$(gcloud spanner backups list --instance="$instance" --format="value(name)" || true)
+                    if [[ -z "$backups" ]]; then
+                      echo "None"
+                    else
+                      while IFS= read -r backup; do
+                        [[ -z "$backup" ]] && continue
+                        echo "\033[1;32mBackup $backup\033[0m"; echo
+                        gcloud spanner backups describe "$backup" --instance="$instance"
+                        DATABASE=$(gcloud spanner backups list --instance="$instance" --filter="$backup" --format="value(SOURCE_DATABASE)")
+                      done <<< "$backups"
+                    fi
+                    echo; echo "\033[1;32mBackup Schedule:\033[0m"; echo
+                    # Query backup schedules for the most recently set DATABASE (if any).
+                    schedules=$(gcloud spanner backup-schedules list --instance="$instance" --database="$DATABASE" --format="value(name)" || true)
+                    if [[ -z "$schedules" ]]; then
+                      echo "None"
+                    else
+                      while IFS= read -r schedule; do
+                        [[ -z "$schedule" ]] && continue
+                        echo "\033[1;32mBackup Schedule $schedule\033[0m"; echo
+                        gcloud spanner backup-schedules describe "$schedule" --instance="$instance" --database="$DATABASE"
+                      done <<< "$schedules"
+                    fi
+                    echo; echo "\033[1;32mInstance $instance state: $(gcloud spanner instances describe \"$instance\" --format='value(instanceType)')\033[0m"; echo;
+                 done <<< "$instances"
+                 if [[ "$found" -eq 0 ]]; then
+                   echo "\033[1;33mNo instances found, may have been destroyed.\033[0m"
+                 fi
+                '''
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

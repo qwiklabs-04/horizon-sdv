@@ -50,7 +50,7 @@ pipeline {
                 }
                 withCredentials([string(credentialsId: 'jenkins-abfs-license-b64', variable: "JENKINS_ABFS_LICENSE_B64")]) {
                   sh '''
-                    cd ./workloads/android/pipelines/environment/abfs/server/
+                    cd ./workloads/android/pipelines/environment/abfs/server_administration/server_operations/
                     ABFS_TERRAFORM_ACTION="${ABFS_TERRAFORM_ACTION}" \
                     SERVER_MACHINE_TYPE="${SERVER_MACHINE_TYPE}" \
                     ABFS_LICENSE_B64=${ABFS_LICENSE_B64:-$JENKINS_ABFS_LICENSE_B64} \

@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-pipelineJob('Android/Environment/ABFS/Server') {
+pipelineJob('Android/Environment/ABFS/Server Administration/Server Operations') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">ABFS Server</h3>
       <p>This job creates a virtual machine (VM) instance for the ABFS Server, which is required for the ABFS build job to mount the ABFS source(cache).<br/>
@@ -116,7 +116,7 @@ pipelineJob('Android/Environment/ABFS/Server') {
           branch("*/${HORIZON_GITHUB_BRANCH}")
         }
       }
-      scriptPath('workloads/android/pipelines/environment/abfs/server/Jenkinsfile')
+      scriptPath('workloads/android/pipelines/environment/abfs/server_administration/server_operations/Jenkinsfile')
     }
   }
 }

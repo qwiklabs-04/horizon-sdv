@@ -14,8 +14,8 @@
 pipelineJob('Android/Environment/ABFS/Server Administration/Get Spanner Details') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">ABFS Server Details</h3>
-    <p>This job returns details on the spanner instances.<br/>
-    Refer to the console log for details of the instance and state.</p>""")
+    <p>This job returns details on the spanner instances, bucket storage, backups and backup schedules.<br/>
+    <br/>Refer to the console log, and artifacts, for details of the instance and state.</p>""")
 
   parameters {
     stringParam {

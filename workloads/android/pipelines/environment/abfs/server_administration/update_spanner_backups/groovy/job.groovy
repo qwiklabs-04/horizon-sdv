@@ -15,7 +15,7 @@ pipelineJob('Android/Environment/ABFS/Server Administration/Update Spanner Backu
   description("""
     <br/><h3 style="margin-bottom: 10px;">ABFS Spanner DB Backup Schedule</h3>
     <p>This job allows retrieval or alteration of the Spanner DB backup schedule.<br/>
-    Refer to the console log for details of the job.</p>""")
+    <br/>Refer to the console log for details of the job.</p>""")
 
   parameters {
     choiceParam {

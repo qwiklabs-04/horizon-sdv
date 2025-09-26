@@ -15,7 +15,7 @@ pipelineJob('Android/Environment/ABFS/Server Administration/Get Server Details')
   description("""
     <br/><h3 style="margin-bottom: 10px;">ABFS Server Details</h3>
     <p>This job returns details on the Server instances and their state.<br/>
-    Refer to the console log for details of the instance and state.</p>""")
+    <br/>Refer to the console log, and artifacts, for details of the instance and state.</p>""")
 
   parameters {
     stringParam {

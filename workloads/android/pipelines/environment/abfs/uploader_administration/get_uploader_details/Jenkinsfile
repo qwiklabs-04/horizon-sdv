@@ -61,14 +61,17 @@ pipeline {
                   cd ./workloads/android/pipelines/environment/abfs/uploader_administration/get_uploader_details/
 
                   # List instances using gcloud's native filter and iterate safely.
-                  gcloud compute instances list --zones="${CLOUD_ZONE}" --format="value(name)" \
-                    --filter="name~'${UPLOADER_INSTANCE_PREFIX}'" \
-                    | while IFS= read -r instance; do
-                        [[ -z "$instance" ]] && continue
-                        echo; echo "\033[1;32mInstance $instance\033[0m"; echo
-                        gcloud compute instances describe "$instance" --zone="${CLOUD_ZONE}"
-                        echo; echo "\033[1;32mInstance $instance state: $(gcloud compute instances describe "$instance" --zone="${CLOUD_ZONE}" --format="value(status)")\033[0m"
-                      done
+                  instances=$(gcloud compute instances list --zones="${CLOUD_ZONE}" --format="value(name)" --filter="name~'${UPLOADER_INSTANCE_PREFIX}'" || true)
+                  if [[ -z "$instances" ]]; then
+                    echo "None"
+                  else
+                    while IFS= read -r instance; do
+                      [[ -z "$instance" ]] && continue
+                      echo; echo "\033[1;32mInstance $instance\033[0m"; echo
+                      gcloud compute instances describe "$instance" --zone="${CLOUD_ZONE}"
+                      echo; echo "\033[1;32mInstance $instance state: $(gcloud compute instances describe "$instance" --zone="${CLOUD_ZONE}" --format="value(status)")\033[0m"
+                    done <<< "$instances"
+                  fi
                 '''
               }
             }

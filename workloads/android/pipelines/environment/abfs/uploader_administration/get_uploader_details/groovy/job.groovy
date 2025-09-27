@@ -14,8 +14,10 @@
 pipelineJob('Android/Environment/ABFS/Uploader Administration/Get Uploader Details') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">ABFS Uploader Details</h3>
-    <p>This job returns details on the Uploader instances and their state.<br/>
-    <br/>Refer to the console log, and artifacts, for details of the instance and state.</p>""")
+    <p>This job retrieves the current status and configuration of Uploader instances.<br/>
+    It also reports ABFS liveness, confirming whether ABFS has been provisioned successfully.<br/>
+    If this check fails, consider destroying the instance (DESTROY) and recreating it (APPLY) under <i>Uploader Operations</i>.<br/>
+    Refer to the console log and artifacts for detailed instance information and state.</p>""")
 
   parameters {
     stringParam {

@@ -85,7 +85,7 @@ pipeline {
                   echo "\033[1;32mListing buckets...\033[0m"
                   buckets=$(gcloud storage buckets list --format="value(name)" | { grep ${bucket_grep_opts} "${bucket_filter}" || true; })
                   if [[ -z "$buckets" ]]; then
-                    echo "None"
+                    echo "\033[1;33mNo buckets found.\033[0m"
                   else
                     while IFS= read -r bucket; do
                       # Use while/read to handle names safely; always quote variables.
@@ -115,7 +115,7 @@ pipeline {
                     # Enumerate backups safely; derive SOURCE_DATABASE for schedules below.
                     backups=$(gcloud spanner backups list --instance="$instance" --format="value(name)" || true)
                     if [[ -z "$backups" ]]; then
-                      echo "None"
+                      echo "\033[1;33mNo backups found.\033[0m"
                     else
                       while IFS= read -r backup; do
                         [[ -z "$backup" ]] && continue
@@ -128,7 +128,7 @@ pipeline {
                     # Query backup schedules for the most recently set database (if any).
                     schedules=$(gcloud spanner backup-schedules list --instance="$instance" --database="$database" --format="value(name)" || true)
                     if [[ -z "$schedules" ]]; then
-                      echo "None"
+                      echo "\033[1;33mNo backup schedules found.\033[0m"
                     else
                       while IFS= read -r schedule; do
                         [[ -z "$schedule" ]] && continue

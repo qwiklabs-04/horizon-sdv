@@ -75,6 +75,7 @@ pipeline {
                       { echo; echo "\033[1;32mABFS Alive:\033[0m ${PROCESS}"; echo; } | artifact "$1"
                     else
                       { echo; echo "\033[1;31mABFS Not running, consider DESTROY and APPLY\033[0m"; echo; } | artifact "${1}"
+                      exit 1
                     fi
                   }
 

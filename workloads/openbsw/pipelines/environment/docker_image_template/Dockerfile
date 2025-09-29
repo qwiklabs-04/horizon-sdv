@@ -44,7 +44,7 @@ RUN apt-get update -y && \
     apt-transport-https ca-certificates \
     build-essential bzip2 clang-tidy curl file gawk \
     gcc-11 g++11 gettext gettext-base git git-core gnupg \
-    htop iputils-ping less lcov ninja-build \
+    htop iproute2 iputils-ping kmod less lcov ninja-build \
     python"${PYTHON_VERSION}" python3-setuptools python3-pip \
     python3-requests python3-venv python3-virtualenv \
     rsync ssh sudo tar tmux unzip vim wget xz-utils zip && \

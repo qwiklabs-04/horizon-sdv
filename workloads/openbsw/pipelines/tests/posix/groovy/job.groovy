@@ -42,7 +42,7 @@ pipelineJob('OpenBSW/Tests/POSIX') {
 
     stringParam {
       name('LAUNCH_APPLICATION_NAME')
-      defaultValue('app.referenceApp.elf')
+      defaultValue('./posix/tools/enet/bring-up-ethernet.sh && ./posix/app.referenceApp.elf')
       description("""<p>Name of the application to launch, or empty to manually launch.</p>""")
       trim(true)
     }

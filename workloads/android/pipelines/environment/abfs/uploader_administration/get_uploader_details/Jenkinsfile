@@ -69,6 +69,7 @@ pipeline {
                   }
 
                   abfs_liveness() {
+                    [[ "$state" != "RUNNING" ]] && return
                     gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "$1" --tunnel-through-iap --command="" > /dev/null 2>&1 || true
                     { echo; echo "\033[1;32mABFS Process Liveness $1\033[0m"; } | artifact "$1"
                     PROCESS=$(gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "${1}" --tunnel-through-iap --command="pgrep -a abfs" || true)
@@ -88,8 +89,9 @@ pipeline {
                       { echo; echo "\033[1;32mInstance $instance\033[0m"; } | artifact "$instance"; echo
 
                       gcloud compute instances describe "$instance" --zone="${CLOUD_ZONE}" | artifact "$instance"
-                      { echo; echo "\033[1;32mInstance $instance state: $(gcloud compute instances describe "$instance" --zone="${CLOUD_ZONE}" --format="value(status)")\033[0m"; } | artifact "$instance"
-                      abfs_liveness "$instance" || true
+                      state=$(gcloud compute instances describe "$instance" --zone="${CLOUD_ZONE}" --format="value(status)")
+                      { echo; echo "\033[1;32mInstance $instance state: $state\033[0m"; } | artifact "$instance"
+                      abfs_liveness "$instance" $state
                     done
                   else
                     echo "\033[1;33mNo instances matching ${UPLOADER_INSTANCE_PREFIX}\033[0m"

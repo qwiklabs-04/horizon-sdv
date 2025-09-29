@@ -27,7 +27,7 @@ pipelineJob('Android/Environment/ABFS/Server Administration/Get Spanner Details'
     stringParam {
       name('ABFS_DB_BUCKET_NAME')
       defaultValue('')
-      description('''<p><b>Optional:</b> Enter specific DB bucket name if known, e.g <code>abfs-d2f2</code>, else leave blank to show potential buckets associated.</p>''')
+      description('''<p><b>Optional:</b> Enter specific DB bucket name if known, e.g <code>abfs-1234</code>, else leave blank to show potential buckets associated.</p>''')
       trim(true)
     }
     stringParam {

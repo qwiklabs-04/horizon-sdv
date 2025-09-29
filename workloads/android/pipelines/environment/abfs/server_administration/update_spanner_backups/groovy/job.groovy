@@ -26,7 +26,9 @@ pipelineJob('Android/Environment/ABFS/Server Administration/Update Spanner Backu
     stringParam {
       name('BACKUP_SCHEDULE_ID')
       defaultValue('')
-      description('''<p><b>Mandatory:</b> Enter backup schedule id, e.g.  <code>default_daily_full_backup_schedule</code></p>''')
+      description('''<p>Leave empty for <code>BACKUP_SCHEDULE_ACTION=DETAILS</code> so as to retrieve all backup schedules.<br/>
+                     For <code>BACKUP_SCHEDULE_ACTION=CREATE|DELETE|UPDATE</code>, define a backup schedule id, e.g.<br/>
+                     <code>default_daily_full_backup_schedule</code> or new schedule name.</p>''')
       trim(true)
     }
     stringParam {

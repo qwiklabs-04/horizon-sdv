@@ -36,7 +36,7 @@ pipelineJob('Android/Environment/ABFS/Server Administration/Destroy Spanner Inst
     stringParam {
       name('ABFS_DB_BUCKET_NAME')
       defaultValue('')
-      description('''<p><b>Mandatory:</b> Must be defined for bucket deletion. Enter specific DB bucket name if known, e.g <code>abfs-d2f2</code>, else leave blank to show potential buckets associated.</p>''')
+      description('''<p><b>Mandatory:</b> Must be defined for bucket deletion. Enter specific DB bucket name if known, e.g <code>abfs-1234</code>, else leave blank to show potential buckets associated.</p>''')
       trim(true)
     }
     stringParam {

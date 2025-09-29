@@ -29,15 +29,28 @@ This depends only on [`buildkit`](https://hub.docker.com/r/moby/buildkit) which 
 
 **Jenkins Parameters:** Defined in the groovy job definition `groovy/job.groovy`.
 
+### `NO_PUSH`
+
+Build the container image but don't push to the registry.
+
 ### `IMAGE_TAG`
 
 This is the tag that will be applied when the container image is pushed to the registry. The default value is defined by
 the `Seed Workloads` pipeline job. Users may override to provide a unique tag that describes the Linux distribution and
 tool chain versions.
 
-### `NO_PUSH`
+### `OPENBSW_GIT_URL`
 
-Build the container image but don't push to the registry.
+This provides the URL for the OpenBSW repository. Such as:
+- https://github.com/eclipse-openbsw/openbsw.git
+
+### `OPENBSW_GIT_BRANCH`
+
+This provides the branch/tag revision for the OpenBSW repository.
+
+### `LINUX_DISTRIBUTION`
+
+Define the Linux Distribution to create the Docker image from. Values must be supported by the Dockerfile `FROM` instruction.
 
 ### `ARM_TOOLCHAIN_URL`
 
@@ -51,17 +64,41 @@ URL of the CLANG tools to install in the Docker image.
 
 URL of the CMAKE shell script to install in the Docker image.
 
-### `LINUX_DISTRIBUTION`
+### `LLVM_ARM_TOOLCHAIN_URL`
 
-Define the Linux Distribution to create the Docker image from. Values must be supported by the Dockerfile `FROM` instruction.
+URL of LLVM Embedded Toolchain for Arm.
+
+### `LLVM_PROJECT_URL`
+
+URL of LLVM Compiler Infrastructure.
 
 ### `NODEJS_VERSION`
 
 The NodeJS version to install in the Docker image. This is required in order to use MTK Connect with the container.
 
+### `PYELFTOOLS_VERSION`
+
+pyelftools package version to install
+
+### `PYTHON_VERSION`
+
+Python version version to install
+
+### `SSCACHE_URL`
+
+URL of Shared Compilation Cache.
+
 ### `TREEFMT_URL`
 
 URL of the treefmt tools to install in the Docker image.
+
+### `BUILDKIT_RELEASE_TAG`
+
+The version of Builkit to use to build the container image.
+
+### `DOCKER_CREDENTIALS_URL`
+
+URL of Google docker credentials helper, required to allow access to the project artifact registry.
 
 ## SYSTEM VARIABLES <a name="system-variables"></a>
 

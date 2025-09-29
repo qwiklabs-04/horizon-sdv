@@ -45,7 +45,7 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('OPENBSW_GIT_BRANCH')
-      defaultValue('main')
+      defaultValue("${OPENBSW_GIT_BRANCH}")
       description('''<p>OpenBSW revision tag/branch name.</p>''')
       trim(true)
     }

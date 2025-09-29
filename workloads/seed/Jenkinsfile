@@ -132,6 +132,11 @@ pipeline {
              <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''',
            trim: true)
 
+    string(name: 'OPENBSW_GIT_BRANCH',
+           defaultValue: 'main',
+           description: '''<p>OpenBSW revision tag/branch name.</p>''',
+           trim: true)
+
     separator(
       name: "Common Parameters",
       sectionHeader: "Common Parameters",
@@ -140,7 +145,7 @@ pipeline {
     )
 
     string(name: 'NODEJS_VERSION',
-           defaultValue: "20.9.0",
+           defaultValue: "24.9.0",
            description: '''<p>NodeJS version.<br/>
              This is installed using <i>nvm</i> on the instance template to be compatible with other tooling.</p>''',
            trim: true)
@@ -228,6 +233,7 @@ pipeline {
                   ['${OPENBSW_BUILD_BUCKET_ROOT_NAME}', "${OPENBSW_BUILD_BUCKET_ROOT_NAME}"],
                   ['${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
                   ['${OPENBSW_IMAGE_TAG}', "${OPENBSW_IMAGE_TAG}"],
+                  ['${OPENBSW_GIT_BRANCH}', "${OPENBSW_GIT_BRANCH}"],
                   ['${NODEJS_VERSION}', "${NODEJS_VERSION}"],
                   ['${BUILDKIT_RELEASE_TAG}', "${BUILDKIT_RELEASE_TAG}"],
                   ['${DOCKER_CREDENTIALS_URL}', "${DOCKER_CREDENTIALS_URL}"]

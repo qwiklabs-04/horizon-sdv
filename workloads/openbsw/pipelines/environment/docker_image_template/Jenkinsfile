@@ -90,6 +90,13 @@ pipeline {
                    --opt build-arg:ARM_TOOLCHAIN_URL=${ARM_TOOLCHAIN_URL} \
                    --opt build-arg:CLANG_TOOLS_URL=${CLANG_TOOLS_URL} \
                    --opt build-arg:CMAKE_URL=${CMAKE_URL} \
+                   --opt build-arg:LLVM_PROJECT_URL=${LLVM_PROJECT_URL} \
+                   --opt build-arg:LLVM_ARM_TOOLCHAIN_URL=${LLVM_ARM_TOOLCHAIN_URL} \
+                   --opt build-arg:OPENBSW_GIT_URL=${OPENBSW_GIT_URL} \
+                   --opt build-arg:OPENBSW_GIT_BRANCH=${OPENBSW_GIT_BRANCH} \
+                   --opt build-arg:PYELFTOOLS_VERSION=${PYELFTOOLS_VERSION} \
+                   --opt build-arg:PYTHON_VERSION=${PYTHON_VERSION} \
+                   --opt build-arg:SSCACHE_URL=${SSCACHE_URL} \
                    --opt build-arg:TREEFMT_URL=${TREEFMT_URL} \
                    --opt platform=linux/amd64 \
                    --registry-auth-tlscontext host=${REGISTRY},insecure=true \

@@ -102,6 +102,10 @@ Build the unit tests. This will build `all` or that which is specified in `UNIT_
 Specify whether to build all tests or a specific test. See `LIST_UNIT_TESTS` which will generate a list of all available
 tests.
 
+e.g. `UNIT_TEST_TARGET` set to `bspTest`:
+
+Creates `build/tests/Debug/libs/bsw/bsp/test/gtest` which can be used with `RUN_UNIT_TESTS_CMDLINE`.
+
 ### `UNIT_TESTS_CMDLINE`
 
 The command that is used to build unit tests. Users may choose to override or retain default.
@@ -116,11 +120,9 @@ The command that is used to run unit tests. If the `UNIT_TEST_TARGET` is `all` t
 individual targets, it is recommended to either run the test target directly or use `ctest` and specify the test target
 directory.
 
-e.g. `UNIT_TEST_TARGET` set to `bspTest`:
+e.g. `UNIT_TEST_TARGET` set to `bspTest` use the following override:
 
-`cmake-build-unit-tests/openbsw/libs/bsw/bsp/test/gtest/bspTest`
-or
-`ctest --test-dir cmake-build-unit-tests/openbsw/libs/bsw/bsp/test/gtest -j7`
+`ctest --test-dir build/tests/Debug/libs/bsw/bsp/test/gtest --parallel ${CMAKE_SYNC_JOBS}`
 
 ### `BUILD_POSIX`
 

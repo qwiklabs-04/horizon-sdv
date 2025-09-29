@@ -144,8 +144,9 @@ if ${BUILD_POSIX}; then
         "${OPENBSW_GIT_DIR}/artifacts/posix"
     )
     POST_BUILD_COMMANDS+=(
-        "mkdir -p artifacts/posix"
+        "mkdir -p artifacts/posix/tools/enet"
         "cp -f ${POSIX_ARTIFACT} artifacts/posix || true"
+        "cp -f ./tools/enet/bring-up-ethernet.sh artifacts/posix/tools/enet || true"
     )
 fi
 

@@ -15,7 +15,8 @@ pipelineJob('Android/Environment/ABFS/Uploader Administration/Uploader Operation
   description("""
     <br/><h3 style="margin-bottom: 10px;">ABFS Uploaders</h3>
     <p>This job creates a virtual machine (VM) instance for the ABFS Uploaders, which is required for the ABFS build job to mount the ABFS source(cache).<br/>
-    The ABFS Uploader VM instances will be start to seed the ABFS server with the requested Android revision.</p>
+    The ABFS Uploader VM instances will be start to seed the ABFS server with the requested Android revision.<br/>
+    Use <i>Get Uploader Details</i> to check the state of the uploader instances.</p>
     <h4 style="margin-bottom: 10px;">Prerequisites</h4>
     <p>Before creating the ABFS Server VM instance, the following dependencies must be met:</p>
     <ul><li><b>Service Account Creation</b>: The abfs-server service account must be created in the GCP project.</li>

@@ -49,7 +49,7 @@ folder('Android/Environment/ABFS/Server Administration') {
     <ul><li><b>Get Server Details:</b> Show server details such as current state.</li>
     <li><b>Get Spanner Details:</b> Show all server side details such as Spanner DB instance name, backup schedule and bucket storage.</li>
     <li><b>Update Spanner Backups:</b> Create, Delete or Update the Spanner DB backup schedule.</li>
-    <li><b>Destroy Spanner Instance:</b> Create, Delete or Update the Spanner DB instance.</li></ul>
+    <li><b>Destroy Spanner Instance:</b> Destroy the Spanner DB instance, backups and associated bucket storage.</li></ul>
     Refer to <i>docs/workloads/android/abfs.md</i> for additional details.</p>''')
 }
 folder('Android/Environment/ABFS/Uploader Administration') {

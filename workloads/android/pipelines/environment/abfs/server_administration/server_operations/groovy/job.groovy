@@ -15,7 +15,8 @@ pipelineJob('Android/Environment/ABFS/Server Administration/Server Operations') 
   description("""
     <br/><h3 style="margin-bottom: 10px;">ABFS Server</h3>
       <p>This job creates a virtual machine (VM) instance for the ABFS Server, which is required for the ABFS build job to mount the ABFS source(cache).<br/>
-      The ABFS Server VM instance will be seeded with the desired Android revision by the Uploaders.</p>
+      The ABFS Server VM instance will be seeded with the desired Android revision by the Uploaders.<br/>
+      Use <i>Get Server Details</i> to check the state of the server.</p>
     <h4 style="margin-bottom: 10px;">Prerequisites</h4>
       <p>Before creating the ABFS Server VM instance, the following dependencies must be met:</p>
       <ul><li><b>Service Account Creation</b>: The abfs-server service account must be created in the GCP project.</li>

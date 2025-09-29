@@ -34,7 +34,25 @@ pipeline {
     def kubernetesPodTemplate = """
       apiVersion: v1
       kind: Pod
+      metadata:
+        annotations:
+          cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+        labels:
+          openbsw_pod: "true"
       spec:
+        tolerations:
+        - key: workloadType
+          operator: Equal
+          value: openbsw
+          effect: "NoSchedule"
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: openbsw_pod
+                  operator: Exists
+              topologyKey: kubernetes.io/hostname
         hostname: jenkins-openbsw-build-pod
         serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
         containers:
@@ -43,11 +61,8 @@ pipeline {
           imagePullPolicy: Always
           securityContext:
             privileged: true
-          resources:
-            limits:
-              memory: 8Gi
-            requests:
-              memory: 8Gi
+        nodeSelector:
+          workloadLabel: openbsw
       """.stripIndent()
   }
 

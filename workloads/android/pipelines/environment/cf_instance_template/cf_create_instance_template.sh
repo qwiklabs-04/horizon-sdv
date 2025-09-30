@@ -147,9 +147,9 @@ $(gcloud info --format="value(basic.python_location)") -m pip install numpy --no
 export CLOUDSDK_PYTHON_SITEPACKAGES=1
 
 # Colours for logging.
-GREEN='\033[0;32m'
-ORANGE='\033[0;33m'
-RED='\033[0;31m'
+GREEN='\033[1;32m'
+ORANGE='\033[1;33m'
+RED='\033[1;31m'
 NC='\033[0m'
 SCRIPT_NAME=$(basename "$0")
 
@@ -186,22 +186,23 @@ function echo_formatted() {
 # Echo environment variables.
 function echo_environment() {
     echo_formatted "Environment variables:"
-    echo_formatted "CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION}"
-    echo_formatted "BOOT_DISK_SIZE=${BOOT_DISK_SIZE}"
-    echo_formatted "DEBIAN_OS_VERSION=${DEBIAN_OS_VERSION}"
-    echo_formatted "JENKINS_NAMESPACE=${JENKINS_NAMESPACE}"
-    echo_formatted "JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME}"
-    echo_formatted "JENKINS_SSH_PUB_KEY_FILE=${JENKINS_SSH_PUB_KEY_FILE}"
-    echo_formatted "MACHINE_TYPE=${MACHINE_TYPE}"
-    echo_formatted "MAX_RUN_DURATION=${MAX_RUN_DURATION}"
-    echo_formatted "NETWORK=${NETWORK}"
-    echo_formatted "PROJECT=${PROJECT}"
-    echo_formatted "REGION=${REGION}"
-    echo_formatted "SERVICE_ACCOUNT=${SERVICE_ACCOUNT}"
-    echo_formatted "SUBNET=${SUBNET}"
-    echo_formatted "CUTTLEFISH_INSTANCE_UNIQUE_NAME=${cuttlefish_unique_name}"
-    echo_formatted "VM_INSTANCE_CREATE=${VM_INSTANCE_CREATE}"
-    echo_formatted "ZONE=${ZONE}"
+    echo "CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION}"
+    echo "BOOT_DISK_SIZE=${BOOT_DISK_SIZE}"
+    echo "DEBIAN_OS_VERSION=${DEBIAN_OS_VERSION}"
+    echo "JENKINS_NAMESPACE=${JENKINS_NAMESPACE}"
+    echo "JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME}"
+    echo "JENKINS_SSH_PUB_KEY_FILE=${JENKINS_SSH_PUB_KEY_FILE}"
+    echo "MACHINE_TYPE=${MACHINE_TYPE}"
+    echo "MAX_RUN_DURATION=${MAX_RUN_DURATION}"
+    echo "NETWORK=${NETWORK}"
+    echo "PROJECT=${PROJECT}"
+    echo "REGION=${REGION}"
+    echo "SERVICE_ACCOUNT=${SERVICE_ACCOUNT}"
+    echo "SUBNET=${SUBNET}"
+    echo "CUTTLEFISH_INSTANCE_UNIQUE_NAME=${cuttlefish_unique_name}"
+    echo "VM_INSTANCE_CREATE=${VM_INSTANCE_CREATE}"
+    echo "ZONE=${ZONE}"
+    echo
 }
 
 function print_usage() {
@@ -229,15 +230,15 @@ function print_usage() {
 # Check environment.
 function check_environment() {
     if [ -z "${PROJECT}" ]; then
-        echo -r "${RED}Environment variable PROJECT must be defined${NC}"
+        echo -e "${RED}Environment variable PROJECT must be defined${NC}"
         exit 1
     fi
     if [ -z "${SERVICE_ACCOUNT}" ]; then
-        echo -r "${RED}Environment variable SERVICE_ACCOUNT must be defined${NC}"
+        echo -e "${RED}Environment variable SERVICE_ACCOUNT must be defined${NC}"
         exit 1
     fi
     if [[ "${cuttlefish_unique_name}" != cuttlefish-vm* ]]; then
-        echo "CUTTLEFISH_INSTANCE_UNIQUE_NAME must start with cuttlefish-vm"
+        echo -e "${RED}CUTTLEFISH_INSTANCE_UNIQUE_NAME must start with cuttlefish-vm${NC}"
         exit 1
     fi
 }
@@ -263,7 +264,7 @@ function create_base_template_instance() {
         --network-interface=network="${NETWORK}",subnet="${SUBNET}",stack-type=IPV4_ONLY,no-address \
         ${max_run_duration_args} >/dev/null 2>&1 &
     progress_spinner "$!"
-    echo -e "${ORANGE}Instance template ${vm_base_instance_template} created${NC}"
+    echo -e "${GREEN}Instance template ${vm_base_instance_template} created${NC}"
 }
 
 # Create a VM instance from the base tenplate instance.
@@ -278,9 +279,9 @@ function create_vm_instance() {
         --zone="${ZONE}" &
     progress_spinner "$!"
 
-    echo -e "${ORANGE}Sleep for 2 minutes while instance stabilises${NC}"
-    sleep 120
-    echo -e "${ORANGE}VM Instance ${vm_base_instance} created${NC}"
+    echo -e "${ORANGE}Sleep for 1 minutes while instance stabilises${NC}"; echo
+    sleep 1m
+    echo -e "${GREEN}VM Instance ${vm_base_instance} created${NC}"
 }
 
 # Install host tools on the base VM instance.
@@ -290,7 +291,7 @@ function install_host_tools() {
 
     # https://cloud.google.com/compute/docs/troubleshooting/troubleshoot-os-login#invalid_argument
     # Clean old SSH keys
-    echo -e "${ORANGE}Remove old SSH keys${NC}"
+    echo -e "${GREEN}Remove old SSH keys${NC}"
     for k in $(gcloud compute os-login ssh-keys list --format="table[no-heading](value.fingerprint)"); do
         gcloud compute os-login ssh-keys remove --key "${k}" || true
     done
@@ -315,7 +316,7 @@ function install_host_tools() {
     # Alternative to reboot instance. Must be rebooted/restarted to ensure
     # user/groups are applied correctly before image is created from the
     # instance.
-    echo -e "${ORANGE}Rebooting VM instance ${vm_base_instance}${NC}"
+    echo -e "${GREEN}Rebooting VM instance ${vm_base_instance}${NC}"
     gcloud compute instances stop "${vm_base_instance}" --discard-local-ssd=false \
         --zone="${ZONE}" >/dev/null 2>&1 &
     progress_spinner "$!"
@@ -323,9 +324,9 @@ function install_host_tools() {
     gcloud compute instances start "${vm_base_instance}" --zone="${ZONE}" >/dev/null 2>&1 &
     progress_spinner "$!"
 
-    echo -e "${ORANGE}Sleep for 2 minutes while instance reboot completes.${NC}"
-    sleep 120
-    echo -e "${ORANGE}VM instance ${vm_base_instance} rebooted!${NC}"
+    echo -e "${ORANGE}Sleep for 2 minutes while instance reboot completes.${NC}"; echo
+    sleep 2m
+    echo -e "${GREEN}VM instance ${vm_base_instance} rebooted!${NC}"
 }
 
 # Add SSH key for Jenkins.
@@ -337,7 +338,7 @@ function create_ssh_key() {
     # Jenkins will extract from credentials and if not present, extract
     # from k8s secrets. Useful for running locally outside of Jenkins.
     if [ ! -f "${JENKINS_SSH_PUB_KEY_FILE}" ]; then
-        echo -e "${ORANGE}Extracting public key ${JENKINS_SSH_PUB_KEY_FILE}${NC}"
+        echo -e "${GREEN}Extracting public key ${JENKINS_SSH_PUB_KEY_FILE}${NC}"
         # Extract the public key from the private key.
         # - Use template arg to extract the private key and decode the base64.
         # - Append new line and correct file permissions so ssh-keygen
@@ -352,14 +353,14 @@ function create_ssh_key() {
         rm -f jenkins_rsa || true
 
         if [ ! -f "${JENKINS_SSH_PUB_KEY_FILE}" ]; then
-            echo "ERROR: Failed to extract public key from private key"
+            echo -e "${RED}ERROR: Failed to extract public key from private key${NC}"
             return 1
         fi
     else
-        echo -e "${ORANGE}Using local public key ${JENKINS_SSH_PUB_KEY_FILE}${NC}"
+        echo -e "${GREEN}Using local public key ${JENKINS_SSH_PUB_KEY_FILE}${NC}"
     fi
 
-    echo -e "${ORANGE}SSH Public key:${NC}"
+    echo -e "${GREEN}SSH Public key:${NC}"
     cat "${JENKINS_SSH_PUB_KEY_FILE}"
 
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap \
@@ -378,46 +379,51 @@ function create_ssh_key() {
 
     # Clean up
     rm -f "${JENKINS_SSH_PUB_KEY_FILE}"
+    echo -e "${GREEN}SSH key installed.${NC}"
 }
 
 # Create the final Cuttlefish template for use with Jenkins GCE plugin
 # allowing Cuttlefish to run on the Jenkins VM Instance.
 function create_cuttlefish_boilerplate_template() {
     echo_formatted "5. Create Cuttlefish boilerplate template instance from VM Instance"
+    echo -e "${GREEN}Stopping ${vm_base_instance}${NC}"
     gcloud compute instances stop "${vm_base_instance}" --zone="${ZONE}" >/dev/null 2>&1 || true &
     progress_spinner "$!"
 
+    echo -e "${GREEN}Deleting ${vm_cuttlefish_image}${NC}"
     yes Y | gcloud compute images delete "${vm_cuttlefish_image}" >/dev/null 2>&1 || true &
     progress_spinner "$!"
 
-    echo -e "${ORANGE}Sleep for 1 minute while image deletion completes${NC}"
-    sleep 60
+    echo -e "${ORANGE}Sleep for 1 minute while image ${vm_cuttlefish_image} deletion completes${NC}"; echo
+    sleep 1m
 
+    echo -e "${GREEN}Creating ${vm_cuttlefish_image}${NC}"
     gcloud compute images create "${vm_cuttlefish_image}" \
         --source-disk="${vm_base_instance}" \
         --source-disk-zone="${ZONE}" \
         --storage-location="${REGION}" \
         --source-disk-project="${PROJECT}" &
     progress_spinner "$!"
+    echo -e "${ORANGE}Sleep for 1 minute while image creation completes${NC}"; echo
+    sleep 1m
 
-    echo -e "${ORANGE}Sleep for 1 minute while image creation completes${NC}"
-    sleep 60
-    echo -e "${ORANGE}Image ${vm_cuttlefish_image} created${NC}"
-
+    echo -e "${GREEN}Delete ${vm_base_instance}${NC}"
     yes Y | gcloud compute instances delete "${vm_base_instance}" \
         --zone="${ZONE}" >/dev/null 2>&1 || true &
     progress_spinner "$!"
 
-    echo -e "${ORANGE}Sleep for 1 minute while instance deletion completes${NC}"
-    sleep 60
+    echo -e "${ORANGE}Sleep for 1 minute while instance ${vm_base_instance} deletion completes${NC}"; echo
+    sleep 1m
 
+    echo -e "${GREEN}Deleting ${vm_cuttlefish_instance_template}${NC}"
     yes Y | gcloud compute instance-templates delete \
         "${vm_cuttlefish_instance_template}" >/dev/null 2>&1 || true &
     progress_spinner "$!"
 
-    echo -e "${ORANGE}Sleep for 1 minute while instance template deletion completes${NC}"
-    sleep 60
+    echo -e "${ORANGE}Sleep for 1 minute while instance template ${vm_cuttlefish_instance_template} deletion completes${NC}"; echo
+    sleep 1m
 
+    echo -e "${GREEN}Creating ${vm_cuttlefish_instance_template}${NC}"
     # shellcheck disable=SC2086
     gcloud compute instance-templates create "${vm_cuttlefish_instance_template}" \
         --description="${vm_cuttlefish_instance_template}" \
@@ -435,18 +441,19 @@ function create_cuttlefish_boilerplate_template() {
         ${max_run_duration_args} &
     progress_spinner "$!"
 
-    echo -e "${ORANGE}Sleep for 4 minute while instance template creation completes, GCP settles.${NC}"
-    sleep 240
+    echo -e "${ORANGE}Sleep for 2 minute while instance template creation completes, GCP settles.${NC}"; echo
+    sleep 2m
 
     # Check the instance template was created.
     template_exists=$(gcloud compute instance-templates list --filter="name=${vm_cuttlefish_instance_template}" --format='get(name)')
      if [ "${template_exists}" != "${vm_cuttlefish_instance_template}" ]; then
-       echo -r "${RED}ERROR: Failed to create template: ${vm_cuttlefish_instance_template}, review logs.${NC}"
+       echo -e "${RED}ERROR: Failed to create template: ${vm_cuttlefish_instance_template}, review logs.${NC}"
        return 1
     else
-       echo -e "${ORANGE}Instance Template ${vm_cuttlefish_instance_template} created${NC}"
+       echo -e "${GREEN}Instance Template ${vm_cuttlefish_instance_template} created${NC}"
     fi
 
+    echo -e "${GREEN}Deleting ${vm_cuttlefish_instance}${NC}"
     # Delete and Recreate a VM instance for local tests.
     yes Y | gcloud compute instances delete "${vm_cuttlefish_instance}" \
         --zone="${ZONE}" >/dev/null 2>&1 || true &
@@ -458,22 +465,24 @@ function create_cuttlefish_boilerplate_template() {
             --zone="${ZONE}" &
         progress_spinner "$!"
 
-        echo -e "${ORANGE}Sleep for 1 minute while instance creation completes${NC}"
-        sleep 60
-        echo -e "${ORANGE}VM Instance ${vm_cuttlefish_instance} created${NC}"
+        echo -e "${ORANGE}Sleep for 1 minute while instance creation completes${NC}"; echo
+        sleep 1m
+        echo -e "${GREEN}VM Instance ${vm_cuttlefish_instance} created${NC}"
 
         # Stop the VM instance.
         gcloud compute instances stop "${vm_cuttlefish_instance}" \
             --zone="${ZONE}" >/dev/null 2>&1 || true &
         progress_spinner "$!"
-        echo -e "${ORANGE}VM Instance ${vm_cuttlefish_instance} stopped${NC}"
+        echo -e "${GREEN}VM Instance ${vm_cuttlefish_instance} stopped${NC}"
     fi
 
+    echo -e "${GREEN}Deleting ${vm_base_instance_template}${NC}"
     # Delete the base template
     yes Y | gcloud compute instance-templates delete \
         "${vm_base_instance_template}" >/dev/null 2>&1 || true &
     progress_spinner "$!"
 
+    echo -e "${GREEN}Cuttlefish boilerplate template instance completed."
 }
 
 # Delete all VM instances and artifacts

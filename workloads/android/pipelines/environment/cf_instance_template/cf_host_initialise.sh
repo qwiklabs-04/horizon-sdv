@@ -63,7 +63,7 @@ function cuttlefish_install_additional_packages() {
     java -version
 
     # Install Node version manager and nodejs.
-    echo -e "${GREEN}Installing nodehs ${NODEJS_VERSION}${NC}"
+    echo -e "${GREEN}Installing nodejs ${NODEJS_VERSION}${NC}"
     npm cache clean -f
     sudo npm install -g n
     sudo n "${NODEJS_VERSION}"

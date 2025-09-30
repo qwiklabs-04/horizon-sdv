@@ -98,6 +98,6 @@ ENV PATH="/root/.local/bin:/usr/local/bin:/usr/bin:$PATH"
 # Node version manager
 RUN sudo npm cache clean -f && \
     sudo npm install -g n && \
-    sudo npm install -g wait-on && \
     sudo n "${NODEJS_VERSION}" && \
+    sudo npm install -g wait-on && \
     sudo ln -sf /usr/local/bin/node /usr/local/bin/nodejs || true

@@ -222,4 +222,3 @@ These are as follows:
 -   The CVD launcher will exit if it cannot boot the desired number of devices. Due to existing issues with CVD's device creation and booting process, it is safer to terminate and report failure rather than attempting to recover with fewer devices, as this may cause connectivity problems with some of the remaining devices.
      - Future plans include implementing mitigation strategies to ensure that devices that boot with fewer than the requested number can be trusted and utilized. Currently, these devices cannot be relied upon to function correctly.
 -    WiFi: Some versions of Android, e.g. `android-14.0.0_r30` are not so reliable when it comes to connecting WiFi to the network. If the device cannot connect to the network, it is not possible to test WiFi connectivity. In future releases we will remove devices that fail to connect from the test.
-     - Known reliable version: `android-14.0.0_r74`

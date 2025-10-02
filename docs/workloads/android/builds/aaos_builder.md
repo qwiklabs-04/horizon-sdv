@@ -50,17 +50,11 @@ This provides the URL for the Android repo manifest. Such as:
 The Android revision, i.e. branch or tag to build. Tested versions are below:
 
 - `horizon/android-14.0.0_r30` (ap1a)
-- `horizon/android-14.0.0_r74` (ap2a - refer to Known Issues)
-- `horizon/android-15.0.0_r4` (ap3a)
-- `horizon/android-15.0.0_r20` (bp1a)
-- `horizon/android-15.0.0_r32` (bp1a)
-- `horizon/android-15.0.0_r36` (bp1a - default)
+- `horizon/android-15.0.0_r36` (bp1a)
+- `horizon/android-16.0.0_r2` (bp2a - default)
 - `android-14.0.0_r30` (ap1a)
-- `android-14.0.0_r74` (ap2a, refer to Known Issues)
-- `android-15.0.0_r4` (ap3a)
-- `android-15.0.0_r20` (bp1a)
-- `android-15.0.0_r32` (bp1a)
 - `android-15.0.0_r36` (bp1a)
+- `android-16.0.0_r2` (bp2a)
 
 ### `AAOS_LUNCH_TARGET` <a name="targets"></a>
 
@@ -71,32 +65,28 @@ Reference: [Codenames, tags, and build numbers](https://source.android.com/docs/
 Examples:
 
 - Virtual Devices:
-    -   `sdk_car_x86_64-ap1a-userdebug`
-    -   `sdk_car_x86_64-ap2a-userdebug`
-    -   `sdk_car_x86_64-ap3a-userdebug`
-    -   `sdk_car_x86_64-bp1a-userdebug`
-    -   `sdk_car_arm64-ap1a-userdebug`
-    -   `sdk_car_arm64-ap2a-userdebug`
-    -   `sdk_car_arm64-ap3a-userdebug`
-    -   `sdk_car_arm64-bp1a-userdebug`
-    -   `aosp_cf_x86_64_auto-ap1a-userdebug`
-    -   `aosp_cf_x86_64_auto-ap2a-userdebug`
-    -   `aosp_cf_x86_64_auto-ap3a-userdebug`
-    -   `aosp_cf_x86_64_auto-bp1a-userdebug`
-    -   `aosp_cf_arm64_auto-ap1a-userdebug`
-    -   `aosp_cf_arm64_auto-ap2a-userdebug`
-    -   `aosp_cf_arm64_auto-ap3a-userdebug`
-    -   `aosp_cf_arm64_auto-bp1a-userdebug`
+    -   `sdk_car_x86_64-ap1a-userdebug` (`android-14.0.0_r30`)
+    -   `sdk_car_x86_64-bp1a-userdebug` (`android-15.0.0_r36` )
+    -   `sdk_car_x86_64-bp2a-userdebug` (`android-16.0.0_r2`)
+    -   `sdk_car_arm64-ap1a-userdebug` (`android-14.0.0_r30`)
+    -   `sdk_car_arm64-bp1a-userdebug` (`android-15.0.0_r36` )
+    -   `sdk_car_arm64-bp2a-userdebug` (`android-16.0.0_r2`)
+    -   `aosp_cf_x86_64_auto-ap1a-userdebug` (`android-14.0.0_r30`)
+    -   `aosp_cf_x86_64_auto-bp1a-userdebug` (`android-15.0.0_r36` )
+    -   `aosp_cf_x86_64_auto-bp2a-userdebug` (`android-16.0.0_r2`)
+    -   `aosp_cf_arm64_auto-ap1a-userdebug` (`android-14.0.0_r30`)
+    -   `aosp_cf_arm64_auto-bp1a-userdebug` (`android-15.0.0_r36` )
+    -   `aosp_cf_arm64_auto-bp2a-userdebug` (`android-16.0.0_r2`)
 -   Pixel Devices:
-    -   `aosp_tangorpro_car-ap1a-userdebug`
-    -   `aosp_tangorpro_car-ap2a-userdebug`
-    -   `aosp_tangorpro_car-ap3a-userdebug`
-    -   `aosp_tangorpro_car-bp1a-userdebug`
+    -   `aosp_tangorpro_car-ap1a-userdebug` (`android-14.0.0_r30`)
+    -   `aosp_tangorpro_car-bp1a-userdebug` (`android-15.0.0_r36` )
 -   Raspberry Pi:
     -   `aosp_rpi4_car-ap1a-userdebug` (`android-14.0.0_r30`)
     -   `aosp_rpi5_car-ap1a-userdebug` (`android-14.0.0_r30`)
-    -   `aosp_rpi4_car-bp1a-userdebug` (`android-15.0.0_r32` | `android-15.0.0_r36` )
-    -   `aosp_rpi5_car-bp1a-userdebug` (`android-15.0.0_r32` | `android-15.0.0_r36` )
+    -   `aosp_rpi4_car-bp1a-userdebug` (`android-15.0.0_r36` )
+    -   `aosp_rpi5_car-bp1a-userdebug` (`android-15.0.0_r36` )
+    -   `aosp_rpi4_car-bp2a-userdebug` (`android-16.0.0_r2`)
+    -   `aosp_rpi5_car-bp2a-userdebug` (`android-16.0.0_r2`)
 
 ### `ANDROID_VERSION`
 
@@ -182,16 +172,16 @@ Some targets have their own definitions for `POST_REPO_INITIALISE_COMMAND` and `
 Example 1: Initialise the repos for `aosp_cf_x86_64_auto-bp1a-userdebug`
 ```
 AAOS_GERRIT_MANIFEST_URL=https://dev.horizon-sdv.com/gerrit/android/platform/manifest \
-AAOS_REVISION=horizon/android-15.0.0_r36 \
-AAOS_LUNCH_TARGET=aosp_cf_x86_64_auto-bp1a-userdebug \
+AAOS_REVISION=horizon/android-16.0.0_r2 \
+AAOS_LUNCH_TARGET=aosp_cf_x86_64_auto-bp2a-userdebug \
 ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
 ```
 
 Example 2: Initialise the repos for `aosp_tangorpro_car-bp1a-userdebug` with Gerrit patch set.
 ```
 AAOS_GERRIT_MANIFEST_URL=https://dev.horizon-sdv.com/gerrit/android/platform/manifest \
-AAOS_REVISION=horizon/android-15.0.0_r36 \
-AAOS_LUNCH_TARGET=aosp_tangorpro_car-bp1a-userdebug \
+AAOS_REVISION=horizon/android-16.0.0_r2 \
+AAOS_LUNCH_TARGET=aosp_tangorpro_car-bp2a-userdebug \
 GERRIT_SERVER_URL=https://dev.horizon-sdv.com/gerrit \
 GERRIT_CHANGE_NUMBER=82 \
 GERRIT_PATCHSET_NUMBER=1 \
@@ -202,7 +192,7 @@ GERRIT_PROJECT=android/platform/packages/services/Car \
 ### `aaos_build.sh` <a name="aaos_build"></a>
 This script is responsible for building the given target.
 ```
-AAOS_LUNCH_TARGET=sdk_car_x86_64-bp1a-userdebug \
+AAOS_LUNCH_TARGET=sdk_car_x86_64-bp2a-userdebug \
 AAOS_PARALLEL_BUILD_JOBS=64 \
 ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
 ```
@@ -213,8 +203,8 @@ This script creates the addon and devices files required for using AVD images wi
 This is only applicable to AVD `sdk_car` based targets.
 
 ```
-AAOS_LUNCH_TARGET=sdk_car_x86_64-bp1a-userdebug \
-ANDROID_VERSION=15 \
+AAOS_LUNCH_TARGET=sdk_car_x86_64-bp2a-userdebug \
+ANDROID_VERSION=16 \
 ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh
 ```
 
@@ -223,7 +213,7 @@ Not applicable in standalone mode. Storage is currently dependent on Jenkins `BU
 Developers may upload their build artifacts to their own storage solution.
 
 ```
-AAOS_LUNCH_TARGET=sdk_car_x86_64-bp1a-userdebug \
+AAOS_LUNCH_TARGET=sdk_car_x86_64-bp2a-userdebug \
 ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
 ```
 

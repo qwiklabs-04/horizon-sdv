@@ -28,7 +28,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
       description('''<p>The branch/tag version of Android Cuttlefish to use, e.g.</p>
         <ul>
           <li>main</li>
-          <li>v1.18.0</li>
+          <li>v1.25.0</li>
         </ul>
         <p>Reference: <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a></p>''')
       trim(true)
@@ -37,9 +37,9 @@ pipelineJob('Android/Environment/CF Instance Template') {
     stringParam {
       name('CUTTLEFISH_INSTANCE_UNIQUE_NAME')
       defaultValue('')
-      description('''<p>Optional parameter to define the unique name used for the instance template, e.g.  <i>cuttlefish-vm-instance-test-v1180</i><br/>
+      description('''<p>Optional parameter to define the unique name used for the instance template, e.g.  <i>cuttlefish-vm-instance-test-v1250</i><br/>
         Name must start with <i>cuttlefish-vm</i>, refer to docs for details on regex requirements for name.<br/>
-        Default: The name will be automatically derived from ANDROID_CUTTLEFISH_REVISION., e.g. <i>cuttlefish-vm-v1180</i><br/><br/></p>''')
+        Default: The name will be automatically derived from ANDROID_CUTTLEFISH_REVISION., e.g. <i>cuttlefish-vm-v1250</i><br/><br/></p>''')
       trim(true)
     }
 
@@ -59,11 +59,11 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('BOOT_DISK_SIZE')
-      defaultValue('200GB')
+      defaultValue('500GB')
       description('''<p>The boot disk size for the instance template image, e.g..</p>
         <ul>
-          <li>200GB</li>
-          <li>150GB</li>
+          <li>500GB</li>
+          <li>250GB</li>
         </ul>
         <p>Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk=[PROPERTY=VALUE,…]</i></p>''')
       trim(true)
@@ -80,7 +80,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('DEBIAN_OS_VERSION')
-      defaultValue('debian-12-bookworm-v20250812')
+      defaultValue('debian-12-bookworm-v20250910')
       description('''<p>Disk image OS version.<br/>
         Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk</i></p>''')
       trim(true)

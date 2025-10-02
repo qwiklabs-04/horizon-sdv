@@ -24,16 +24,28 @@
 read -r -a ARTIFACT_LIST <<< "${ARTIFACT_LIST}"
 IFS=$'\n' read -r -d '' -a POST_CLEANUP_COMMANDS <<< "$POST_CLEANUP_STRING"
 
+# Format STORAGE_PATH as a zero-padded two-digit string (e.g. 7/aaa -> 07/aaa, 7 -> 07)
+# shellcheck disable=SC2329
+function pad_first_number_if_numeric() {
+    local width=${1:-2} s=$2 head rest
+    head=${s%%/*}
+    [[ $s == */* ]] && rest="/${s#*/}" || rest=
+    if [[ $head =~ ^[0-9]+$ ]]; then
+        printf "%0*d%s\n" "$width" "$head" "$rest"
+    else
+        echo "$s" # Return the original.
+    fi
+}
+
 # shellcheck disable=SC2329
 function gcs_bucket() {
     local -r bucket_name="gs://${ARTIFACT_ROOT_NAME}"
     # Replace spaces in Jenkins Job Name
     BUCKET_FOLDER="${JOB_NAME// /_}"
-    # Format BUILD_NUMBER as a zero-padded two-digit string (e.g., 7 -> "07") and assign to build_number
     # shellcheck disable=SC2155
-    local build_number=$(printf '%02d' "${BUILD_NUMBER}")
-    local -r destination="${bucket_name}/${BUCKET_FOLDER}/${build_number}"
-    local -r cloud_url="https://console.cloud.google.com/storage/browser/${ARTIFACT_ROOT_NAME}/${BUCKET_FOLDER}/${build_number}"
+    local storage_path=$(pad_first_number_if_numeric 2 "${STORAGE_PATH}")
+    local -r destination="${bucket_name}/${BUCKET_FOLDER}/${storage_path}"
+    local -r cloud_url="https://console.cloud.google.com/storage/browser/${ARTIFACT_ROOT_NAME}/${BUCKET_FOLDER}/${storage_path}"
 
     # Remove the old artifacts
     gcloud storage rm -r "${destination}" || true
@@ -113,7 +125,7 @@ case "${ARTIFACT_STORAGE_SOLUTION}" in
 esac
 
 # Store artifacts to artifact storage.
-if [ -n "${ARTIFACT_STORAGE_SOLUTION}" ] && [ -n "${BUILD_NUMBER}" ]; then
+if [ -n "${ARTIFACT_STORAGE_SOLUTION}" ] && [ -n "${STORAGE_PATH}" ]; then
     if [ "${#ARTIFACT_LIST[@]}" -gt 0 ]; then
         "${ARTIFACT_STORAGE_SOLUTION_FUNCTION}"
     else

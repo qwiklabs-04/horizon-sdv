@@ -24,7 +24,7 @@
 # From command line, such as Google Cloud Shell, create templates for all
 # versions of android-cuttlefish host tools/packages:
 #
-#  CUTTLEFISH_REVISION=v1.18.0 ./cf_create_instance_template.sh && \
+#  CUTTLEFISH_REVISION=v1.25.0 ./cf_create_instance_template.sh && \
 #  CUTTLEFISH_REVISION=main ./cf_create_instance_template.sh
 #
 # The following variables are required to run the script, choose to use
@@ -32,8 +32,8 @@
 #
 #  - CUTTLEFISH_REVISION: the branch/tag version of Android Cuttlefish
 #        to use. Default: main
-#  - BOOT_DISK_SIZE: Disk image size in GB. Default: 200GB
-#  - DEBIAN_OS_VERSION: Default: debian-12-bookworm-v20250812
+#  - BOOT_DISK_SIZE: Disk image size in GB. Default: 500GB
+#  - DEBIAN_OS_VERSION: Default: debian-12-bookworm-v20250910
 #  - JENKINS_NAMESPACE: k8s namespace. Default: jenkins
 #  - JENKINS_PRIVATE_SSH_KEY_NAME: SSH key name to extract public key from
 #        Private key would be created similar to:
@@ -97,9 +97,9 @@ CUTTLEFISH_INSTANCE_UNIQUE_NAME=${CUTTLEFISH_INSTANCE_UNIQUE_NAME:-cuttlefish-vm
 CUTTLEFISH_INSTANCE_UNIQUE_NAME=$(echo "${CUTTLEFISH_INSTANCE_UNIQUE_NAME}" | awk '{print tolower($0)}' | xargs)
 CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION:-main}
 CUTTLEFISH_REVISION=$(echo "${CUTTLEFISH_REVISION}" | xargs)
-BOOT_DISK_SIZE=${BOOT_DISK_SIZE:-200GB}
+BOOT_DISK_SIZE=${BOOT_DISK_SIZE:-500GB}
 BOOT_DISK_SIZE=$(echo "${BOOT_DISK_SIZE}" | awk '{print toupper($0)}' | xargs)
-DEBIAN_OS_VERSION=${DEBIAN_OS_VERSION:-debian-12-bookworm-v20250812}
+DEBIAN_OS_VERSION=${DEBIAN_OS_VERSION:-debian-12-bookworm-v20250910}
 DEBIAN_OS_VERSION=$(echo "${DEBIAN_OS_VERSION}" | xargs)
 JENKINS_NAMESPACE=${JENKINS_NAMESPACE:-jenkins}
 JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME:-jenkins-cuttlefish-vm-ssh-private-key}

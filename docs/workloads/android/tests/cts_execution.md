@@ -16,7 +16,7 @@ The pipeline first runs CVD on the Cuttlefish VM Instance to instantiate the spe
 
 Note:
 
-- This pipeline offers the flexibility to run using a user-defined CTS suite (built by the `CTS Builder` pipeline) instead of the default Android 14 and Android 15 CTS suites provided by google.
+- This pipeline offers the flexibility to run using a user-defined CTS suite (built by the `CTS Builder` pipeline) instead of the default Android 14, 15 and 16 CTS suites provided by google.
 - It allows user to enable MTK Connect should they wish to view the virtual devices during testing (e.g. useful for UI tests).
 - It allows users to keep the cuttlefish virtual devices alive for a certain amount of time after the CTS run has completed in order to facilitate debugging via MTK Connect. MTK Connect must be enabled for this option.
 
@@ -67,7 +67,7 @@ This allows the user to install Wifi utility APK on all Cuttlefish virtual devic
 
 ### `ANDROID_VERSION`
 
-Defines the Android and thus CTS version to use. The Cuttlefish VM Instance is already pre-installed with Android 14 CTS and Android 15 CTS, so this defines which version to use.
+Defines the Android and thus CTS version to use. The Cuttlefish VM Instance is already pre-installed with Android 14, 15 and CTS, so this defines which version to use.
 
 ### `CTS_DOWNLOAD_URL`
 
@@ -83,7 +83,7 @@ URL is of the form `gs://<ANDROID_BUILD_BUCKET_ROOT_NAME>/Android/Builds/CTS_Bui
 
 ### `CTS_TESTPLAN`
 
-This defines the CTS test plan that will be run. Default is: `cts-system-virtual` which is only available in Android 15.
+This defines the CTS test plan that will be run. Default is: `cts-system-virtual` which is only available in Android 15 and 16.
 
 Android 14 users should pick a test plan that is compatible with their version of Cuttlefish.
 

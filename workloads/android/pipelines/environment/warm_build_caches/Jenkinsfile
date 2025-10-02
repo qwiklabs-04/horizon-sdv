@@ -20,6 +20,8 @@ def getAndroidVersion(revision) {
     return "14"
   } else if (revision =~ "android-15") {
     return "15"
+  } else if (revision =~ "android-16") {
+    return "16"
   } else {
     currentBuild.result = 'FAILURE'
     error "Failed to determine Android version from revision: ${revision}"
@@ -69,11 +71,13 @@ pipeline {
         containers:
         - name: builder
           image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
           command:
           - sleep
           args:
-          - 5h
+          - 6h
           resources:
             limits:
               cpu: 98000m
@@ -114,12 +118,8 @@ pipeline {
                 script {
                   env.ANDROID_BUILD_ID=''
                   if ( "${env.AAOS_REVISION}" =~ "android-14.0.0_r30" ) env.ANDROID_BUILD_ID="ap1a-"
-                  if ( "${env.AAOS_REVISION}" =~ "android-14.0.0_r74" ) env.ANDROID_BUILD_ID="ap2a-"
-                  if ( "${env.AAOS_REVISION}" =~ "android-15.0.0_r4" )  env.ANDROID_BUILD_ID="ap3a-"
-                  if ( "${env.AAOS_REVISION}" =~ "android-15.0.0_r10" ) env.ANDROID_BUILD_ID="ap4a-"
-                  if ( "${env.AAOS_REVISION}" =~ "android-15.0.0_r20" ) env.ANDROID_BUILD_ID="bp1a-"
-                  if ( "${env.AAOS_REVISION}" =~ "android-15.0.0_r32" ) env.ANDROID_BUILD_ID="bp1a-"
                   if ( "${env.AAOS_REVISION}" =~ "android-15.0.0_r36" ) env.ANDROID_BUILD_ID="bp1a-"
+                  if ( "${env.AAOS_REVISION}" =~ "android-16.0.0_r2" ) env.ANDROID_BUILD_ID="bp2a-"
                 }
                 sh '''
                   set +x
@@ -242,6 +242,7 @@ pipeline {
         }
 
         stage ('Build: aosp_tangorpro_car') {
+          when { expression { !(env.AAOS_REVISION ?: '').contains('android-16.0.0_r2') } }
           steps {
             container(name: 'builder') {
               withCredentials([usernamePassword(credentialsId: 'jenkins-gerrit-http-password', passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {

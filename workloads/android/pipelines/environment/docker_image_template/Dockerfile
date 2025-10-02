@@ -74,10 +74,6 @@ RUN useradd -u 1000 -ms /bin/bash ${USER} && \
     usermod -aG sudo ${USER} && \
     echo "${USER} ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers
 
-RUN if [ "$ABFS" = "true" ]; then \
-        mkdir /src && chown ${USER}:${USER} /src; \
-    fi
-
 # Switch to user
 USER ${USER}
 WORKDIR /home/${USER}

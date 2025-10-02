@@ -37,17 +37,11 @@ This provides the URL for the Android repo manifest. Such as:
 The Android revision, i.e. branch or tag to build. Tested versions are below:
 
 - `horizon/android-14.0.0_r30` (ap1a)
-- `horizon/android-14.0.0_r74` (ap2a - refer to Known Issues)
-- `horizon/android-15.0.0_r4` (ap3a)
-- `horizon/android-15.0.0_r20` (bp1a)
-- `horizon/android-15.0.0_r32` (bp1a)
-- `horizon/android-15.0.0_r36` (bp1a - default)
+- `horizon/android-15.0.0_r36` (bp1a)
+- `horizon/android-16.0.0_r2` (bp2a - default)
 - `android-14.0.0_r30` (ap1a)
-- `android-14.0.0_r74` (ap2a, refer to Known Issues)
-- `android-15.0.0_r4` (ap3a)
-- `android-15.0.0_r20` (bp1a)
-- `android-15.0.0_r32` (bp1a)
 - `android-15.0.0_r36` (bp1a)
+- `android-16.0.0_r2` (bp2a)
 
 ### `AAOS_LUNCH_TARGET` <a name="targets"></a>
 
@@ -59,13 +53,11 @@ Examples:
 
 - Virtual Devices:
     -   `aosp_cf_x86_64_auto-ap1a-userdebug`
-    -   `aosp_cf_x86_64_auto-ap2a-userdebug`
-    -   `aosp_cf_x86_64_auto-ap3a-userdebug`
     -   `aosp_cf_x86_64_auto-bp1a-userdebug`
+    -   `aosp_cf_x86_64_auto-bp2a-userdebug`
     -   `aosp_cf_arm64_auto-ap1a-userdebug`
-    -   `aosp_cf_arm64_auto-ap2a-userdebug`
-    -   `aosp_cf_arm64_auto-ap3a-userdebug`
     -   `aosp_cf_arm64_auto-bp1a-userdebug`
+    -   `aosp_cf_arm64_auto-bp2a-userdebug`
 
 ### `ANDROID_VERSION`
 

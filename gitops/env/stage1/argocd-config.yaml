@@ -59,6 +59,7 @@ spec:
             keycloakjenkins: ##CLOUD_REGION##-docker.pkg.dev/##PROJECT_ID##/horizon-sdv/keycloak-post-jenkins:1.0.0
             keycloakargocd: ##CLOUD_REGION##-docker.pkg.dev/##PROJECT_ID##/horizon-sdv/keycloak-post-argocd:1.0.0
             keycloakgerrit: ##CLOUD_REGION##-docker.pkg.dev/##PROJECT_ID##/horizon-sdv/keycloak-post-gerrit:1.0.0
+            keycloakgrafana: ##CLOUD_REGION##-docker.pkg.dev/##PROJECT_ID##/horizon-sdv/keycloak-post-grafana:1.0.0
             mtkconnect: ##CLOUD_REGION##-docker.pkg.dev/##PROJECT_ID##/horizon-sdv/mtk-connect-post:1.0.0
             mtkconnectkey: ##CLOUD_REGION##-docker.pkg.dev/##PROJECT_ID##/horizon-sdv/mtk-connect-post-key:1.0.0
             gerrit: ##CLOUD_REGION##-docker.pkg.dev/##PROJECT_ID##/horizon-sdv/gerrit-post:1.0.0

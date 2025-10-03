@@ -49,6 +49,9 @@ on:
       gh-keycloak-initial-password:
         required: false
         description: "Github Secret KEYCLOAK_INITIAL_PASSWORD"
+      gh-grafana-initial-password:
+        required: false
+        description: "Github Secret GRAFANA_INITIAL_PASSWORD"
       gh-gerrit-admin-initial-password:
         required: false
         description: "Github Secret GERRIT_ADMIN_INITIAL_PASSWORD"
@@ -198,6 +201,7 @@ jobs:
           echo "TF_VAR_sdv_gh_argocd_initial_password_bcrypt=${{ steps.generate-encoded-argocd-bcrypt-hash.outputs.argocd_encoded_bcrypt_hash }}" >> $GITHUB_ENV
           echo "TF_VAR_sdv_gh_jenkins_initial_password=${{ secrets.gh-jenkins-initial-password }}" >> $GITHUB_ENV
           echo "TF_VAR_sdv_gh_keycloak_initial_password=${{ secrets.gh-keycloak-initial-password }}" >> $GITHUB_ENV
+          echo "TF_VAR_sdv_gh_grafana_initial_password=${{ secrets.gh-grafana-initial-password }}" >> $GITHUB_ENV
           echo "TF_VAR_sdv_gh_gerrit_admin_initial_password=${{ secrets.gh-gerrit-admin-initial-password }}" >> $GITHUB_ENV
           echo "TF_VAR_sdv_gh_keycloak_horizon_admin_password=${{ secrets.gh-keycloak-horizon-admin-password }}" >> $GITHUB_ENV
           echo "TF_VAR_sdv_gh_abfs_license_b64=${{ secrets.gh-abfs-license-b64 }}" >> $GITHUB_ENV

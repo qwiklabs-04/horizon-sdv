@@ -69,6 +69,7 @@ jobs:
       gh-argocd-initial-password: ${{ secrets.ARGOCD_INITIAL_PASSWORD }}
       gh-jenkins-initial-password: ${{ secrets.JENKINS_INITIAL_PASSWORD }}
       gh-keycloak-initial-password: ${{ secrets.KEYCLOAK_INITIAL_PASSWORD }}
+      gh-grafana-initial-password: ${{ secrets.GRAFANA_INITIAL_PASSWORD }}
       gh-gerrit-admin-initial-password: ${{ secrets.GERRIT_ADMIN_INITIAL_PASSWORD }}
       gh-gerrit-admin-private-key: ${{ secrets.GERRIT_ADMIN_PRIVATE_KEY }}
       gh-keycloak-horizon-admin-password: ${{ secrets.KEYCLOAK_HORIZON_ADMIN_PASSWORD }}

@@ -21,6 +21,8 @@ Before creating the ABFS Uploader(s) VM instance, the following dependencies mus
 - **Docker Infra Image Template Job**:The Docker Infra Image Template job must be run, and the Docker image must be available in the registry.
 - **ABFS Server**: The ABFS server must have been created and started for uploader to seed the server.
 
+Consider using `Get Uploader Details` to ensure the uploader instances have been provisioned correctly.
+
 Additional details are available in `docs/workloads/android/abfs.md`.
 
 

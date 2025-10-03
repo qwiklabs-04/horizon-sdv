@@ -52,6 +52,8 @@ pipeline {
         - name: builder
           image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}:${IMAGE_TAG}
           imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
           command:
           - sleep
           args:

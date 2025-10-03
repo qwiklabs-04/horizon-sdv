@@ -109,15 +109,15 @@ UNIT_TEST_TARGET=${UNIT_TEST_TARGET:-all}
 CODE_COVERAGE=${CODE_COVERAGE:-false}
 
 # Configure and generate the build systems before building.
-UNIT_TESTS_CMDLINE=${UNIT_TESTS_CMDLINE:-cmake -DBUILD_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -B cmake-build-unit-tests -S executables/unitTest && cmake --build cmake-build-unit-tests -j${CMAKE_SYNC_JOBS} --target ${UNIT_TEST_TARGET}}
-LIST_UNIT_TESTS_CMDLINE=${LIST_UNIT_TESTS_CMDLINE:-cmake -DBUILD_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -B cmake-build-unit-tests -S executables/unitTest && cmake --build cmake-build-unit-tests --target help -j${CMAKE_SYNC_JOBS}}
-RUN_UNIT_TESTS_CMDLINE=${RUN_UNIT_TESTS_CMDLINE:-ctest --test-dir cmake-build-unit-tests -j${CMAKE_SYNC_JOBS}}
-POSIX_BUILD_CMDLINE=${POSIX_BUILD_CMDLINE:-cmake -B cmake-build-posix -S executables/referenceApp && cmake --build cmake-build-posix --target app.referenceApp -j${CMAKE_SYNC_JOBS}}
-NXP_S32K148_BUILD_CMDLINE=${NXP_S32K148_BUILD_CMDLINE:-cmake -B cmake-build-s32k148 -S executables/referenceApp -DBUILD_TARGET_PLATFORM='S32K148EVB' --toolchain ../../admin/cmake/ArmNoneEabi-gcc.cmake && cmake --build cmake-build-s32k148 --target app.referenceApp -j${CMAKE_SYNC_JOBS}}
+UNIT_TESTS_CMDLINE=${UNIT_TESTS_CMDLINE:-cmake --preset tests-debug && cmake --build --preset tests-debug --target ${UNIT_TEST_TARGET} -j${CMAKE_SYNC_JOBS}}
+LIST_UNIT_TESTS_CMDLINE=${LIST_UNIT_TESTS_CMDLINE:-cmake --preset tests-debug && cmake --build --preset tests-debug --target help -j${CMAKE_SYNC_JOBS}}
+RUN_UNIT_TESTS_CMDLINE=${RUN_UNIT_TESTS_CMDLINE:-ctest --preset tests-debug --parallel ${CMAKE_SYNC_JOBS}}
+POSIX_BUILD_CMDLINE=${POSIX_BUILD_CMDLINE:-cmake --preset posix && cmake --build --preset posix -j${CMAKE_SYNC_JOBS}}
+NXP_S32K148_BUILD_CMDLINE=${NXP_S32K148_BUILD_CMDLINE:-cmake --preset s32k148-gcc && cmake --build --preset s32k148-gcc -j${CMAKE_SYNC_JOBS}}
 
 # Artifacts
-POSIX_ARTIFACT=${POSIX_ARTIFACT:-"cmake-build-posix/app.referenceApp.elf"}
-NXP_S32K148_ARTIFACT=${NXP_S32K148_ARTIFACT:-"cmake-build-s32k148/app.referenceApp.elf"}
+POSIX_ARTIFACT=${POSIX_ARTIFACT:-"build/posix/executables/referenceApp/application/Release/app.referenceApp.elf"}
+NXP_S32K148_ARTIFACT=${NXP_S32K148_ARTIFACT:-"build/s32k148-gcc/executables/referenceApp/application/RelWithDebInfo/app.referenceApp.elf"}
 
 # Post build commands
 declare -a POST_BUILD_COMMANDS
@@ -144,19 +144,20 @@ if ${BUILD_POSIX}; then
         "${OPENBSW_GIT_DIR}/artifacts/posix"
     )
     POST_BUILD_COMMANDS+=(
-        "mkdir -p artifacts/posix"
+        "mkdir -p artifacts/posix/tools/enet"
         "cp -f ${POSIX_ARTIFACT} artifacts/posix || true"
+        "cp -f ./tools/enet/bring-up-ethernet.sh artifacts/posix/tools/enet || true"
     )
 fi
 
 if ${BUILD_NXP_S32K148}; then
     OPENBSW_ARTIFACT_LIST+=(
-        "${OPENBSW_GIT_DIR}/artifacts/s32k148"
+        "${OPENBSW_GIT_DIR}/artifacts/s32k148-gcc"
     )
     POST_BUILD_COMMANDS+=(
-        "mkdir -p artifacts/s32k148"
-        "cp -f ${NXP_S32K148_ARTIFACT} artifacts/s32k148 || true"
-        "cp -f cmake-build-s32k148/application/application.map artifacts/s32k148 || true"
+        "mkdir -p artifacts/s32k148-gcc"
+        "cp -f ${NXP_S32K148_ARTIFACT} artifacts/s32k148-gcc || true"
+        "cp -f build/s32k148-gcc/application.map artifacts/s32k148-gcc || true"
     )
 fi
 

@@ -21,7 +21,6 @@
 pipeline {
 
   // Parameters defined in groovy/job.groovy
-
   agent {
     kubernetes {
       yaml """\
@@ -30,7 +29,23 @@ pipeline {
         metadata:
           annotations:
             cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+          labels:
+            aaos_pod: "true"
         spec:
+          tolerations:
+          - key: workloadType
+            operator: Equal
+            value: android
+            effect: "NoSchedule"
+          affinity:
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                  - key: aaos_pod
+                    operator: Exists
+                topologyKey: kubernetes.io/hostname
+          hostname: jenkins-aaos-cf-build-pod
           serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
           containers:
           - name: builder
@@ -39,14 +54,22 @@ pipeline {
             command:
             - sleep
             args:
-            - 4h
+            - 5h
+            resources:
+              limits:
+                cpu: 98000m
+                memory: 180000Mi
+              requests:
+                cpu: 98000m
+                memory: 180000Mi
+          nodeSelector:
+            workloadLabel: android
       """.stripIndent()
     }
   }
 
   stages {
     stage ('Stage 1: Create base instance template') {
-
       when {
         allOf {
           expression { env.DELETE == 'false' }

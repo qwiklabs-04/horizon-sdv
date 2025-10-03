@@ -207,7 +207,7 @@ Artifacts stored in gs://sdva-2108202401-openbsw/OpenBSW/Builds/BSW_Builder/18
 Bucket URL: https://console.cloud.google.com/storage/browser/sdva-2108202401-openbsw/OpenBSW/Builds/BSW_Builder/18
 
     gcloud storage cp gs://sdva-2108202401-openbsw/OpenBSW/Builds/BSW_Builder/18/build_info.txt .
-    gcloud storage cp -r gs://sdva-2108202401-openbsw/OpenBSW/Builds/BSW_Builder/18/s32k148 .
+    gcloud storage cp -r gs://sdva-2108202401-openbsw/OpenBSW/Builds/BSW_Builder/18/s32k148-gcc .
 ```
 Within the `s32k148` storage bucket directory, the following has been stored for later retrieval and use on NXP evaluation boards:
 
@@ -272,7 +272,7 @@ Note that testing the NXP S32K148 platform is not currently supported in this re
 To download the application, use the following command, which will be shown in the respective `BSW Builder` jobs
 artifact file, eg. `openbsw-1-artifacts.txt`:
 
-`gcloud storage cp -r gs://sdva-2108202401-openbsw/OpenBSW/Builds/BSW_Builder/1/s32k148 .`
+`gcloud storage cp -r gs://sdva-2108202401-openbsw/OpenBSW/Builds/BSW_Builder/1/s32k148-gcc .`
 
 **Flashing the Application**
 

@@ -2274,7 +2274,7 @@ ___
 
 The table below shows the templates and machine types used for the Android workflows.
 
-| Job Name             | [kaniko](http://gcr.io/kaniko-project/executor:debug) | Docker Image Template | CF Instance Template |
+| Job Name             | [buildkit](https://hub.docker.com/r/moby/buildkit) | Docker Image Template | CF Instance Template |
 | :----------------------------------------------------------------| :---------------------------------------------------: | :-------------------: | :------------------: |
 | `Android Workflows / Environment / Docker Image Template`         |  ✅ |    |    |
 | `Android Workflows / Environment / CF Instance Template`          |     | ✅ <sup>1</sup>|    |

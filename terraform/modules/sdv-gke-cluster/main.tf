@@ -141,6 +141,8 @@ resource "google_container_node_pool" "sdv_build_node_pool" {
   node_config {
     preemptible  = false
     machine_type = var.build_node_pool_machine_type
+    disk_size_gb = 500
+    image_type   = "UBUNTU_CONTAINERD"
 
     # Google recommends custom service accounts that have cloud-platform
     # scope and permissions granted via IAM Roles.
@@ -229,6 +231,8 @@ resource "google_container_node_pool" "sdv_openbsw_build_node_pool" {
   node_config {
     preemptible  = false
     machine_type = var.openbsw_build_node_pool_machine_type
+    disk_size_gb = 500
+    image_type   = "UBUNTU_CONTAINERD"
 
     # Google recommends custom service accounts that have cloud-platform
     # scope and permissions granted via IAM Roles.

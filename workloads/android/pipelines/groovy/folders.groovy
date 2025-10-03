@@ -30,13 +30,36 @@ folder('Android/Environment') {
 folder('Android/Environment/ABFS') {
   displayName('ABFS')
   description('''<p>This folder contains environment administrative jobs related to supporting Android Build File System (ABFS) workflows.</p>
-    Ensure you execute in the following order to ensure ABFS environment is correctly provisioned.<br/>
-    <ol><li><b>Docker Infra Image Template:</b> create the Docker infrastructure container for ABFS Server and Uploader jobs.</li>
-    <li><b>Server:</b> Create the ABFS server (dependent on Docker Infra Image Template) </li>
-    <li><b>Uploader:</b> Create the ABFS uploaders (dependent on Docker Infra Image Template) </li>
-    <li><b>Docker Image Template:</b> create the Docker build container used for ABFS builds.</li></ol>
-    <p>Refer to <i>docs/workloads/android/abfs.md</> for additional details.</p>''')
-
+    Ensure you execute in the following order to ensure ABFS environment is correctly provisioned before creating server and uploaders.<br/>
+    <ol><li><b>Docker Image Template:</b> create the Docker build container used for ABFS builds.</li>
+    <li><b>Docker Infra Image Template:</b> create the Docker infrastructure container for ABFS Server and Uploader jobs.</li></ol>
+    <p>Once Docker templates have been created, refer to the <code>Server Administration</code> and <code>Uploader Administration</code> jobs to create and manage ABFS infrastructure.<br/>
+    <br/>Refer to <i>docs/workloads/android/abfs.md</i> for additional details.</p>''')
+}
+folder('Android/Environment/ABFS/Server Administration') {
+  description('''<p>This folder contains ABFS server administrative jobs related to supporting Android Build File System (ABFS) workflows.</p>
+    Ensure you create the server instance before creating the uploaders to avoid installation issues.<br/><br/>
+    The other jobs here offer the ability to administer the spanner DB, especially useful when user destroys the ABFS server <br/>
+    and thus ensuring all resources are released to reduce costs.<br/><br/>
+    <b>Mandatory:</b><br/>
+    <ul><li><b>Server Operations:</b> Create, destroy, stop, start the ABFS server</li></ul>
+    <b>Optional:</b><br/>
+    Use the following utilities to manage Cloud Spanner resources. On server destruction, the database, backups,  bucket storage,<br/>
+    and the Spanner instance are retained. These operations are provided to allow you to explicitly release those resources.
+    <ul><li><b>Get Server Details:</b> Show server details such as current state.</li>
+    <li><b>Get Spanner Details:</b> Show all server side details such as Spanner DB instance name, backup schedule and bucket storage.</li>
+    <li><b>Update Spanner Backups:</b> Create, Delete or Update the Spanner DB backup schedule.</li>
+    <li><b>Destroy Spanner Instance:</b> Destroy the Spanner DB instance, backups and associated bucket storage.</li></ul>
+    Refer to <i>docs/workloads/android/abfs.md</i> for additional details.</p>''')
+}
+folder('Android/Environment/ABFS/Uploader Administration') {
+  description('''<p>This folder contains ABFS uploader administrative jobs related to supporting Android Build File System (ABFS) workflows.</p>
+    Ensure you create the server instance before creating the uploaders to avoid installation issues.<br/><br/>
+    <b>Mandatory:</b><br/>
+    <ul><li><b>Uploader Operations:</b> Create, destroy, stop, start the ABFS uploaders,</li></ul>
+    <b>Optional:</b><br/>
+    <ul><li><b>Get Uploader Details:</b> Show uploader details such as current state.</li></ul>
+    Refer to <i>docs/workloads/android/abfs.md</i> for additional details.</p>''')
 }
 folder('Android/Tests') {
   displayName('Tests')

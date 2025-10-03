@@ -45,9 +45,40 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
         <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''')
       trim(true)
     }
+    separator {
+      name('OpenBSW Version')
+      sectionHeader('OpenBSW Version')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
+    }
+    stringParam {
+      name('OPENBSW_GIT_URL')
+      defaultValue("https://github.com/eclipse-openbsw/openbsw.git")
+      description('''<p>OpenBSW Git URL.</p>''')
+      trim(true)
+    }
+    stringParam {
+      name('OPENBSW_GIT_BRANCH')
+      defaultValue("${OPENBSW_GIT_BRANCH}")
+      description('''<p>OpenBSW revision tag/branch name.</p>''')
+      trim(true)
+    }
+    stringParam {
+      name('LINUX_DISTRIBUTION')
+      defaultValue('ubuntu:22.04')
+      description('''<p>Define the Linux distribution to use, e.g.</p></br>
+        <ul><li>ubuntu:22.04</li></ul>''')
+      trim(true)
+    }
+    separator {
+      name('OpenBSW Toolchains')
+      sectionHeader('OpenBSW Toolchains')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
+    }
     stringParam {
       name('ARM_TOOLCHAIN_URL')
-      defaultValue('https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.xz')
+      defaultValue('https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2')
       description('''<p>ARM GNU toolchain archive URL.</p>''')
       trim(true)
     }
@@ -59,16 +90,20 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
     }
     stringParam {
       name('CMAKE_URL')
-      defaultValue('https://github.com/Kitware/CMake/releases/download/v3.22.5/cmake-3.22.5-linux-x86_64.sh')
+      defaultValue('https://github.com/Kitware/CMake/releases/download/v3.28.3/cmake-3.28.3-linux-x86_64.sh')
       description('''<p>CMAKE shell install script URL.</p>''')
       trim(true)
     }
     stringParam {
-      name('LINUX_DISTRIBUTION')
-      defaultValue('ubuntu:22.04')
-      description('''<p>Define the Linux distribution to use, e.g.</p></br>
-        <ul><li>ubuntu:22.04</li>
-            <li>ubuntu:20.04</li></ul>''')
+      name('LLVM_ARM_TOOLCHAIN_URL')
+      defaultValue('https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-19.1.1/LLVM-ET-Arm-19.1.1-Linux-x86_64.tar.xz')
+      description('''<p>LLVM Embedded Toolchain for Arm.</p>''')
+      trim(true)
+    }
+    stringParam {
+      name('LLVM_PROJECT_URL')
+      defaultValue('https://github.com/llvm/llvm-project/releases/download/llvmorg-17.0.2/clang+llvm-17.0.2-x86_64-linux-gnu-ubuntu-22.04.tar.xz')
+      description('''<p>LLVM Compiler Infrastructure URL.</p>''')
       trim(true)
     }
     stringParam {
@@ -79,9 +114,45 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
       trim(true)
     }
     stringParam {
+      name('PYELFTOOLS_VERSION')
+      defaultValue('0.32')
+      description('''<p>pyelftools package version to install.</p>''')
+      trim(true)
+    }
+    stringParam {
+      name('PYTHON_VERSION')
+      defaultValue('3.10')
+      description('''<p>Python version to install.</p>''')
+      trim(true)
+    }
+    stringParam {
+      name('SSCACHE_URL')
+      defaultValue('https://github.com/mozilla/sccache/releases/download/v0.10.0/sccache-v0.10.0-x86_64-unknown-linux-musl.tar.gz')
+      description('''<p>Shared Compilation Cache URL.</p>''')
+      trim(true)
+    }
+    stringParam {
       name('TREEFMT_URL')
       defaultValue('https://github.com/numtide/treefmt/releases/download/v2.1.0/treefmt_2.1.0_linux_amd64.tar.gz')
       description('''<p>Treefmt archive URL.</p>''')
+      trim(true)
+    }
+    separator {
+      name('Common Parameters: Buildkit')
+      sectionHeader('Common Parameters: Buildkit')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
+    }
+    stringParam {
+      name('BUILDKIT_RELEASE_TAG')
+      defaultValue("${BUILDKIT_RELEASE_TAG}")
+      description('''<p>BuildKit tag, see <a target="_blank"  href=https://hub.docker.com/r/moby/buildkit>buildkit releases</a>.</p>''')
+      trim(true)
+    }
+    stringParam {
+      name('DOCKER_CREDENTIALS_URL')
+      defaultValue("${DOCKER_CREDENTIALS_URL}")
+      description('''<p>Docker credentials helper URL, e.g. <a target="_blank" href=https://cloud.google.com/artifact-registry/docs/docker/authentication#standalone-helper>credentials helper</a>.</p>''')
       trim(true)
     }
   }

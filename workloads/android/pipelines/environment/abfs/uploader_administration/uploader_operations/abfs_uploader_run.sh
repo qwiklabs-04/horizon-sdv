@@ -60,7 +60,7 @@ function abfs_uploader_run() {
       VM_STATUS=$(gcloud compute instances describe "${vm}" --zone="${CLOUD_ZONE}" --format='get(status)')
       if [[ $VM_STATUS == "RUNNING" ]]; then
         #shellcheck disable=SC2154,SC2086
-        BR_L_CUR=$(gcloud compute ssh --quiet --zone=europe-west1-d --tunnel-through-iap ${vm} --command="PID=\$(ps -efww --no-headers | grep -v grep | grep \"/usr/local/bin/abfs\" | awk '{uid=\$1; pid=\$2; ppid=\$3; c=\$4; stime=\$5; tty=\$6; time=\$7; cmd=\"\"; for (i=8; i<=NF; i++) cmd=cmd $i \" \"; print pid}') && BRANCH_LIST=\$(tr '\0' '\n' < /proc/\${PID}/cmdline | awk 'found { print; exit } \$0 == \"--branch\" { found = 1 } ' | tr ',' '\n' | sort -n | uniq | xargs ) && echo \${BRANCH_LIST}")
+        BR_L_CUR=$(gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" --tunnel-through-iap ${vm} --command="PID=\$(ps -efww --no-headers | grep -v grep | grep \"/usr/local/bin/abfs\" | awk '{uid=\$1; pid=\$2; ppid=\$3; c=\$4; stime=\$5; tty=\$6; time=\$7; cmd=\"\"; for (i=8; i<=NF; i++) cmd=cmd $i \" \"; print pid}') && BRANCH_LIST=\$(tr '\0' '\n' < /proc/\${PID}/cmdline | awk 'found { print; exit } \$0 == \"--branch\" { found = 1 } ' | tr ',' '\n' | sort -n | uniq | xargs ) && echo \${BRANCH_LIST}")
         BR_L_NEW=$(echo "${UPLOADER_GIT_BRANCH}" | tr -d '[]"' | tr ',' '\n' | sed 's/^ *//;s/ *$//' | sort | uniq | xargs)
         echo "Current branch $BR_L_CUR, requested branch(es) $BR_L_NEW"
         if [[ "${BR_L_CUR}" != "${BR_L_NEW}" ]]; then

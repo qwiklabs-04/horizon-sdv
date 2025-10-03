@@ -19,14 +19,14 @@ The following pipelines are currently available:
 These pipelines need only be run once, or when their Dockerfile is updated. There is an option not to push the resulting image to the registry, so that devs can test their changes before committing the image.
 
 ### References
-- [Kaniko](https://github.com/GoogleContainerTools/kaniko)
+- [buildkit](https://hub.docker.com/r/moby/buildkit)
 - [Base Image for Horizon Code OSS](https://us-central1-docker.pkg.dev/cloud-workstations-images/predefined/code-oss:latest)
 - [Base Template for Horizon Android Studio for Platform (ASfP)](https://github.com/GoogleCloudPlatform/cloud-workstations-custom-image-examples/tree/main/examples/images/android-open-source-project/android-studio-for-platform)
 - [Base Template for Horizon Android Studio](https://github.com/GoogleCloudPlatform/cloud-workstations-custom-image-examples/tree/main/examples/images/android/android-studio)
 
 ## Prerequisites<a name="prerequisites"></a>
 
-All of these pipelines depend on [`kaniko`](https://github.com/GoogleContainerTools/kaniko) which should be installed by default.
+All of these pipelines depend on [`buildkit`](https://hub.docker.com/r/moby/buildkit) which should be installed by default.
 
 ## Environment Variables/Parameters <a name="environment-variables"></a>
 

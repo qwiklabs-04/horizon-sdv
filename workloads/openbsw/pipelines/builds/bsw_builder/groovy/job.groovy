@@ -45,16 +45,16 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('OPENBSW_GIT_BRANCH')
-      defaultValue('main')
+      defaultValue("${OPENBSW_GIT_BRANCH}")
       description('''<p>OpenBSW revision tag/branch name.</p>''')
       trim(true)
     }
 
     stringParam {
       name('POST_GIT_CLONE_COMMAND')
-      defaultValue('')
+      defaultValue('cd openbsw && git checkout 8c8b9334 && cd -')
       description('''<p>Optional additional commands post git clone and prior to build/make.<br/>
-        <b>Note: </b>Single command line only, use logical operators to execute subsequent commands.<br/><br/></p>''')
+        <b>Note: </b>Single command line only, use logical operators to execute subsequent commands.<br/></p>''')
       trim(true)
     }
 
@@ -95,7 +95,7 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('LIST_UNIT_TESTS_CMDLINE')
-      defaultValue('cmake -DBUILD_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -B cmake-build-unit-tests -S executables/unitTest && cmake --build cmake-build-unit-tests --target help -j${CMAKE_SYNC_JOBS} ')
+      defaultValue('cmake --preset tests-debug && cmake --build --preset tests-debug --target help -j${CMAKE_SYNC_JOBS}')
       description('''<p>Default Unit Test build command line''')
       trim(true)
     }
@@ -115,7 +115,7 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('UNIT_TESTS_CMDLINE')
-      defaultValue('cmake -DBUILD_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -B cmake-build-unit-tests -S executables/unitTest && cmake --build cmake-build-unit-tests -j${CMAKE_SYNC_JOBS} --target ${UNIT_TEST_TARGET}')
+      defaultValue('cmake --preset tests-debug && cmake --build --preset tests-debug --target ${UNIT_TEST_TARGET} -j${CMAKE_SYNC_JOBS}')
       description('''<p>Default Unit Test build command line''')
       trim(true)
     }
@@ -128,8 +128,9 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('RUN_UNIT_TESTS_CMDLINE')
-      defaultValue('ctest --test-dir cmake-build-unit-tests -j${CMAKE_SYNC_JOBS}')
-      description('''<p>Default Unit Test execution command line''')
+      defaultValue('ctest --preset tests-debug --parallel ${CMAKE_SYNC_JOBS}')
+      description('''<p>Default Unit Test execution command line. If running a single unit test, ensure use of <code>--test-dir</code>, e.g. bspTest:<br/>
+      <code>ctest --test-dir build/tests/Debug/libs/bsw/bsp/test/gtest --parallel ${CMAKE_SYNC_JOBS}</code></p>''')
       trim(true)
     }
 
@@ -148,14 +149,14 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('POSIX_BUILD_CMDLINE')
-      defaultValue('cmake -B cmake-build-posix -S executables/referenceApp && cmake --build cmake-build-posix --target app.referenceApp -j${CMAKE_SYNC_JOBS}')
+      defaultValue('cmake --preset posix && cmake --build --preset posix -j${CMAKE_SYNC_JOBS}')
       description('''<p>Default POSIX build command line''')
       trim(true)
     }
 
     stringParam {
       name('POSIX_ARTIFACT')
-      defaultValue('cmake-build-posix/application/app.referenceApp.elf')
+      defaultValue('build/posix/executables/referenceApp/application/Release/app.referenceApp.elf')
       description('''<p>Default POSIX artifact''')
       trim(true)
     }
@@ -175,14 +176,14 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('NXP_S32K148_BUILD_CMDLINE')
-      defaultValue('cmake -B cmake-build-s32k148 -S executables/referenceApp -DBUILD_TARGET_PLATFORM="S32K148EVB" --toolchain ../../admin/cmake/ArmNoneEabi-gcc.cmake && cmake --build cmake-build-s32k148 --target app.referenceApp -j${CMAKE_SYNC_JOBS}')
+      defaultValue('cmake --preset s32k148-gcc && cmake --build --preset s32k148-gcc -j${CMAKE_SYNC_JOBS}')
       description('''<p>Default NXP S32K148 build command line''')
       trim(true)
     }
 
     stringParam {
       name('NXP_S32K148_ARTIFACT')
-      defaultValue('cmake-build-s32k148/application/app.referenceApp.elf')
+      defaultValue('build/s32k148-gcc/executables/referenceApp/application/RelWithDebInfo/app.referenceApp.elf')
       description('''<p>Default NXP S32K148 artifact''')
       trim(true)
     }

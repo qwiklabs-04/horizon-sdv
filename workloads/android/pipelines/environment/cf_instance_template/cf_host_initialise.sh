@@ -27,10 +27,16 @@ source "$(dirname "${BASH_SOURCE[0]}")"/cf_environment.sh "$0"
 
 declare -r JENKINS_USER="jenkins"
 
+# Colours for logging.
+GREEN='\033[1;32m'
+ORANGE='\033[1;33m'
+RED='\033[1;31m'
+NC='\033[0m'
+
 # Check virtualization enabled.
 function cuttlefish_virtualization() {
     if ! sudo find /dev -name kvm > /dev/null 2>&1; then
-        echo "Error: virtualization not enabled"
+        echo -e "${RED}Error: virtualization not enabled${NC}"
         exit 1
     fi
 }
@@ -39,16 +45,16 @@ function cuttlefish_virtualization() {
 function cuttlefish_install_additional_packages() {
     local -a package_list=("default-jdk" "adb" "git" "npm" "aapt" "htop")
 
-    echo "Installing additional packages."
+    echo -e "${GREEN}Installing additional packages.${NC}"
 
     # Ensure update to latest package list.
     sudo apt update -y
     for package in "${package_list[@]}"; do
         if ! dpkg -s "${package}" > /dev/null 2>&1; then
-            echo "Installing ${package}"
+            echo -e "${GREEN}Installing ${package}${NC}"
             sudo apt install -y "${package}"
         else
-            echo "${package} already installed"
+            echo -e "${GREEN}${package} already installed${NC}"
         fi
     done
 
@@ -57,17 +63,18 @@ function cuttlefish_install_additional_packages() {
     java -version
 
     # Install Node version manager and nodejs.
+    echo -e "${GREEN}Installing nodejs ${NODEJS_VERSION}${NC}"
     npm cache clean -f
     sudo npm install -g n
-    sudo npm install -g wait-on
     sudo n "${NODEJS_VERSION}"
+    sudo npm install -g wait-on
     sudo ln -sf /usr/local/bin/node  /usr/local/bin/nodejs || true
 
     # Show node version and path.
     which node
     node -v
 
-    echo "Installing additional packages completed."
+    echo -e "${GREEN}Installing additional packages completed.${NC}"
 }
 
 # Disable unattended-upgrades
@@ -80,21 +87,29 @@ function disable_unattended_upgrades() {
 
 # Install CTS test harness on instance to avoid lengthy CTS runs.
 function cuttlefish_install_cts() {
-    echo "Installing CTS test harness"
+    echo -e "${GREEN}Installing CTS test harness ... ${NC}"
+    local start=$SECONDS
 
     su -l "${JENKINS_USER}" -c "mkdir -p android-cts_15"
+    echo -e "${GREEN}Downloading.${NC} ${CTS_ANDROID_15_URL}. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
     su -l "${JENKINS_USER}" -c "wget -nv ${CTS_ANDROID_15_URL} -O android-cts_15.zip"
-    su -l "${JENKINS_USER}" -c "unzip android-cts_15.zip -d android-cts_15"
+    echo -e "${GREEN}Unpacking.${NC} android-cts_15.zip. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
+    su -l "${JENKINS_USER}" -c "unzip -q android-cts_15.zip -d android-cts_15"
     su -l "${JENKINS_USER}" -c "rm -f android-cts_15.zip"
 
     su -l "${JENKINS_USER}" -c "mkdir -p android-cts_14"
+    echo -e "${GREEN}Downloading.${NC} ${CTS_ANDROID_14_URL}. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
     su -l "${JENKINS_USER}" -c "wget -nv ${CTS_ANDROID_14_URL} -O android-cts_14.zip"
-    su -l "${JENKINS_USER}" -c "unzip android-cts_14.zip -d android-cts_14"
+    echo -e "${GREEN}Unpacking.${NC} android-cts_14.zip. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
+    su -l "${JENKINS_USER}" -c "unzip -q android-cts_14.zip -d android-cts_14"
     su -l "${JENKINS_USER}" -c "rm -f android-cts_14.zip"
     # Force sync to ensure disk is updated.
     sync
 
-    echo "Installing CTS test harness completed."
+    local elapsed=$(( SECONDS - start ))
+    m=$(( elapsed / 60 ))
+    s=$(( elapsed % 60 ))
+    echo -e "${GREEN}Installing CTS test harness completed in ${m}m${s}s.${NC}"
 }
 
 # Add the user to the CVD groups.
@@ -105,7 +120,7 @@ function cuttlefish_user_groups() {
     for gid in "${cf_gids[@]}"; do
         # This is most reliable method to check if group is present.
         if ! echo "${gids}" | grep -qw "${gid}"; then
-            echo "Group ${gid} is missing from user: $1"
+            echo -e "${ORANGE}Group ${gid} is missing from user: ${1}${NC}"
             sudo usermod -aG "${gid}" "$1"
         fi
     done
@@ -139,12 +154,12 @@ function cuttlefish_install() {
 
     # Build and install the cuttlefish packages
     if ! [ -f "${BUILD_SCRIPT}" ]; then
-        echo "Error: ${CUTTLEFISH_REVISION} does not support ${BUILD_SCRIPT}"
-        echo "       Please choose a compatible version."
+        echo -e "${RED}Error: ${CUTTLEFISH_REVISION} does not support ${BUILD_SCRIPT}${NC}"
+        echo -e "${RED}       Please choose a compatible version.${NC}"
         cuttlefish_cleanup
         exit 1
     else
-        echo "Cuttlefish build script: ${BUILD_SCRIPT}"
+        echo -e "${GREEN}Cuttlefish build script: ${BUILD_SCRIPT}${NC}"
         # Build cuttlefish packages
         yes Y | "${BUILD_SCRIPT}"
 
@@ -162,8 +177,8 @@ function cuttlefish_install() {
 
         # Install CTS
         if [ "$(uname -s)" = "Darwin" ]; then
-            echo "This script is only supported on Linux"
-            echo "   Ignore CTS download and install"
+            echo -e "${ORANGE}This script is only supported on Linux${NC}"
+            echo -e "${ORANGE}   Ignore CTS download and install${NC}"
         else
             cuttlefish_install_cts
         fi
@@ -177,15 +192,13 @@ function cuttlefish_initialise() {
     cuttlefish_virtualization
 
     # Check if cuttlefish is already installed
-    CUTTLEFISH_VERSION=$(dpkg -s cuttlefish-base | grep '^Version:' | cut -d' ' -f2)
-    echo "Cuttlefish revision: ${CUTTLEFISH_REVISION}"
-    echo "Cuttlefish installed version: ${CUTTLEFISH_VERSION}"
+    echo -e "${GREEN}Installing Cuttlefish revision ${CUTTLEFISH_REVISION}${NC}"
 
     if ! dpkg -s cuttlefish-base > /dev/null 2>&1; then
         cuttlefish_install
     else
         if [ "${CUTTLEFISH_UPDATE}" = "true" ]; then
-            echo "Cuttlefish upgrade required."
+            echo -e "${ORANGE}Cuttlefish upgrade required.${NC}"
             # Remove and purge previous install.
             # Note: base will remove user, but remove just in case
             sudo apt remove -y cuttlefish-base cuttlefish-user > /dev/null 2>&1
@@ -194,6 +207,7 @@ function cuttlefish_initialise() {
             cuttlefish_install
         fi
     fi
+    echo -e "${GREEN}Installing Cuttlefish revision ${CUTTLEFISH_REVISION} completed${NC}"
 }
 
 # Main program

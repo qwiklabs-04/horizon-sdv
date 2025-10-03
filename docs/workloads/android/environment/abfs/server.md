@@ -19,6 +19,8 @@ Before creating the ABFS Server VM instance, the following dependencies must be 
 - **ABFS License Deployment**: The ABFS license provided by Google must be deployed on the platform using GitHub environment secrets and Terraform workflow.
 - **Docker Infra Image Template Job**:The Docker Infra Image Template job must be run, and the Docker image must be available in the registry.
 
+Consider using `Get Server Details` to ensure the server has been provisioned correctly.
+
 Additional details are available in `docs/workloads/android/abfs.md`.
 
 

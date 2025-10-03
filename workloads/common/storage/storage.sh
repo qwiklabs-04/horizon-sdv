@@ -24,13 +24,16 @@
 read -r -a ARTIFACT_LIST <<< "${ARTIFACT_LIST}"
 IFS=$'\n' read -r -d '' -a POST_CLEANUP_COMMANDS <<< "$POST_CLEANUP_STRING"
 
-# shellcheck disable=SC2317
+# shellcheck disable=SC2329
 function gcs_bucket() {
     local -r bucket_name="gs://${ARTIFACT_ROOT_NAME}"
     # Replace spaces in Jenkins Job Name
     BUCKET_FOLDER="${JOB_NAME// /_}"
-    local -r destination="${bucket_name}/${BUCKET_FOLDER}/${BUILD_NUMBER}"
-    local -r cloud_url="https://console.cloud.google.com/storage/browser/${ARTIFACT_ROOT_NAME}/${BUCKET_FOLDER}/${BUILD_NUMBER}"
+    # Format BUILD_NUMBER as a zero-padded two-digit string (e.g., 7 -> "07") and assign to build_number
+    # shellcheck disable=SC2155
+    local build_number=$(printf '%02d' "${BUILD_NUMBER}")
+    local -r destination="${bucket_name}/${BUCKET_FOLDER}/${build_number}"
+    local -r cloud_url="https://console.cloud.google.com/storage/browser/${ARTIFACT_ROOT_NAME}/${BUCKET_FOLDER}/${build_number}"
 
     # Remove the old artifacts
     gcloud storage rm -r "${destination}" || true

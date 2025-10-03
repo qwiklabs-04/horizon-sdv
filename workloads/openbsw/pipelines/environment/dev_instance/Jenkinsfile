@@ -65,8 +65,8 @@ pipeline {
 
   stages {
     stage ('Start VM Instance') {
+      agent { kubernetes { yaml kubernetesPodTemplate } }
       stages {
-        agent { kubernetes { yaml kubernetesPodTemplate } }
         stage ('MTK Connect to Host Device') {
           when { expression { env.MTK_CONNECT_ENABLE == 'true' } }
           steps {

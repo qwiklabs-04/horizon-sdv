@@ -286,8 +286,8 @@ pipeline {
               sh '''
                 BUCKET_FOLDER=$(echo "$JOB_NAME" | tr ' ' '_')
                 export CUTTLEFISH_DOWNLOAD_URL="gs://${CLOUD_PROJECT}-aaos/$BUCKET_FOLDER/$(printf "%02d\n" "$BUILD_NUMBER")/aosp_cf_x86_64_auto-${ANDROID_BUILD_ID}userdebug"
-                export NUM_INSTANCES=10
-                export VM_CPUS=6
+                export NUM_INSTANCES=6
+                export VM_CPUS=8
                 export CTS_VERSION=${ANDROID_VERSION}
                 export CTS_TESTPLAN="cts-virtual-device-stable"
                 export CTS_MODULE="CtsHostsideNumberBlockingTestCases"

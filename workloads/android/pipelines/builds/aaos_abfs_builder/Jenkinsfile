@@ -55,6 +55,8 @@ pipeline {
           imagePullPolicy: Always
           securityContext:
             privileged: true
+            appArmorProfile:
+              type: Unconfined
           command:
           - sleep
           args:
@@ -100,6 +102,8 @@ pipeline {
           imagePullPolicy: Always
           securityContext:
             privileged: true
+            appArmorProfile:
+              type: Unconfined
           command:
           - sleep
           args:

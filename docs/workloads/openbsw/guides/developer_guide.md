@@ -272,7 +272,7 @@ Note that testing the NXP S32K148 platform is not currently supported in this re
 To download the application, use the following command, which will be shown in the respective `BSW Builder` jobs
 artifact file, eg. `openbsw-1-artifacts.txt`:
 
-`gcloud storage cp -r gs://sdva-2108202401-openbsw/OpenBSW/Builds/BSW_Builder/1/s32k148-gcc .`
+`gcloud storage cp -r gs://sdva-2108202401-openbsw/OpenBSW/Builds/BSW_Builder/01/s32k148-gcc .`
 
 **Flashing the Application**
 

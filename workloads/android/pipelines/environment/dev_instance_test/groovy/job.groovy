@@ -28,7 +28,7 @@ pipelineJob('Android/Environment/Development Test Instance') {
       description('''<p>The Jenkins GCE Clouds label for the VM instance template, e.g.<br/></p>
         <ul>
           <li>cuttlefish-vm-main</li>
-          <li>cuttlefish-vm-v1180</li>
+          <li>cuttlefish-vm-v1250</li>
         </ul>''')
       trim(true)
     }

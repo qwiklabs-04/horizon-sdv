@@ -32,6 +32,7 @@ CUTTLEFISH_UPDATE=${CUTTLEFISH_UPDATE:-false}
 # https://source.android.com/docs/compatibility/cts/downloads
 CTS_ANDROID_15_URL="https://dl.google.com/dl/android/cts/android-cts-15_r5-linux_x86-x86.zip"
 CTS_ANDROID_14_URL="https://dl.google.com/dl/android/cts/android-cts-14_r9-linux_x86-x86.zip"
+CTS_ANDROID_16_URL="https://dl.google.com/dl/android/cts/android-cts-16_r2-linux_x86-x86.zip"
 # NodeJS Version
 NODEJS_VERSION=${NODEJS_VERSION:-20.9.0}
 
@@ -47,6 +48,7 @@ fi
 
 # Show variables.
 VARIABLES="Environment:
+        CTS_ANDROID_16_URL=${CTS_ANDROID_16_URL}
         CTS_ANDROID_15_URL=${CTS_ANDROID_15_URL}
         CTS_ANDROID_14_URL=${CTS_ANDROID_14_URL}
 

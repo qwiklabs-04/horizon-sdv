@@ -20,6 +20,8 @@ def getAndroidVersion(revision) {
     return "14"
   } else if (revision =~ "android-15") {
     return "15"
+  } else if (revision =~ "android-16") {
+    return "16"
   } else {
     currentBuild.result = 'FAILURE'
     error "Failed to determine Android version from revision: ${revision}"
@@ -69,7 +71,11 @@ pipeline {
         containers:
         - name: builder
           image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+            appArmorProfile:
+              type: Unconfined
           command:
           - sleep
           args:

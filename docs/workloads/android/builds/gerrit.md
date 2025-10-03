@@ -7,21 +7,15 @@ Currently it is designed to run a base set of builds that can be used to verify 
 
 It supports the following branches:
 
--   `android-14.0.0_r30`
--   `android-14.0.0_r74`
--   `android-15.0.0_r4`
--   `android-15.0.0_r20`
--   `android-15.0.0_r32`
--   `android-15.0.0_r36`
+-   `horizon/android-14.0.0_r30`
+-   `horizon/android-15.0.0_r36`
+-   `horizon/android-16.0.0_r2`
 
 The branch is used to derive the full name (build identifier) of the build targets, e.g.
 
 -   `android-14.0.0_r30` -> `sdk_car_x86_64-ap1a-userdebug`
--   `android-14.0.0_r74` -> `sdk_car_x86_64-ap2a-userdebug`
--   `android-15.0.0_r4` -> `sdk_car_x86_64-ap3a-userdebug`
--   `android-15.0.0_r20` -> `sdk_car_x86_64-bp1a-userdebug`
--   `android-15.0.0_r32` -> `sdk_car_x86_64-bp1a-userdebug`
 -   `android-15.0.0_r36` -> `sdk_car_x86_64-bp1a-userdebug`
+-   `android-16.0.0_r2` -> `sdk_car_x86_64-bp2a-userdebug`
 
 It builds the following targets:
 

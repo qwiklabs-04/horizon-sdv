@@ -75,6 +75,19 @@ pipeline {
                     PROCESS=$(gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "${1}" --tunnel-through-iap --command="pgrep -a abfs" || true)
                     if [ -n "${PROCESS}" ]; then
                       { echo; echo "\033[1;32mABFS Alive:\033[0m ${PROCESS}"; echo; } | artifact "$1"
+                      BR_TAG=$(echo "${PROCESS}" | awk '{
+                        grab=0; out=""
+                        for (i=1;i<=NF;i++) {
+                          if ($i ~ /^--branch(=|$)/) {
+                            grab=1
+                            if ($i ~ /^--branch=/) { sub(/^--branch=/,"",$i); out=$i }
+                            continue
+                          }
+                          if (grab && $i ~ /^--project(\b|[-=])/) { print out; exit }
+                          if (grab) { out = out (out?" ":"") $i }
+                        }
+                      }')
+                      { echo; echo "\033[1;32mBranches/tags:\033[0m ${BR_TAG}"; echo; } | artifact "${1}"
                     else
                       { echo; echo "\033[1;31mABFS Not running, consider DESTROY and APPLY\033[0m"; echo; } | artifact "${1}"
                       exit 1

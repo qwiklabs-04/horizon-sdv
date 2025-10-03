@@ -311,22 +311,22 @@ spec:
                         noDelayProvisioning: false
                         projectId: {{ .Values.config.projectID }}
                     - computeEngine:
-                        cloudName: "cuttlefish-vm-v1180"
+                        cloudName: "cuttlefish-vm-v1250"
                         configurations:
                         - bootDiskAutoDelete: true
                           bootDiskSizeGb: 10
                           bootDiskSizeGbStr: "10"
                           bootDiskType: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/zones/{{ .Values.config.zone }}/diskTypes/hyperdisk-balanced"
-                          description: "cuttlefish-vm-v1180"
+                          description: "cuttlefish-vm-v1250"
                           javaExecPath: "/usr/bin/java"
                           labelSet:
-                          - name: "cuttlefish-vm-v1180"
-                          labelString: "cuttlefish-vm-v1180"
-                          labels: "cuttlefish-vm-v1180"
+                          - name: "cuttlefish-vm-v1250"
+                          labelString: "cuttlefish-vm-v1250"
+                          labels: "cuttlefish-vm-v1250"
                           launchTimeoutSeconds: 300
                           launchTimeoutSecondsStr: "300"
                           mode: NORMAL
-                          namePrefix: "cuttlefish-vm-v1180"
+                          namePrefix: "cuttlefish-vm-v1250"
                           numExecutors: 1
                           numExecutorsStr: "1"
                           oneShot: true
@@ -337,7 +337,7 @@ spec:
                           runAsUser: "jenkins"
                           sshConfiguration:
                             customPrivateKeyCredentialsId: "jenkins-cuttlefish-vm-ssh-private-key"
-                          template: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/global/instanceTemplates/instance-template-cuttlefish-vm-v1180"
+                          template: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/global/instanceTemplates/instance-template-cuttlefish-vm-v1250"
                           useInternalAddress: true
                           zone: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/zones/{{ .Values.config.zone }}"
                         credentialsId: "gce-creds"

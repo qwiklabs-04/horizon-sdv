@@ -55,7 +55,7 @@ crucial for correlating <code>ABFS_VERSION</code> and <code>ABFS_CASFS_VERSION</
     choiceParam {
       name('ANDROID_VERSION')
       description('''<p>Version of Android required for SDK generation of addons and devices.</p>''')
-      choices(['15', '14'])
+      choices(['15','16'])
     }
 
     booleanParam {

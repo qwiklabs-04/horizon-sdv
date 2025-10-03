@@ -39,7 +39,7 @@ One-time setup requirements.
 
 The Android revision, i.e. branch or tag to build. Tested versions are below:
 
-- `android-15.0.0_r36` (bp1a)
+- `android-16.0.0_r2` (bp2a)
 
 ### `AAOS_LUNCH_TARGET` <a name="targets"></a>
 

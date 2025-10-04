@@ -92,7 +92,7 @@ function cuttlefish_install_cts() {
 
     su -l "${JENKINS_USER}" -c "mkdir -p android-cts_16"
     echo -e "${GREEN}Downloading.${NC} ${CTS_ANDROID_16_URL}. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
-    su -l "${JENKINS_USER}" -c "wget -nv ${CTS_ANDROID_15_URL} -O android-cts_16.zip"
+    su -l "${JENKINS_USER}" -c "wget -nv ${CTS_ANDROID_16_URL} -O android-cts_16.zip"
     echo -e "${GREEN}Unpacking.${NC} android-cts_16.zip. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
     su -l "${JENKINS_USER}" -c "unzip -q android-cts_16.zip -d android-cts_16"
     su -l "${JENKINS_USER}" -c "rm -f android-cts_16.zip"

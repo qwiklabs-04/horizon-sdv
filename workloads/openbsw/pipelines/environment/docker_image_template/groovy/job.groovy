@@ -53,7 +53,7 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
     }
     stringParam {
       name('OPENBSW_GIT_URL')
-      defaultValue("https://github.com/eclipse-openbsw/openbsw.git")
+      defaultValue("${OPENBSW_GIT_URL}")
       description('''<p>OpenBSW Git URL.</p>''')
       trim(true)
     }
@@ -61,6 +61,13 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
       name('OPENBSW_GIT_BRANCH')
       defaultValue("${OPENBSW_GIT_BRANCH}")
       description('''<p>OpenBSW revision tag/branch name.</p>''')
+      trim(true)
+    }
+    stringParam {
+      name('POST_GIT_CLONE_COMMAND')
+      defaultValue('git checkout 8c8b9334')
+      description('''<p>Optional additional commands post git clone and prior to build/make.<br/>
+        <b>Note: </b>Single command line only, use logical operators to execute subsequent commands.<br/></p>''')
       trim(true)
     }
     stringParam {

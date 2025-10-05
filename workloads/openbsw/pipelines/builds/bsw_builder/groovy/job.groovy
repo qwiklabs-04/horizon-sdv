@@ -38,7 +38,7 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('OPENBSW_GIT_URL')
-      defaultValue("https://github.com/eclipse-openbsw/openbsw.git")
+      defaultValue("${OPENBSW_GIT_URL}")
       description('''<p>OpenBSW Git URL.</p>''')
       trim(true)
     }
@@ -144,7 +144,8 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
     booleanParam {
       name('BUILD_POSIX')
       defaultValue(true)
-      description('''<p>Build POSIX Target.</p>''')
+      description('''<p>Build POSIX Target application.<br/>
+      This will upload the reference application, to artifact registry for use by the OpenBSW POSIX test job.</p>''')
     }
 
     stringParam {
@@ -158,6 +159,26 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
       name('POSIX_ARTIFACT')
       defaultValue('build/posix/executables/referenceApp/application/Release/app.referenceApp.elf')
       description('''<p>Default POSIX artifact''')
+      trim(true)
+    }
+
+    separator {
+      name('POSIX pyTest')
+      sectionHeader('POSIX pyTest')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
+    }
+
+    booleanParam {
+      name('POSIX_PYTEST')
+      defaultValue(false)
+      description('''<p>Run pyTest on POSIX target application. Only applicable when <code>BUILD_POSIX</code> is selected.</p>''')
+    }
+
+    stringParam {
+      name('POSIX_PYTEST_CMDLINE')
+      defaultValue('./tools/enet/bring-up-ethernet.sh && cd test/pyTest/ && pytest --target=posix')
+      description('''<p>Default POSIX pyTest command line''')
       trim(true)
     }
 

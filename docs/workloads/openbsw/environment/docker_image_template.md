@@ -48,6 +48,10 @@ This provides the URL for the OpenBSW repository. Such as:
 
 This provides the branch/tag revision for the OpenBSW repository.
 
+### `POST_GIT_CLONE_COMMAND`
+
+Useful to pin OpenBSW to a particular sha1 when creating the python test packages.
+
 ### `LINUX_DISTRIBUTION`
 
 Define the Linux Distribution to create the Docker image from. Values must be supported by the Dockerfile `FROM` instruction.

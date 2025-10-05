@@ -41,13 +41,6 @@ pipelineJob('OpenBSW/Tests/POSIX') {
     }
 
     stringParam {
-      name('LAUNCH_APPLICATION_NAME')
-      defaultValue('./posix/tools/enet/bring-up-ethernet.sh && ./posix/app.referenceApp.elf')
-      description("""<p>Name of the application to launch, or empty to manually launch.</p>""")
-      trim(true)
-    }
-
-    stringParam {
       name('IMAGE_TAG')
       defaultValue("${OPENBSW_IMAGE_TAG}")
       description('''<p>Docker image template to use.<p>
@@ -59,6 +52,14 @@ pipelineJob('OpenBSW/Tests/POSIX') {
       name('POSIX_KEEP_ALIVE_TIME')
       choices(['5', '15', '30', '60', '90', '120', '180'])
       description('''<p>Time in minutes, to keep host instance alive before stopping.</p>''')
+    }
+
+    stringParam {
+      name('NUM_HOST_INSTANCES')
+      defaultValue('2')
+      description('''<p>Number of host instances to create.<p>
+        <p>i.e. the number of devices to create in MTK Connect testbench.</p>''')
+      trim(true)
     }
   }
 

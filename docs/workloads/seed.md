@@ -61,6 +61,15 @@ ABFS manifest source URL. Used for seeding ABFS builds, blobs/objects.
 Defines the name of the build image tag used for OpenBSW pipelines.
 This value will propogate to OpenBSW pipeline jobs.
 
+### `OPENBSW_GIT_URL`
+
+This provides the URL for the OpenBSW repository. Such as:
+- https://github.com/eclipse-openbsw/openbsw.git
+
+### `OPENBSW_GIT_BRANCH`
+
+This provides the branch/tag revision for the OpenBSW repository.
+
 ### Groovy Scripts <a name="groovyscripts"></a>
 
 This job uses the "Authorize Project" plugin to set an authorization property, allowing the job to run as the user who triggered the build. This is configured as follows:

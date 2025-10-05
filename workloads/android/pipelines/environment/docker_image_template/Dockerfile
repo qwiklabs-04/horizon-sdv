@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Allow user to choose distribution, e.g. ubuntu:22.04
-ARG LINUX_DISTRIBUTION
-FROM --platform=linux/amd64 ${LINUX_DISTRIBUTION}
+# Allow user to choose distribution, e.g. ubuntu:20.04
+ARG LINUX_DISTRIBUTION=20.04
+FROM ${LINUX_DISTRIBUTION}
 
 # Overrides
 ARG NODEJS_VERSION

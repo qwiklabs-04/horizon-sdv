@@ -109,6 +109,7 @@ pipeline {
                    --opt build-arg:LLVM_ARM_TOOLCHAIN_URL=${LLVM_ARM_TOOLCHAIN_URL} \
                    --opt build-arg:OPENBSW_GIT_URL=${OPENBSW_GIT_URL} \
                    --opt build-arg:OPENBSW_GIT_BRANCH=${OPENBSW_GIT_BRANCH} \
+                   --opt build-arg:POST_GIT_CLONE_COMMAND="${POST_GIT_CLONE_COMMAND}" \
                    --opt build-arg:PYELFTOOLS_VERSION=${PYELFTOOLS_VERSION} \
                    --opt build-arg:PYTHON_VERSION=${PYTHON_VERSION} \
                    --opt build-arg:SSCACHE_URL=${SSCACHE_URL} \

@@ -132,6 +132,11 @@ pipeline {
              <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''',
            trim: true)
 
+    string(name: 'OPENBSW_GIT_URL',
+           defaultValue: 'https://github.com/eclipse-openbsw/openbsw.git',
+           description: '''<p>OpenBSW Git URL.</p>''',
+           trim: true)
+
     string(name: 'OPENBSW_GIT_BRANCH',
            defaultValue: 'main',
            description: '''<p>OpenBSW revision tag/branch name.</p>''',
@@ -233,6 +238,7 @@ pipeline {
                   ['${OPENBSW_BUILD_BUCKET_ROOT_NAME}', "${OPENBSW_BUILD_BUCKET_ROOT_NAME}"],
                   ['${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
                   ['${OPENBSW_IMAGE_TAG}', "${OPENBSW_IMAGE_TAG}"],
+                  ['${OPENBSW_GIT_URL}', "${OPENBSW_GIT_URL}"],
                   ['${OPENBSW_GIT_BRANCH}', "${OPENBSW_GIT_BRANCH}"],
                   ['${NODEJS_VERSION}', "${NODEJS_VERSION}"],
                   ['${BUILDKIT_RELEASE_TAG}', "${BUILDKIT_RELEASE_TAG}"],

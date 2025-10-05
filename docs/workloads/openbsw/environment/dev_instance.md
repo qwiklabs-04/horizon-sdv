@@ -45,6 +45,11 @@ This is the maximum time that the instance may be running before it is automatic
 
 Enable if user wishes to connect to the HOST via MTK Connect.
 
+### `NUM_HOST_INSTANCES`
+
+Number of host instances to create for testing the POSIX application. This is effectively the number of devices that
+will be created associated with the development instance testbench in MTK Connect.
+
 ## SYSTEM VARIABLES <a name="system-variables"></a>
 
 There are a number of system environment variables that are unique to each platform but required by Jenkins build, test and environment pipelines.

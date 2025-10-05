@@ -69,6 +69,7 @@ This provides the branch/tag revision for the OpenBSW repository.
 ### `POST_GIT_CLONE_COMMAND`
 
 Optional parameter that allows the user to include additional commands to run after the repository has been cloned.
+Useful to pin OpenBSW to a particular sha1.
 
 ### `IMAGE_TAG`
 
@@ -135,6 +136,14 @@ The command that is used to build the POSIX platform target. Users may choose to
 ### `POSIX_ARTIFACT`
 
 The artifact to store. Default is the `app.referenceApp.elf`.
+
+### `POSIX_PYTEST`
+
+Run python tests on POSIX application. User may also run using the POSIX test job.
+
+### `POSIX_PYTEST_CMDLINE`
+
+The command that will be used to run the pyTest on the POSIX platform target.
 
 ### `BUILD_NXP_S32K148`
 

@@ -180,7 +180,6 @@ spec:
     name: keycloak-secret-store
   target:
     name: keycloak-grafana-admin
-    creationPolicy: Merge
   data:
     - secretKey: password
       remoteRef:

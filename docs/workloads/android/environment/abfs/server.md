@@ -72,6 +72,9 @@ The sha1 for Google Terraform modules for ABFS.
 
 This is a local override of the ABFS license that was created in GitHub environment secrets and stored as a kubernetes secret. It's purpose is to allow users test license updates locally, prior to updating GitHub, Terraform and ArgoCD to apply the license formally to the project.
 
+### `ABFS_COS_IMAGE_REF`
+Defines the ABFS Containerized OS images used on server and uploader instances.
+
 ## SYSTEM VARIABLES <a name="system-variables"></a>
 
 There are a number of system environment variables that are unique to each platform but required by Jenkins build, test and environment pipelines.

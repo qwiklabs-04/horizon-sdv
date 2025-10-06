@@ -68,6 +68,12 @@ variable "abfs_manifest_file" {
   default     = "default.xml"
 }
 
+variable "abfs_uploader_cos_image_ref" {
+  type        = string
+  description = "Reference to the COS boot image to use for the ABFS uploader"
+  default     = "projects/cos-cloud/global/images/family/cos-113-lts"
+}
+
 variable "abfs_gerrit_uploader_manifest_server" {
   type        = string
   description = "The manifest server to assume"

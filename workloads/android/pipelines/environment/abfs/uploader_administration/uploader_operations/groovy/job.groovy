@@ -119,6 +119,13 @@ pipelineJob('Android/Environment/ABFS/Uploader Administration/Uploader Operation
       trim(true)
     }
 
+    stringParam {
+      name('ABFS_COS_IMAGE_REF')
+      defaultValue("${ABFS_COS_IMAGE_REF}")
+      description('''<p>ABFS Containerized OS images used on server and uploader instances.</p>''')
+      trim(true)
+    }
+
   }
 
   // Block build if certain jobs are running.

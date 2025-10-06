@@ -31,6 +31,12 @@ variable "sdv_network" {
   type        = string
 }
 
+variable "abfs_server_cos_image_ref" {
+  type        = string
+  description = "Reference to the COS boot image to use for the ABFS server"
+  default     = "projects/cos-cloud/global/images/family/cos-113-lts"
+}
+
 variable "abfs_server_machine_type" {
   type        = string
   description = "Machine type for ABFS gerrit server"

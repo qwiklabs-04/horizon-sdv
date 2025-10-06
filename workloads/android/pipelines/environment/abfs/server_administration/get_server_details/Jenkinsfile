@@ -70,6 +70,12 @@ pipeline {
                   abfs_liveness() {
                     [[ "$state" != "RUNNING" ]] && return
                     gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "$1" --tunnel-through-iap --command="" > /dev/null 2>&1 || true
+
+                    # Dump useful logs
+                    gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "${1}" --tunnel-through-iap --command="sudo cat /var/log/cloud-init.log" > "${WORKSPACE}"/"${1}"-cloud-init.log 2>&1 || true
+                    gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "${1}" --tunnel-through-iap --command="sudo cat /var/log/cloud-init-output.log" > "${WORKSPACE}"/"${1}"-cloud-init-output.log 2>&1 || true
+                    gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "${1}" --tunnel-through-iap --command="sudo journalctl" > "${WORKSPACE}"/"${1}"-journalctl.log 2>&1 || true
+
                     { echo; echo "\033[1;32mABFS Process Liveness $1\033[0m"; } | artifact "$1"
                     PROCESS=$(gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "${1}" --tunnel-through-iap --command="pgrep -a abfs" || true)
                     if [ -n "${PROCESS}" ]; then
@@ -96,8 +102,10 @@ pipeline {
                     echo "\033[1;33mNo instances matching ${SERVER_INSTANCE_PREFIX}\033[0m"
                   fi
                 '''
-                archiveArtifacts artifacts: '*status*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
               }
+              archiveArtifacts artifacts: '*status*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+              archiveArtifacts artifacts: '*cloud-init*.log', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+              archiveArtifacts artifacts: '*journal*.log', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
             }
           }
         }

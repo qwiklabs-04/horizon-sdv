@@ -49,6 +49,7 @@ function run_pytest_posix_target() {
     eval "${POSIX_PYTEST_CMDLINE}" | tee -a "${PYTEST_RESULTS_FILE}"
     if [ "${PIPESTATUS[0]}" -ne 0 ]; then
         echo "ERROR: ${POSIX_PYTEST_CMDLINE} failed"
+        exit 1
     fi
 }
 

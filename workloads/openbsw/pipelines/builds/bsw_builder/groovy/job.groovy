@@ -52,7 +52,7 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('POST_GIT_CLONE_COMMAND')
-      defaultValue('cd openbsw && git checkout 8c8b9334 && cd -')
+      defaultValue('cd openbsw && git checkout 923e836f && cd -')
       description('''<p>Optional additional commands post git clone and prior to build/make.<br/>
         <b>Note: </b>Single command line only, use logical operators to execute subsequent commands.<br/></p>''')
       trim(true)

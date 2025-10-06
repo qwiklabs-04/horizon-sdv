@@ -141,8 +141,9 @@ RUN echo "\033[1;32mInstall python packages\033[0m" \
     && echo "\033[1;32mInstall pyTest\033[0m" \
     && pip3 install -r test/pyTest/requirements.txt \
     && echo "\033[1;32mInstall UdsTool\033[0m" \
-    && pip3 install -r tools/UdsTool/requirements.txt \
-    && cd - \
+    && cd tools/UdsTool \
+    && pip install . \
+    && cd ../../../ \
     && rm -rf openbsw
 
 # Node version manager

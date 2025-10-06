@@ -17,16 +17,34 @@
 // POSIX application.
 pipelineJob('OpenBSW/Tests/POSIX') {
   description("""
-    <br/><h3 style="margin-bottom: 10px;">OpenBSW POSIX Test Job</h3>
+    <br/><h2 style="margin-bottom: 10px;">OpenBSW POSIX Test Job</h2>
     <p>This job allows the user to access the OpenBSW platform to test a prior build of the POSIX application.</p>
-    <h4 style="margin-bottom: 10px;">Job Overview</h4>
+    <h3 style="margin-bottom: 10px;">Job Overview</h3>
     <p>Devices are initialized and remain active for a specified period, allowing users to interact with them via <a href="http://${HORIZON_DOMAIN}/mtk-connect/portal/testbenches" target="_blank">MTK Connect</a>.<br/>
     After the <code>POSIX_KEEP_ALIVE_TIME</code> period expires, the devices, testbenches, and test instance are terminated in a controlled manner.</p>
-    <h4 style="margin-bottom: 10px;">Mandatory Parameters</h4>
+    <h3 style="margin-bottom: 10px;">Mandatory Parameters</h3>
     <ul>
       <li><code>OPENBSW_DOWNLOAD_URL</code>: The URL of the user's POISX test binaries to install and run.</li>
     </ul>
-    <h4>Reference documentation:</h4>
+    <h3 style="margin-bottom: 10px;">POSIX Application Test Execution Guide</h3>
+    <p>Use this concise guide to bring up networking, launch the reference app, and run tests.</p>
+    <h4 style="margin-bottom: 10px;">One-Time Setup</h4>
+    <p>Run these once per machine boot (or when networking state is reset):</p>
+    <pre><code class="language-bash"># Bring up Ethernet
+./posix/tools/enet/bring-up-ethernet.sh
+# Bring up virtual CAN on vcan0
+./posix/tools/can/bring-up-vcan0.sh</code></pre>
+    <h4 style="margin-bottom: 10px;">Launch the Reference Application:</h4>
+    <p>Starts the POSIX reference application console:</p>
+    <pre><code class="language-bash">./posix/build/posix/executables/referenceApp/application/Release/app.referenceApp.elf</code></pre>
+    <ul>
+      <li>Keep this running while testing.</li>
+      <li>Stop with Ctrl+C when done.</li>
+    </ul>
+    <h4 style="margin-bottom: 10px;">Run POSIX pyTest:</h4>
+    <p>Execute pyTests targeting the POSIX build::</p>
+    <pre><code>cd posix/test/pyTest/ && pytest --target=posix</code></pre>
+    <h3>Reference documentation:</h3>
     <ul>
       <li><a href="https://eclipse-openbsw.github.io/openbsw/sphinx_docs/doc/learning/console/index.html" target="_blank">Application Console.</a></li>
     </ul>

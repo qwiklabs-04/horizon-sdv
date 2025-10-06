@@ -52,6 +52,13 @@ crucial for correlating <code>ABFS_VERSION</code> and <code>ABFS_CASFS_VERSION</
       trim(true)
     }
 
+    booleanParam {
+      name('AAOS_BUILD_CTS')
+      defaultValue(false)
+      description('''<p>Build the Android Automotive Compatibility Test Suite.<br/>
+        Only applicable for CF lunch targets, i.e aosp_cf.</p>''')
+    }
+
     choiceParam {
       name('ANDROID_VERSION')
       description('''<p>Version of Android required for SDK generation of addons and devices.</p>''')

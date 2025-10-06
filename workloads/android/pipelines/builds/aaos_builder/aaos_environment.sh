@@ -297,6 +297,7 @@ declare -a POST_STORAGE_COMMANDS=(
 # to build the image.
 case "${AAOS_LUNCH_TARGET}" in
     aosp_rpi*)
+        AAOS_BUILD_CTS="false"
         AAOS_MAKE_CMDLINE="m bootimage systemimage vendorimage -j${AAOS_PARALLEL_BUILD_JOBS}"
         # FIXME: we can build full flashable image but may require special
         # permissions, for now host the individual parts.
@@ -345,6 +346,7 @@ case "${AAOS_LUNCH_TARGET}" in
         )
         ;;
     sdk_car*)
+        AAOS_BUILD_CTS="false"
         AAOS_MAKE_CMDLINE="m -j${AAOS_PARALLEL_BUILD_JOBS}&& m emu_img_zip -j${AAOS_PARALLEL_BUILD_JOBS}&& m sbom -j${AAOS_PARALLEL_BUILD_JOBS}"
         AAOS_ARTIFACT_LIST+=(
             "${OUT_DIR}/target/product/emulator_car64_${AAOS_ARCH}/sbom.spdx.json"
@@ -376,9 +378,15 @@ case "${AAOS_LUNCH_TARGET}" in
             "[ -f ${WIFI_APK_PATH_NAME} ] && cp -f ${WIFI_APK_PATH_NAME} . || ${WIFI_APK_FALLBACK_CMD}"
         )
 
-        # If the AAOS_BUILD_CTS variable is set, build only the cts image.
-        if [[ "$AAOS_BUILD_CTS" -eq 1 ]]; then
-            AAOS_MAKE_CMDLINE="m cts -j32"
+        # If the AAOS_BUILD_CTS variable is set, build CTS. Reduce jobs to avoid resource issues with instance and
+        # Jenkins agent.
+        if [[ "${AAOS_BUILD_CTS}" == "true" ]]; then
+            # CTS causes OOMs if too may threads are used when building, so reduce by half.
+            threads=$(( $(nproc) / 2 ))
+            threads=$(( threads < 1 ? 1 : threads ))
+  
+            # Always build aosp_cf and then CTS.
+            AAOS_MAKE_CMDLINE+=" && m cts -j ${threads}"
             AAOS_ARTIFACT_LIST+=("${OUT_DIR}/host/linux-x86/cts/android-cts.zip")
         fi
         POST_STORAGE_COMMANDS+=(
@@ -386,6 +394,7 @@ case "${AAOS_LUNCH_TARGET}" in
         )
         ;;
     *tangorpro_car*)
+        AAOS_BUILD_CTS="false"
         AAOS_ARTIFACT_LIST+=(
             "${OUT_DIR}.tgz"
         )

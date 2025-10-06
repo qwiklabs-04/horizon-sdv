@@ -204,6 +204,7 @@ pipeline {
                   ABFS_VERSION="${ABFS_VERSION}" \
                   ABFS_REPOSITORY="${ABFS_REPOSITORY}" \
                   ABFS_BUILDER="true" \
+                  AAOS_BUILD_CTS=${AAOS_BUILD_CTS} \
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
                 '''
               }

@@ -49,6 +49,13 @@ pipelineJob('Android/Builds/AAOS Builder') {
       trim(true)
     }
 
+    booleanParam {
+      name('AAOS_BUILD_CTS')
+      defaultValue(false)
+      description('''<p>Build the Android Automotive Compatibility Test Suite.<br/>
+        Only applicable for CF lunch targets, i.e aosp_cf.</p>''')
+    }
+
     choiceParam {
       name('ANDROID_VERSION')
       description('''<p>Version of disk pool to use for the build cache, select from one of the following options:</p>

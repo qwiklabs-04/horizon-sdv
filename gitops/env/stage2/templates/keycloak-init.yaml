@@ -170,7 +170,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: grafana-admin-initial-secret
-  namespace: monitoring
+  namespace: keycloak
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:

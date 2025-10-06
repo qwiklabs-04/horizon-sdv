@@ -1195,21 +1195,15 @@ In this exercise, we will walk you through the process of building your own CTS 
 
 **_Create the CTS target:_**
 
-- Open Jenkins Dashboard (e.g. https://example.horizon-sdv.com/jenkins/) and navigate to `CTS Builder` pipeline job to prepare build targets that will be used in this lab exercise.
-- Select `Android Workflows` → `Builds` → `CTS Builder`
-  - Select `Build with Parameters` and set the `AAOS_LUNCH_TARGET` to `aosp_cf_x86_64_auto-bp2a-userdebug` and select `Build`
-
-    <img src="images/section.6/6.1.1_cts_builder.png" width="200" />
+- Open Jenkins Dashboard (e.g. https://example.horizon-sdv.com/jenkins/) and navigate to `AAOS Builder` pipeline job to prepare build targets that will be used in this lab exercise.
+- Select `Android Workflows` → `Builds` → `AAOS Builder`
+  - Select `Build with Parameters`, set the `AAOS_LUNCH_TARGET` to `aosp_cf_x86_64_auto-bp2a-userdebug`, set AAOS_BUILD_CTS to true, and select `Build`
 
   - When the build completes, the job will show the artifacts it has stored. These help the user locate the build artifacts within the Google Cloud Storage bucket.
 
-    <img src="images/section.6/6.1.1_cts_builder_artifacts.png" width="300" />
+  - Open the `aosp_cf_x86_64_auto-bp2a-userdebug-artifacts.txt` which will show you how to retrieve the artifacts.
 
-  - Open the `aosp_cf_x86_64_auto-bp2a-userdebug-artifacts.txt` which will show you how to retrieve the artifacts, e.g.
-
-    <img src="images/section.6/6.1.1_cts_builder_artifacts_txt.png" width="500" />
-
-    - Note the storage URL for `android-cts.zip` for later use in test jobs, e.g. `gs://sdva-2108202401-aaos/Android/Builds/CTS_Builder/03/android-cts.zip`. You do not need to download these artifacts, later jobs will simply reference the URL.
+    - Note the storage URL for `android-cts.zip` for later use in test jobs, e.g. `gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/03/android-cts.zip`. You do not need to download these artifacts, later jobs will simply reference the URL.
 
 ___
 
@@ -1376,13 +1370,13 @@ This next stage demonstrates the `Compatibility Test Suite` test job.
 > **Note:**
 > This can be performed in parallel with the previous section.
 
-In the previous exercise where you built the CTS using `CTS Builder` job, you may now use that `android-cts.zip` instead of the default CTS provided by Google.
+In the previous exercise where you built the CTS using `AAOS Builder` job, you may now use that `android-cts.zip` instead of the default CTS provided by Google.
 
  - Repeat the `Build with Parameters` steps as per above but this time we will define `CTS_DOWNLOAD_URL` so the test will use your prebuilt CTS:
 
    <img src="images/section.6/6.1.3_cts_execution_download_url.png" width="300" />
 
-- Enter your build URL from the fiirst exercise, e.g. `gs://sdva-2108202401-aaos/Android/Builds/CTS_Builder/01/android-cts.zip`
+- Enter your build URL from the fiirst exercise, e.g. `gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/01/android-cts.zip`
   - Note: ensure it is the full URL including `android-cts.zip`
 - Then select `Build`. This job takes a little longer as it pulls down and unpacks your `android-cts.zip` from Google
   Cloud Storage.
@@ -2126,7 +2120,6 @@ The table below shows the templates and machine types used for the Android workf
 | `Android Workflows / Environment / Development Instance`          |     | ✅ <sup>2</sup>|    |
 | `Android Workflows / Environment / Warm Build Caches`             |     | ✅ <sup>2</sup>|    |
 | `Android Workflows / Builds / AAOS Builder`                       |     | ✅ <sup>2</sup>|    |
-| `Android Workflows / Builds / CTS Builder`                        |     | ✅ <sup>2</sup> |    |
 | `Android Workflows / Tests / CTS Execution`                       |     | ✅ <sup>1</sup>| ✅ <sup>3</sup> |
 | `Android Workflows / Tests / CVD Launcher`                        |     | ✅ <sup>1</sup>| ✅ <sup>3</sup> |
 

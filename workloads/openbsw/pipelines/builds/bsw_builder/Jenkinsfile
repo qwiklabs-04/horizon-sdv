@@ -90,9 +90,18 @@ pipeline {
           command:
           - sleep
           args:
-          - 4h
+          - 5h
+          volumeMounts:
+            - name: host-lib-modules
+              mountPath: /lib/modules
+              readOnly: true
         nodeSelector:
           workloadLabel: openbsw
+        volumes:
+          - name: host-lib-modules
+            hostPath:
+              path: /lib/modules
+              type: Directory
     """.stripIndent()
   }
 
@@ -140,7 +149,7 @@ pipeline {
                   BUILD_DOCUMENTATION="${BUILD_DOCUMENTATION}" \
                   ./workloads/openbsw/pipelines/builds/bsw_builder/bsw_build.sh
                 '''
-                archiveArtifacts artifacts: '*doc*.tgz', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+                archiveArtifacts artifacts: 'openbsw-doc*.*', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
 
                 publishHTML target: [
                   allowMissing: true,

@@ -190,7 +190,7 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('POSIX_PYTEST_CMDLINE')
-      defaultValue('./tools/enet/bring-up-ethernet.sh && cd test/pyTest/ && pytest --target=posix')
+      defaultValue('./tools/enet/bring-up-ethernet.sh && ./tools/can/bring-up-vcan0.sh && cd test/pyTest/ && pytest --target=posix')
       description('''<p>Default POSIX pyTest command line''')
       trim(true)
     }

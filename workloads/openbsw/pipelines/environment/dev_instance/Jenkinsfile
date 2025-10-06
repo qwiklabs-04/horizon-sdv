@@ -58,8 +58,17 @@ pipeline {
           - sleep
           args:
           - 5h
+          volumeMounts:
+            - name: host-lib-modules
+              mountPath: /lib/modules
+              readOnly: true
         nodeSelector:
           workloadLabel: openbsw
+        volumes:
+          - name: host-lib-modules
+            hostPath:
+              path: /lib/modules
+              type: Directory
     """.stripIndent()
   }
 

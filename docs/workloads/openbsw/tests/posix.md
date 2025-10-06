@@ -19,13 +19,13 @@ The following options are available for testing the POSIX reference application:
 
 This will allow users to execute and operate the POSIX reference application.
 
-`./posix/tools/enet/bring-up-ethernet.sh && ./posix/build/posix/executables/referenceApp/application/Release/app.referenceApp.elf`
+`./posix/tools/enet/bring-up-ethernet.sh && ./posix/tools/can/bring-up-vcan0.sh && ./posix/build/posix/executables/referenceApp/application/Release/app.referenceApp.elf`
 
 **POSIX pyTest:**
 
 This will allow users to run pyTest on the reference application, and debug failures etc:
 
-`./posix/tools/enet/bring-up-ethernet.sh && cd posix/test/pyTest/ && pytest --target=posix`
+`./posix/tools/enet/bring-up-ethernet.sh && ./posix/tools/can/bring-up-vcan0.sh && cd posix/test/pyTest/ && pytest --target=posix`
 
 
 ### References <a name="references"></a>

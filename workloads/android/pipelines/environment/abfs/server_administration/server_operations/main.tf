@@ -33,6 +33,7 @@ module "abfs-server" {
   abfs_server_machine_type              = var.abfs_server_machine_type
   abfs_server_name                      = "abfs-server"
   abfs_server_allow_stopping_for_update = true
+  abfs_server_cos_image_ref             = var.abfs_server_cos_image_ref
 }
 
 resource "google_compute_firewall" "abfs-server-allow-all-from-internal" {

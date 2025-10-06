@@ -50,6 +50,11 @@ Defines the version for use with the ABFS server, uploader and build jobs.
 ## `ABFS_CASFS_VERSION`
 Defines the ABFS CASFS version for use with the ABFS build jobs.
 
+## `ABFS_COS_IMAGE_REF`
+Defines the ABFS Containerized OS images used on server and uploader instances.
+
+Use `gcloud compute images list --no-standard-images --project=cos-cloud | grep lts` to check for available LTS images.
+
 ## `ABFS_REPOSITORY`
 Defines the artifact repository from where to retrieve the ABFS packages.
 

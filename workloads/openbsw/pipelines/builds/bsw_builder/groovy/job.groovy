@@ -75,6 +75,19 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
     }
 
     separator {
+      name('Documentation')
+      sectionHeader('Documentation')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
+    }
+
+    booleanParam {
+      name('BUILD_DOCUMENTATION')
+      defaultValue(false)
+      description('''<p>Create OpenBSW doxygen documentation and coverage report.</p>''')
+    }
+
+    separator {
       name('Unit Tests')
       sectionHeader('Unit Tests')
       sectionHeaderStyle("${HEADER_STYLE}")

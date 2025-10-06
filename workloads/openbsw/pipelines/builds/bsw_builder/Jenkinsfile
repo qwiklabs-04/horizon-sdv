@@ -120,6 +120,41 @@ pipeline {
           }
         }
 
+        stage ('Build Documentation') {
+          when {
+            allOf {
+              expression { env.BUILD_DOCUMENTATION == 'true' }
+              expression { currentBuild.currentResult == 'SUCCESS' }
+            }
+          }
+          steps {
+            container(name: 'builder') {
+              catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                sh '''
+                  BUILD_NXP_S32K148="false" \
+                  BUILD_POSIX="false" \
+                  BUILD_UNIT_TESTS="false" \
+                  CODE_COVERAGE="false" \
+                  LIST_UNIT_TESTS="false" \
+                  RUN_UNIT_TESTS="false" \
+                  BUILD_DOCUMENTATION="${BUILD_DOCUMENTATION}" \
+                  ./workloads/openbsw/pipelines/builds/bsw_builder/bsw_build.sh
+                '''
+                archiveArtifacts artifacts: '*doc*.tgz', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+
+                publishHTML target: [
+                  allowMissing: true,
+                  alwaysLinkToLastBuild: true,
+                  keepAll: true,
+                  reportDir: "doxygenOut/html",
+                  reportFiles: 'index.html',
+                  reportName: 'OpenBSW Documentation'
+                ]
+              }
+            }
+          }
+        }
+
         stage ('List Unit Tests') {
           when {
             allOf {

@@ -18,6 +18,8 @@ This job automates the build process for the Eclipse Foundation OpenBSW software
 
 The job offers the following build targets and options:
 
+- Documentation:
+  - Creates OpenBSW documentation from doxygen.
 - Unit Tests:
   - Build unit tests
   - Run unit tests (all or individual test library)
@@ -84,6 +86,14 @@ Defines the number of parallel sync jobs when running `cmake` commands.
 ### `CODE_COVERAGE`
 
 Enable code coverage for unit tests. Only applicable when `BUILD_UNIT_TESTS` and `RUN_UNIT_TESTS` are enabled.
+
+### `BUILD_DOCUMENTATION`
+
+Use this to build the OpenBSW documentation using doxygen. PublishHTML is used in Jenkins so you can view the HTML output, or simply download the archive.
+
+To view in Jenkins correctly, you would have to lower the [content security level](https://www.jenkins.io/doc/book/security/configuring-content-security-policy/) from `Script Console`, allowing the full HTML to be accessible, e.g.
+
+`System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "")`
 
 ### `LIST_UNIT_TESTS`
 

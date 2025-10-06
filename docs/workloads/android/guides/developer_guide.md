@@ -26,6 +26,7 @@ These exercises cater for two types of developers:
 
 > [!IMPORTANT]
 > - Please use the latest available Android revisions when following this guide. Jenkins Android revisions may change over time, while this guide remains showing older versions.
+>   - Android versions are updated regularly. Users should verify which releases are currently supported. Exercises in this guide may reference older versions; please update them to the latest supported release as appropriate.
 > - When working with Cuttlefish, please be aware that the latest supported versions change frequently. The examples provided in this guide may become outdated, as <a href=https://github.com/google/android-cuttlefish/tags>tags</a> are updated regularly.
 > - Some examples reference `gsutil` which is now deprecated, please replace with `gcloud storage` commands instead.
 
@@ -295,6 +296,7 @@ This section shows how to create and populate the mirrors on Horizon SDV Gerrit.
 - Enter the `Repository Name` as per list above (e.g. `android/platform/manifest`)
 - Enter the `Default Branch` : `horizon/android-14.0.0_r30`
   - This means `HEAD` will move from `master` to `horizon/android-14.0.0_r30`
+  - Should you wish to, you may choose to change `HEAD` to point to a different branch.
 - Set `Create Empty Commit` to `False` so we retain original history from upstream Google AOSP.
 
   <img src="images/section.3/3.4.3_create_project.png" width="200" />
@@ -2024,9 +2026,9 @@ Gerrit triggers are based on a single project/repo build, i.e. build one compone
 Cuttlefish instance templates are instances pre-installed with Android cuttlefish debian host packages, Android 14, 15 and 16 CTS, together with other tools required to launch CVD and run CTS tests. There are two instances we have created ahead of time:
 
 - `cuttlefish-vm-main` based on [android-cuttlefish.git main branch](https://github.com/google/android-cuttlefish/tree/main)
-- `cuttlefish-vm-v110` based on [android-cuttlefish.git v1.1.0 tag](https://github.com/google/android-cuttlefish/tree/v1.1.0)
+- `cuttlefish-vm-v1250` based on [android-cuttlefish.git v1.25.0 tag](https://github.com/google/android-cuttlefish/tree/v1.25.0)
 
-Users may wish to create newer versions, e.g. [v1.2.0](https://github.com/google/android-cuttlefish/tree/v1.2.0) and [v1.3.0](https://github.com/google/android-cuttlefish/tree/v1.3.0) tags have appeared recently. This section describes how to create the instance templates and configure the test jobs to use those instances.
+Users may wish to create newer versions as the android-cuttlefish repo is updated and new tagged versions appear. This section describes how to create the instance templates and configure the test jobs to use those instances.
 
 > [!NOTE]
 > Instance templates take around 1 hour to create. This is because the install of android-cuttlefish takes a significant time, together with downloading and installing Android 14, 15 and 16 CTS takes around 25 minutes. The remaining time is based on GCP gcloud CLI commands, these commands can complete before the change is actually visible, therefore there are some mandatory delays included to ensure settling time of the gcloud CLI updates.

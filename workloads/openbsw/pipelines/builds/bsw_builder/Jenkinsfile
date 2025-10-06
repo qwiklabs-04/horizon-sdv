@@ -143,6 +143,7 @@ pipeline {
                   BUILD_NXP_S32K148="false" \
                   BUILD_POSIX="false" \
                   BUILD_UNIT_TESTS="false" \
+                  POSIX_PYTEST="false" \
                   CODE_COVERAGE="false" \
                   LIST_UNIT_TESTS="false" \
                   RUN_UNIT_TESTS="false" \
@@ -179,6 +180,7 @@ pipeline {
                   BUILD_NXP_S32K148="false" \
                   BUILD_POSIX="false" \
                   BUILD_UNIT_TESTS="false" \
+                  POSIX_PYTEST="false" \
                   CODE_COVERAGE="false" \
                   LIST_UNIT_TESTS="${LIST_UNIT_TESTS}" \
                   LIST_UNIT_TESTS_CMDLINE="${LIST_UNIT_TESTS_CMDLINE}" \
@@ -206,6 +208,7 @@ pipeline {
                   BUILD_NXP_S32K148="false" \
                   BUILD_POSIX="false" \
                   BUILD_UNIT_TESTS="${BUILD_UNIT_TESTS}" \
+                  POSIX_PYTEST="false" \
                   CODE_COVERAGE="false" \
                   LIST_UNIT_TESTS="false" \
                   RUN_UNIT_TESTS="false" \
@@ -233,6 +236,7 @@ pipeline {
                   BUILD_NXP_S32K148="false" \
                   BUILD_POSIX="false" \
                   BUILD_UNIT_TESTS="false" \
+                  POSIX_PYTEST="false" \
                   CODE_COVERAGE="false" \
                   LIST_UNIT_TESTS="false" \
                   RUN_UNIT_TESTS="${RUN_UNIT_TESTS}" \
@@ -260,6 +264,7 @@ pipeline {
                   BUILD_NXP_S32K148="false" \
                   BUILD_POSIX="false" \
                   BUILD_UNIT_TESTS="false" \
+                  POSIX_PYTEST="false" \
                   LIST_UNIT_TESTS="false" \
                   RUN_UNIT_TESTS="false" \
                   CODE_COVERAGE="${CODE_COVERAGE}" \
@@ -350,6 +355,7 @@ pipeline {
                   BUILD_POSIX="false" \
                   BUILD_UNIT_TESTS="false" \
                   BUILD_NXP_S32K148="${BUILD_NXP_S32K148}" \
+                  POSIX_PYTEST="false" \
                   CODE_COVERAGE="false" \
                   LIST_UNIT_TESTS="false" \
                   NXP_S32K148_BUILD_CMDLINE="${NXP_S32K148_BUILD_CMDLINE}" \

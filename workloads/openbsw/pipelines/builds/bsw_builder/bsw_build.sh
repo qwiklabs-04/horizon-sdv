@@ -72,6 +72,16 @@ function list_unit_tests() {
     fi
 }
 
+# Function to generate documentation
+function build_documentation() {
+    echo "Building unit tests"
+    if ! eval "${BUILD_DOCUMENTATION_CMDLINE}"
+    then
+        echo "ERROR: ${BUILD_DOCUMENTATION_CMDLINE} failed"
+        exit 1
+    fi
+}
+
 # Function to run unit tests
 function run_unit_tests() {
     echo "Running unit tests"
@@ -98,6 +108,11 @@ cd "${OPENBSW_GIT_DIR}" || exit
 # List available tests.
 if ${LIST_UNIT_TESTS}; then
     list_unit_tests
+fi
+
+# Create documentation
+if ${BUILD_DOCUMENTATION}; then
+    build_documentation
 fi
 
 # Build and run unit tests if enabled

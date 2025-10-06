@@ -43,7 +43,7 @@ RUN apt-get update -y && \
     apt-get -y upgrade && \
     apt-get install -y --no-install-recommends \
     apt-transport-https ca-certificates \
-    build-essential bzip2 clang-tidy curl file gawk \
+    build-essential bzip2 clang-tidy curl doxygen file gawk \
     gcc-11 g++11 gettext gettext-base git git-core gnupg \
     htop iproute2 iputils-ping kmod less lcov ninja-build \
     python"${PYTHON_VERSION}" python3-setuptools python3-pip \
@@ -134,7 +134,7 @@ RUN echo "PATH=$PATH" >> /home/${USER}/.bash_aliases
 
 # Configure python packages together with OpenBSW pyTest and UdsTool
 RUN echo "\033[1;32mInstall python packages\033[0m" \
-    && pip3 install cmakelang pytest rich pyelftools=="${PYELFTOOLS_VERSION}" \
+    && pip3 install cmakelang coverxygen pytest pyelftools=="${PYELFTOOLS_VERSION}" rich \
     && git clone "${OPENBSW_GIT_URL}" -b "${OPENBSW_GIT_BRANCH}" openbsw \
     && cd openbsw \
     && if [ ! -z "${POST_GIT_CLONE_COMMAND}" ]; then eval "${POST_GIT_CLONE_COMMAND}"; fi \

@@ -2139,7 +2139,6 @@ If users are interested in how these machine types are configured, then refer to
   - `workloads/android/pipelines/environment/warm_build_caches/Jenkinsfile`
   - `workloads/android/pipelines/environment/dev_instance/Jenkinsfile`
   - `workloads/android/pipelines/builds/aaos_builder/Jenkinsfile`
-  - `workloads/android/pipelines/builds/cts_builder/Jenkinsfile`
 
 **OpenBSW Build Jobs: `n1-standard-8`**
 - `./terraform/env/main.tf`: `sdv_openbsw_build_node_pool_machine_type   = "n1-standard-8"`

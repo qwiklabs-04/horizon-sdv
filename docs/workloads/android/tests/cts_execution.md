@@ -16,7 +16,7 @@ The pipeline first runs CVD on the Cuttlefish VM Instance to instantiate the spe
 
 Note:
 
-- This pipeline offers the flexibility to run using a user-defined CTS suite (built by the `CTS Builder` pipeline) instead of the default Android 14, 15 and 16 CTS suites provided by google.
+- This pipeline offers the flexibility to run using a user-defined CTS suite (built by the `AAOS Builder` pipeline with `AAOS_BUILD_CTS` enabled) instead of the default Android 14, 15 and 16 CTS suites provided by google.
 - It allows user to enable MTK Connect should they wish to view the virtual devices during testing (e.g. useful for UI tests).
 - It allows users to keep the cuttlefish virtual devices alive for a certain amount of time after the CTS run has completed in order to facilitate debugging via MTK Connect. MTK Connect must be enabled for this option.
 
@@ -73,7 +73,7 @@ Defines the Android and thus CTS version to use. The Cuttlefish VM Instance is a
 
 Optional.
 
-This allows the user to use their own CTS that was built using the `CTS Builder` build job.
+This allows the user to use their own CTS that was built using the `AAOS Builder` build job.
 
 The URL must point to the bucket where the Android CTS archive is stored:
 

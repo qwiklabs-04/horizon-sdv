@@ -57,6 +57,10 @@ Examples:
 -   Pixel Devices:
     -   `aosp_tangorpro_car-bp1a-userdebug`
 
+### `AAOS_BUILD_CTS`
+
+This builds the Android Automotive Compatibility Test Suite ([CTS](https://source.android.com/docs/compatibility/cts)) test harness from the specified code base, if the `AAOS_LUNCH_TARGET` is that of Cuttlefish, i.e `aosp_cf`.
+
 ### `ANDROID_VERSION`
 
 Only applicable for sdk AVD targets, this is used to derive the Android API version for the SDK addons and device files.

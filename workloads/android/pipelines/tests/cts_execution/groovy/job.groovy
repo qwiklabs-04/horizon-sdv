@@ -19,7 +19,8 @@ pipelineJob('Android/Tests/CTS Execution') {
     <p>The job runs on a cuttlefish-ready virtual machine instance (refer to the <i>CF Instance Template</i> job) together with running virtual devices (refer to <i>CVD Launcher</i> job). The Compatibility Test Suite is then executed across the virtual devices:
     <ul>
       <li><a href="https://source.android.com/docs/core/tests/tradefed" target="_blank">CTS Trade Federation</a></i> (<tt>cts-tradefed</tt>) - the test harness for CTS - can distribute / shard the tests across the multiple virtual devices </li>
-      <li>The CTS version can either use the default <a href="https://source.android.com/docs/compatibility/cts/downloads" target="_blank">google-released</a> version or a test suite built by the <i>CTS Builder</i> job</i></li>
+      <li>The CTS version can either use the default <a
+href="https://source.android.com/docs/compatibility/cts/downloads" target="_blank">google-released</a> version or a test suite built by the <i>AAOS Builder</i> job with <i>AAOS_BUILD_CTS</i> enabled.</i></li>
     </ul></p>
     <h4 style="margin-bottom: 10px;">Mandatory Parameters</h4>
     <ul>

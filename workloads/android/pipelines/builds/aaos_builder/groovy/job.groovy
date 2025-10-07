@@ -20,7 +20,9 @@ pipelineJob('Android/Builds/AAOS Builder') {
       <li><a href="https://source.android.com/docs/automotive/start/avd/android_virtual_device" target="_blank">Android Virtual Devices</a> for use with <a href="https://source.android.com/docs/automotive/start/avd/android_virtual_device#share-an-avd-image-with-android-studio-users" target="_blank">Android Studio</a></li> 
       <li><a href="https://source.android.com/docs/devices/cuttlefish" target="_blank">Cuttlefish Virtual Devices</a> for use with <a href="https://source.android.com/docs/compatibility/cts" target="_blank">CTS</a></li>
       <li>Reference hardware platforms such as <a href="https://github.com/raspberry-vanilla/android_local_manifest" target="_blank">RPi</a> and <a href="https://source.android.com/docs/automotive/start/pixelxl" target="_blank">Pixel Tablets</a></li>
+      <li><a href="https://source.android.com/docs/compatibility/cts/development" target="_blank">CTS development</a>, reference <a href="https://source.android.com/docs/compatibility/cts" target="_blank">Compatibility Test Suite</a> and <a href="https://source.android.com/docs/core/tests/tradefed" target="_blank">CTS Trade Federataion</a></a>.</li>
     </ul>
+    <p>For <i>CTS development builds</i>, select a cuttlefish variety of <code>AAOS_LUNCH_TARGET</code> and enable <code>AAOS_BUILD_CTS</code> to build and create <code>android-cts.zip</code> for use in the <i>CTS Execution</i> test job.</p>
     <h4 style="margin-bottom: 10px;">Build Outputs</h4>
     <p>Build outputs are stored in a Google Cloud Storage bucket (refer to build artifact for location).</p>
     <h4 style="margin-bottom: 10px;">Viewing Artifacts on Google Cloud</h4>

@@ -93,7 +93,7 @@ pipelineJob('Android/Environment/ABFS/Uploader Administration/Uploader Operation
 
     stringParam {
       name('UPLOADER_GIT_BRANCH')
-      defaultValue('["android-16.0.0_r2","android-15.0.0_r36"]')
+      defaultValue('["android-15.0.0_r36"]')
       description('''<p>Gerrit branches/tags to seed from. Remove branch/tag and seed will be removed.</p>''')
       trim(true)
     }

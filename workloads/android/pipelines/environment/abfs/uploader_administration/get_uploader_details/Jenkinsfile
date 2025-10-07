@@ -61,6 +61,7 @@ pipeline {
                   # Strict mode for safer scripts:
                   # -e exit on error, -u error on unset vars, -o pipefail fail on pipeline errors
 
+                  result=0
                   cd ./workloads/android/pipelines/environment/abfs/uploader_administration/get_uploader_details/
 
                   artifact() {
@@ -72,15 +73,11 @@ pipeline {
                     [[ "$state" != "RUNNING" ]] && return
                     gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "$1" --tunnel-through-iap --command="" > /dev/null 2>&1 || true
 
-                    # Dump useful logs
-                    gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "${1}" --tunnel-through-iap --command="sudo cat /var/log/cloud-init.log" > "${WORKSPACE}"/"${1}"-cloud-init.log 2>&1 || true
-                    gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "${1}" --tunnel-through-iap --command="sudo cat /var/log/cloud-init-output.log" > "${WORKSPACE}"/"${1}"-cloud-init-output.log 2>&1 || true
-                    gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "${1}" --tunnel-through-iap --command="sudo journalctl" > "${WORKSPACE}"/"${1}"-journalctl.log 2>&1 || true
-
                     { echo; echo "\033[1;32mABFS Process Liveness $1\033[0m"; } | artifact "$1"
                     PROCESS=$(gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "${1}" --tunnel-through-iap --command="pgrep -a abfs" || true)
                     if [ -n "${PROCESS}" ]; then
                       { echo; echo "\033[1;32mABFS Alive:\033[0m ${PROCESS}"; echo; } | artifact "$1"
+
                       BR_TAG=$(echo "${PROCESS}" | awk '{
                         grab=0; out=""
                         for (i=1;i<=NF;i++) {
@@ -96,7 +93,13 @@ pipeline {
                       { echo; echo "\033[1;32mBranches/tags:\033[0m ${BR_TAG}"; echo; } | artifact "${1}"
                     else
                       { echo; echo "\033[1;31mABFS Not running, consider DESTROY and APPLY\033[0m"; echo; } | artifact "${1}"
-                      exit 1
+
+                      # Dump useful logs
+                      gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "${1}" --tunnel-through-iap --command="sudo cat /var/log/cloud-init.log" > "${WORKSPACE}"/"${1}"-cloud-init.log 2>&1 || true
+                      gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "${1}" --tunnel-through-iap --command="sudo cat /var/log/cloud-init-output.log" > "${WORKSPACE}"/"${1}"-cloud-init-output.log 2>&1 || true
+                      gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "${1}" --tunnel-through-iap --command="sudo journalctl" > "${WORKSPACE}"/"${1}"-journalctl.log 2>&1 || true
+
+                      result=1
                     fi
                   }
 
@@ -112,6 +115,8 @@ pipeline {
                       { echo; echo "\033[1;32mInstance $instance state: $state\033[0m"; } | artifact "$instance"
                       abfs_liveness "$instance" $state
                     done
+                    echo "RESULT = $result"
+                    exit "${result}"
                   else
                     echo "\033[1;33mNo instances matching ${UPLOADER_INSTANCE_PREFIX}\033[0m"
                   fi

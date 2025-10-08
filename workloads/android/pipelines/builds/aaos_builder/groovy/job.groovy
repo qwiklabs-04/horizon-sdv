@@ -131,6 +131,15 @@ pipelineJob('Android/Builds/AAOS Builder') {
     }
 
     stringParam {
+      name('STORAGE_BUCKET_DESTINATION')
+      defaultValue('')
+      description('''<p>Storage bucket destination:<br/>
+        Leave empty for build to create default, e.g. gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/AAOS_Builder/<BUILD_NUMBER><br/>
+        Alternatively, override path, e.g gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Releases/010129</p>''')
+      trim(true)
+    }
+
+    stringParam {
       name('GERRIT_PROJECT')
       defaultValue('')
       description('''<p>Optional, define Gerrit Project with open review.</p>''')

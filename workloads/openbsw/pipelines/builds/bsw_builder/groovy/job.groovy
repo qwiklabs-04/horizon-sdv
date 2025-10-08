@@ -244,6 +244,15 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
         <li>Empty will result in nothing stored</li></ul></p>''')
       trim(true)
     }
+
+    stringParam {
+      name('STORAGE_BUCKET_DESTINATION')
+      defaultValue('')
+      description('''<p>OpenBSW Bucket Storage destination:<br/>
+        Leave empty for build to create default, e.g. gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Builds/BSW_Builder/<BUILD_NUMBER><br/>
+        Alternatively, override path, e.g gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Releases/010129</p>''')
+      trim(true)
+    }
   }
 
   logRotator {

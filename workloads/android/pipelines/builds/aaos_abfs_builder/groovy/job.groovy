@@ -180,6 +180,15 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/
         <li>Empty will result in nothing stored</li></ul></p>''')
       trim(true)
     }
+
+    stringParam {
+      name('STORAGE_BUCKET_DESTINATION')
+      defaultValue('')
+      description('''<p>Storage bucket destination:<br/>
+        Leave empty for build to create default, e.g. gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/AAOS_Builder_ABFS/<BUILD_NUMBER><br/>
+        Alternatively, override path, e.g gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Releases/010129</p>''')
+      trim(true)
+    }
   }
 
   logRotator {

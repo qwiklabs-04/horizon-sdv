@@ -46,7 +46,7 @@ One-time setup requirements.
 
 ### `OPENBSW_DOWNLOAD_URL`
 
-Storage URL pointing to the location of the POSIX target application image that was build using `BSW Builder`, e.g.`gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Builds/BSW_Builder/<BUILD_NUMBER>/posix`
+Storage URL pointing to the location of the POSIX target application image that was build using `BSW Builder`, e.g.`gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Builds/BSW_Builder/<BUILD_NUMBER>/posix`, or `<STORAGE_BUCKET_DESTINATION>/posix` if destination was overridden.
 
 ### `IMAGE_TAG`
 

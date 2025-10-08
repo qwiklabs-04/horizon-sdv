@@ -141,6 +141,15 @@ Define storage solution used to push artifacts.
 
 Currently `GCS_BUCKET` default pushes to GCS bucket, if empty then nothing will be stored.
 
+### `STORAGE_BUCKET_DESTINATION`
+
+Lets you override the default artifact storage destination. If not set, the build derives it automatically, for example:
+
+`gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/AAOS_Builder_ABFS/<BUILD_NUMBER>`
+
+The override must be a full GCS URI, including the `gs://` prefix, bucket name, and the artifact path. For example:
+
+`gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Releases/010129`
 
 ## SYSTEM VARIABLES <a name="system-variables"></a>
 

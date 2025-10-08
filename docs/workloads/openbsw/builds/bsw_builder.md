@@ -179,6 +179,16 @@ Define storage solution used to push artifacts.
 
 Currently `GCS_BUCKET` default pushes to GCS bucket, if empty then nothing will be stored.
 
+### `STORAGE_BUCKET_DESTINATION`
+
+Lets you override the default artifact storage destination. If not set, the build derives it automatically, for example:
+
+`gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Builds/BSW_Builder/<BUILD_NUMBER>`
+
+The override must be a full GCS URI, including the `gs://` prefix, bucket name, and the artifact path. For example:
+
+`gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Releases/010129`
+
 ## SYSTEM VARIABLES <a name="system-variables"></a>
 
 There are a number of system environment variables that are unique to each platform but required by Jenkins build, test and environment pipelines.

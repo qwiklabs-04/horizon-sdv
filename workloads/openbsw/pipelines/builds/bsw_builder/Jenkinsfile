@@ -379,6 +379,7 @@ pipeline {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                 sh '''
                   OPENBSW_ARTIFACT_ROOT_NAME="${OPENBSW_BUILD_BUCKET_ROOT_NAME}" \
+                  STORAGE_BUCKET_DESTINATION="${STORAGE_BUCKET_DESTINATION}" \
                   ./workloads/openbsw/pipelines/builds/bsw_builder/bsw_storage.sh
                 '''
                 archiveArtifacts artifacts: '*artifacts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true

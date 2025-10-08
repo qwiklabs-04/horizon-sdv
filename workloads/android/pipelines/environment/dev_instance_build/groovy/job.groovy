@@ -36,13 +36,15 @@ pipelineJob('Android/Environment/Development Build Instance') {
       name('ANDROID_VERSION')
       description('''<p>Version of disk pool to use for the build cache:</p>
           <ul>
+            <li>16: Use the Android 16 disk pool.</li>
             <li>15: Use the Android 15 disk pool.</li>
             <li>14: Use the Android 14 disk pool.</li>
+            <li>16-rpi: Use the Android 16 RPi disk pool.</li>
             <li>15-rpi: Use the Android 15 RPi disk pool.</li>
             <li>14-rpi: Use the Android 14 RPi disk pool.</li>
           </ul>
         <p>Not applicable for ABFS, PV only serves as cache for cacheman.</p>''')
-      choices(['15', '14', '15-rpi', '14-rpi'])
+      choices(['16', '15', '14', '16-rpi', '15-rpi', '14-rpi'])
     }
 
     stringParam {

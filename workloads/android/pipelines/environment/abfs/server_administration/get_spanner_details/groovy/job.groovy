@@ -20,7 +20,7 @@ pipelineJob('Android/Environment/ABFS/Server Administration/Get Spanner Details'
   parameters {
     stringParam {
       name('ABFS_DB_NAME')
-      defaultValue('')
+      defaultValue('abfs')
       description('''<p><b>Optional:</b> Enter specific DB name if known, e.g <code>abfs</code>, else leave blank to show potential instances.</p>''')
       trim(true)
     }

@@ -44,6 +44,12 @@ pipelineJob('Android/Environment/ABFS/Server Administration/Update Spanner Backu
       trim(true)
     }
     stringParam {
+      name('DATABASE')
+      defaultValue('abfs')
+      description('''<p>ABFS Database name.</p>''')
+      trim(true)
+    }
+    stringParam {
       name('INFRA_IMAGE_TAG')
       defaultValue('latest')
       description('''<p>Image tag for the ABFS infra docker image.</p>''')

@@ -25,6 +25,8 @@
 #   INSTANCE_PREFIX: The prefix name of the ABFS instance to retrieve details.
 #   LIST_BRANCHES:   boolean to indicate whether to dump ABFS branches being
 #                    uploaded.
+set -euo pipefail
+
 LIST_BRANCHES=${LIST_BRANCHES:-false}
 RESULT=0
 

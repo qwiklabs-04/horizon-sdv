@@ -59,88 +59,10 @@ pipeline {
             container(name: 'abfs-spanner-details') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                 sh '''
-                  /usr/bin/env bash -euo pipefail <<'BASH'
-                  # Strict mode for safer scripts:
-                  # -e exit on error, -u error on unset vars, -o pipefail fail on pipeline errors
-
                   cd ./workloads/android/pipelines/environment/abfs/server_administration/get_spanner_details/
-
-                  artifact() {
-                    local file="${WORKSPACE}/$1-status.txt"
-                    tee >(sed -E 's/\\x1b\\[[0-9;]*[A-Za-z]//g' >> "$file")
-                  }
-
-                  # List instances using gcloud's native filter and iterate safely.
-                  # Filter buckets: if ABFS_DB_BUCKET_NAME is set use fixed-string grep (-F),
-                  # otherwise match default ABFS pattern with extended regex (-E).
-                  if [[ -n "${ABFS_DB_BUCKET_NAME:-}" ]]; then
-                    bucket_filter="${ABFS_DB_BUCKET_NAME}"
-                    bucket_grep_opts="-F"
-                  else
-                    bucket_filter='^abfs-[0-9a-fA-F]{4}$'
-                    bucket_grep_opts="-E"
-                  fi
-
-                  # List buckets and apply filter.
-                  echo "\033[1;32mListing buckets...\033[0m"
-                  buckets=$(gcloud storage buckets list --format="value(name)" | { grep ${bucket_grep_opts} "${bucket_filter}" || true; })
-                  if [[ -z "$buckets" ]]; then
-                    echo "\033[1;33mNo buckets found.\033[0m"
-                  else
-                    while IFS= read -r bucket; do
-                      # Use while/read to handle names safely; always quote variables.
-                      [[ -z "$bucket" ]] && continue
-                      { echo "\033[1;32mBucket $bucket details:\033[0m"; echo; } | artifact "$bucket"
-                      size=$(gcloud storage du --readable-sizes "gs://${bucket}/" --summarize)
-                      { echo "Size: ${size}"; echo;} | artifact "$bucket"
-                    done <<< "$buckets"
-                  fi
-
-                  # Default database hint; may be overwritten from backups SOURCE_DATABASE below.
-                  # If an instance has no backups, this may remain "abfs" and schedules may be empty.
-                  database="abfs"
-                  instances=$(gcloud spanner instances list --format="value(name)" || true)
-                  found=0
-                  while IFS= read -r instance; do
-                    [[ -z "$instance" ]] && continue
-                    # If ABFS_DB_NAME is set, only keep instances whose name contains it (safe under set -u)
-                    if [[ -n "${ABFS_DB_NAME:-}" && "$instance" != *"${ABFS_DB_NAME}"* ]]; then
-                      echo "\033[1;33mSkipping instance $instance != ${ABFS_DB_NAME}\033[0m"
-                      continue
-                    fi
-                    found=1
-                    { echo "\033[1;32mInstance $instance details:\033[0m"; echo; } | artifact "$instance"
-                    { gcloud spanner instances describe "$instance"; echo; } | artifact "$instance"
-                    echo "\033[1;32mBackup list:\033[0m\033[0m"; echo
-                    # Enumerate backups safely; derive SOURCE_DATABASE for schedules below.
-                    backups=$(gcloud spanner backups list --instance="$instance" --format="value(name)" || true)
-                    if [[ -z "$backups" ]]; then
-                      echo "\033[1;33mNo backups found.\033[0m"
-                    else
-                      while IFS= read -r backup; do
-                        [[ -z "$backup" ]] && continue
-                        echo "\033[1;32mBackup $backup\033[0m"; echo
-                        { gcloud spanner backups describe "$backup" --instance="$instance"; echo; } | artifact "$instance"
-                        database=$(gcloud spanner backups list --instance="$instance" --filter="$backup" --format="value(SOURCE_DATABASE)")
-                      done <<< "$backups"
-                    fi
-                    echo; echo "\033[1;32mBackup Schedule:\033[0m"; echo
-                    # Query backup schedules for the most recently set database (if any).
-                    schedules=$(gcloud spanner backup-schedules list --instance="$instance" --database="$database" --format="value(name)" || true)
-                    if [[ -z "$schedules" ]]; then
-                      echo "\033[1;33mNo backup schedules found.\033[0m"
-                    else
-                      while IFS= read -r schedule; do
-                        [[ -z "$schedule" ]] && continue
-                        { echo "\033[1;32mBackup Schedule $schedule\033[0m"; echo; } | artifact "$instance"
-                        { gcloud spanner backup-schedules describe "$schedule" --instance="$instance" --database="$database"; echo; } | artifact "$instance";
-                      done <<< "$schedules"
-                    fi
-                    { echo; echo "\033[1;32mInstance $instance state: $(gcloud spanner instances describe \"$instance\" --format='value(instanceType)')\033[0m"; } | artifact "$instance"
-                 done <<< "$instances"
-                 if [[ "$found" -eq 0 ]]; then
-                   echo "\033[1;33mNo instances found, may have been destroyed.\033[0m"
-                 fi
+                  ABFS_BUCKET_NAME=${ABFS_BUCKET_NAME} \
+                  ABFS_DB_NAME=${ABS_DB_NAME} \
+                  ./get_spanner_details.sh
                 '''
                 archiveArtifacts artifacts: '*status*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
               }

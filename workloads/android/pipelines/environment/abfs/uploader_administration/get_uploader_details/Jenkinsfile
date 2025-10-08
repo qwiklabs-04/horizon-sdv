@@ -61,7 +61,7 @@ pipeline {
                   INSTANCE_PREFIX=${UPLOADER_INSTANCE_PREFIX} \
                   ZONE=${CLOUD_ZONE} \
                   LIST_BRANCHES="true" \
-                  ./abfs_instance_details.sh
+                  ./get_instance_details.sh
                 '''
               }
               archiveArtifacts artifacts: '*status*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true

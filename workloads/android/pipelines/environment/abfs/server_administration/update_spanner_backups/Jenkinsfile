@@ -59,80 +59,13 @@ pipeline {
             container(name: 'abfs-spanner-backups') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                 sh '''
-                  /usr/bin/env bash -euo pipefail <<'BASH'
-                  # Strict mode for safer scripts:
-                  # -e exit on error, -u error on unset vars, -o pipefail fail on pipeline errors
-
                   cd ./workloads/android/pipelines/environment/abfs/server_administration/update_spanner_backups/
-
-                  # Build instance stream and (optionally) filter by ABFS_DB_NAME without using eval.
-                  # Use grep -F for fixed string matching and tolerate no matches under strict mode.
-                  gcloud spanner instances list --format="value(name)" \
-                    | while IFS= read -r instance; do
-                        [[ -z "$instance" ]] && continue
-
-                        # Derive DATABASE name: default to "abfs", override from backups' SOURCE_DATABASE when present.
-                        DATABASE="abfs"
-                        gcloud spanner backups list --instance="$instance" --format="value(name)" \
-                          | while IFS= read -r backup; do
-                              [[ -z "$backup" ]] && continue
-                              # SOURCE_DATABASE gives the database the backup was created from.
-                              DATABASE=$(gcloud spanner backups list --instance="$instance" --filter="$backup" --format="value(SOURCE_DATABASE)")
-                            done
-
-                        # If DATABASE is still empty (no backups), you may choose a fallback such as the first database.
-                        if [[ -z "${DATABASE:-}" ]]; then
-                          DATABASE=$(gcloud spanner databases list --instance="$instance" --format="value(name)" | head -n1 || true)
-                        fi
-
-                        # Switch on the requested backup schedule action.
-                        case "${BACKUP_SCHEDULE_ACTION:-}" in
-                          "DETAILS")
-                            # List schedules and show details for the actual schedule being iterated.
-                            gcloud spanner backup-schedules list --instance="$instance" --database="$DATABASE" --format="value(name)" \
-                              | while IFS= read -r schedule; do
-                                  [[ -z "$schedule" ]] && continue
-                                  echo "\033[1;32m"
-                                  echo "Backup Schedule $schedule"
-                                  echo "Cron: $(gcloud spanner backup-schedules describe "$schedule" --instance="$instance" --database="$DATABASE" --format="value(spec.cronSpec.text)")"
-                                  echo "Retention Duration: $(gcloud spanner backup-schedules describe "$schedule" --instance="$instance" --database="$DATABASE" --format="value(retentionDuration)")"
-                                  echo "\033[0m"
-                                done
-                            ;;
-                          "CREATE")
-                            # Create a new schedule with provided CRON and RETENTION_DURATION (seconds).
-                            gcloud spanner backup-schedules create "${BACKUP_SCHEDULE_ID}" \
-                              --instance="$instance" \
-                              --database="$DATABASE" \
-                              --cron="${CRON}" \
-                              --retention-duration="${RETENTION_DURATION}s" \
-                              --encryption-type=USE_DATABASE_ENCRYPTION \
-                              --backup-type=full-backup
-                            echo "\033[1;32mCreated ${BACKUP_SCHEDULE_ID}\033[0m"
-                            ;;
-                          "DELETE")
-                            # Delete the specified schedule quietly.
-                            gcloud spanner backup-schedules delete "${BACKUP_SCHEDULE_ID}" \
-                              --instance="$instance" \
-                              --database="$DATABASE" \
-                              --quiet
-                            echo "\033[1;32mDeleted ${BACKUP_SCHEDULE_ID}\033[0m"
-                            ;;
-                          "UPDATE")
-                            # Update schedule cron and retention.
-                            gcloud spanner backup-schedules update "${BACKUP_SCHEDULE_ID}" \
-                              --instance="$instance" \
-                              --database="$DATABASE" \
-                              --cron="${CRON}" \
-                              --retention-duration="${RETENTION_DURATION}s" \
-                              --encryption-type=USE_DATABASE_ENCRYPTION
-                            echo "\033[1;32mUpdated ${BACKUP_SCHEDULE_ID}\033[0m"
-                            ;;
-                          *)
-                            echo "\033[1;33mError: unsupported option ${BACKUP_SCHEDULE_ACTION:-<unset>}\033[0m"
-                            ;;
-                        esac
-                      done
+                  BACKUP_SCHEDULE_ACTION=${BACKUP_SCHEDULE_ACTION} \
+                  BACKUP_SCHEDULE_ID=${BACKUP_SCHEDULE_ID} \
+                  CRON=${CRON} \
+                  DATABASE=${DATABASE} \
+                  RETENTION_DURATION=${RETENTION_DURATION} \
+                  ./update_spanner_backups.sh
                 '''
               }
             }

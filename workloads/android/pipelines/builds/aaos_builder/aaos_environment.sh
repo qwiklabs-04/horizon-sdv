@@ -348,7 +348,9 @@ case "${AAOS_LUNCH_TARGET}" in
     sdk_car*)
         AAOS_BUILD_CTS="false"
         AAOS_MAKE_CMDLINE="m -j${AAOS_PARALLEL_BUILD_JOBS}&& m emu_img_zip -j${AAOS_PARALLEL_BUILD_JOBS}&& m sbom -j${AAOS_PARALLEL_BUILD_JOBS}"
+        # Newer versions, sbom is under SOONG
         AAOS_ARTIFACT_LIST+=(
+            "${OUT_DIR}/soong/sbom/sdk_car_${AAOS_ARCH}/sbom.spdx.json"
             "${OUT_DIR}/target/product/emulator_car64_${AAOS_ARCH}/sbom.spdx.json"
             "${OUT_DIR}/target/product/emulator_car64_${AAOS_ARCH}/${AAOS_SDK_SYSTEM_IMAGE_PREFIX}*.zip"
             "${OUT_DIR}/target/product/emulator_car64_${AAOS_ARCH}/${AAOS_SDK_ADDON_FILE}"

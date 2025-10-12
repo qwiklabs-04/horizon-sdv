@@ -35,6 +35,7 @@ CTS_TEST=${CTS_TEST:-}
 CTS_TEST_LISTS_ONLY=${CTS_TEST_LISTS_ONLY:-false}
 CTS_TIMEOUT=$(echo "${CTS_TIMEOUT}" | xargs)
 CTS_TIMEOUT=${CTS_TIMEOUT:-600}
+JAVA_VERSION=$(java --version)
 ANDROID_VERSION=${ANDROID_VERSION:-14}
 
 SUMMARY_FILE="${WORKSPACE}/cts_execution_parameters.txt"
@@ -56,15 +57,22 @@ fi
 
 # Show variables.
 VARIABLES="Environment:
+        JAVA_VERSION=$(java --version)
+
+        WORKSPACE=${WORKSPACE}
+
 "
 
 case "$0" in
     *initialise.sh)
         VARIABLES+="
         CUTTLEFISH_DOWNLOAD_URL=${CUTTLEFISH_DOWNLOAD_URL}
-        CTS_DOWNLOAD_URL=${CTS_DOWNLOAD_URL}
+
         ANDROID_VERSION=${ANDROID_VERSION}
+
+        CTS_DOWNLOAD_URL=${CTS_DOWNLOAD_URL}
         CTS_PATHNAME=${CTS_PATHNAME}
+
         "
         ;;
     *execution.sh)
@@ -76,15 +84,12 @@ case "$0" in
         CTS_TIMEOUT=${CTS_TIMEOUT}
 
         SHARD_COUNT=${SHARD_COUNT} (--shard-count ${SHARD_COUNT})
+
         "
         ;;
     *)
         ;;
 esac
-
-VARIABLES+="
-        WORKSPACE=${WORKSPACE}
-"
 
 echo "$0 Test Info:" | tee -a "${SUMMARY_FILE}"
 echo "${VARIABLES}" | tee -a "${SUMMARY_FILE}"

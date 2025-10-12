@@ -121,6 +121,13 @@ pipelineJob('Android/Builds/AAOS Builder') {
       choices(['0', '15', '30', '45', '60', '120', '180'])
     }
 
+    separator {
+      name('Storage Options')
+      sectionHeader('Storage Options')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
+    }
+
     stringParam {
       name('AAOS_ARTIFACT_STORAGE_SOLUTION')
       defaultValue('GCS_BUCKET')
@@ -137,6 +144,13 @@ pipelineJob('Android/Builds/AAOS Builder') {
         Leave empty for build to create default, e.g. gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/AAOS_Builder/<BUILD_NUMBER><br/>
         Alternatively, override path, e.g gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Releases/010129</p>''')
       trim(true)
+    }
+
+    separator {
+      name('Gerrit Changeset Options')
+      sectionHeader('Gerrit Changeset Options')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
     }
 
     stringParam {

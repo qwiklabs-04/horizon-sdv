@@ -108,40 +108,43 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/
       trim(true)
     }
 
-    stringParam {
-      name('AAOS_GERRIT_MANIFEST_URL')
-      defaultValue("https://${HORIZON_DOMAIN}/gerrit/android/platform/manifest")
-      description('''<p>Gerrit manifest URL for patchset.<br>
-        Manifest is required so project can be matched to path within the source tree in order to fetch the change.</p>''')
-      trim(true)
-    }
-
-    stringParam {
-      name('GERRIT_PROJECT')
-      defaultValue('')
-      description('''<p>Optional, define Gerrit Project with open review.</p>''')
-      trim(true)
-    }
-
-    stringParam {
-      name('GERRIT_CHANGE_NUMBER')
-      defaultValue('')
-      description('''<p>Optional, define Gerrit review item change number.</p>''')
-      trim(true)
-    }
-
-    stringParam {
-      name('GERRIT_PATCHSET_NUMBER')
-      defaultValue('')
-      description('''<p>Optional, define Gerrit review item patchset number.</p>''')
-      trim(true)
-    }
-
     choiceParam {
       name('INSTANCE_RETENTION_TIME')
       description('''<p>Time in minutes to retain the instance after build completion.<br/>
         Useful for debugging build issues, reviewing target outputs etc.</p>''')
       choices(['0', '15', '30', '45', '60', '120', '180'])
+    }
+
+    separator {
+      name('Storage Options')
+      sectionHeader('Storage Options')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
+    }
+
+    stringParam {
+      name('AAOS_ARTIFACT_STORAGE_SOLUTION')
+      defaultValue('GCS_BUCKET')
+      description('''<p>Android Artifact Storage:<br/>
+        <ul><li>GCS_BUCKET will store to cloud bucket storage</li>
+        <li>Empty will result in nothing stored</li></ul></p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('STORAGE_BUCKET_DESTINATION')
+      defaultValue('')
+      description('''<p>Storage bucket destination:<br/>
+        Leave empty for build to create default, e.g. gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/AAOS_Builder_ABFS/<BUILD_NUMBER><br/>
+        Alternatively, override path, e.g gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Releases/010129</p>''')
+      trim(true)
+    }
+
+    separator {
+      name('ABFS Version Options')
+      sectionHeader('ABFS Version Options')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
     }
 
     stringParam {
@@ -172,21 +175,39 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/
       trim(true)
     }
 
+    separator {
+      name('Gerrit Changeset Options')
+      sectionHeader('Gerrit Changeset Options')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
+    }
+
     stringParam {
-      name('AAOS_ARTIFACT_STORAGE_SOLUTION')
-      defaultValue('GCS_BUCKET')
-      description('''<p>Android Artifact Storage:<br/>
-        <ul><li>GCS_BUCKET will store to cloud bucket storage</li>
-        <li>Empty will result in nothing stored</li></ul></p>''')
+      name('AAOS_GERRIT_MANIFEST_URL')
+      defaultValue("https://${HORIZON_DOMAIN}/gerrit/android/platform/manifest")
+      description('''<p>Gerrit manifest URL for patchset.<br>
+        Manifest is required so project can be matched to path within the source tree in order to fetch the change.</p>''')
       trim(true)
     }
 
     stringParam {
-      name('STORAGE_BUCKET_DESTINATION')
+      name('GERRIT_PROJECT')
       defaultValue('')
-      description('''<p>Storage bucket destination:<br/>
-        Leave empty for build to create default, e.g. gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/AAOS_Builder_ABFS/<BUILD_NUMBER><br/>
-        Alternatively, override path, e.g gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Releases/010129</p>''')
+      description('''<p>Optional, define Gerrit Project with open review.</p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('GERRIT_CHANGE_NUMBER')
+      defaultValue('')
+      description('''<p>Optional, define Gerrit review item change number.</p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('GERRIT_PATCHSET_NUMBER')
+      defaultValue('')
+      description('''<p>Optional, define Gerrit review item patchset number.</p>''')
       trim(true)
     }
   }

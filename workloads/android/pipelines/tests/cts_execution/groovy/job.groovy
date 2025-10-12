@@ -45,6 +45,8 @@ href="https://source.android.com/docs/compatibility/cts/downloads" target="_blan
         <ul>
           <li>cuttlefish-vm-main</li>
           <li>cuttlefish-vm-v1250</li>
+          <li>cuttlefish-vm-main-arm64</li>
+          <li>cuttlefish-vm-v1250-arm64</li>
         </ul>''')
       trim(true)
     }

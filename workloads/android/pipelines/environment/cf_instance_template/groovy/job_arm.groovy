@@ -11,10 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-pipelineJob('Android/Environment/CF Instance Template') {
+pipelineJob('Android/Environment/CF Instance Template ARM64') {
   description("""
-    <br/><h3 style="margin-bottom: 10px;">GCE x86_64 Instance Template Creation Job</h3>
-    <p>This job creates the GCE instance templates used by test pipelines to spin up cuttlefish-ready and CTS-ready cloud instances, which are then used to launch <a href="https://source.android.com/docs/devices/cuttlefish" target="_blank" title="Cuttlefish Virtual Device">CVD</a> and run <a href="https://source.android.com/docs/compatibility/cts" target="_blank" title="Compatibility Test Suite">CTS</a> tests. Refer to the README.md in the respective repository for further details.</p>
+    <br/><h3 style="margin-bottom: 10px;">GCE ARM64 Instance Template Creation Job</h3>
+    <p>This job creates the GCE ARM64 based instance templates used by test pipelines to spin up ARM64 cuttlefish-ready and CTS-ready cloud instances, which are then used to launch <a href="https://source.android.com/docs/devices/cuttlefish" target="_blank" title="Cuttlefish Virtual Device">CVD</a> and run <a href="https://source.android.com/docs/compatibility/cts" target="_blank" title="Compatibility Test Suite">CTS</a> tests. Refer to the README.md in the respective repository for further details.</p>
     <h4 style="margin-bottom: 10px;">Instance Template Naming</h4>
     <p>The name for the created instance template can either be auto-generated or user-provided (<code>CUTTLEFISH_INSTANCE_UNIQUE_NAME</code>). The resulting artifact will be <code>instance-template-&lt;name&gt;</code>. If a user-defined name is used, the Jenkins CasC (<code>jenkins.yaml</code>) must be updated with a new <code>computeEngine</code> entry for the template.</p>
     <h4 style="margin-bottom: 10px;">Updating and Deleting Outdated Instances</h4>
@@ -45,13 +45,10 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('MACHINE_TYPE')
-      defaultValue('n1-standard-64')
-      description('''<p>The machine type to use when creating the instance, e.g..</p>
+      defaultValue('c4a-highmem-96-metal')
+      description('''<p>The ARM64 machine type to use when creating the instance, e.g..</p>
         <ul>
-          <li>n1-standard-64</li>
-          <li>n1-standard-32</li>
-          <li>n1-standard-16</li>
-          <li>n1-standard-8</li>
+          <li>c4a-highmem-96-metal</li>
         </ul>
         <p>Reference: <a href="https://cloud.google.com/compute/docs/general-purpose-machines" target="_blank">General-purpose machine family for Compute Engine</a> i.e. <i>--machine-type=MACHINE_TYPE</i></p>''')
       trim(true)
@@ -71,7 +68,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('BOOT_DISK_TYPE')
-      defaultValue("pd-balanced")
+      defaultValue("hyperdisk-balanced")
       description('''<p>Boot disk type.</p>''')
       trim(true)
     }
@@ -87,15 +84,15 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('OS_VERSION')
-      defaultValue('debian-12-bookworm-v20250910')
-      description('''<p>Disk image OS version.<br/>
-        Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk</i></p>''')
+      defaultValue('ubuntu-2204-lts-arm64')
+      description('''<p>ARM64 Disk image OS version.<br/>
+        Select the OS family, e.g ``ubuntu-2204-lts-arm64`.</p>''')
       trim(true)
     }
 
     stringParam {
       name('OS_PROJECT')
-      defaultValue('debian-cloud')
+      defaultValue('ubuntu-os-cloud')
       description('''<p>Disk image project.<br/>
         Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk</i></p>''')
       trim(true)
@@ -103,7 +100,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('TAGS')
-      defaultValue("http-server,https-server")
+      defaultValue("arm64-metal-us")
       description('''<p>ARM64 firewall tags to apply to instance.</p>''')
       trim(true)
     }
@@ -139,7 +136,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('CTS_ANDROID_16_URL')
-      defaultValue("https://dl.google.com/dl/android/cts/android-cts-16_r2-linux_x86-x86.zip")
+      defaultValue("https://dl.google.com/dl/android/cts/android-cts-16_r2-linux_x86-arm.zip")
       description('''<p>Leave blank if a version is not needed, or specify your preferred version.<br/>
       Enter the full bucket URL, including <code>android-cts.zip</code>, for example:<br/>
       <code>gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/01/android-cts.zip</code></p>''')
@@ -148,7 +145,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('CTS_ANDROID_15_URL')
-      defaultValue("https://dl.google.com/dl/android/cts/android-cts-15_r5-linux_x86-x86.zip")
+      defaultValue("https://dl.google.com/dl/android/cts/android-cts-15_r5-linux_x86-arm.zip")
       description('''<p>Leave blank if a version is not needed, or specify your preferred version.<br/>
       Enter the full bucket URL, including <code>android-cts.zip</code>, for example:<br/>
       <code>gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/02/android-cts.zip</code></p>''')
@@ -157,12 +154,48 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('CTS_ANDROID_14_URL')
-      defaultValue("https://dl.google.com/dl/android/cts/android-cts-14_r9-linux_x86-x86.zip")
+      defaultValue("https://dl.google.com/dl/android/cts/android-cts-14_r9-linux_x86-arm.zip")
       description('''<p>Leave blank if a version is not needed, or specify your preferred version.<br/>
       Enter the full bucket URL, including <code>android-cts.zip</code>, for example:<br/>
       <code>gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/04/android-cts.zip</code></p>''')
       trim(true)
     }
+
+    separator {
+      name('ARM64 Unique Configuration')
+      sectionHeader('ARM64 Locations')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
+    }
+
+    stringParam {
+      name('ADDITIONAL_NETWORKING')
+      defaultValue("nic-type=IDPF")
+      description('''<p>ARM64 require IDPF network interface.</p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('SUBNET')
+      defaultValue("sdv-subnet-us")
+      description('''<p>ARM64 subnet or leave blank to use default platform value.</p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('REGION')
+      defaultValue("us-central1")
+      description('''<p>ARM64 region or leave blank to use default platform value.</p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('ZONE')
+      defaultValue("us-central1-b")
+      description('''<p>ARM64 zone or leave blank to use default platform value.</p>''')
+      trim(true)
+    }
+
   }
 
   // Block build if certain jobs are running.

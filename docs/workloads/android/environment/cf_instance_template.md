@@ -9,7 +9,7 @@
 
 ## Introduction <a name="introduction"></a>
 
-This pipeline creates (or deletes) Cuttlefish instance templates which are used by the Jenkins test pipelines to spin up cloud instances which are cuttlefish-ready and CTS-ready; these cloud instances are then used to launch CVD and run CTS tests.
+This pipeline creates (or deletes) ARM64 and x86_64 Cuttlefish instance templates which are used by the Jenkins test pipelines to spin up cloud instances which are cuttlefish-ready and CTS-ready; these cloud instances are then used to launch CVD and run CTS tests.
 
 During the process of creating an instance template, this pipeline also creates a custom image which is referenced by the created instance template. This image is created using the same naming convention as the instance template.
 
@@ -50,7 +50,7 @@ One-time setup requirements.
 This defines the version of [Android Cuttlefish](https://github.com/google/android-cuttlefish.git) host packages to use, e.g.
 
 - `main` - the main working branch of `android-cuttlefish`
-- `v1.1.0` - the latest tagged version.
+- `v1.25.0` - the latest tagged version.
 
 User may define any valid version so long as that version contains `tools/buildutils/build_packages.sh` which is a dependency for these scripts.
 
@@ -73,11 +73,17 @@ If user defines a unique name, ensure the following is met:
 
 ### `MACHINE_TYPE`
 
-The machine type to be used for the VM instance, default is `n1-standard-64`.
+The machine type to be used for the VM instance. For x86, the default is `n1-standard-64`. Whereas ARM64 currently only `c4a-highmem-96-metal` is available.
 
 ### `BOOT_DISK_SIZE`
 
 A boot disk is required to create the instance, therefore define the size of disk required.
+
+### `BOOT_DISK_TYPE`
+
+Define the Boot disk type. Typically:
+- x86_64: `pd-balanced`
+- ARM64: `hyperdisk-balanced`
 
 ### `MAX_RUN_DURATION`
 
@@ -85,11 +91,20 @@ VM instances are expensive so it is advisable to define the maximum amount of ti
 
 User may disable by setting the value to 0, but they must be aware of any costs that they may incur to their project.  Setting to 0 is useful when creating development test instances so users can connect directly to the VM instance.
 
-### `DEBIAN_OS_VERSION`
+### `OS_VERSION`
 
 Override the OS version. These regularly become deprecated and superceded, hence option to update to newer version.
 
-Keep an eye out in the console logs for `deprecated` and update as required.
+- x86_64: use debian only.
+- ARM64: use `ubuntu-2204-lts-arm64`
+
+### `OS_PROJECT`
+
+Disk image project.
+
+#### `TAGS`
+
+Network/firewall tags to use when creating instances.
 
 ### `NODEJS_VERSION`
 
@@ -128,6 +143,32 @@ This would allow developers to:
 - Enable this only for instance templates created for developement purposes that are created with a well defined `CUTTLEFISH_INSTANCE_UNIQUE_NAME`.
 - Set `MAX_RUN_DURATION` to 0 to ensure VM instance is never deleted on runtime expiry.
 - It is advisable to `DELETE` these development instances when testing is completed.
+
+### `CTS_ANDROID_<14|15|16>_URL`
+
+Defines the URL where to retrieve and install the Android CTS test harness. Leave blank if not required, or override the
+current default using your own version, e.g. from bucket storage.
+
+### `ARM64 Unique Configuration`
+
+The following are unique to ARM64 support because support is currently in preview and limited to United States region,
+therefore users may need to override if their projects are not located within `us-central1`.
+
+#### `ADDITIONAL_NETWORKING`
+
+ARM64 bare metal currently require `nic-type=IDPF`
+
+#### `SUBNET`
+
+Define the subnet to use for ARM64 instances, or leave blank to use default platform subnet.
+
+#### `REGION`
+
+Region of the instance to create. Leave black to use the default platform region.
+
+#### `ZONE`
+
+Region of the instance to create. Leave black to use the default platform zone.
 
 ## Example Usage <a name="examples"></a>
 

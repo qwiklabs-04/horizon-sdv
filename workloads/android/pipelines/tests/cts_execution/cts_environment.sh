@@ -37,9 +37,6 @@ CTS_TIMEOUT=$(echo "${CTS_TIMEOUT}" | xargs)
 CTS_TIMEOUT=${CTS_TIMEOUT:-600}
 ANDROID_VERSION=${ANDROID_VERSION:-14}
 
-# Architecture x86_64 is only supported at this time.
-ARCHITECTURE=${ARCHITECTURE:-x86_64}
-
 # Shards should match CVD --num_instances (NUM_INSTANCES).
 SHARD_COUNT=$(echo "${SHARD_COUNT}" | xargs)
 SHARD_COUNT=${SHARD_COUNT:-8}
@@ -57,7 +54,6 @@ fi
 
 # Show variables.
 VARIABLES="Environment:
-        ARCHITECTURE=${ARCHITECTURE}
 "
 
 case "$0" in

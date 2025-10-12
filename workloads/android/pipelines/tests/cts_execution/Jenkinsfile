@@ -50,6 +50,7 @@ cvdPipeline(
           sh '''
             ANDROID_VERSION=${ANDROID_VERSION} \
             CTS_DOWNLOAD_URL="${CTS_DOWNLOAD_URL}" \
+            CUTTLEFISH_DOWNLOAD_URL="${CUTTLEFISH_DOWNLOAD_URL}" \
             ./workloads/android/pipelines/tests/cts_execution/cts_initialise.sh
             CTS_TEST_LISTS_ONLY="$CTS_TEST_LISTS_ONLY}" \
             ./workloads/android/pipelines/tests/cts_execution/cts_execution.sh

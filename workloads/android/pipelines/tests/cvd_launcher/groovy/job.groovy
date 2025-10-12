@@ -37,6 +37,8 @@ pipelineJob('Android/Tests/CVD Launcher') {
         <ul>
           <li>cuttlefish-vm-main</li>
           <li>cuttlefish-vm-v1250</li>
+          <li>cuttlefish-vm-main-arm64</li>
+          <li>cuttlefish-vm-v1250-arm64</li>
         </ul>''')
       trim(true)
     }

@@ -30,10 +30,11 @@
 # The following variables are required to run the script, choose to use
 # default values or override from command line.
 #
+#   -ADDITIONAL_NETWORKING: ARM64 Bare metal requires IDPF network interface.
 #  - CUTTLEFISH_REVISION: the branch/tag version of Android Cuttlefish
 #        to use. Default: main
-#  - BOOT_DISK_SIZE: Disk image size in GB. Default: 500GB
-#  - DEBIAN_OS_VERSION: Default: debian-12-bookworm-v20250910
+#  - BOOT_DISK_SIZE: Disk image size in GB. Default: 250GB
+#  - BOOT_DISK_TYPE: Disk image disk type.
 #  - JENKINS_NAMESPACE: k8s namespace. Default: jenkins
 #  - JENKINS_PRIVATE_SSH_KEY_NAME: SSH key name to extract public key from
 #        Private key would be created similar to:
@@ -49,6 +50,7 @@
 #  - MAX_RUN_DURATION: Limits how long this VM instance can run. Default: 10h
 #  - NETWORK: The name of the VPC network. Default: sdv-network
 #  - NODEJS_VERSION: The version of nodejs to install. Default: 20.9.0
+#  - OS_VERSION: Default: debian-12-bookworm-v20250910
 #  - PROJECT: The GCP project. Default: derived from gcloud config.
 #  - REGION: The GCP region. Default: europe-west1
 #  - SERVICE_ACCOUNT: The GCP service account. Default: derived from gcloud
@@ -91,16 +93,24 @@
 # shellcheck disable=SC1091
 source "$(dirname "${BASH_SOURCE[0]}")"/cf_environment.sh "$0"
 
+# Colours for logging.
+GREEN='\033[1;32m'
+ORANGE='\033[1;33m'
+RED='\033[1;31m'
+NC='\033[0m'
+SCRIPT_NAME=$(basename "$0")
+
 # Environment variables that can be overridden from command line.
 # android-cuttlefish revisions can be of the form v1.7.0, main etc.
+ADDITIONAL_NETWORKING=${ADDITIONAL_NETWORKING:-}
+[ -n "${ADDITIONAL_NETWORKING}" ] && ADDITIONAL_NETWORKING=",${ADDITIONAL_NETWORKING}"
+BOOT_DISK_SIZE=${BOOT_DISK_SIZE:-500GB}
+BOOT_DISK_SIZE=$(echo "${BOOT_DISK_SIZE}" | awk '{print toupper($0)}' | xargs)
+BOOT_DISK_TYPE=${BOOT_DISK_TYPE:-pd-balanced}
 CUTTLEFISH_INSTANCE_UNIQUE_NAME=${CUTTLEFISH_INSTANCE_UNIQUE_NAME:-cuttlefish-vm}
 CUTTLEFISH_INSTANCE_UNIQUE_NAME=$(echo "${CUTTLEFISH_INSTANCE_UNIQUE_NAME}" | awk '{print tolower($0)}' | xargs)
 CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION:-main}
 CUTTLEFISH_REVISION=$(echo "${CUTTLEFISH_REVISION}" | xargs)
-BOOT_DISK_SIZE=${BOOT_DISK_SIZE:-500GB}
-BOOT_DISK_SIZE=$(echo "${BOOT_DISK_SIZE}" | awk '{print toupper($0)}' | xargs)
-DEBIAN_OS_VERSION=${DEBIAN_OS_VERSION:-debian-12-bookworm-v20250910}
-DEBIAN_OS_VERSION=$(echo "${DEBIAN_OS_VERSION}" | xargs)
 JENKINS_NAMESPACE=${JENKINS_NAMESPACE:-jenkins}
 JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME:-jenkins-cuttlefish-vm-ssh-private-key}
 JENKINS_SSH_PUB_KEY_FILE=${JENKINS_SSH_PUB_KEY_FILE:-jenkins_rsa.pub}
@@ -110,21 +120,42 @@ MAX_RUN_DURATION=${MAX_RUN_DURATION:-10h}
 NETWORK=${NETWORK:-sdv-network}
 NODEJS_VERSION=${NODEJS_VERSION:-20.9.0}
 NODEJS_VERSION=$(echo "${NODEJS_VERSION}" | xargs)
+OS_PROJECT=${OS_PROJECT:-debian-cloud}
+OS_PROJECT=$(echo "${OS_PROJECT}" | xargs)
+OS_VERSION=${OS_VERSION:-debian-12-bookworm-v20250910}
+OS_VERSION=$(echo "${OS_VERSION}" | xargs)
 PROJECT=${PROJECT:-$(gcloud config list --format 'value(core.project)'|head -n 1)}
 REGION=${REGION:-europe-west1}
 SERVICE_ACCOUNT=${SERVICE_ACCOUNT:-$(gcloud projects describe "${PROJECT}" --format='get(projectNumber)')-compute@developer.gserviceaccount.com}
 SUBNET=${SUBNET:-sdv-subnet}
+TAGS=${TAGS:-http-server,https-server}
 VM_INSTANCE_CREATE=${VM_INSTANCE_CREATE:-true}
 ZONE=${ZONE:-europe-west1-d}
 
+# Ubuntu and debian different paths.
+if [[ "$OS_VERSION" == *ubuntu* ]]; then
+    IMAGE="projects/${OS_PROJECT}/global/images/family/${OS_VERSION}"
+else
+    IMAGE="projects/${OS_PROJECT}/global/images/${OS_VERSION}"
+fi
+
+# Define architecture based on OS_VERSION as this will always include arch for arm.
+if [[ "$OS_VERSION" == *arm64* ]]; then
+    ARCHITECTURE="ARM64"
+    VM_SUFFIX="-arm64"
+else
+    ARCHITECTURE="X86_64"
+fi
+VM_SUFFIX=${VM_SUFFIX:-}
+
 # Instance names can only include specific characters, drop '.'.
-declare -r vm_base_instance=vm-debian
-declare -r vm_base_instance_template=instance-template-vm-debian
+declare -r vm_base_instance=vm-"${OS_VERSION}"
+declare -r vm_base_instance_template=instance-template-vm-"${OS_VERSION}"
 declare -r cuttlefish_version=${CUTTLEFISH_REVISION//./}
 declare cuttlefish_unique_name=${CUTTLEFISH_INSTANCE_UNIQUE_NAME//./-}
 if [[ "${cuttlefish_unique_name}" == "cuttlefish-vm" ]]; then
     # If unique name is default, append version.
-    cuttlefish_unique_name="${cuttlefish_unique_name}"-"${cuttlefish_version}"
+    cuttlefish_unique_name="${cuttlefish_unique_name}"-"${cuttlefish_version}""${VM_SUFFIX}"
 fi
 declare -r vm_cuttlefish_image=image-"${cuttlefish_unique_name}"
 declare -r vm_cuttlefish_instance_template=instance-template-"${cuttlefish_unique_name}"
@@ -145,13 +176,6 @@ export PATH=$PATH:$(gcloud info --format="value(basic.python_location)")
 $(gcloud info --format="value(basic.python_location)") -m pip install --upgrade pip --no-warn-script-location > /dev/null 2>&1 || true
 $(gcloud info --format="value(basic.python_location)") -m pip install numpy --no-warn-script-location > /dev/null 2>&1 || true
 export CLOUDSDK_PYTHON_SITEPACKAGES=1
-
-# Colours for logging.
-GREEN='\033[1;32m'
-ORANGE='\033[1;33m'
-RED='\033[1;31m'
-NC='\033[0m'
-SCRIPT_NAME=$(basename "$0")
 
 # Catch Ctrl+C and terminate all
 trap terminate SIGINT
@@ -186,42 +210,58 @@ function echo_formatted() {
 # Echo environment variables.
 function echo_environment() {
     echo_formatted "Environment variables:"
-    echo "CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION}"
+    echo "ARCHITECTURE=${ARCHITECTURE}"
+    echo "ADDITIONAL_NETWORKING=${ADDITIONAL_NETWORKING}"
     echo "BOOT_DISK_SIZE=${BOOT_DISK_SIZE}"
-    echo "DEBIAN_OS_VERSION=${DEBIAN_OS_VERSION}"
+    echo "BOOT_DISK_TYPE=${BOOT_DISK_TYPE}"
+    echo "CUTTLEFISH_INSTANCE_UNIQUE_NAME=${cuttlefish_unique_name}"
+    echo "CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION}"
+    echo "IMAGE=${IMAGE}"
     echo "JENKINS_NAMESPACE=${JENKINS_NAMESPACE}"
     echo "JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME}"
     echo "JENKINS_SSH_PUB_KEY_FILE=${JENKINS_SSH_PUB_KEY_FILE}"
     echo "MACHINE_TYPE=${MACHINE_TYPE}"
     echo "MAX_RUN_DURATION=${MAX_RUN_DURATION}"
     echo "NETWORK=${NETWORK}"
+    echo "NODEJS_VERSION=${NODEJS_VERSION}"
+    echo "OS_PROJECT=${OS_PROJECT}"
+    echo "OS_VERSION=${OS_VERSION}"
     echo "PROJECT=${PROJECT}"
     echo "REGION=${REGION}"
     echo "SERVICE_ACCOUNT=${SERVICE_ACCOUNT}"
     echo "SUBNET=${SUBNET}"
-    echo "CUTTLEFISH_INSTANCE_UNIQUE_NAME=${cuttlefish_unique_name}"
+    echo "TAGS=${TAGS}"
     echo "VM_INSTANCE_CREATE=${VM_INSTANCE_CREATE}"
+    echo "VM_SUFFIX=${VM_SUFFIX}"
     echo "ZONE=${ZONE}"
     echo
 }
 
 function print_usage() {
     echo "Usage:
+      ARCHITECTURE=${ARCHITECTURE} \\
+      ADDITIONAL_NETWORKING=${ADDITIONAL_NETWORKING} \\
+      CUTTLEFISH_INSTANCE_UNIQUE_NAME=${cuttlefish_unique_name} \\
       CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION} \\
       BOOT_DISK_SIZE=${BOOT_DISK_SIZE} \\
-      DEBIAN_OS_VERSION=${DEBIAN_OS_VERSION} \\
+      BOOT_DISK_TYPE=${BOOT_DISK_TYPE} \\
+      IMAGE=${IMAGE} \\
       JENKINS_NAMESPACE=${JENKINS_NAMESPACE} \\
       JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME} \\
       JENKINS_SSH_PUB_KEY_FILE=${JENKINS_SSH_PUB_KEY_FILE} \\
       MACHINE_TYPE=${MACHINE_TYPE} \\
       MAX_RUN_DURATION=${MAX_RUN_DURATION} \\
       NETWORK=${NETWORK} \\
+      NODEJS_VERSION=${NODEJS_VERSION} \\
+      OS_PROJECT=${OS_PROJECT} \\
+      OS_VERSION=${OS_VERSION} \\
       PROJECT=${PROJECT} \\
       REGION=${REGION} \\
       SERVICE_ACCOUNT=${SERVICE_ACCOUNT} \\
       SUBNET=${SUBNET} \\
-      CUTTLEFISH_INSTANCE_UNIQUE_NAME=${cuttlefish_unique_name} \\
+      TAGS=${TAGS} \\
       VM_INSTANCE_CREATE=${VM_INSTANCE_CREATE} \\
+      VM_SUFFIX=${VM_SUFFIX} \\
       ZONE=${ZONE} \\
       ./${SCRIPT_NAME}"
     echo "Use defaults or override environment variables."
@@ -254,15 +294,16 @@ function create_base_template_instance() {
         --key-revocation-action-type=none \
         --service-account="${SERVICE_ACCOUNT}" \
         --machine-type="${MACHINE_TYPE}" \
+        --maintenance-policy=TERMINATE \
         --image-project=debian-cloud \
-        --create-disk=mode=rw,architecture=X86_64,boot=yes,size="${BOOT_DISK_SIZE}",auto-delete=true,type=pd-balanced,device-name="${vm_base_instance}",image=projects/debian-cloud/global/images/"${DEBIAN_OS_VERSION}",interface=SCSI \
-        --tags=http-server,https-server \
+        --create-disk=mode=rw,architecture="${ARCHITECTURE}",boot=yes,size="${BOOT_DISK_SIZE}",auto-delete=true,type="${BOOT_DISK_TYPE}",device-name="${vm_base_instance}",image="${IMAGE}",interface=SCSI \
+        --tags="${TAGS}" \
         --metadata=enable-oslogin=true \
         --reservation-affinity=any \
         --enable-nested-virtualization \
         --region="${REGION}" \
-        --network-interface=network="${NETWORK}",subnet="${SUBNET}",stack-type=IPV4_ONLY,no-address \
-        ${max_run_duration_args} >/dev/null 2>&1 &
+        --network-interface=network="${NETWORK}",subnet="${SUBNET}",stack-type=IPV4_ONLY,no-address"${ADDITIONAL_NETWORKING}" \
+        ${max_run_duration_args} >/dev/null &
     progress_spinner "$!"
     echo -e "${GREEN}Instance template ${vm_base_instance_template} created${NC}"
 }
@@ -276,11 +317,12 @@ function create_vm_instance() {
 
     gcloud compute instances create "${vm_base_instance}" \
         --source-instance-template "${vm_base_instance_template}" \
+        --tags="${TAGS}" \
         --zone="${ZONE}" &
     progress_spinner "$!"
 
-    echo -e "${ORANGE}Sleep for 1 minutes while instance stabilises${NC}"; echo
-    sleep 1m
+    echo -e "${ORANGE}Sleep for 3 minutes while instance stabilises${NC}"; echo
+    sleep 3m
     echo -e "${GREEN}VM Instance ${vm_base_instance} created${NC}"
 }
 
@@ -305,7 +347,12 @@ function install_host_tools() {
 
     # Keep debug so we can see what's happening.
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" \
-        --command="CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION} NODEJS_VERSION=${NODEJS_VERSION} ./cf/cf_host_initialise.sh" &
+        --command="CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION} \
+        NODEJS_VERSION=${NODEJS_VERSION} \
+        CTS_ANDROID_16_URL=${CTS_ANDROID_16_URL} \
+        CTS_ANDROID_15_URL=${CTS_ANDROID_15_URL} \
+        CTS_ANDROID_14_URL=${CTS_ANDROID_14_URL} \
+        ./cf/cf_host_initialise.sh" &
     progress_spinner "$!"
 
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" \
@@ -324,8 +371,8 @@ function install_host_tools() {
     gcloud compute instances start "${vm_base_instance}" --zone="${ZONE}" >/dev/null 2>&1 &
     progress_spinner "$!"
 
-    echo -e "${ORANGE}Sleep for 2 minutes while instance reboot completes.${NC}"; echo
-    sleep 2m
+    echo -e "${ORANGE}Sleep for 3 minutes while instance reboot completes.${NC}"; echo
+    sleep 3m
     echo -e "${GREEN}VM instance ${vm_base_instance} rebooted!${NC}"
 }
 
@@ -431,13 +478,15 @@ function create_cuttlefish_boilerplate_template() {
         --key-revocation-action-type=none \
         --service-account="${SERVICE_ACCOUNT}" \
         --machine-type="${MACHINE_TYPE}" \
-        --image-project=debian-cloud \
-        --create-disk=image="${vm_cuttlefish_image}",boot=yes,auto-delete=yes,type=pd-balanced \
+        --maintenance-policy=TERMINATE \
+        --image-project="${OS_PROJECT}" \
+        --create-disk=image="${vm_cuttlefish_image}",boot=yes,auto-delete=yes,type="${BOOT_DISK_TYPE}" \
         --metadata=enable-oslogin=true \
         --reservation-affinity=any \
         --enable-nested-virtualization \
         --region="${REGION}" \
-        --network-interface network="${NETWORK}",subnet="${SUBNET}",stack-type=IPV4_ONLY,no-address \
+        --network-interface network="${NETWORK}",subnet="${SUBNET}",stack-type=IPV4_ONLY,no-address"${ADDITIONAL_NETWORKING}" \
+        --tags="${TAGS}" \
         ${max_run_duration_args} &
     progress_spinner "$!"
 
@@ -462,6 +511,7 @@ function create_cuttlefish_boilerplate_template() {
     if [ "${VM_INSTANCE_CREATE}" = true ]; then
         gcloud compute instances create "${vm_cuttlefish_instance}" \
             --source-instance-template "${vm_cuttlefish_instance_template}" \
+            --tags="${TAGS}" \
             --zone="${ZONE}" &
         progress_spinner "$!"
 

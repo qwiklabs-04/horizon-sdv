@@ -25,6 +25,9 @@
 # shellcheck disable=SC1091
 source "$(dirname "${BASH_SOURCE[0]}")"/cf_environment.sh "$0"
 
+# Block all interaction, and avoid having to change needrestart.
+export DEBIAN_FRONTEND=noninteractive
+
 declare -r JENKINS_USER="jenkins"
 
 # Colours for logging.
@@ -58,9 +61,18 @@ function cuttlefish_install_additional_packages() {
         fi
     done
 
-    # Show Java version and path.
-    which java
-    java -version
+    # Java must be 17 pr greater, ubuntu 22.04 is on 11!
+    java_version=$(java --version 2>&1 | awk 'NR==1{match($0, /([0-9]+)/, a); print a[1]}')
+    if (( java_version < 17 )); then
+        echo -e "${ORANGE}Java version is less than 17. Upgrading...${NC}"
+        sudo apt-get update -y
+        sudo apt-get install -y openjdk-17-jdk
+    else
+        echo -e "${GREEN}Java version is $java_version (>= 17). No upgrade needed.${NC}"
+    fi
+
+    echo -e "${GREEN} Java version:${NC}"
+    java --version
 
     # Install Node version manager and nodejs.
     echo -e "${GREEN}Installing nodejs ${NODEJS_VERSION}${NC}"
@@ -85,31 +97,61 @@ function disable_unattended_upgrades() {
     sudo rm -rf /var/log/unattended-upgrades
 }
 
+# Download from local storage of official (http)
+function download_cts() {
+    local url="$1"
+    local dest="$2"
+    if [[ "${url}" == gs://* ]]; then
+        CMD="gcloud storage cp ${url} ${dest}"
+        echo "Download $CMD"
+        su -l "${JENKINS_USER}" -c "eval $CMD"
+    elif [[ "${url}" == http*  ]]; then
+        CMD="wget -nv ${url} -O ${dest}"
+        echo "Download $CMD"
+        su -l "${JENKINS_USER}" -c "eval $CMD"
+    else
+        echo "echo 'Unknown URL scheme (${url})."
+        exit 1
+    fi
+}
+
 # Install CTS test harness on instance to avoid lengthy CTS runs.
 function cuttlefish_install_cts() {
     echo -e "${GREEN}Installing CTS test harness ... ${NC}"
     local start=$SECONDS
 
-    su -l "${JENKINS_USER}" -c "mkdir -p android-cts_16"
-    echo -e "${GREEN}Downloading.${NC} ${CTS_ANDROID_16_URL}. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
-    su -l "${JENKINS_USER}" -c "wget -nv ${CTS_ANDROID_16_URL} -O android-cts_16.zip"
-    echo -e "${GREEN}Unpacking.${NC} android-cts_16.zip. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
-    su -l "${JENKINS_USER}" -c "unzip -q android-cts_16.zip -d android-cts_16"
-    su -l "${JENKINS_USER}" -c "rm -f android-cts_16.zip"
+    if [ ! -z "${CTS_ANDROID_16_URL}" ]; then
+        su -l "${JENKINS_USER}" -c "mkdir -p android-cts_16"
+        echo -e "${GREEN}Downloading.${NC} ${CTS_ANDROID_16_URL}. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
+        download_cts  "${CTS_ANDROID_16_URL}" android-cts_16.zip
+        echo -e "${GREEN}Unpacking.${NC} android-cts_16.zip. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
+        su -l "${JENKINS_USER}" -c "unzip -q android-cts_16.zip -d android-cts_16"
+        su -l "${JENKINS_USER}" -c "rm -f android-cts_16.zip"
+    else
+        echo -e "${ORANGE} Skipped Android 16 CTS, nothing to install.${NC}"
+    fi
 
-    su -l "${JENKINS_USER}" -c "mkdir -p android-cts_15"
-    echo -e "${GREEN}Downloading.${NC} ${CTS_ANDROID_15_URL}. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
-    su -l "${JENKINS_USER}" -c "wget -nv ${CTS_ANDROID_15_URL} -O android-cts_15.zip"
-    echo -e "${GREEN}Unpacking.${NC} android-cts_15.zip. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
-    su -l "${JENKINS_USER}" -c "unzip -q android-cts_15.zip -d android-cts_15"
-    su -l "${JENKINS_USER}" -c "rm -f android-cts_15.zip"
+    if [ ! -z "${CTS_ANDROID_15_URL}" ]; then
+        su -l "${JENKINS_USER}" -c "mkdir -p android-cts_15"
+        echo -e "${GREEN}Downloading.${NC} ${CTS_ANDROID_15_URL}. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
+        download_cts  "${CTS_ANDROID_15_URL}" android-cts_15.zip
+        echo -e "${GREEN}Unpacking.${NC} android-cts_15.zip. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
+        su -l "${JENKINS_USER}" -c "unzip -q android-cts_15.zip -d android-cts_15"
+        su -l "${JENKINS_USER}" -c "rm -f android-cts_15.zip"
+    else
+        echo -e "${ORANGE} Skipped Android 15 CTS, nothing to install.${NC}"
+    fi
 
-    su -l "${JENKINS_USER}" -c "mkdir -p android-cts_14"
-    echo -e "${GREEN}Downloading.${NC} ${CTS_ANDROID_14_URL}. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
-    su -l "${JENKINS_USER}" -c "wget -nv ${CTS_ANDROID_14_URL} -O android-cts_14.zip"
-    echo -e "${GREEN}Unpacking.${NC} android-cts_14.zip. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
-    su -l "${JENKINS_USER}" -c "unzip -q android-cts_14.zip -d android-cts_14"
-    su -l "${JENKINS_USER}" -c "rm -f android-cts_14.zip"
+    if [ ! -z "${CTS_ANDROID_14_URL}" ]; then
+        su -l "${JENKINS_USER}" -c "mkdir -p android-cts_14"
+        echo -e "${GREEN}Downloading.${NC} ${CTS_ANDROID_14_URL}. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
+        download_cts  "${CTS_ANDROID_14_URL}" android-cts_14.zip
+        echo -e "${GREEN}Unpacking.${NC} android-cts_14.zip. ${ORANGE}This can take several minutes to complete, please wait!${NC}"
+        su -l "${JENKINS_USER}" -c "unzip -q android-cts_14.zip -d android-cts_14"
+        su -l "${JENKINS_USER}" -c "rm -f android-cts_14.zip"
+    else
+        echo -e "${ORANGE} Skipped Android 14 CTS, nothing to install.${NC}"
+    fi
     # Force sync to ensure disk is updated.
     sync
 
@@ -134,6 +176,9 @@ function cuttlefish_user_groups() {
 }
 
 function cuttlefish_jenkins_user() {
+    # Delete any ubuntu default user (1000)
+    # shellcheck disable=SC2046
+    sudo userdel $(awk -F: '$3==1000{print $1}' /etc/passwd) > /dev/null 2>&1 || true
     sudo useradd -u 1000 -ms /bin/bash ${JENKINS_USER} > /dev/null 2>&1
     sudo passwd -d ${JENKINS_USER} > /dev/null 2>&1
     sudo usermod -aG google-sudoers ${JENKINS_USER} > /dev/null 2>&1

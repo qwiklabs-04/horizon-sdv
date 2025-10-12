@@ -33,8 +33,13 @@ WIFI_APK_NAME="WifiUtil.apk"
 
 JOB_NAME=${JOB_NAME:-AAOS_CVD}
 
-# Architecture x86_64 is only supported at this time.
-ARCHITECTURE=${ARCHITECTURE:-x86_64}
+# Derive architecture from instance.
+ARCHITECTURE=$(uname -m)
+case "${ARCHITECTURE}" in
+  x86_64)  ARCHITECTURE="x86_64" ;;
+  aarch64) ARCHITECTURE="arm64" ;;
+  *)       echo "Error: ${ARCHITECTURE} is not supported!"; exit 1 ;;
+esac
 
 # Download URL for artifacts.
 CUTTLEFISH_DOWNLOAD_URL=$(echo "${CUTTLEFISH_DOWNLOAD_URL}" | xargs)

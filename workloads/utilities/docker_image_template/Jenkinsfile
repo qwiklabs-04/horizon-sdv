@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // Description:
-// This pipeline builds the Infra Docker image using Buildkit.
+// This pipeline builds the Generic Docker image using Buildkit.
 //
 // References:
 //   * https://github.com/moby/buildkit
@@ -29,14 +29,14 @@ pipeline {
   environment {
     // Update latest tag.
     REGISTRY="${env.CLOUD_REGION}-docker.pkg.dev"
-    DESTINATION="${REGISTRY}/${env.CLOUD_PROJECT}/${env.INFRA_DOCKER_ARTIFACT_PATH_NAME}"
+    DESTINATION="${REGISTRY}/${env.CLOUD_PROJECT}/${env.UTILITIES_DOCKER_ARTIFACT_PATH_NAME}"
     PUSH="${NO_PUSH == "true" ? "false" : "true"}"
 
     def kubernetesPodTemplate = """
       apiVersion: v1
       kind: Pod
       spec:
-        hostname: jenkins-aaos-abfs-build-pod
+        hostname: utilities-build-pod
         serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
         containers:
         - name: buildkit
@@ -85,7 +85,6 @@ pipeline {
                    --frontend=dockerfile.v0 \
                    --local=dockerfile=. \
                    --local context=. \
-                   --opt build-arg:TERRAFORM_CATEGORY="${TERRAFORM_CATEGORY}" \
                    --registry-auth-tlscontext host=${REGISTRY},insecure=true \
                    --output=type=image,name=${DESTINATION}:${IMAGE_TAG},push=${PUSH}
                 '''

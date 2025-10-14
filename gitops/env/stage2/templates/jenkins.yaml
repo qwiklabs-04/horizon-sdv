@@ -447,6 +447,8 @@ spec:
                           value: "horizon-sdv/abfs-infra"
                         - key: "ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME"
                           value: "horizon-sdv/aaos-abfs-builder"
+                        - key: "UTILITIES_DOCKER_ARTIFACT_PATH_NAME"
+                          value: "horizon-sdv/gcp-utilities"
 
                         - key: "CLOUD_WS_WORKLOADS_ENV_IMAGE_NAME"
                           value: {{ .Values.config.workloads.cloudWorkstations.workloadEnv.image }}

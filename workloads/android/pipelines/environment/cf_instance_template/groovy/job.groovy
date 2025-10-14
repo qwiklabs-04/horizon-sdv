@@ -104,7 +104,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
     stringParam {
       name('TAGS')
       defaultValue("http-server,https-server")
-      description('''<p>ARM64 firewall tags to apply to instance.</p>''')
+      description('''<p>Firewall tags to apply to instance.</p>''')
       trim(true)
     }
 

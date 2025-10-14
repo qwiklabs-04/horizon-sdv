@@ -11,11 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+# A common template for usage in ABFS server, uploader creation and
+# networking utilities.
 
 # Latest stable.
 FROM --platform=linux/amd64 debian:12
 
-ARG TERRAFORM_CATEGORY
+ARG TERRAFORM_CATEGORY=""
 
 # Install packages required for building AAOSP targets.
 RUN apt-get update -y && \
@@ -40,10 +43,12 @@ RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
 # GCS:END
 
 # Install Terraform command tool
-RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - && \
-    apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) ${TERRAFORM_CATEGORY}" && \
-    apt-get update -y && apt-get install -y terraform && \
-    apt-get -y clean
+RUN if [ -n "${TERRAFORM_CATEGORY}" ]; then \
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - && \
+        apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) ${TERRAFORM_CATEGORY}" && \
+        apt-get update -y && apt-get install -y terraform && \
+        apt-get -y clean; \
+    fi
 
 # Install numpy to speed up the SSH IAP tunelling
 RUN $(gcloud info --format="value(basic.python_location)") -m pip install numpy

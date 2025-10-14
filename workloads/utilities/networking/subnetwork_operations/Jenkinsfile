@@ -1,0 +1,131 @@
+// Copyright (c) 2025 Accenture, All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//         http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Description:
+// Jenkins pipeline to create Google Compute Engine (GCE) instance templates
+// for use with CVD Launcher and CTS Execution jobs.
+//
+// It reuses the AAOS Docker Builder Docker image, which contains all the
+// necessary packages to create the instance template.
+pipeline {
+
+  // Parameters defined in groovy/job.groovy
+  agent {
+    kubernetes {
+      yaml """\
+        apiVersion: v1
+        kind: Pod
+        spec:
+          hostname: utilities-pod
+          serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
+          containers:
+          - name: utilities
+            image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${UTILITIES_DOCKER_ARTIFACT_PATH_NAME}:latest
+            imagePullPolicy: Always
+            command:
+            - sleep
+            args:
+            - 5h
+            tty: true
+      """.stripIndent()
+    }
+  }
+
+  stages {
+
+    stage ('Networking Action') {
+      steps {
+        container(name: 'utilities') {
+          script {
+            currentBuild.description = "Action: ${env.ACTION}" + "<br/>" + "$BUILD_USER"
+          }
+          sh '''
+            set +x
+            case "${ACTION}" in
+              DELETE)
+                echo "\033[1;32mDeleting Network:\033[0m"; echo
+                [ "${FIREWALL}" = "true" ] && gcloud compute firewall-rules delete \
+                  "${FIREWALL_NAME}" --quiet || true
+                [ "${NAT_ROUTER}" = "true" ] && gcloud compute routers nats delete \
+                  "${NETWORK}"-"${REGION}"-egress-nat \
+                  --router="${NETWORK}"-"${REGION}"-nat-router --region="${REGION}" \
+                  --quiet || true
+                [ "${NAT_ROUTER}" = "true" ] && gcloud compute routers delete \
+                  "${NETWORK}"-"${REGION}"-nat-router \
+                  --region="${REGION}" --quiet || true
+                [ "${SUBNET}" = "true" ] && gcloud compute networks subnets delete \
+                  "${SUBNET_NAME}" --region="${REGION}" --quiet || true
+                echo "\033[1;32mDeleting Network completed.\033[0m"; echo
+                ;;
+              CREATE)
+                echo "\033[1;32mCreating Network:\033[0m"; echo
+
+                if [ "${SUBNET}" = "true" ]; then
+                  gcloud compute networks subnets "${CMD}" "${SUBNET_NAME}" \
+                    --network="${NETWORK}" \
+                    --region="${REGION}" \
+                    --range="${RANGE}" \
+                    --secondary-range="${SECONDARY_RANGE}" \
+                    --stack-type="${STACK_TYPE}" \
+                    --quiet || true
+                fi
+
+                if [ "${FIREWALL}" = "true" ]; then
+                  gcloud compute firewall-rules "${CMD}" "${FIREWALL_NAME}" \
+                    --network="${NETWORK}" \
+                    --direction=INGRESS \
+                    --priority=1000 \
+                    --allow="${ALLOW}" \
+                    --source-ranges="${SOURCE_RANGES}" \
+                    --target-tags="${TARGET_TAGS}" \
+                    --quiet || true
+                fi
+
+                if [ "${NAT_ROUTER}" = "true" ]; then
+                  gcloud compute routers "${CMD}" "${NETWORK}"-"${REGION}"-nat-router \
+                    --region="${REGION}" \
+                    --network="${NETWORK}" \
+                    --quiet || true
+
+                  gcloud compute routers nats "${CMD}" "${NETWORK}"-"${REGION}"-egress-nat \
+                    --region="${REGION}" \
+                    --router="${NETWORK}"-"${REGION}"-nat-router \
+                    --nat-all-subnet-ip-ranges \
+                    --auto-allocate-nat-external-ips \
+                    --enable-logging \
+                    --quiet || true
+                fi
+                ;;
+            esac
+
+            echo; echo "\033[1;32mSubnet Details:\033[0m"; echo
+            gcloud compute networks subnets describe "${SUBNET_NAME}" \
+              --region="${REGION}" || true
+
+            echo; echo "\033[1;32mFirewall Details:\033[0m"; echo
+            gcloud compute firewall-rules describe "${FIREWALL_NAME}" || true
+
+            echo; echo "\033[1;32mRouter Details:\033[0m"; echo
+            echo; gcloud compute routers describe "${NETWORK}"-"${REGION}"-nat-router \
+              --region="${REGION}" || true
+
+            echo; echo "\033[1;32mNAT Details:\033[0m"; echo
+            gcloud compute routers nats describe "${NETWORK}"-"${REGION}"-egress-nat \
+              --router="${NETWORK}"-"${REGION}"-nat-router --region="${REGION}" || true
+          '''
+        }
+      }
+    }
+  }
+}

@@ -52,6 +52,7 @@ pipeline {
           }
           sh '''
             set +x
+            CMD="create"
             case "${ACTION}" in
               DELETE)
                 echo "\033[1;32mDeleting Network:\033[0m"; echo

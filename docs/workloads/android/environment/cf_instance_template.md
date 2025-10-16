@@ -50,7 +50,7 @@ One-time setup requirements.
 This defines the version of [Android Cuttlefish](https://github.com/google/android-cuttlefish.git) host packages to use, e.g.
 
 - `main` - the main working branch of `android-cuttlefish`
-- `v1.25.0` - the latest tagged version.
+- `v1.27.0` - the latest tagged version.
 
 User may define any valid version so long as that version contains `tools/buildutils/build_packages.sh` which is a dependency for these scripts.
 

@@ -43,7 +43,7 @@ function cuttlefish_virtualization() {
 
 # Install additional packages.
 function cuttlefish_install_additional_packages() {
-    local -a package_list=("default-jdk" "adb" "git" "npm" "aapt" "htop")
+    local -a package_list=("default-jdk" "adb" "git" "npm" "aapt" "htop" "unzip")
 
     echo -e "${GREEN}Installing additional packages.${NC}"
 

@@ -311,22 +311,22 @@ spec:
                         noDelayProvisioning: false
                         projectId: {{ .Values.config.projectID }}
                     - computeEngine:
-                        cloudName: "cuttlefish-vm-v1250"
+                        cloudName: "cuttlefish-vm-v1270"
                         configurations:
                         - bootDiskAutoDelete: true
                           bootDiskSizeGb: 10
                           bootDiskSizeGbStr: "10"
                           bootDiskType: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/zones/{{ .Values.config.zone }}/diskTypes/hyperdisk-balanced"
-                          description: "cuttlefish-vm-v1250"
+                          description: "cuttlefish-vm-v1270"
                           javaExecPath: "/usr/bin/java"
                           labelSet:
-                          - name: "cuttlefish-vm-v1250"
-                          labelString: "cuttlefish-vm-v1250"
-                          labels: "cuttlefish-vm-v1250"
+                          - name: "cuttlefish-vm-v1270"
+                          labelString: "cuttlefish-vm-v1270"
+                          labels: "cuttlefish-vm-v1270"
                           launchTimeoutSeconds: 300
                           launchTimeoutSecondsStr: "300"
                           mode: NORMAL
-                          namePrefix: "cuttlefish-vm-v1250"
+                          namePrefix: "cuttlefish-vm-v1270"
                           numExecutors: 1
                           numExecutorsStr: "1"
                           oneShot: true
@@ -337,7 +337,7 @@ spec:
                           runAsUser: "jenkins"
                           sshConfiguration:
                             customPrivateKeyCredentialsId: "jenkins-cuttlefish-vm-ssh-private-key"
-                          template: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/global/instanceTemplates/instance-template-cuttlefish-vm-v1250"
+                          template: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/global/instanceTemplates/instance-template-cuttlefish-vm-v1270"
                           useInternalAddress: true
                           zone: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/zones/{{ .Values.config.zone }}"
                         credentialsId: "gce-creds"
@@ -379,22 +379,22 @@ spec:
                         noDelayProvisioning: false
                         projectId: {{ .Values.config.projectID }}
                     - computeEngine:
-                        cloudName: cuttlefish-vm-v1250-arm64
+                        cloudName: cuttlefish-vm-v1270-arm64
                         configurations:
                         - bootDiskAutoDelete: true
                           bootDiskSizeGb: 10
                           bootDiskSizeGbStr: "10"
                           bootDiskType: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/zones/us-central1-b/diskTypes/hyperdisk-balanced"
-                          description: "cuttlefish-vm-v1250-arm64"
+                          description: "cuttlefish-vm-v1270-arm64"
                           javaExecPath: "/usr/bin/java"
                           labelSet:
-                          - name: "cuttlefish-vm-v1250-arm64"
-                          labelString: "cuttlefish-vm-v1250-arm64"
-                          labels: "cuttlefish-vm-v1250-arm64"
+                          - name: "cuttlefish-vm-v1270-arm64"
+                          labelString: "cuttlefish-vm-v1270-arm64"
+                          labels: "cuttlefish-vm-v1270-arm64"
                           launchTimeoutSeconds: 300
                           launchTimeoutSecondsStr: "300"
                           mode: NORMAL
-                          namePrefix: "cuttlefish-vm-v1250-arm64"
+                          namePrefix: "cuttlefish-vm-v1270-arm64"
                           numExecutors: 1
                           numExecutorsStr: "1"
                           oneShot: true
@@ -405,7 +405,7 @@ spec:
                           runAsUser: "jenkins"
                           sshConfiguration:
                             customPrivateKeyCredentialsId: "jenkins-cuttlefish-vm-ssh-private-key"
-                          template: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/global/instanceTemplates/instance-template-cuttlefish-vm-v1250-arm64"
+                          template: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/global/instanceTemplates/instance-template-cuttlefish-vm-v1270-arm64"
                           useInternalAddress: true
                           zone: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/zones/us-central1-b"
                         credentialsId: "gce-creds"

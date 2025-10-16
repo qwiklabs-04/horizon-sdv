@@ -34,6 +34,15 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
       trim(true)
     }
 
+    booleanParam {
+      name('ANDROID_CUTTLEFISH_PREBUILT')
+      defaultValue(false)
+      description('''<p>Use Google Cuttlefish prebuilt packages.<br/>
+        Choose whether to download and install Google prebuilt version instead of building from the <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a> repository.<br/>
+       If disabled, cuttlefish is built and installed, if enabled and versions exist, then cuttlefish prebuilt packages are installed.
+       <br/><b>Note:</b> this is only applicable to <code>ANDROID_CUTTLEFISH_REVISION=main</code>. If packages are not available, cuttlefish will be built from scratch.</p>''')
+    }
+
     stringParam {
       name('CUTTLEFISH_INSTANCE_UNIQUE_NAME')
       defaultValue('')
@@ -79,6 +88,14 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
       description('''<p>Limits how long this VM instance can run.<br/>
         Useful to avoid excessive costs. Set to 0 to disable limit.<br/>
         Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instances/create" target="_blank">gcloud compute instances create</a>, i.e. <i>--max-run-duration=MAX_RUN_DURATION</i></p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('JAVA_VERSION')
+      defaultValue('openjdk-17-jdk-headless')
+      description('''<p>OpenJDK Java version to install.<br/>
+        Use <code>headless</code> to avoid issues with installing in various operating system versions.</p>''')
       trim(true)
     }
 

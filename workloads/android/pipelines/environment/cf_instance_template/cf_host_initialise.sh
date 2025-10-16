@@ -25,9 +25,6 @@
 # shellcheck disable=SC1091
 source "$(dirname "${BASH_SOURCE[0]}")"/cf_environment.sh "$0"
 
-# Block all interaction, and avoid having to change needrestart.
-export DEBIAN_FRONTEND=noninteractive
-
 declare -r JENKINS_USER="jenkins"
 
 # Colours for logging.
@@ -61,15 +58,9 @@ function cuttlefish_install_additional_packages() {
         fi
     done
 
-    # Java must be 17 pr greater, ubuntu 22.04 is on 11!
-    java_version=$(java --version 2>&1 | awk 'NR==1{match($0, /([0-9]+)/, a); print a[1]}')
-    if (( java_version < 17 )); then
-        echo -e "${ORANGE}Java version is less than 17. Upgrading...${NC}"
-        sudo apt-get update -y
-        sudo apt-get install -y openjdk-17-jdk
-    else
-        echo -e "${GREEN}Java version is $java_version (>= 17). No upgrade needed.${NC}"
-    fi
+    echo -e "${ORANGE}Install version ${JAVA_VERSION}.${NC}"
+    sudo apt-get update -y
+    sudo apt-get install -y openjdk-17-jdk-headless || true
 
     echo -e "${GREEN} Java version:${NC}"
     java --version
@@ -161,6 +152,27 @@ function cuttlefish_install_cts() {
     echo -e "${GREEN}Installing CTS test harness completed in ${m}m${s}s.${NC}"
 }
 
+# Install Cuttlefish prebuilts
+function cuttlefish_install_prebuilt() {
+    # Register the apt repository on Artifact Registry
+    echo -e "${GREEN}Cuttlefish attempt prebuilt install on $1 ...${NC}"
+    sudo curl -fsSL https://us-apt.pkg.dev/doc/repo-signing-key.gpg \
+        -o /etc/apt/trusted.gpg.d/artifact-registry.asc
+    sudo chmod a+r /etc/apt/trusted.gpg.d/artifact-registry.asc
+    echo "deb https://us-apt.pkg.dev/projects/android-cuttlefish-artifacts android-cuttlefish $1" \
+        | sudo tee -a /etc/apt/sources.list.d/artifact-registry.list
+    sudo cat /etc/apt/sources.list.d/artifact-registry.list
+    sudo apt update -y
+
+    if ! sudo apt install -y cuttlefish-base cuttlefish-user cuttlefish-orchestration; then
+        echo -e "${RED}Failed to install prebuilt for revision ${1}${NC}"
+        return 1
+    else
+        echo -e "${GREEN}Installed prebuilt for revision ${1}${NC}"
+        return 0
+    fi
+}
+
 # Add the user to the CVD groups.
 function cuttlefish_user_groups() {
     declare -a cf_gids=(cvdnetwork kvm render)
@@ -199,41 +211,49 @@ function cuttlefish_install() {
     # Install additional packages
     cuttlefish_install_additional_packages
 
-    git clone "${CUTTLEFISH_REPO_URL}" -b "${CUTTLEFISH_REVISION}" > /dev/null 2>&1
-    cd "${CUTTLEFISH_REPO_NAME}" || exit
+    # Cuttlefish will request package restart, override mode.
+    export NEEDRESTART_MODE=a
+    # Prebuilts are only supported on X86_64 and main currently, fall through to build on error.
+    if [ "${ANDROID_CUTTLEFISH_PREBUILT}" != "true" ] || ! cuttlefish_install_prebuilt "${CUTTLEFISH_REVISION}"; then
+        echo -e "${GREEN}Cuttlefish Building from ${CUTTLEFISH_REVISION}.${NC}"; echo
+        git clone "${CUTTLEFISH_REPO_URL}" -b "${CUTTLEFISH_REVISION}" > /dev/null 2>&1
+        cd "${CUTTLEFISH_REPO_NAME}" || exit
 
-    declare -r BUILD_SCRIPT=./tools/buildutils/build_packages.sh
+        declare -r BUILD_SCRIPT=./tools/buildutils/build_packages.sh
 
-    # Build and install the cuttlefish packages
-    if ! [ -f "${BUILD_SCRIPT}" ]; then
-        echo -e "${RED}Error: ${CUTTLEFISH_REVISION} does not support ${BUILD_SCRIPT}${NC}"
-        echo -e "${RED}       Please choose a compatible version.${NC}"
-        cuttlefish_cleanup
-        exit 1
-    else
-        echo -e "${GREEN}Cuttlefish build script: ${BUILD_SCRIPT}${NC}"
-        # Build cuttlefish packages
-        yes Y | "${BUILD_SCRIPT}"
-
-        # Install the cuttlefish packages
-        sudo apt install -y ./cuttlefish-base_*.deb ./cuttlefish-user_*.deb
-
-        # Clean up
-        cuttlefish_cleanup
-
-        # Add groups to the user.
-        cuttlefish_user_groups "$(whoami)"
-
-        # Add jenkins user
-        cuttlefish_jenkins_user
-
-        # Install CTS
-        if [ "$(uname -s)" = "Darwin" ]; then
-            echo -e "${ORANGE}This script is only supported on Linux${NC}"
-            echo -e "${ORANGE}   Ignore CTS download and install${NC}"
+        # Build and install the cuttlefish packages
+        if ! [ -f "${BUILD_SCRIPT}" ]; then
+            echo -e "${RED}Error: ${CUTTLEFISH_REVISION} does not support ${BUILD_SCRIPT}${NC}"
+            echo -e "${RED}       Please choose a compatible version.${NC}"
+            cuttlefish_cleanup
+            exit 1
         else
-            cuttlefish_install_cts
+            echo -e "${GREEN}Cuttlefish build script: ${BUILD_SCRIPT}${NC}"
+            # Avoid restart issues
+            # Build cuttlefish packages
+            yes Y | "${BUILD_SCRIPT}"
+
+            # Install the cuttlefish packages
+            sudo apt install -y ./cuttlefish-base_*.deb ./cuttlefish-user_*.deb ./cuttlefish-orchestration*.deb
+
+            # Clean up
+            cuttlefish_cleanup
         fi
+        echo -e "${GREEN}Cuttlefish Build process complete.${NC}"
+    fi
+
+    # Add groups to the user.
+    cuttlefish_user_groups "$(whoami)"
+
+    # Add jenkins user
+    cuttlefish_jenkins_user
+
+    # Install CTS
+    if [ "$(uname -s)" = "Darwin" ]; then
+        echo -e "${ORANGE}This script is only supported on Linux${NC}"
+        echo -e "${ORANGE}   Ignore CTS download and install${NC}"
+    else
+        cuttlefish_install_cts
     fi
 }
 
@@ -253,9 +273,9 @@ function cuttlefish_initialise() {
             echo -e "${ORANGE}Cuttlefish upgrade required.${NC}"
             # Remove and purge previous install.
             # Note: base will remove user, but remove just in case
-            sudo apt remove -y cuttlefish-base cuttlefish-user > /dev/null 2>&1
+            sudo apt remove -y cuttlefish-* > /dev/null 2>&1
             sudo apt autoremove -y > /dev/null 2>&1
-            sudo dpkg --purge cuttlefish-base cuttlefish-user > /dev/null 2>&1
+            sudo dpkg --purge cuttlefish-base cuttlefish-user cuttlefish-orchestration > /dev/null 2>&1
             cuttlefish_install
         fi
     fi

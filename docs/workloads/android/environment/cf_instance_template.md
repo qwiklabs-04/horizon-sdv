@@ -54,6 +54,15 @@ This defines the version of [Android Cuttlefish](https://github.com/google/andro
 
 User may define any valid version so long as that version contains `tools/buildutils/build_packages.sh` which is a dependency for these scripts.
 
+### `ANDROID_CUTTLEFISH_PREBUILT`
+
+Users have the option to build cuttlefish from scratch, ie. from <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a> repository. Alternatively they may choose to install Google prebuilt versions of cuttlefish.
+
+Disabled: build and install from repo.
+Enabled:  download and install Google prebuilt versions.
+
+Note: this is only applicable to `ANDROID_CUTTLEFISH_REVISION` `main` branch currently, and if packages are not found it will default to building cuttlefish from scratch.
+
 ### `CUTTLEFISH_INSTANCE_UNIQUE_NAME`
 **Note:** Name must be a match of regex `(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)`, i.e lower case.
 
@@ -90,6 +99,12 @@ Define the Boot disk type. Typically:
 VM instances are expensive so it is advisable to define the maximum amount of time to run the instance before it will automatically be terminated. This avoids leaving expensive instances in running state and consuming resources.
 
 User may disable by setting the value to 0, but they must be aware of any costs that they may incur to their project.  Setting to 0 is useful when creating development test instances so users can connect directly to the VM instance.
+
+### `JAVA_VERSION`
+
+Specify the version of Java to install (`openjdk-17-jdk-headless`).
+
+Must be OpenJDK and headless to avoid installation issues with various operating system versions.
 
 ### `OS_VERSION`
 

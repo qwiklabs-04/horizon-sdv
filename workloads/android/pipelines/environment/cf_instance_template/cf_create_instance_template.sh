@@ -30,11 +30,14 @@
 # The following variables are required to run the script, choose to use
 # default values or override from command line.
 #
-#   -ADDITIONAL_NETWORKING: ARM64 Bare metal requires IDPF network interface.
+#  - ANDROID_CUTTLEFISH_PREBUILT: build or install prebuilt versions of
+#        cuttlefish.
+#  - ADDITIONAL_NETWORKING: ARM64 Bare metal requires IDPF network interface.
 #  - CUTTLEFISH_REVISION: the branch/tag version of Android Cuttlefish
 #        to use. Default: main
 #  - BOOT_DISK_SIZE: Disk image size in GB. Default: 250GB
 #  - BOOT_DISK_TYPE: Disk image disk type.
+#  - JAVA_VERSION: Update Java version (must be openjdk headless)
 #  - JENKINS_NAMESPACE: k8s namespace. Default: jenkins
 #  - JENKINS_PRIVATE_SSH_KEY_NAME: SSH key name to extract public key from
 #        Private key would be created similar to:
@@ -102,6 +105,7 @@ SCRIPT_NAME=$(basename "$0")
 
 # Environment variables that can be overridden from command line.
 # android-cuttlefish revisions can be of the form v1.7.0, main etc.
+ANDROID_CUTTLEFISH_PREBUILT=${ANDROID_CUTTLEFISH_PREBUILT:-false}
 ADDITIONAL_NETWORKING=${ADDITIONAL_NETWORKING:-}
 [ -n "${ADDITIONAL_NETWORKING}" ] && ADDITIONAL_NETWORKING=",${ADDITIONAL_NETWORKING}"
 BOOT_DISK_SIZE=${BOOT_DISK_SIZE:-500GB}
@@ -111,6 +115,7 @@ CUTTLEFISH_INSTANCE_UNIQUE_NAME=${CUTTLEFISH_INSTANCE_UNIQUE_NAME:-cuttlefish-vm
 CUTTLEFISH_INSTANCE_UNIQUE_NAME=$(echo "${CUTTLEFISH_INSTANCE_UNIQUE_NAME}" | awk '{print tolower($0)}' | xargs)
 CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION:-main}
 CUTTLEFISH_REVISION=$(echo "${CUTTLEFISH_REVISION}" | xargs)
+JAVA_VERSION=${JAVA_VERSION:-openjdk-17-jdk-headless}
 JENKINS_NAMESPACE=${JENKINS_NAMESPACE:-jenkins}
 JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME:-jenkins-cuttlefish-vm-ssh-private-key}
 JENKINS_SSH_PUB_KEY_FILE=${JENKINS_SSH_PUB_KEY_FILE:-jenkins_rsa.pub}
@@ -200,6 +205,11 @@ function progress_spinner() {
     done
     printf "\r"
     wait "${1}"
+    rc=$?
+    if [ "${rc}" -ne 0 ]; then
+        echo -e "${RED}Process $1 failed, exit.${NC}"
+        exit "${rc}"
+    fi
 }
 
 # Echo formatted output.
@@ -210,6 +220,7 @@ function echo_formatted() {
 # Echo environment variables.
 function echo_environment() {
     echo_formatted "Environment variables:"
+    echo "ANDROID_CUTTLEFISH_PREBUILT=${ANDROID_CUTTLEFISH_PREBUILT}"
     echo "ARCHITECTURE=${ARCHITECTURE}"
     echo "ADDITIONAL_NETWORKING=${ADDITIONAL_NETWORKING}"
     echo "BOOT_DISK_SIZE=${BOOT_DISK_SIZE}"
@@ -217,6 +228,7 @@ function echo_environment() {
     echo "CUTTLEFISH_INSTANCE_UNIQUE_NAME=${cuttlefish_unique_name}"
     echo "CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION}"
     echo "IMAGE=${IMAGE}"
+    echo "JAVA_VERSION=${JAVA_VERSION}"
     echo "JENKINS_NAMESPACE=${JENKINS_NAMESPACE}"
     echo "JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME}"
     echo "JENKINS_SSH_PUB_KEY_FILE=${JENKINS_SSH_PUB_KEY_FILE}"
@@ -239,6 +251,7 @@ function echo_environment() {
 
 function print_usage() {
     echo "Usage:
+      ANDROID_CUTTLEFISH_PREBUILT=${ANDROID_CUTTLEFISH_PREBUILT} \\
       ARCHITECTURE=${ARCHITECTURE} \\
       ADDITIONAL_NETWORKING=${ADDITIONAL_NETWORKING} \\
       CUTTLEFISH_INSTANCE_UNIQUE_NAME=${cuttlefish_unique_name} \\
@@ -246,6 +259,7 @@ function print_usage() {
       BOOT_DISK_SIZE=${BOOT_DISK_SIZE} \\
       BOOT_DISK_TYPE=${BOOT_DISK_TYPE} \\
       IMAGE=${IMAGE} \\
+      JAVA_VERSION=${JAVA_VERSION} \\
       JENKINS_NAMESPACE=${JENKINS_NAMESPACE} \\
       JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME} \\
       JENKINS_SSH_PUB_KEY_FILE=${JENKINS_SSH_PUB_KEY_FILE} \\
@@ -336,29 +350,34 @@ function install_host_tools() {
     echo -e "${GREEN}Remove old SSH keys${NC}"
     for k in $(gcloud compute os-login ssh-keys list --format="table[no-heading](value.fingerprint)"); do
         gcloud compute os-login ssh-keys remove --key "${k}" || true
+        sleep 1m
     done
 
+    echo -e "${GREEN}Create CF directory for scripts${NC}"
+    gcloud compute ssh --quiet --zone="${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" --command=""
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" \
         --command='mkdir -p cf' >/dev/null &
     progress_spinner "$!"
 
+    echo -e "${GREEN}Copy CF host install scripts${NC}"
     gcloud compute scp "${CF_SCRIPT_PATH}"/*.sh "${vm_base_instance}":~/cf/ --zone="${ZONE}" >/dev/null &
     progress_spinner "$!"
 
     # Keep debug so we can see what's happening.
+    echo -e "${GREEN}Installing CF host ....${NC}"
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" \
         --command="CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION} \
-        NODEJS_VERSION=${NODEJS_VERSION} \
+        ANDROID_CUTTLEFISH_PREBUILT=${ANDROID_CUTTLEFISH_PREBUILT} \
+        ARCHITECTURE=${ARCHITECTURE} \
         CTS_ANDROID_16_URL=${CTS_ANDROID_16_URL} \
         CTS_ANDROID_15_URL=${CTS_ANDROID_15_URL} \
         CTS_ANDROID_14_URL=${CTS_ANDROID_14_URL} \
-        ./cf/cf_host_initialise.sh" &
+        JAVA_VERSION=${JAVA_VERSION} \
+        NODEJS_VERSION=${NODEJS_VERSION} \
+        ./cf/cf_host_initialise.sh; \
+        rm -rf cf"
     progress_spinner "$!"
-
-    gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" \
-        --command='rm -rf cf' >/dev/null &
-    progress_spinner "$!"
-
+    echo -e "${GREEN}Installing CF host completed.${NC}"
 
     # Alternative to reboot instance. Must be rebooted/restarted to ensure
     # user/groups are applied correctly before image is created from the
@@ -441,9 +460,6 @@ function create_cuttlefish_boilerplate_template() {
     yes Y | gcloud compute images delete "${vm_cuttlefish_image}" >/dev/null 2>&1 || true &
     progress_spinner "$!"
 
-    echo -e "${ORANGE}Sleep for 1 minute while image ${vm_cuttlefish_image} deletion completes${NC}"; echo
-    sleep 1m
-
     echo -e "${GREEN}Creating ${vm_cuttlefish_image}${NC}"
     gcloud compute images create "${vm_cuttlefish_image}" \
         --source-disk="${vm_base_instance}" \
@@ -451,24 +467,16 @@ function create_cuttlefish_boilerplate_template() {
         --storage-location="${REGION}" \
         --source-disk-project="${PROJECT}" &
     progress_spinner "$!"
-    echo -e "${ORANGE}Sleep for 1 minute while image creation completes${NC}"; echo
-    sleep 1m
 
     echo -e "${GREEN}Delete ${vm_base_instance}${NC}"
     yes Y | gcloud compute instances delete "${vm_base_instance}" \
         --zone="${ZONE}" >/dev/null 2>&1 || true &
     progress_spinner "$!"
 
-    echo -e "${ORANGE}Sleep for 1 minute while instance ${vm_base_instance} deletion completes${NC}"; echo
-    sleep 1m
-
     echo -e "${GREEN}Deleting ${vm_cuttlefish_instance_template}${NC}"
     yes Y | gcloud compute instance-templates delete \
         "${vm_cuttlefish_instance_template}" >/dev/null 2>&1 || true &
     progress_spinner "$!"
-
-    echo -e "${ORANGE}Sleep for 1 minute while instance template ${vm_cuttlefish_instance_template} deletion completes${NC}"; echo
-    sleep 1m
 
     echo -e "${GREEN}Creating ${vm_cuttlefish_instance_template}${NC}"
     # shellcheck disable=SC2086
@@ -489,9 +497,6 @@ function create_cuttlefish_boilerplate_template() {
         --tags="${TAGS}" \
         ${max_run_duration_args} &
     progress_spinner "$!"
-
-    echo -e "${ORANGE}Sleep for 2 minute while instance template creation completes, GCP settles.${NC}"; echo
-    sleep 2m
 
     # Check the instance template was created.
     template_exists=$(gcloud compute instance-templates list --filter="name=${vm_cuttlefish_instance_template}" --format='get(name)')
@@ -514,9 +519,6 @@ function create_cuttlefish_boilerplate_template() {
             --tags="${TAGS}" \
             --zone="${ZONE}" &
         progress_spinner "$!"
-
-        echo -e "${ORANGE}Sleep for 1 minute while instance creation completes${NC}"; echo
-        sleep 1m
         echo -e "${GREEN}VM Instance ${vm_cuttlefish_instance} created${NC}"
 
         # Stop the VM instance.

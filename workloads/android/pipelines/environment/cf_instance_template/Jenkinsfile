@@ -140,14 +140,16 @@ pipeline {
         container(name: 'builder') {
           sh '''
             ADDITIONAL_NETWORKING="${ADDITIONAL_NETWORKING}" \
+            ANDROID_CUTTLEFISH_PREBUILT="${ANDROID_CUTTLEFISH_PREBUILT}" \
             CUTTLEFISH_REVISION="${ANDROID_CUTTLEFISH_REVISION}" \
-            VM_INSTANCE_CREATE="${VM_INSTANCE_CREATE}" \
+            JAVA_VERSION="${JAVA_VERSION}" \
+            NODEJS_VERSION="${NODEJS_VERSION}" \
             PROJECT=${CLOUD_PROJECT} \
             REGION=${REGION:-${CLOUD_REGION}} \
             SUBNET=${SUBNET} \
             TAGS=${TAGS} \
+            VM_INSTANCE_CREATE="${VM_INSTANCE_CREATE}" \
             ZONE=${ZONE:-${CLOUD_ZONE}} \
-            NODEJS_VERSION="${NODEJS_VERSION}" \
             ./workloads/android/pipelines/environment/cf_instance_template/cf_create_instance_template.sh 3
           '''
         }

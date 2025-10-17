@@ -36,7 +36,7 @@ spec:
         rbac:
           readSecrets: true
         agent:
-          containerCap: 20
+          containerCap: 2
         controller:
           sidecars:
             configAutoReload:

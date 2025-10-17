@@ -93,7 +93,6 @@ pipeline {
             CUTTLEFISH_INSTANCE_UNIQUE_NAME="${CUTTLEFISH_INSTANCE_UNIQUE_NAME}" \
             VM_INSTANCE_CREATE="${VM_INSTANCE_CREATE}" \
             SUBNET=${SUBNET} \
-            TAGS=${TAGS} \
             ZONE=${ZONE:-${CLOUD_ZONE}} \
             ./workloads/android/pipelines/environment/cf_instance_template/cf_create_instance_template.sh 1
           '''
@@ -119,7 +118,6 @@ pipeline {
             PROJECT=${CLOUD_PROJECT} \
             REGION=${REGION:-${CLOUD_REGION}} \
             SUBNET=${SUBNET} \
-            TAGS=${TAGS} \
             ZONE=${ZONE:-${CLOUD_ZONE}} \
             ./workloads/android/pipelines/environment/cf_instance_template/cf_create_instance_template.sh 2
           '''
@@ -147,7 +145,6 @@ pipeline {
             PROJECT=${CLOUD_PROJECT} \
             REGION=${REGION:-${CLOUD_REGION}} \
             SUBNET=${SUBNET} \
-            TAGS=${TAGS} \
             VM_INSTANCE_CREATE="${VM_INSTANCE_CREATE}" \
             ZONE=${ZONE:-${CLOUD_ZONE}} \
             ./workloads/android/pipelines/environment/cf_instance_template/cf_create_instance_template.sh 3
@@ -187,7 +184,6 @@ pipeline {
               PROJECT=${CLOUD_PROJECT} \
               REGION=${REGION:-${CLOUD_REGION}} \
               SUBNET=${SUBNET} \
-              TAGS=${TAGS} \
               ZONE=${ZONE:-${CLOUD_ZONE}} \
              ./workloads/android/pipelines/environment/cf_instance_template/cf_create_instance_template.sh 4
             '''
@@ -216,7 +212,6 @@ pipeline {
             PROJECT=${CLOUD_PROJECT} \
             REGION=${REGION:-${CLOUD_REGION}} \
             SUBNET=${SUBNET} \
-            TAGS=${TAGS} \
             CUTTLEFISH_INSTANCE_UNIQUE_NAME="${CUTTLEFISH_INSTANCE_UNIQUE_NAME}" \
             ZONE=${ZONE:-${CLOUD_ZONE}} \
             ./workloads/android/pipelines/environment/cf_instance_template/cf_create_instance_template.sh 5
@@ -242,7 +237,6 @@ pipeline {
             REGION=${REGION:-${CLOUD_REGION}} \
             CUTTLEFISH_INSTANCE_UNIQUE_NAME="${CUTTLEFISH_INSTANCE_UNIQUE_NAME}" \
             SUBNET=${SUBNET} \
-            TAGS=${TAGS} \
             ZONE=${ZONE:-${CLOUD_ZONE}} \
             ./workloads/android/pipelines/environment/cf_instance_template/cf_create_instance_template.sh 6
           '''

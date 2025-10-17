@@ -55,8 +55,6 @@ pipeline {
             case "${ACTION}" in
               DELETE)
                 echo "\033[1;32mDeleting Network:\033[0m"; echo
-                [ "${FIREWALL}" = "true" ] && yes Y | gcloud compute firewall-rules delete \
-                  "${FIREWALL_NAME}" || true
                 [ "${NAT_ROUTER}" = "true" ] && yes Y | gcloud compute routers nats delete \
                   "${NETWORK}"-"${REGION}"-egress-nat \
                   --router="${NETWORK}"-"${REGION}"-nat-router --region="${REGION}" || true
@@ -78,16 +76,6 @@ pipeline {
                     --stack-type="${STACK_TYPE}" || true
                 fi
 
-                if [ "${FIREWALL}" = "true" ]; then
-                  gcloud compute firewall-rules create "${FIREWALL_NAME}" \
-                    --network="${NETWORK}" \
-                    --direction=INGRESS \
-                    --priority=1000 \
-                    --allow="${ALLOW}" \
-                    --source-ranges="${SOURCE_RANGES}" \
-                    --target-tags="${TARGET_TAGS}" || true
-                fi
-
                 if [ "${NAT_ROUTER}" = "true" ]; then
                   gcloud compute routers create "${NETWORK}"-"${REGION}"-nat-router \
                     --region="${REGION}" \
@@ -106,9 +94,6 @@ pipeline {
             echo; echo "\033[1;32mSubnet Details:\033[0m"; echo
             gcloud compute networks subnets describe "${SUBNET_NAME}" \
               --region="${REGION}" || true
-
-            echo; echo "\033[1;32mFirewall Details:\033[0m"; echo
-            gcloud compute firewall-rules describe "${FIREWALL_NAME}" || true
 
             echo; echo "\033[1;32mRouter Details:\033[0m"; echo
             echo; gcloud compute routers describe "${NETWORK}"-"${REGION}"-nat-router \

@@ -8,7 +8,7 @@
 
 ## Introduction <a name="introduction"></a>
 
-This pipeline allows for users of Horizon-SDV create additional subnets, firewall rules and NAT/Cloud Routers, should
+This pipeline allows for users of Horizon-SDV create additional subnets and NAT/Cloud Routers, should
 they need a second subnet for a secondary regions.
 
 ## Prerequisites<a name="prerequisites"></a>
@@ -54,28 +54,6 @@ Adds a secondary IP range to the subnetwork for use in IP aliasing. PROPERTY=VAL
 ### `STACK_TYPE`
 
 The stack type for this subnet.
-
-### `FIREWALL`
-
-If enabled, Firewall will be created/deleted.
-
-### `FIREWALL_NAME`
-
-Name of the firewall rule to create.
-Required for Cuttlefish instances to gain access to network and more so tcp:22 for Jenkins.
-
-### `ALLOW`
-
-A list of protocols and ports whose traffic will be allowed.
-
-### `SOURCE_RANGES`
-
-A list of IP address blocks that are allowed to make inbound connections that match the firewall rule to the instances on the network.
-
-### `TARGET_TAGS`
-
-List of instance tags indicating the set of instances on the network which may accept connections that match the firewall rule.
-Used in the `CF Instance Template` jobs when creating instance templates to reference the target tags.
 
 ### `NAT_ROUTER`
 

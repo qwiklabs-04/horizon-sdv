@@ -119,13 +119,6 @@ pipelineJob('Android/Environment/CF Instance Template') {
     }
 
     stringParam {
-      name('TAGS')
-      defaultValue("http-server,https-server")
-      description('''<p>Firewall tags to apply to instance.</p>''')
-      trim(true)
-    }
-
-    stringParam {
       name('NODEJS_VERSION')
       defaultValue("${NODEJS_VERSION}")
       description('''<p>NodeJS version.<br/>

@@ -52,60 +52,53 @@ pipeline {
           }
           sh '''
             set +x
-            CMD="create"
             case "${ACTION}" in
               DELETE)
                 echo "\033[1;32mDeleting Network:\033[0m"; echo
-                [ "${FIREWALL}" = "true" ] && gcloud compute firewall-rules delete \
-                  "${FIREWALL_NAME}" --quiet || true
-                [ "${NAT_ROUTER}" = "true" ] && gcloud compute routers nats delete \
+                [ "${FIREWALL}" = "true" ] && yes Y | gcloud compute firewall-rules delete \
+                  "${FIREWALL_NAME}" || true
+                [ "${NAT_ROUTER}" = "true" ] && yes Y | gcloud compute routers nats delete \
                   "${NETWORK}"-"${REGION}"-egress-nat \
-                  --router="${NETWORK}"-"${REGION}"-nat-router --region="${REGION}" \
-                  --quiet || true
-                [ "${NAT_ROUTER}" = "true" ] && gcloud compute routers delete \
-                  "${NETWORK}"-"${REGION}"-nat-router \
-                  --region="${REGION}" --quiet || true
-                [ "${SUBNET}" = "true" ] && gcloud compute networks subnets delete \
-                  "${SUBNET_NAME}" --region="${REGION}" --quiet || true
+                  --router="${NETWORK}"-"${REGION}"-nat-router --region="${REGION}" || true
+                [ "${NAT_ROUTER}" = "true" ] && yes Y | gcloud compute routers delete \
+                  "${NETWORK}"-"${REGION}"-nat-router --region="${REGION}" || true
+                [ "${SUBNET}" = "true" ] && yes Y | gcloud compute networks subnets delete \
+                  "${SUBNET_NAME}" --region="${REGION}" || true
                 echo "\033[1;32mDeleting Network completed.\033[0m"; echo
                 ;;
               CREATE)
                 echo "\033[1;32mCreating Network:\033[0m"; echo
 
                 if [ "${SUBNET}" = "true" ]; then
-                  gcloud compute networks subnets "${CMD}" "${SUBNET_NAME}" \
+                  yes Y | gcloud compute networks subnets create "${SUBNET_NAME}" \
                     --network="${NETWORK}" \
                     --region="${REGION}" \
                     --range="${RANGE}" \
                     --secondary-range="${SECONDARY_RANGE}" \
-                    --stack-type="${STACK_TYPE}" \
-                    --quiet || true
+                    --stack-type="${STACK_TYPE}" || true
                 fi
 
                 if [ "${FIREWALL}" = "true" ]; then
-                  gcloud compute firewall-rules "${CMD}" "${FIREWALL_NAME}" \
+                  gcloud compute firewall-rules create "${FIREWALL_NAME}" \
                     --network="${NETWORK}" \
                     --direction=INGRESS \
                     --priority=1000 \
                     --allow="${ALLOW}" \
                     --source-ranges="${SOURCE_RANGES}" \
-                    --target-tags="${TARGET_TAGS}" \
-                    --quiet || true
+                    --target-tags="${TARGET_TAGS}" || true
                 fi
 
                 if [ "${NAT_ROUTER}" = "true" ]; then
-                  gcloud compute routers "${CMD}" "${NETWORK}"-"${REGION}"-nat-router \
+                  gcloud compute routers create "${NETWORK}"-"${REGION}"-nat-router \
                     --region="${REGION}" \
-                    --network="${NETWORK}" \
-                    --quiet || true
+                    --network="${NETWORK}" || true
 
-                  gcloud compute routers nats "${CMD}" "${NETWORK}"-"${REGION}"-egress-nat \
+                  gcloud compute routers nats create "${NETWORK}"-"${REGION}"-egress-nat \
                     --region="${REGION}" \
                     --router="${NETWORK}"-"${REGION}"-nat-router \
                     --nat-all-subnet-ip-ranges \
                     --auto-allocate-nat-external-ips \
-                    --enable-logging \
-                    --quiet || true
+                    --enable-logging || true
                 fi
                 ;;
             esac

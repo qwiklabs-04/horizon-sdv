@@ -373,7 +373,7 @@ spec:
                             customPrivateKeyCredentialsId: "jenkins-cuttlefish-vm-ssh-private-key"
                           template: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/global/instanceTemplates/instance-template-cuttlefish-vm-main-arm64"
                           useInternalAddress: true
-                          zone: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/zones/us-central1-b"
+                          zone: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/zones/us-central1-f"
                         credentialsId: "gce-creds"
                         instanceCapStr: "20"
                         noDelayProvisioning: false
@@ -407,7 +407,7 @@ spec:
                             customPrivateKeyCredentialsId: "jenkins-cuttlefish-vm-ssh-private-key"
                           template: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/global/instanceTemplates/instance-template-cuttlefish-vm-v1270-arm64"
                           useInternalAddress: true
-                          zone: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/zones/us-central1-b"
+                          zone: "https://www.googleapis.com/compute/v1/projects/{{ .Values.config.projectID }}/zones/us-central1-f"
                         credentialsId: "gce-creds"
                         instanceCapStr: "20"
                         noDelayProvisioning: false

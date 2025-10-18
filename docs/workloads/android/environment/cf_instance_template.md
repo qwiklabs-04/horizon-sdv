@@ -117,10 +117,6 @@ Override the OS version. These regularly become deprecated and superceded, hence
 
 Disk image project.
 
-#### `TAGS`
-
-Network/firewall tags to use when creating instances.
-
 ### `NODEJS_VERSION`
 
 MTK Connect requires NodeJS; this option allows you to update the version to install on the instance template.

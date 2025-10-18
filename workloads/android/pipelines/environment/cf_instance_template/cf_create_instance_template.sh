@@ -133,7 +133,6 @@ PROJECT=${PROJECT:-$(gcloud config list --format 'value(core.project)'|head -n 1
 REGION=${REGION:-europe-west1}
 SERVICE_ACCOUNT=${SERVICE_ACCOUNT:-$(gcloud projects describe "${PROJECT}" --format='get(projectNumber)')-compute@developer.gserviceaccount.com}
 SUBNET=${SUBNET:-sdv-subnet}
-TAGS=${TAGS:-http-server,https-server}
 VM_INSTANCE_CREATE=${VM_INSTANCE_CREATE:-true}
 ZONE=${ZONE:-europe-west1-d}
 
@@ -242,7 +241,6 @@ function echo_environment() {
     echo "REGION=${REGION}"
     echo "SERVICE_ACCOUNT=${SERVICE_ACCOUNT}"
     echo "SUBNET=${SUBNET}"
-    echo "TAGS=${TAGS}"
     echo "VM_INSTANCE_CREATE=${VM_INSTANCE_CREATE}"
     echo "VM_SUFFIX=${VM_SUFFIX}"
     echo "ZONE=${ZONE}"
@@ -273,7 +271,6 @@ function print_usage() {
       REGION=${REGION} \\
       SERVICE_ACCOUNT=${SERVICE_ACCOUNT} \\
       SUBNET=${SUBNET} \\
-      TAGS=${TAGS} \\
       VM_INSTANCE_CREATE=${VM_INSTANCE_CREATE} \\
       VM_SUFFIX=${VM_SUFFIX} \\
       ZONE=${ZONE} \\
@@ -311,7 +308,6 @@ function create_base_template_instance() {
         --maintenance-policy=TERMINATE \
         --image-project=debian-cloud \
         --create-disk=mode=rw,architecture="${ARCHITECTURE}",boot=yes,size="${BOOT_DISK_SIZE}",auto-delete=true,type="${BOOT_DISK_TYPE}",device-name="${vm_base_instance}",image="${IMAGE}",interface=SCSI \
-        --tags="${TAGS}" \
         --metadata=enable-oslogin=true \
         --reservation-affinity=any \
         --enable-nested-virtualization \
@@ -331,7 +327,6 @@ function create_vm_instance() {
 
     gcloud compute instances create "${vm_base_instance}" \
         --source-instance-template "${vm_base_instance_template}" \
-        --tags="${TAGS}" \
         --zone="${ZONE}" &
     progress_spinner "$!"
 
@@ -494,7 +489,6 @@ function create_cuttlefish_boilerplate_template() {
         --enable-nested-virtualization \
         --region="${REGION}" \
         --network-interface network="${NETWORK}",subnet="${SUBNET}",stack-type=IPV4_ONLY,no-address"${ADDITIONAL_NETWORKING}" \
-        --tags="${TAGS}" \
         ${max_run_duration_args} &
     progress_spinner "$!"
 
@@ -516,7 +510,6 @@ function create_cuttlefish_boilerplate_template() {
     if [ "${VM_INSTANCE_CREATE}" = true ]; then
         gcloud compute instances create "${vm_cuttlefish_instance}" \
             --source-instance-template "${vm_cuttlefish_instance_template}" \
-            --tags="${TAGS}" \
             --zone="${ZONE}" &
         progress_spinner "$!"
         echo -e "${GREEN}VM Instance ${vm_cuttlefish_instance} created${NC}"

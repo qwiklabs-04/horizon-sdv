@@ -14,7 +14,7 @@
 pipelineJob('Utilities/Networking/Subnetwork Operations') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">Subnetwork Operations</h3>
-    <p>This job allows creating a new subnetwork in the GCP project, together with Firewall and NAT router.</p>
+    <p>This job allows creating a new subnetwork in the GCP project together with NAT router.</p>
     <h4 style="margin-bottom: 10px;">Prerequisites</h4>
     <p>Create the docker image template from <code>Utilities->Docker Image Template</code></p>
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
@@ -86,49 +86,6 @@ pipelineJob('Utilities/Networking/Subnetwork Operations') {
       name('STACK_TYPE')
       defaultValue("IPV4_ONLY")
       description('''<p>The stack type for this subnet</p>''')
-      trim(true)
-    }
-
-    separator {
-      name('Firewall Operations')
-      sectionHeader('Firewall Operations')
-      sectionHeaderStyle("${HEADER_STYLE}")
-      separatorStyle("${SEPARATOR_STYLE}")
-    }
-
-    booleanParam {
-      name('FIREWALL')
-      defaultValue(false)
-      description('''<p>If enabled, Firewall will be created/deleted.</p>''')
-    }
-
-    stringParam {
-      name('FIREWALL_NAME')
-      defaultValue("us-central1-allow-any-inbound")
-      description('''<p>Name of the firewall rule to create.<br/>
-      Required for Cuttlefish instances to gain access to network and more so tcp:22 for Jenkins.</p>''')
-      trim(true)
-    }
-
-    stringParam {
-      name('ALLOW')
-      defaultValue("tcp:0-65535,udp:0-65535,icmp")
-      description('''<p>A list of protocols and ports whose traffic will be allowed.</p>''')
-      trim(true)
-    }
-
-    stringParam {
-      name('SOURCE_RANGES')
-      defaultValue("0.0.0.0/0")
-      description('''<p>A list of IP address blocks that are allowed to make inbound connections that match the firewall rule to the instances on the network.</p>''')
-      trim(true)
-    }
-
-    stringParam {
-      name('TARGET_TAGS')
-      defaultValue("us-central1")
-      description('''<p>List of instance tags indicating the set of instances on the network which may accept connections that match the firewall rule.<br/>
-      Used in the <code>CF Instance Template</code> jobs when creating instance templates to reference the target tags.</p>''')
       trim(true)
     }
 

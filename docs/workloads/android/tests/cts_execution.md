@@ -96,6 +96,18 @@ Optional.
 This defines the CTS test module that will be run. Default is: `CtsDeqpTestCases` but if field is left empty, all CTS test modules will be run.
 Note: `CtsHostsideNumberBlockingTestCases` is the previous default simply because it was quick.
 
+### `CTS_RETRY_STRATEGY`
+
+Default: `RETRY_ANY_FAILURE`
+
+Refer to [`--retry-strategy`](https://source.android.com/reference/tradefed/com/android/tradefed/retry/RetryStrategy).
+
+### `CTS_MAX_TESTCASE_RUN_COUNT`
+
+Default: `2`
+
+Option is dependent on `CTS_RETRY_STRATEGY`, refer to [`--max-testcase-run-count`](https://source.android.com/docs/core/tests/tradefed/testing/through-tf/auto-retry).
+
 ### `CUTTLEFISH_MAX_BOOT_TIME`
 
 Cuttlefish virtual devices need time to boot up. This defines the maximum time to wait for the virtual device(s) to boot up. Cuttlefish virtual devices can take a serious amount of time before booting, hence this is quite large.

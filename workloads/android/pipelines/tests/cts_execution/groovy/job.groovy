@@ -106,6 +106,20 @@ e.g.<br/>gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/AAOS_Builder/&lt;
     }
 
     stringParam {
+      name('CTS_RETRY_STRATEGY')
+      defaultValue('RETRY_ANY_FAILURE')
+      description('''<p>CTS <a href="https://source.android.com/reference/tradefed/com/android/tradefed/retry/RetryStrategy" target="_blank">--retry-strategy</a> option.</p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('CTS_MAX_TESTCASE_RUN_COUNT')
+      defaultValue('2')
+      description('''<p>CTS <a href="https://source.android.com/docs/core/tests/tradefed/testing/through-tf/auto-retry" target="_blank">--max-testcase-run-count</a> option dependent on retry strategy.</p>''')
+      trim(true)
+    }
+
+    stringParam {
       name('CUTTLEFISH_MAX_BOOT_TIME')
       defaultValue('180')
       description('''<p>Android Cuttlefish max boot time in seconds.<br/>

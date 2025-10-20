@@ -60,7 +60,7 @@ function cuttlefish_install_additional_packages() {
 
     echo -e "${ORANGE}Install version ${JAVA_VERSION}.${NC}"
     sudo apt-get update -y
-    sudo apt-get install -y openjdk-17-jdk-headless || true
+    sudo apt-get install -y "${JAVA_VERSION}" || true
 
     echo -e "${GREEN} Java version:${NC}"
     java --version

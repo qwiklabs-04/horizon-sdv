@@ -93,7 +93,7 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
 
     stringParam {
       name('JAVA_VERSION')
-      defaultValue('openjdk-17-jdk-headless')
+      defaultValue('openjdk-21-jdk-headless')
       description('''<p>OpenJDK Java version to install.<br/>
         Use <code>headless</code> to avoid issues with installing in various operating system versions.</p>''')
       trim(true)

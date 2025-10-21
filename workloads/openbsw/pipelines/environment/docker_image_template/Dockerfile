@@ -48,7 +48,8 @@ RUN apt-get update -y && \
     htop iproute2 iputils-ping kmod less lcov ninja-build \
     python"${PYTHON_VERSION}" python3-setuptools python3-pip \
     python3-requests python3-venv python3-virtualenv \
-    rsync ssh sudo tar tmux unzip vim wget xz-utils zip && \
+    rsync ruby-rubygems ssh sudo tar tmux unzip vim wget \
+    xz-utils zip && \
     apt-get update -y && apt install -y npm && \
     rm -rf /var/lib/apt/lists/*
 
@@ -98,7 +99,9 @@ RUN echo "\033[1;32mInstall ${CMAKE_URL}\033[0m" \
     && rm -rf sccache-*-x86_64-unknown-linux-musl \
     && echo 'export HISTFILE=/root/.bash_history/history' >> /root/.bashrc
 
-ENV PATH="/usr/bin/gcc-arm-none-eabi/bin:/usr/bin/llvm/bin:/usr/bin/llvm-arm/bin:usr/bin/clang-format-17:usr/bin/treefmt:/usr/bin/gcc:/usr/local/bin/sccache:${PATH}"
+RUN gem install esr-rim
+
+ENV PATH="/usr/bin/gcc-arm-none-eabi/bin:/usr/bin/llvm/bin:/usr/bin/llvm-arm/bin:${PATH}"
 
 # The following installs gcloud sdk required for uploading
 # artifacts to Google Cloud Storage. Remove if using alternative storage.

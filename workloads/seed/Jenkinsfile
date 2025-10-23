@@ -156,7 +156,7 @@ pipeline {
     )
 
     string(name: 'NODEJS_VERSION',
-           defaultValue: "24.9.0",
+           defaultValue: "25.0.0",
            description: '''<p>NodeJS version.<br/>
              This is installed using <i>nvm</i> on the instance template to be compatible with other tooling.</p>''',
            trim: true)

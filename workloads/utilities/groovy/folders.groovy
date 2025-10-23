@@ -15,7 +15,3 @@ folder('Utilities') {
   displayName('Utilities')
   description('<p>This folder contains utility functionality common across workloads.</p>')
 }
-folder('Utilities/Networking') {
-  displayName('Networking')
-  description('<p>This folder contains jobs to work with platform networking.</p>')
-}

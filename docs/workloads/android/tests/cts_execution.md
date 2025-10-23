@@ -16,7 +16,7 @@ The pipeline first runs CVD on the Cuttlefish VM Instance to instantiate the spe
 
 Note:
 
-- This pipeline offers the flexibility to run using a user-defined CTS suite (built by the `CTS Builder` pipeline) instead of the default Android 14 and Android 15 CTS suites provided by google.
+- This pipeline offers the flexibility to run using a user-defined CTS suite (built by the `AAOS Builder` pipeline with `AAOS_BUILD_CTS` enabled) instead of the default Android 14, 15 and 16 CTS suites provided by google.
 - It allows user to enable MTK Connect should they wish to view the virtual devices during testing (e.g. useful for UI tests).
 - It allows users to keep the cuttlefish virtual devices alive for a certain amount of time after the CTS run has completed in order to facilitate debugging via MTK Connect. MTK Connect must be enabled for this option.
 
@@ -59,7 +59,7 @@ The URL must point to the bucket where the host packages and virtual devices ima
 - `cvd-host_package.tar.gz`
 - `osp_cf_x86_64_auto-img-builder.zip`
 
-URL is of the form `gs://<ANDROID_BUILD_BUCKET_ROOT_NAME>/Android/Builds/AAOS_Builder/<BUILD_NUMBER>` where `ANDROID_BUILD_BUCKET_ROOT_NAME` is a system environment variable defined in Jenkins CasC `jenkins.yaml` and `BUILD_NUMBER` is the Jenkins build number.
+URL is of the form `gs://<ANDROID_BUILD_BUCKET_ROOT_NAME>/Android/Builds/AAOS_Builder/<BUILD_NUMBER>` where `ANDROID_BUILD_BUCKET_ROOT_NAME` is a system environment variable defined in Jenkins CasC `jenkins.yaml` and `BUILD_NUMBER` is the Jenkins build number. Alternatively, `<STORAGE_BUCKET_DESTINATION>` if destination was overridden.
 
 ### `CUTTLEFISH_INSTALL_WIFI`
 
@@ -67,23 +67,23 @@ This allows the user to install Wifi utility APK on all Cuttlefish virtual devic
 
 ### `ANDROID_VERSION`
 
-Defines the Android and thus CTS version to use. The Cuttlefish VM Instance is already pre-installed with Android 14 CTS and Android 15 CTS, so this defines which version to use.
+Defines the Android and thus CTS version to use. The Cuttlefish VM Instance is already pre-installed with Android 14, 15 and CTS, so this defines which version to use.
 
 ### `CTS_DOWNLOAD_URL`
 
 Optional.
 
-This allows the user to use their own CTS that was built using the `CTS Builder` build job.
+This allows the user to use their own CTS that was built using the `AAOS Builder` build job.
 
 The URL must point to the bucket where the Android CTS archive is stored:
 
 - `android-cts.zip`
 
-URL is of the form `gs://<ANDROID_BUILD_BUCKET_ROOT_NAME>/Android/Builds/CTS_Builder/<BUILD_NUMBER>` where `ANDROID_BUILD_BUCKET_ROOT_NAME` is a system environment variable defined in Jenkins CasC `jenkins.yaml` and `BUILD_NUMBER` is the Jenkins build number.
+URL is of the form `gs://<ANDROID_BUILD_BUCKET_ROOT_NAME>/Android/Builds/AAOS_Builder/<BUILD_NUMBER>/android-cts.zip` where `ANDROID_BUILD_BUCKET_ROOT_NAME` is a system environment variable defined in Jenkins CasC `jenkins.yaml` and `BUILD_NUMBER` is the Jenkins build number. Alternatively, `<STORAGE_BUCKET_DESTINATION>/android-cts.zip` if destination was overridden.
 
 ### `CTS_TESTPLAN`
 
-This defines the CTS test plan that will be run. Default is: `cts-system-virtual` which is only available in Android 15.
+This defines the CTS test plan that will be run. Default is: `cts-system-virtual` which is only available in Android 15 and 16.
 
 Android 14 users should pick a test plan that is compatible with their version of Cuttlefish.
 
@@ -95,6 +95,18 @@ Optional.
 
 This defines the CTS test module that will be run. Default is: `CtsDeqpTestCases` but if field is left empty, all CTS test modules will be run.
 Note: `CtsHostsideNumberBlockingTestCases` is the previous default simply because it was quick.
+
+### `CTS_RETRY_STRATEGY`
+
+Default: `RETRY_ANY_FAILURE`
+
+Refer to [`--retry-strategy`](https://source.android.com/reference/tradefed/com/android/tradefed/retry/RetryStrategy).
+
+### `CTS_MAX_TESTCASE_RUN_COUNT`
+
+Default: `2`
+
+Option is dependent on `CTS_RETRY_STRATEGY`, refer to [`--max-testcase-run-count`](https://source.android.com/docs/core/tests/tradefed/testing/through-tf/auto-retry).
 
 ### `CUTTLEFISH_MAX_BOOT_TIME`
 

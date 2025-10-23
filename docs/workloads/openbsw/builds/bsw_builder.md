@@ -18,6 +18,8 @@ This job automates the build process for the Eclipse Foundation OpenBSW software
 
 The job offers the following build targets and options:
 
+- Documentation:
+  - Creates OpenBSW documentation from doxygen.
 - Unit Tests:
   - Build unit tests
   - Run unit tests (all or individual test library)
@@ -69,6 +71,7 @@ This provides the branch/tag revision for the OpenBSW repository.
 ### `POST_GIT_CLONE_COMMAND`
 
 Optional parameter that allows the user to include additional commands to run after the repository has been cloned.
+Useful to pin OpenBSW to a particular sha1.
 
 ### `IMAGE_TAG`
 
@@ -83,6 +86,14 @@ Defines the number of parallel sync jobs when running `cmake` commands.
 ### `CODE_COVERAGE`
 
 Enable code coverage for unit tests. Only applicable when `BUILD_UNIT_TESTS` and `RUN_UNIT_TESTS` are enabled.
+
+### `BUILD_DOCUMENTATION`
+
+Use this to build the OpenBSW documentation using doxygen. PublishHTML is used in Jenkins so you can view the HTML output, or simply download the archive.
+
+To view in Jenkins correctly, you would have to lower the [content security level](https://www.jenkins.io/doc/book/security/configuring-content-security-policy/) from `Script Console`, allowing the full HTML to be accessible, e.g.
+
+`System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "")`
 
 ### `LIST_UNIT_TESTS`
 
@@ -136,6 +147,14 @@ The command that is used to build the POSIX platform target. Users may choose to
 
 The artifact to store. Default is the `app.referenceApp.elf`.
 
+### `POSIX_PYTEST`
+
+Run python tests on POSIX application. User may also run using the POSIX test job.
+
+### `POSIX_PYTEST_CMDLINE`
+
+The command that will be used to run the pyTest on the POSIX platform target.
+
 ### `BUILD_NXP_S32K148`
 
 Build the OpenBSW S32K148 Hardware target. This will build the `app.referenceApp.elf` application and store in respective GCS bucket for user to retrieve and install on their physical hardware.
@@ -159,6 +178,16 @@ Access using `kubectl` e.g. `kubectl exec -it -n jenkins <pod name> -- bash` fro
 Define storage solution used to push artifacts.
 
 Currently `GCS_BUCKET` default pushes to GCS bucket, if empty then nothing will be stored.
+
+### `STORAGE_BUCKET_DESTINATION`
+
+Lets you override the default artifact storage destination. If not set, the build derives it automatically, for example:
+
+`gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Builds/BSW_Builder/<BUILD_NUMBER>`
+
+The override must be a full GCS URI, including the `gs://` prefix, bucket name, and the artifact path. For example:
+
+`gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Releases/010129`
 
 ## SYSTEM VARIABLES <a name="system-variables"></a>
 

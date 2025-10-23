@@ -19,7 +19,8 @@ pipelineJob('Android/Tests/CTS Execution') {
     <p>The job runs on a cuttlefish-ready virtual machine instance (refer to the <i>CF Instance Template</i> job) together with running virtual devices (refer to <i>CVD Launcher</i> job). The Compatibility Test Suite is then executed across the virtual devices:
     <ul>
       <li><a href="https://source.android.com/docs/core/tests/tradefed" target="_blank">CTS Trade Federation</a></i> (<tt>cts-tradefed</tt>) - the test harness for CTS - can distribute / shard the tests across the multiple virtual devices </li>
-      <li>The CTS version can either use the default <a href="https://source.android.com/docs/compatibility/cts/downloads" target="_blank">google-released</a> version or a test suite built by the <i>CTS Builder</i> job</i></li>
+      <li>The CTS version can either use the default <a
+href="https://source.android.com/docs/compatibility/cts/downloads" target="_blank">google-released</a> version or a test suite built by the <i>AAOS Builder</i> job with <i>AAOS_BUILD_CTS</i> enabled.</i></li>
     </ul></p>
     <h4 style="margin-bottom: 10px;">Mandatory Parameters</h4>
     <ul>
@@ -43,7 +44,9 @@ pipelineJob('Android/Tests/CTS Execution') {
       description('''<p>The Jenkins GCE Clouds label for the Cuttlefish instance template, e.g.<br/></p>
         <ul>
           <li>cuttlefish-vm-main</li>
-          <li>cuttlefish-vm-v1180</li>
+          <li>cuttlefish-vm-v1270</li>
+          <li>cuttlefish-vm-main-arm64</li>
+          <li>cuttlefish-vm-v1270-arm64</li>
         </ul>''')
       trim(true)
     }
@@ -75,15 +78,16 @@ pipelineJob('Android/Tests/CTS Execution') {
 
     choiceParam {
       name('ANDROID_VERSION')
-      choices(['15', '14'])
-      description('''<p>Select Android version: Android 15 or 14<br/>
+      choices(['16', '15', '14'])
+      description('''<p>Select Android version: Android 16, 15 or 14<br/>
         Essential for picking the correct test hardness</p>''')
     }
 
     stringParam {
       name('CTS_DOWNLOAD_URL')
       defaultValue('')
-      description("""<p>Optional CTS test harness download URL.<br/>Use official CTS test harness (empty field) or one built from CTS Builder job and stored in GS Bucket, e.g.<br/>gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/CTS_Builder/&lt;BUILD_NUMBER&gt;/android-cts.zip</p>""")
+      description("""<p>Optional CTS test harness download URL.<br/>Use official CTS test harness (empty field) or one built from AAOS Builder job and stored in GCS Bucket,
+e.g.<br/>gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/AAOS_Builder/&lt;BUILD_NUMBER&gt;/android-cts.zip</p>""")
       trim(true)
     }
 
@@ -98,6 +102,20 @@ pipelineJob('Android/Tests/CTS Execution') {
       name('CTS_MODULE')
       defaultValue('CtsDeqpTestCases')
       description('''<p>CTS module to test, or leave empty if all modules are to be tested.</p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('CTS_RETRY_STRATEGY')
+      defaultValue('RETRY_ANY_FAILURE')
+      description('''<p>CTS <a href="https://source.android.com/reference/tradefed/com/android/tradefed/retry/RetryStrategy" target="_blank">--retry-strategy</a> option.</p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('CTS_MAX_TESTCASE_RUN_COUNT')
+      defaultValue('2')
+      description('''<p>CTS <a href="https://source.android.com/docs/core/tests/tradefed/testing/through-tf/auto-retry" target="_blank">--max-testcase-run-count</a> option dependent on retry strategy.</p>''')
       trim(true)
     }
 

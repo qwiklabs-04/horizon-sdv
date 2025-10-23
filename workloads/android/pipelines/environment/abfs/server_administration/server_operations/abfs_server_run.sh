@@ -13,6 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+set -euo pipefail
 
 function abfs_override_tf() {
   cat >main_override.tf <<EOL
@@ -40,6 +41,7 @@ function abfs_server_run() {
   export TF_VAR_sdv_network="sdv-network"
   export TF_VAR_abfs_server_machine_type="${SERVER_MACHINE_TYPE}"
   export TF_VAR_abfs_docker_image_uri="${DOCKER_REGISTRY_NAME}"
+  export TF_VAR_abfs_server_cos_image_ref="${ABFS_COS_IMAGE_REF}"
   export TF_VAR_abfs_license
   TF_VAR_abfs_license="$(echo "${ABFS_LICENSE_B64}" | base64 -d)"
 

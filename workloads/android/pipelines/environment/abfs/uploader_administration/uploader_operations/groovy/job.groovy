@@ -94,7 +94,7 @@ pipelineJob('Android/Environment/ABFS/Uploader Administration/Uploader Operation
     stringParam {
       name('UPLOADER_GIT_BRANCH')
       defaultValue('["android-15.0.0_r36"]')
-      description('''<p>Gerrit branch/tag to seed from.</p>''')
+      description('''<p>Gerrit branches/tags to seed from. Remove branch/tag and seed will be removed.</p>''')
       trim(true)
     }
 
@@ -116,6 +116,13 @@ pipelineJob('Android/Environment/ABFS/Uploader Administration/Uploader Operation
       name('ABFS_LICENSE_B64')
       defaultValue('')
       description('''<p>Optional: Base64 encoded version of the ABFS license file.</p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('ABFS_COS_IMAGE_REF')
+      defaultValue("${ABFS_COS_IMAGE_REF}")
+      description('''<p>ABFS Containerized OS images used on server and uploader instances.</p>''')
       trim(true)
     }
 

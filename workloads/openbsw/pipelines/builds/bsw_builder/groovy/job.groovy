@@ -38,7 +38,7 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('OPENBSW_GIT_URL')
-      defaultValue("https://github.com/eclipse-openbsw/openbsw.git")
+      defaultValue("${OPENBSW_GIT_URL}")
       description('''<p>OpenBSW Git URL.</p>''')
       trim(true)
     }
@@ -52,7 +52,7 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('POST_GIT_CLONE_COMMAND')
-      defaultValue('cd openbsw && git checkout 8c8b9334 && cd -')
+      defaultValue('cd openbsw && git checkout e1dc16274 && cd -')
       description('''<p>Optional additional commands post git clone and prior to build/make.<br/>
         <b>Note: </b>Single command line only, use logical operators to execute subsequent commands.<br/></p>''')
       trim(true)
@@ -72,6 +72,19 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
       description('''<p>Number of parallel sync jobs for <i>cmake</i>.<br/>
         If undefined, defaults to -j.</p>''')
       trim(true)
+    }
+
+    separator {
+      name('Documentation')
+      sectionHeader('Documentation')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
+    }
+
+    booleanParam {
+      name('BUILD_DOCUMENTATION')
+      defaultValue(false)
+      description('''<p>Create OpenBSW doxygen documentation and coverage report.</p>''')
     }
 
     separator {
@@ -95,8 +108,9 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('LIST_UNIT_TESTS_CMDLINE')
-      defaultValue('cmake --preset tests-debug && cmake --build --preset tests-debug --target help -j${CMAKE_SYNC_JOBS}')
-      description('''<p>Default Unit Test build command line''')
+      defaultValue('cmake --preset tests-posix-debug && cmake --build --preset tests-posix-debug --target help -j${CMAKE_SYNC_JOBS}')
+      description('''<p>Default List Unit Test build command line.<br/>
+      Options: <code>tests-posix-debug</code>, <code>tests-posix-release</code>, <code>tests-s32k1xx-debug</code>, <code>tests-s32k1xx-release</code></p>''')
       trim(true)
     }
 
@@ -109,14 +123,15 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
     stringParam {
       name('UNIT_TEST_TARGET')
       defaultValue('all')
-      description('''<p>Build specific Unit Test target, or all tests.''')
+      description('''<p>Build specific Unit Test target, or all tests.</p>''')
       trim(true)
     }
 
     stringParam {
       name('UNIT_TESTS_CMDLINE')
-      defaultValue('cmake --preset tests-debug && cmake --build --preset tests-debug --target ${UNIT_TEST_TARGET} -j${CMAKE_SYNC_JOBS}')
-      description('''<p>Default Unit Test build command line''')
+      defaultValue('cmake --preset tests-posix-debug && cmake --build --preset tests-posix-debug --target ${UNIT_TEST_TARGET} -j${CMAKE_SYNC_JOBS}')
+      description('''<p>Default Unit Test build command line.<br/>
+      Options: <code>tests-posix-debug</code>, <code>tests-posix-release</code>, <code>tests-s32k1xx-debug</code>, <code>tests-s32k1xx-release</code></p>''')
       trim(true)
     }
 
@@ -128,9 +143,10 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('RUN_UNIT_TESTS_CMDLINE')
-      defaultValue('ctest --preset tests-debug --parallel ${CMAKE_SYNC_JOBS}')
+      defaultValue('ctest --preset tests-posix-debug --parallel ${CMAKE_SYNC_JOBS}')
       description('''<p>Default Unit Test execution command line. If running a single unit test, ensure use of <code>--test-dir</code>, e.g. bspTest:<br/>
-      <code>ctest --test-dir build/tests/Debug/libs/bsw/bsp/test/gtest --parallel ${CMAKE_SYNC_JOBS}</code></p>''')
+      <code>ctest --test-dir build/tests/Debug/libs/bsw/bsp/test/gtest --parallel ${CMAKE_SYNC_JOBS}</code><br/>
+      Options: <code>tests-posix-debug</code>, <code>tests-posix-release</code>, <code>tests-s32k1xx-debug</code>, <code>tests-s32k1xx-release</code></p>''')
       trim(true)
     }
 
@@ -144,20 +160,42 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
     booleanParam {
       name('BUILD_POSIX')
       defaultValue(true)
-      description('''<p>Build POSIX Target.</p>''')
+      description('''<p>Build POSIX Target application.<br/>
+      This will upload the reference application, to artifact registry for use by the OpenBSW POSIX test job.</p>''')
     }
 
     stringParam {
       name('POSIX_BUILD_CMDLINE')
       defaultValue('cmake --preset posix && cmake --build --preset posix -j${CMAKE_SYNC_JOBS}')
-      description('''<p>Default POSIX build command line''')
+      description('''<p>Default POSIX build command line<br/>
+      Options: <code>posix</code></p>''')
       trim(true)
     }
 
     stringParam {
       name('POSIX_ARTIFACT')
       defaultValue('build/posix/executables/referenceApp/application/Release/app.referenceApp.elf')
-      description('''<p>Default POSIX artifact''')
+      description('''<p>Default POSIX artifact.</p>''')
+      trim(true)
+    }
+
+    separator {
+      name('POSIX pyTest')
+      sectionHeader('POSIX pyTest')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
+    }
+
+    booleanParam {
+      name('POSIX_PYTEST')
+      defaultValue(false)
+      description('''<p>Run pyTest on POSIX target application. Only applicable when <code>BUILD_POSIX</code> is selected.</p>''')
+    }
+
+    stringParam {
+      name('POSIX_PYTEST_CMDLINE')
+      defaultValue('./tools/enet/bring-up-ethernet.sh && ./tools/can/bring-up-vcan0.sh && cd test/pyTest/ && pytest --target=posix')
+      description('''<p>Default POSIX pyTest command line</p>''')
       trim(true)
     }
 
@@ -177,14 +215,16 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
     stringParam {
       name('NXP_S32K148_BUILD_CMDLINE')
       defaultValue('cmake --preset s32k148-gcc && cmake --build --preset s32k148-gcc -j${CMAKE_SYNC_JOBS}')
-      description('''<p>Default NXP S32K148 build command line''')
+      description('''<p>Default NXP S32K148 build command line.<br/>
+      Options: <code> s32k148-gcc</code>, <code>s32k148-clang</code><br/>
+      To build clang, override CC and CXX, e.g. <code>export CC=/usr/bin/llvm-arm/LLVM-ET-Arm-19.1.1-Linux-x86_64/bin/clang; export CXX=/usr/bin/llvm-arm/LLVM-ET-Arm-19.1.1-Linux-x86_64/bin/clang++; cmake ...</code> </p>''')
       trim(true)
     }
 
     stringParam {
       name('NXP_S32K148_ARTIFACT')
       defaultValue('build/s32k148-gcc/executables/referenceApp/application/RelWithDebInfo/app.referenceApp.elf')
-      description('''<p>Default NXP S32K148 artifact''')
+      description('''<p>Default NXP S32K148 artifact. Note if building clang, replace <code>s32k148-gcc</code> with <code>s32k148-clang</code></p>''')
       trim(true)
     }
 
@@ -208,6 +248,15 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
       description('''<p>OpenBSW Artifact Storage:<br/>
         <ul><li>GCS_BUCKET will store to cloud bucket storage</li>
         <li>Empty will result in nothing stored</li></ul></p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('STORAGE_BUCKET_DESTINATION')
+      defaultValue('')
+      description('''<p>OpenBSW Bucket Storage destination:<br/>
+        Leave empty for build to create default, e.g. gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Builds/BSW_Builder/<BUILD_NUMBER><br/>
+        Alternatively, override path, e.g gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Releases/010129</p>''')
       trim(true)
     }
   }

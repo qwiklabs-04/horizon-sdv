@@ -31,6 +31,9 @@ pipeline {
     ABFS_STORAGE_CLASS_SUFFIX="android-abfs"
     ABFS_STORAGE_SIZE="750Gi"
 
+
+    // FIXME - have one template
+
     // Define Pod Template in environment so we can override.
     def kubernetesPodTemplate = """
       apiVersion: v1
@@ -59,11 +62,13 @@ pipeline {
         containers:
         - name: builder
           image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}:${IMAGE_TAG}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
           command:
           - sleep
           args:
-          - 5h
+          - 10h
           resources:
             limits:
               cpu: 98000m

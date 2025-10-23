@@ -80,7 +80,7 @@ pipeline {
             container(name: 'buildkit') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                 sh '''
-                  cd "${WORKSPACE}/workloads/android/pipelines/environment/abfs/docker_infra_template/";
+                  cd "${WORKSPACE}/workloads/common/docker_image_template/";
                   buildctl build \
                    --frontend=dockerfile.v0 \
                    --local=dockerfile=. \

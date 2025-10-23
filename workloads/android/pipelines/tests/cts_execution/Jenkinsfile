@@ -50,6 +50,7 @@ cvdPipeline(
           sh '''
             ANDROID_VERSION=${ANDROID_VERSION} \
             CTS_DOWNLOAD_URL="${CTS_DOWNLOAD_URL}" \
+            CUTTLEFISH_DOWNLOAD_URL="${CUTTLEFISH_DOWNLOAD_URL}" \
             ./workloads/android/pipelines/tests/cts_execution/cts_initialise.sh
             CTS_TEST_LISTS_ONLY="$CTS_TEST_LISTS_ONLY}" \
             ./workloads/android/pipelines/tests/cts_execution/cts_execution.sh
@@ -76,6 +77,8 @@ cvdPipeline(
                 CTS_TESTPLAN="${CTS_TESTPLAN}" \
                 CTS_MODULE="${CTS_MODULE}" \
                 CTS_TIMEOUT="${CTS_TIMEOUT}" \
+                CTS_RETRY_STRATEGY="${CTS_RETRY_STRATEGY}" \
+                CTS_MAX_TESTCASE_RUN_COUNT="${CTS_MAX_TESTCASE_RUN_COUNT}" \
                 SHARD_COUNT="${NUM_INSTANCES}" \
                 ./workloads/android/pipelines/tests/cts_execution/cts_execution.sh
               '''

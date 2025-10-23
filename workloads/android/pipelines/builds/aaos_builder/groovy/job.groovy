@@ -20,7 +20,9 @@ pipelineJob('Android/Builds/AAOS Builder') {
       <li><a href="https://source.android.com/docs/automotive/start/avd/android_virtual_device" target="_blank">Android Virtual Devices</a> for use with <a href="https://source.android.com/docs/automotive/start/avd/android_virtual_device#share-an-avd-image-with-android-studio-users" target="_blank">Android Studio</a></li> 
       <li><a href="https://source.android.com/docs/devices/cuttlefish" target="_blank">Cuttlefish Virtual Devices</a> for use with <a href="https://source.android.com/docs/compatibility/cts" target="_blank">CTS</a></li>
       <li>Reference hardware platforms such as <a href="https://github.com/raspberry-vanilla/android_local_manifest" target="_blank">RPi</a> and <a href="https://source.android.com/docs/automotive/start/pixelxl" target="_blank">Pixel Tablets</a></li>
+      <li><a href="https://source.android.com/docs/compatibility/cts/development" target="_blank">CTS development</a>, reference <a href="https://source.android.com/docs/compatibility/cts" target="_blank">Compatibility Test Suite</a> and <a href="https://source.android.com/docs/core/tests/tradefed" target="_blank">CTS Trade Federataion</a></a>.</li>
     </ul>
+    <p>For <i>CTS development builds</i>, select a cuttlefish variety of <code>AAOS_LUNCH_TARGET</code> and enable <code>AAOS_BUILD_CTS</code> to build and create <code>android-cts.zip</code> for use in the <i>CTS Execution</i> test job.</p>
     <h4 style="margin-bottom: 10px;">Build Outputs</h4>
     <p>Build outputs are stored in a Google Cloud Storage bucket (refer to build artifact for location).</p>
     <h4 style="margin-bottom: 10px;">Viewing Artifacts on Google Cloud</h4>
@@ -37,7 +39,7 @@ pipelineJob('Android/Builds/AAOS Builder') {
 
     stringParam {
       name('AAOS_REVISION')
-      defaultValue('horizon/android-15.0.0_r36')
+      defaultValue('horizon/android-16.0.0_r2')
       description('''<p>Android revision tag/branch name.</p>''')
       trim(true)
     }
@@ -49,15 +51,23 @@ pipelineJob('Android/Builds/AAOS Builder') {
       trim(true)
     }
 
+    booleanParam {
+      name('AAOS_BUILD_CTS')
+      defaultValue(false)
+      description('''<p>Build the Android Automotive Compatibility Test Suite.<br/>
+        Only applicable for CF lunch targets, i.e aosp_cf.</p>''')
+    }
+
     choiceParam {
       name('ANDROID_VERSION')
       description('''<p>Version of disk pool to use for the build cache, select from one of the following options:</p>
           <ul>
             <li>default: let job determine pool.</li>
+            <li>16: Use the Android 16 disk pool, if target is for RPi the Android 16 RPi pool will be used.</li>
             <li>15: Use the Android 15 disk pool, if target is for RPi the Android 15 RPi pool will be used.</li>
             <li>14: Use the Android 14 disk pool, if target is for RPi the Android 14 RPi pool will be used.</li>
           </ul>''')
-      choices(['default', '15', '14'])
+      choices(['default', '16', '15', '14'])
     }
 
     stringParam {
@@ -111,6 +121,13 @@ pipelineJob('Android/Builds/AAOS Builder') {
       choices(['0', '15', '30', '45', '60', '120', '180'])
     }
 
+    separator {
+      name('Storage Options')
+      sectionHeader('Storage Options')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
+    }
+
     stringParam {
       name('AAOS_ARTIFACT_STORAGE_SOLUTION')
       defaultValue('GCS_BUCKET')
@@ -118,6 +135,22 @@ pipelineJob('Android/Builds/AAOS Builder') {
         <ul><li>GCS_BUCKET will store to cloud bucket storage</li>
         <li>Empty will result in nothing stored</li></ul></p>''')
       trim(true)
+    }
+
+    stringParam {
+      name('STORAGE_BUCKET_DESTINATION')
+      defaultValue('')
+      description('''<p>Storage bucket destination:<br/>
+        Leave empty for build to create default, e.g. gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/AAOS_Builder/<BUILD_NUMBER><br/>
+        Alternatively, override path, e.g gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Releases/010129</p>''')
+      trim(true)
+    }
+
+    separator {
+      name('Gerrit Changeset Options')
+      sectionHeader('Gerrit Changeset Options')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
     }
 
     stringParam {

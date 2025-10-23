@@ -50,6 +50,14 @@ pipelineJob('OpenBSW/Environment/Development Instance') {
       defaultValue(false)
       description('''<p>Enable if wishing to use MTK Connect to connect to the host instance.</p>''')
     }
+
+    stringParam {
+      name('NUM_HOST_INSTANCES')
+      defaultValue('1')
+      description('''<p>Number of host instances to create.<p>
+        <p>i.e. the number of devices to create in MTK Connect testbench.</p>''')
+      trim(true)
+    }
   }
 
   logRotator {

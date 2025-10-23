@@ -29,14 +29,14 @@ CUTTLEFISH_REPO_NAME=$(basename "${CUTTLEFISH_REPO_URL}" .git)
 CUTTLEFISH_UPDATE=${CUTTLEFISH_UPDATE:-false}
 
 # Android CTS test harness URLs, installed on host.
+# Allow override - users may install their own. Defaults set in Groovy.
 # https://source.android.com/docs/compatibility/cts/downloads
-CTS_ANDROID_15_URL="https://dl.google.com/dl/android/cts/android-cts-15_r5-linux_x86-x86.zip"
-CTS_ANDROID_14_URL="https://dl.google.com/dl/android/cts/android-cts-14_r9-linux_x86-x86.zip"
+CTS_ANDROID_16_URL=${CTS_ANDROID_16_URL:-}
+CTS_ANDROID_15_URL=${CTS_ANDROID_15_URL:-}
+CTS_ANDROID_14_URL=${CTS_ANDROID_14_URL:-}
+
 # NodeJS Version
 NODEJS_VERSION=${NODEJS_VERSION:-20.9.0}
-
-# Architecture x86_64 is only supported at this time.
-ARCHITECTURE=${ARCHITECTURE:-x86_64}
 
 # Support local vs Jenkins.
 if [ -z "${WORKSPACE}" ]; then
@@ -47,10 +47,9 @@ fi
 
 # Show variables.
 VARIABLES="Environment:
+        CTS_ANDROID_16_URL=${CTS_ANDROID_16_URL}
         CTS_ANDROID_15_URL=${CTS_ANDROID_15_URL}
         CTS_ANDROID_14_URL=${CTS_ANDROID_14_URL}
-
-        ARCHITECTURE=${ARCHITECTURE}
 "
 
 case "$0" in

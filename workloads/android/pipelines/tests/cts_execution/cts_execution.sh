@@ -64,6 +64,16 @@ function cts_run() {
         cts_module="--module ${CTS_MODULE}"
     fi
 
+    max_run_count=""
+    if [ -n "${CTS_MAX_TESTCASE_RUN_COUNT}" ]; then
+        max_run_count="--max-testcase-run-count ${CTS_MAX_TESTCASE_RUN_COUNT}"
+    fi
+
+    retry_strategy=""
+    if [ -n "${CTS_RETRY_STRATEGY}" ]; then
+        retry_strategy="--retry-strategy ${CTS_RETRY_STRATEGY}"
+    fi
+
     # Updates shards
     shards=$(adb devices | grep -c -E '0.+device$')
     echo "SHARD_COUNT = ${shards}"
@@ -71,7 +81,7 @@ function cts_run() {
     # WARNING: cts-tradefed does not work well with quotes. Also keep on single
     #          line to avoid strange behaviour.
     # shellcheck disable=SC2086
-    ./cts-tradefed run commandAndExit ${CTS_TESTPLAN} ${cts_module} --no-enable-parameterized-modules --max-testcase-run-count 2 --retry-strategy RETRY_ANY_FAILURE --reboot-at-last-retry --shard-count "${shards}" &
+    ./cts-tradefed run commandAndExit ${CTS_TESTPLAN} ${cts_module} --no-enable-parameterized-modules ${max_run_count} ${retry_strategy} --reboot-at-last-retry --shard-count "${shards}" &
     cts_wait_for_completion "$!"
 }
 

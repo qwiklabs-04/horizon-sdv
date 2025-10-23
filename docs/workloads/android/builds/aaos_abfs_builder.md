@@ -39,7 +39,7 @@ One-time setup requirements.
 
 The Android revision, i.e. branch or tag to build. Tested versions are below:
 
-- `android-15.0.0_r36` (bp1a)
+- `android-16.0.0_r2` (bp2a)
 
 ### `AAOS_LUNCH_TARGET` <a name="targets"></a>
 
@@ -56,6 +56,10 @@ Examples:
     -   `aosp_cf_arm64_auto-bp1a-userdebug`
 -   Pixel Devices:
     -   `aosp_tangorpro_car-bp1a-userdebug`
+
+### `AAOS_BUILD_CTS`
+
+This builds the Android Automotive Compatibility Test Suite ([CTS](https://source.android.com/docs/compatibility/cts)) test harness from the specified code base, if the `AAOS_LUNCH_TARGET` is that of Cuttlefish, i.e `aosp_cf`.
 
 ### `ANDROID_VERSION`
 
@@ -137,6 +141,15 @@ Define storage solution used to push artifacts.
 
 Currently `GCS_BUCKET` default pushes to GCS bucket, if empty then nothing will be stored.
 
+### `STORAGE_BUCKET_DESTINATION`
+
+Lets you override the default artifact storage destination. If not set, the build derives it automatically, for example:
+
+`gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/AAOS_Builder_ABFS/<BUILD_NUMBER>`
+
+The override must be a full GCS URI, including the `gs://` prefix, bucket name, and the artifact path. For example:
+
+`gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Releases/010129`
 
 ## SYSTEM VARIABLES <a name="system-variables"></a>
 

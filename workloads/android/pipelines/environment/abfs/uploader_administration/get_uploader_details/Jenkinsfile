@@ -57,48 +57,16 @@ pipeline {
             container(name: 'abfs-uploader-details') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                 sh '''
-                  /usr/bin/env bash -euo pipefail <<'BASH'
-                  # Strict mode for safer scripts:
-                  # -e exit on error, -u error on unset vars, -o pipefail fail on pipeline errors
-
-                  cd ./workloads/android/pipelines/environment/abfs/uploader_administration/get_uploader_details/
-
-                  artifact() {
-                    local file="${WORKSPACE}/${1}-status.txt"
-                    tee >(sed -E 's/\\x1b\\[[0-9;]*[A-Za-z]//g' >> "$file")
-                  }
-
-                  abfs_liveness() {
-                    [[ "$state" != "RUNNING" ]] && return
-                    gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "$1" --tunnel-through-iap --command="" > /dev/null 2>&1 || true
-                    { echo; echo "\033[1;32mABFS Process Liveness $1\033[0m"; } | artifact "$1"
-                    PROCESS=$(gcloud compute ssh --quiet --zone="${CLOUD_ZONE}" "${1}" --tunnel-through-iap --command="pgrep -a abfs" || true)
-                    if [ -n "${PROCESS}" ]; then
-                      { echo; echo "\033[1;32mABFS Alive:\033[0m ${PROCESS}"; echo; } | artifact "$1"
-                    else
-                      { echo; echo "\033[1;31mABFS Not running, consider DESTROY and APPLY\033[0m"; echo; } | artifact "${1}"
-                      exit 1
-                    fi
-                  }
-
-                  # List instances using gcloud's native filter and iterate safely.
-                  instances=($(gcloud compute instances list --zones="${CLOUD_ZONE}" --format="value(name)" --filter="name~'${UPLOADER_INSTANCE_PREFIX}'" || true))
-                  if [ "${#instances[@]}" -gt 0 ]; then
-                    for instance in "${instances[@]}"; do
-                      [[ -z "$instance" ]] && continue
-                      { echo; echo "\033[1;32mInstance $instance\033[0m"; } | artifact "$instance"; echo
-
-                      gcloud compute instances describe "$instance" --zone="${CLOUD_ZONE}" | artifact "$instance"
-                      state=$(gcloud compute instances describe "$instance" --zone="${CLOUD_ZONE}" --format="value(status)")
-                      { echo; echo "\033[1;32mInstance $instance state: $state\033[0m"; } | artifact "$instance"
-                      abfs_liveness "$instance" $state
-                    done
-                  else
-                    echo "\033[1;33mNo instances matching ${UPLOADER_INSTANCE_PREFIX}\033[0m"
-                  fi
+                  cd ./workloads/android/pipelines/environment/abfs/server_administration/get_server_details/
+                  INSTANCE_PREFIX=${UPLOADER_INSTANCE_PREFIX} \
+                  ZONE=${CLOUD_ZONE} \
+                  LIST_BRANCHES="true" \
+                  ./get_instance_details.sh
                 '''
-                archiveArtifacts artifacts: '*status*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
               }
+              archiveArtifacts artifacts: '*status*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+              archiveArtifacts artifacts: '*cloud-init*.log', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+              archiveArtifacts artifacts: '*journal*.log', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
             }
           }
         }

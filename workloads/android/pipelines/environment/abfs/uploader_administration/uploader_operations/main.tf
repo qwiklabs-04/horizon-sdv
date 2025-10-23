@@ -40,4 +40,5 @@ module "abfs-uploaders" {
   abfs_license                                   = var.abfs_license
   abfs_server_name                               = "abfs-server"
   abfs_gerrit_uploader_allow_stopping_for_update = true
+  abfs_uploader_cos_image_ref                    = var.abfs_uploader_cos_image_ref
 }

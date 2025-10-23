@@ -18,9 +18,9 @@
 # necessary tools and dependencies required for building OpenBSW targets,
 # such as the ARM toolchain, CMake, Clang tools, and other utilities.
 
-# Allow user to choose distribution, e.g. ubuntu:22.04
-ARG LINUX_DISTRIBUTION
-FROM --platform=linux/amd64 ${LINUX_DISTRIBUTION}
+# Allow user to choose distribution, e.g. ubuntu:20.04
+ARG LINUX_DISTRIBUTION=20.04
+FROM ${LINUX_DISTRIBUTION}
 
 # Overrides
 ARG ARM_TOOLCHAIN_URL
@@ -31,6 +31,7 @@ ARG LLVM_PROJECT_URL
 ARG NODEJS_VERSION
 ARG OPENBSW_GIT_URL
 ARG OPENBSW_GIT_BRANCH
+ARG POST_GIT_CLONE_COMMAND
 ARG PYTHON_VERSION
 ARG PYELFTOOLS_VERSION
 ARG SSCACHE_URL
@@ -42,12 +43,13 @@ RUN apt-get update -y && \
     apt-get -y upgrade && \
     apt-get install -y --no-install-recommends \
     apt-transport-https ca-certificates \
-    build-essential bzip2 clang-tidy curl file gawk \
+    build-essential bzip2 clang-tidy curl doxygen file gawk \
     gcc-11 g++11 gettext gettext-base git git-core gnupg \
     htop iproute2 iputils-ping kmod less lcov ninja-build \
     python"${PYTHON_VERSION}" python3-setuptools python3-pip \
     python3-requests python3-venv python3-virtualenv \
-    rsync ssh sudo tar tmux unzip vim wget xz-utils zip && \
+    rsync ruby-rubygems ssh sudo tar tmux unzip vim wget \
+    xz-utils zip && \
     apt-get update -y && apt install -y npm && \
     rm -rf /var/lib/apt/lists/*
 
@@ -97,7 +99,9 @@ RUN echo "\033[1;32mInstall ${CMAKE_URL}\033[0m" \
     && rm -rf sccache-*-x86_64-unknown-linux-musl \
     && echo 'export HISTFILE=/root/.bash_history/history' >> /root/.bashrc
 
-ENV PATH="/usr/bin/gcc-arm-none-eabi/bin:/usr/bin/llvm/bin:/usr/bin/llvm-arm/bin:usr/bin/clang-format-17:usr/bin/treefmt:/usr/bin/gcc:/usr/local/bin/sccache:${PATH}"
+RUN gem install esr-rim
+
+ENV PATH="/usr/bin/gcc-arm-none-eabi/bin:/usr/bin/llvm/bin:/usr/bin/llvm-arm/bin:${PATH}"
 
 # The following installs gcloud sdk required for uploading
 # artifacts to Google Cloud Storage. Remove if using alternative storage.
@@ -127,18 +131,22 @@ RUN git config --global user.email "bsw.jenkins@dummy.com" && \
     git config --global user.name "BSW Jenkins" && \
     git config --global color.ui false
 
-ENV PATH="/home/${USER}/.local/bin:/usr/local/bin:/usr/bin:$PATH"
+# Paths for pyTest
+ENV PATH="/home/${USER}/.local/bin:/usr/local/bin:/usr/bin:${PATH}"
+RUN echo "PATH=$PATH" >> /home/${USER}/.bash_aliases
 
 # Configure python packages together with OpenBSW pyTest and UdsTool
 RUN echo "\033[1;32mInstall python packages\033[0m" \
-    && pip3 install cmakelang pytest rich pyelftools=="${PYELFTOOLS_VERSION}" \
+    && pip3 install cmakelang coverxygen pytest pyelftools=="${PYELFTOOLS_VERSION}" rich \
     && git clone "${OPENBSW_GIT_URL}" -b "${OPENBSW_GIT_BRANCH}" openbsw \
     && cd openbsw \
+    && if [ ! -z "${POST_GIT_CLONE_COMMAND}" ]; then eval "${POST_GIT_CLONE_COMMAND}"; fi \
     && echo "\033[1;32mInstall pyTest\033[0m" \
     && pip3 install -r test/pyTest/requirements.txt \
     && echo "\033[1;32mInstall UdsTool\033[0m" \
-    && pip3 install -r tools/UdsTool/requirements.txt \
-    && cd - \
+    && cd tools/UdsTool \
+    && pip install . \
+    && cd ../../../ \
     && rm -rf openbsw
 
 # Node version manager

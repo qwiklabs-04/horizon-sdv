@@ -44,13 +44,14 @@ pipeline {
 
   parameters {
     choice(name: 'SEED_WORKLOAD',
-           choices: ['none', 'all', 'android', 'openbsw', 'cloud-workstations'],
+           choices: ['none', 'all', 'android', 'openbsw', 'utilities', 'cloud-workstations'],
            description: '''<p>Workload to seed:</p>
              <ul>
              <li>none: seed nothing, derisk triggering by accident.</li>
              <li>all: seed all workloads.</li>
              <li>android: seed the Android workload.</li>
              <li>openbsw: seed the OpenBSW workload.</li>
+             <li>utilities: seed the Utilities jobs.</li>
              <li>cloud-workstations: seed the Cloud Workstations workload.</li>
            </ul>''')
 
@@ -88,7 +89,7 @@ pipeline {
            description: '''<p>The Jenkins GCE Clouds label for jobs dependent on the Cuttlefish instance template, e.g.<br/></p>
                         <ul>
                           <li>cuttlefish-vm-main</li>
-                          <li>cuttlefish-vm-v1180</li>
+                          <li>cuttlefish-vm-v1270</li>
                         </ul>''',
            trim: true)
 
@@ -105,8 +106,13 @@ pipeline {
            trim: true)
 
     string(name: 'ABFS_CASFS_VERSION',
-           defaultValue: "0.0.33-19-gd8f7000",
-           description: '''<p>ABFS CASFS version may differ from ABFS_VERSION, e.g. 0.0.33-10-g654e659</p>''',
+           defaultValue: "0.0.33-30-g64ff253",
+           description: '''<p>ABFS CASFS version may differ from ABFS_VERSION, e.g. 0.0.33-30-g64ff253</p>''',
+           trim: true)
+
+    string(name: 'ABFS_COS_IMAGE_REF',
+           defaultValue: "projects/cos-cloud/global/images/family/cos-113-lts",
+           description: '''<p>ABFS Containerized OS images used on server and uploader instances.</p>''',
            trim: true)
 
     string(name: 'ABFS_REPOSITORY',
@@ -132,6 +138,11 @@ pipeline {
              <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''',
            trim: true)
 
+    string(name: 'OPENBSW_GIT_URL',
+           defaultValue: 'https://github.com/eclipse-openbsw/openbsw.git',
+           description: '''<p>OpenBSW Git URL.</p>''',
+           trim: true)
+
     string(name: 'OPENBSW_GIT_BRANCH',
            defaultValue: 'main',
            description: '''<p>OpenBSW revision tag/branch name.</p>''',
@@ -145,7 +156,7 @@ pipeline {
     )
 
     string(name: 'NODEJS_VERSION',
-           defaultValue: "24.9.0",
+           defaultValue: "25.0.0",
            description: '''<p>NodeJS version.<br/>
              This is installed using <i>nvm</i> on the instance template to be compatible with other tooling.</p>''',
            trim: true)
@@ -174,6 +185,7 @@ pipeline {
                   ['${REPO_SYNC_JOBS}', "${REPO_SYNC_JOBS}"],
                   ['${ABFS_VERSION}', "${ABFS_VERSION}" ],
                   ['${ABFS_CASFS_VERSION}', "${ABFS_CASFS_VERSION}" ],
+                  ['${ABFS_COS_IMAGE_REF}', "${ABFS_COS_IMAGE_REF}" ],
                   ['${ABFS_REPOSITORY}', "${ABFS_REPOSITORY}" ],
                   ['${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
                   ['${UPLOADER_MANIFEST_SERVER}', "${UPLOADER_MANIFEST_SERVER}"],
@@ -233,6 +245,7 @@ pipeline {
                   ['${OPENBSW_BUILD_BUCKET_ROOT_NAME}', "${OPENBSW_BUILD_BUCKET_ROOT_NAME}"],
                   ['${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
                   ['${OPENBSW_IMAGE_TAG}', "${OPENBSW_IMAGE_TAG}"],
+                  ['${OPENBSW_GIT_URL}', "${OPENBSW_GIT_URL}"],
                   ['${OPENBSW_GIT_BRANCH}', "${OPENBSW_GIT_BRANCH}"],
                   ['${NODEJS_VERSION}', "${NODEJS_VERSION}"],
                   ['${BUILDKIT_RELEASE_TAG}', "${BUILDKIT_RELEASE_TAG}"],
@@ -263,7 +276,57 @@ pipeline {
         stage ("Seed jobs") {
           steps {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-              jobDsl targets: 'workloads/openbsw/pipelines/*/*/groovy/*.groovy', sandbox: true
+              jobDsl targets: 'workloads/openbsw/pipelines/**/groovy/*.groovy', sandbox: true
+            }
+          }
+        }
+      }
+    }
+
+    stage ('Workload: Seed Utilities') {
+      when {
+        anyOf {
+          expression { env.SEED_WORKLOAD == 'utilities' }
+          expression { env.SEED_WORKLOAD == 'all' }
+        }
+      }
+
+      stages {
+        stage ("Prepare Groovy files") {
+          steps {
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+              script {
+                replacements += [
+                  ['${BUILDKIT_RELEASE_TAG}', "${BUILDKIT_RELEASE_TAG}"],
+                  ['${DOCKER_CREDENTIALS_URL}', "${DOCKER_CREDENTIALS_URL}"],
+                  ['${UTILITIES_DOCKER_ARTIFACT_PATH_NAME}', "${UTILITIES_DOCKER_ARTIFACT_PATH_NAME}"]
+                ]
+
+                def files = sh(returnStdout: true, script: "find workloads/utilities -name '*.groovy'").trim().split('\n')
+
+                files.each { file ->
+                  replacements.each { replacement ->
+                    def escapedValue = replacement[1].replace('/', '\\/')
+                    sh "sed -i 's/${replacement[0]}/${escapedValue}/g' ${file}"
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        stage ("Seed folders") {
+          steps {
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+              jobDsl targets: 'workloads/utilities/groovy/folders.groovy', sandbox: true
+            }
+          }
+        }
+
+        stage ("Seed jobs") {
+          steps {
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+              jobDsl targets: 'workloads/utilities/**/groovy/*.groovy', sandbox: true
             }
           }
         }

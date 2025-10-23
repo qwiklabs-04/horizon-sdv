@@ -36,7 +36,9 @@ pipelineJob('Android/Tests/CVD Launcher') {
       description('''<p>The Jenkins GCE Clouds label for the Cuttlefish instance template, e.g.<br/></p>
         <ul>
           <li>cuttlefish-vm-main</li>
-          <li>cuttlefish-vm-v1180</li>
+          <li>cuttlefish-vm-v1270</li>
+          <li>cuttlefish-vm-main-arm64</li>
+          <li>cuttlefish-vm-v1270-arm64</li>
         </ul>''')
       trim(true)
     }

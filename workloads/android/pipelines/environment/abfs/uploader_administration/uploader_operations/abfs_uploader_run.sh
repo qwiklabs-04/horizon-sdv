@@ -45,6 +45,7 @@ function abfs_uploader_run() {
   export TF_VAR_abfs_gerrit_uploader_manifest_server=${UPLOADER_MANIFEST_SERVER}
   export TF_VAR_abfs_gerrit_uploader_git_branch=${UPLOADER_GIT_BRANCH}
   export TF_VAR_abfs_manifest_file=${UPLOADER_MANIFEST_FILE}
+  export TF_VAR_abfs_uploader_cos_image_ref="${ABFS_COS_IMAGE_REF}"
   export TF_VAR_abfs_license
   TF_VAR_abfs_license="$(echo "${ABFS_LICENSE_B64}" | base64 -d)"
 

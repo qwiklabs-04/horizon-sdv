@@ -52,7 +52,7 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('POST_GIT_CLONE_COMMAND')
-      defaultValue('cd openbsw && git checkout de546e82 && cd -')
+      defaultValue('cd openbsw && git checkout e1dc16274 && cd -')
       description('''<p>Optional additional commands post git clone and prior to build/make.<br/>
         <b>Note: </b>Single command line only, use logical operators to execute subsequent commands.<br/></p>''')
       trim(true)
@@ -123,7 +123,7 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
     stringParam {
       name('UNIT_TEST_TARGET')
       defaultValue('all')
-      description('''<p>Build specific Unit Test target, or all tests.''')
+      description('''<p>Build specific Unit Test target, or all tests.</p>''')
       trim(true)
     }
 
@@ -175,7 +175,7 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
     stringParam {
       name('POSIX_ARTIFACT')
       defaultValue('build/posix/executables/referenceApp/application/Release/app.referenceApp.elf')
-      description('''<p>Default POSIX artifact''')
+      description('''<p>Default POSIX artifact.</p>''')
       trim(true)
     }
 
@@ -195,7 +195,7 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
     stringParam {
       name('POSIX_PYTEST_CMDLINE')
       defaultValue('./tools/enet/bring-up-ethernet.sh && ./tools/can/bring-up-vcan0.sh && cd test/pyTest/ && pytest --target=posix')
-      description('''<p>Default POSIX pyTest command line''')
+      description('''<p>Default POSIX pyTest command line</p>''')
       trim(true)
     }
 
@@ -216,14 +216,15 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
       name('NXP_S32K148_BUILD_CMDLINE')
       defaultValue('cmake --preset s32k148-gcc && cmake --build --preset s32k148-gcc -j${CMAKE_SYNC_JOBS}')
       description('''<p>Default NXP S32K148 build command line.<br/>
-      Options: <code> s32k148-gcc</code>, <code>s32k148-clang</code></p>''')
+      Options: <code> s32k148-gcc</code>, <code>s32k148-clang</code><br/>
+      To build clang, override CC and CXX, e.g. <code>export CC=/usr/bin/llvm-arm/LLVM-ET-Arm-19.1.1-Linux-x86_64/bin/clang; export CXX=/usr/bin/llvm-arm/LLVM-ET-Arm-19.1.1-Linux-x86_64/bin/clang++; cmake ...</code> </p>''')
       trim(true)
     }
 
     stringParam {
       name('NXP_S32K148_ARTIFACT')
       defaultValue('build/s32k148-gcc/executables/referenceApp/application/RelWithDebInfo/app.referenceApp.elf')
-      description('''<p>Default NXP S32K148 artifact''')
+      description('''<p>Default NXP S32K148 artifact. Note if building clang, replace <code>s32k148-gcc</code> with <code>s32k148-clang</code></p>''')
       trim(true)
     }
 

@@ -52,7 +52,7 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('POST_GIT_CLONE_COMMAND')
-      defaultValue('cd openbsw && git checkout 8c8b9334 && cd -')
+      defaultValue('cd openbsw && git checkout de546e82 && cd -')
       description('''<p>Optional additional commands post git clone and prior to build/make.<br/>
         <b>Note: </b>Single command line only, use logical operators to execute subsequent commands.<br/></p>''')
       trim(true)
@@ -108,8 +108,9 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('LIST_UNIT_TESTS_CMDLINE')
-      defaultValue('cmake --preset tests-debug && cmake --build --preset tests-debug --target help -j${CMAKE_SYNC_JOBS}')
-      description('''<p>Default Unit Test build command line''')
+      defaultValue('cmake --preset tests-posix-debug && cmake --build --preset tests-posix-debug --target help -j${CMAKE_SYNC_JOBS}')
+      description('''<p>Default List Unit Test build command line.<br/>
+      Options: <code>tests-posix-debug</code>, <code>tests-posix-release</code>, <code>tests-s32k1xx-debug</code>, <code>tests-s32k1xx-release</code></p>''')
       trim(true)
     }
 
@@ -128,8 +129,9 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('UNIT_TESTS_CMDLINE')
-      defaultValue('cmake --preset tests-debug && cmake --build --preset tests-debug --target ${UNIT_TEST_TARGET} -j${CMAKE_SYNC_JOBS}')
-      description('''<p>Default Unit Test build command line''')
+      defaultValue('cmake --preset tests-posix-debug && cmake --build --preset tests-posix-debug --target ${UNIT_TEST_TARGET} -j${CMAKE_SYNC_JOBS}')
+      description('''<p>Default Unit Test build command line.<br/>
+      Options: <code>tests-posix-debug</code>, <code>tests-posix-release</code>, <code>tests-s32k1xx-debug</code>, <code>tests-s32k1xx-release</code></p>''')
       trim(true)
     }
 
@@ -141,9 +143,10 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('RUN_UNIT_TESTS_CMDLINE')
-      defaultValue('ctest --preset tests-debug --parallel ${CMAKE_SYNC_JOBS}')
+      defaultValue('ctest --preset tests-posix-debug --parallel ${CMAKE_SYNC_JOBS}')
       description('''<p>Default Unit Test execution command line. If running a single unit test, ensure use of <code>--test-dir</code>, e.g. bspTest:<br/>
-      <code>ctest --test-dir build/tests/Debug/libs/bsw/bsp/test/gtest --parallel ${CMAKE_SYNC_JOBS}</code></p>''')
+      <code>ctest --test-dir build/tests/Debug/libs/bsw/bsp/test/gtest --parallel ${CMAKE_SYNC_JOBS}</code><br/>
+      Options: <code>tests-posix-debug</code>, <code>tests-posix-release</code>, <code>tests-s32k1xx-debug</code>, <code>tests-s32k1xx-release</code></p>''')
       trim(true)
     }
 
@@ -164,7 +167,8 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
     stringParam {
       name('POSIX_BUILD_CMDLINE')
       defaultValue('cmake --preset posix && cmake --build --preset posix -j${CMAKE_SYNC_JOBS}')
-      description('''<p>Default POSIX build command line''')
+      description('''<p>Default POSIX build command line<br/>
+      Options: <code>posix</code></p>''')
       trim(true)
     }
 
@@ -211,7 +215,8 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
     stringParam {
       name('NXP_S32K148_BUILD_CMDLINE')
       defaultValue('cmake --preset s32k148-gcc && cmake --build --preset s32k148-gcc -j${CMAKE_SYNC_JOBS}')
-      description('''<p>Default NXP S32K148 build command line''')
+      description('''<p>Default NXP S32K148 build command line.<br/>
+      Options: <code> s32k148-gcc</code>, <code>s32k148-clang</code></p>''')
       trim(true)
     }
 

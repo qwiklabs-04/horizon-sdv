@@ -114,9 +114,9 @@ POSIX_PYTEST=${POSIX_PYTEST:-false}
 BUILD_DOCUMENTATION=${BUILD_DOCUMENTATION:-false}
 
 # Configure and generate the build systems before building.
-UNIT_TESTS_CMDLINE=${UNIT_TESTS_CMDLINE:-cmake --preset tests-debug && cmake --build --preset tests-debug --target ${UNIT_TEST_TARGET} -j${CMAKE_SYNC_JOBS}}
-LIST_UNIT_TESTS_CMDLINE=${LIST_UNIT_TESTS_CMDLINE:-cmake --preset tests-debug && cmake --build --preset tests-debug --target help -j${CMAKE_SYNC_JOBS}}
-RUN_UNIT_TESTS_CMDLINE=${RUN_UNIT_TESTS_CMDLINE:-ctest --preset tests-debug --parallel ${CMAKE_SYNC_JOBS}}
+UNIT_TESTS_CMDLINE=${UNIT_TESTS_CMDLINE:-cmake --preset tests-posix-debug && cmake --build --preset tests-debug --target ${UNIT_TEST_TARGET} -j${CMAKE_SYNC_JOBS}}
+LIST_UNIT_TESTS_CMDLINE=${LIST_UNIT_TESTS_CMDLINE:-cmake --preset tests-posix-debug && cmake --build --preset tests-debug --target help -j${CMAKE_SYNC_JOBS}}
+RUN_UNIT_TESTS_CMDLINE=${RUN_UNIT_TESTS_CMDLINE:-ctest --preset tests-posix-debug --parallel ${CMAKE_SYNC_JOBS}}
 POSIX_BUILD_CMDLINE=${POSIX_BUILD_CMDLINE:-cmake --preset posix && cmake --build --preset posix -j${CMAKE_SYNC_JOBS}}
 NXP_S32K148_BUILD_CMDLINE=${NXP_S32K148_BUILD_CMDLINE:-cmake --preset s32k148-gcc && cmake --build --preset s32k148-gcc -j${CMAKE_SYNC_JOBS}}
 POSIX_PYTEST_CMDLINE=${POSIX_PYTEST_CMDLINE:-./tools/enet/bring-up-ethernet.sh && ./tools/can/bring-up-vcan0.sh && cd test/pyTest/ && pytest --target=posix}

@@ -65,7 +65,7 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
     }
     stringParam {
       name('POST_GIT_CLONE_COMMAND')
-      defaultValue('git checkout 8c8b9334')
+      defaultValue('git checkout de546e82')
       description('''<p>Optional additional commands post git clone and prior to build/make.<br/>
         <b>Note: </b>Single command line only, use logical operators to execute subsequent commands.<br/></p>''')
       trim(true)
@@ -85,7 +85,7 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
     }
     stringParam {
       name('ARM_TOOLCHAIN_URL')
-      defaultValue('https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2')
+      defaultValue('https://developer.arm.com/-/media/Files/downloads/gnu/14.3.rel1/binrel/arm-gnu-toolchain-14.3.rel1-x86_64-arm-none-eabi.tar.xz')
       description('''<p>ARM GNU toolchain archive URL.</p>''')
       trim(true)
     }

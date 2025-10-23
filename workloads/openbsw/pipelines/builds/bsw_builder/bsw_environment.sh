@@ -183,11 +183,15 @@ fi
 if ${BUILD_NXP_S32K148}; then
     OPENBSW_ARTIFACT_LIST+=(
         "${OPENBSW_GIT_DIR}/artifacts/s32k148-gcc"
+        "${OPENBSW_GIT_DIR}/artifacts/s32k148-clang"
     )
     POST_BUILD_COMMANDS+=(
         "mkdir -p artifacts/s32k148-gcc"
+        "mkdir -p artifacts/s32k148-clang"
         "cp -f ${NXP_S32K148_ARTIFACT} artifacts/s32k148-gcc || true"
+        "cp -f ${NXP_S32K148_ARTIFACT} artifacts/s32k148-clang || true"
         "cp -f build/s32k148-gcc/application.map artifacts/s32k148-gcc || true"
+        "cp -f build/s32k148-clang/application.map artifacts/s32k148-clang || true"
     )
 fi
 

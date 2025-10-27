@@ -22,7 +22,7 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: default
+  project: horizon-sdv
   source:
     repoURL: {{ .Values.spec.source.repoURL }}
     path: gitops/env/stage2/apps/token-injector

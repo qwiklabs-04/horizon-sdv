@@ -192,7 +192,13 @@ pipeline {
                   ['${JENKINS_GCE_CLOUD_LABEL}', "${CUTTLEFISH_GCE_CLOUD_LABEL}" ],
                   ['${NODEJS_VERSION}', "${NODEJS_VERSION}"],
                   ['${BUILDKIT_RELEASE_TAG}', "${BUILDKIT_RELEASE_TAG}"],
-                  ['${DOCKER_CREDENTIALS_URL}', "${DOCKER_CREDENTIALS_URL}"]
+                  ['${DOCKER_CREDENTIALS_URL}', "${DOCKER_CREDENTIALS_URL}"],
+                  ['${AOSP_MIRROR_WORKLOADS_ENV_IMAGE_NAME}', "${AOSP_MIRROR_WORKLOADS_ENV_IMAGE_NAME}"],
+                  ['${AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME}', "${AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME}"],
+                  ['${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}', "${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}"],
+                  ['${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}', "${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}"],
+                  ['${AOSP_MIRROR_PRESET_NETWORK_NAME}', "${AOSP_MIRROR_PRESET_NETWORK_NAME}"],
+                  ['${AOSP_MIRROR_PRESET_SUBNETWORK_NAME}', "${AOSP_MIRROR_PRESET_SUBNETWORK_NAME}"]
                  ]
 
                 def files = sh(returnStdout: true, script: "find workloads/android -name '*.groovy'").trim().split('\n')

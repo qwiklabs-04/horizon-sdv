@@ -435,6 +435,8 @@ spec:
                           value: {{ .Values.config.workloads.android.url }}
                         - key: "HORIZON_GITHUB_BRANCH"
                           value: {{ .Values.config.workloads.android.branch }}
+                        - key: "TERRAFORM_WORKLOADS_SERVICE_ACCOUNT"
+                          value: {{ .Values.config.workloads.common.serviceAccounts.terraformWorkloadsSA.name }}
                         - key: "JENKINS_SERVICE_ACCOUNT"
                           value: "jenkins-sa"
                         - key: "JENKINS_AAOS_BUILD_CACHE_STORAGE_PREFIX"
@@ -449,6 +451,19 @@ spec:
                           value: "horizon-sdv/aaos-abfs-builder"
                         - key: "UTILITIES_DOCKER_ARTIFACT_PATH_NAME"
                           value: "horizon-sdv/gcp-utilities"
+
+                        - key: "AOSP_MIRROR_WORKLOADS_ENV_IMAGE_NAME"
+                          value: {{ .Values.config.workloads.android.aospMirror.workloadEnv.image }}
+                        - key: "AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME"
+                          value: {{ .Values.config.workloads.android.aospMirror.mirrorPresets.filestorePVCName }}
+                        - key: "AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER"
+                          value: {{ .Values.config.workloads.android.aospMirror.mirrorPresets.filestorePVCMountPathInContainer }}
+                        - key: "AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME"
+                          value: {{ .Values.config.workloads.android.aospMirror.mirrorPresets.mirrorRootSubdirectoryName }}
+                        - key: "AOSP_MIRROR_PRESET_NETWORK_NAME"
+                          value: {{ .Values.config.workloads.android.aospMirror.mirrorPresets.network }}
+                        - key: "AOSP_MIRROR_PRESET_SUBNETWORK_NAME"
+                          value: {{ .Values.config.workloads.android.aospMirror.mirrorPresets.subnetwork }}
 
                         - key: "CLOUD_WS_WORKLOADS_ENV_IMAGE_NAME"
                           value: {{ .Values.config.workloads.cloudWorkstations.workloadEnv.image }}

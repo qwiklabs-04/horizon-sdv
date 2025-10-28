@@ -15,8 +15,24 @@
 config:
   name: Horizon SDV
   workloads:
+    common:
+      serviceAccounts:
+        terraformWorkloadsSA:
+          name: "terraform-workloads-sa"
     android:
       repoSyncJobs: 2
+      aospMirror:
+        workloadEnv:
+          image: "horizon-sdv/aosp-mirror-workloads/env"
+        mirrorPresets:
+          filestorePVCName: 'sdv-aosp-mirror-filestore-pvc'
+          filestorePVCMountPathInContainer: '/mnt/mirror-filestore-pvc'
+          mirrorRootSubdirectoryName: 'horizon-mirrors'
+          network: 'sdv-network'
+          subnetwork: 'sdv-subnet'
+          # region: defined in argocd-config.yaml
+          # zone: defined in argocd-config.yaml
+          # projectID: defined in argocd-config.yaml
     cloudWorkstations:
       workloadEnv:
         image: "horizon-sdv/cloud-ws-workloads/env"

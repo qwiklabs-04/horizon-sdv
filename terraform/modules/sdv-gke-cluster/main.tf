@@ -27,6 +27,9 @@ resource "google_container_cluster" "sdv_cluster" {
   subnetwork               = var.subnetwork
   remove_default_node_pool = true
   initial_node_count       = 1
+  fleet {
+    project = "${var.project_id}"
+  }
 
   # Set `deletion_protection` to `true` will ensure that one cannot
   # accidentally delete this instance by use of Terraform.

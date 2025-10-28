@@ -72,6 +72,16 @@ pipeline {
            description: '''<p>Docker credentials helper URL, e.g. <a target="_blank" href=https://cloud.google.com/artifact-registry/docs/docker/authentication#standalone-helper>credentials helper</a>.</p>''',
            trim: true)
 
+    string(name: 'GCLOUD_CLI_VERSION',
+           defaultValue: '544.0.0-0',
+           description: '''<p>Version of <a target="_blank" https://docs.cloud.google.com/sdk/docs/release-notes>Google Cloud CLI</a>.<br/>Note: Define <code>latest</code> if wishing to use the latest available version.</p>''',
+           trim: true)
+
+    string(name: 'KUBECTL_VERSION',
+           defaultValue: '1:544.0.0-0',
+           description: '''<p>Version of <code>kubectl</code>. Typically based on <a target="_blank" https://docs.cloud.google.com/sdk/docs/release-notes>Google Cloud CLI</a><br/>Note: Define <code>latest</code> if wishing to use the latest available version.</p>''',
+           trim: true)
+
     separator(
       name: "Android Workload",
       sectionHeader: "Android Parameters",
@@ -188,6 +198,8 @@ pipeline {
                   ['${ABFS_COS_IMAGE_REF}', "${ABFS_COS_IMAGE_REF}" ],
                   ['${ABFS_REPOSITORY}', "${ABFS_REPOSITORY}" ],
                   ['${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
+                  ['${GCLOUD_CLI_VERSION}', "${GCLOUD_CLI_VERSION}"],
+                  ['${KUBECTL_VERSION}', "${KUBECTL_VERSION}"],
                   ['${UPLOADER_MANIFEST_SERVER}', "${UPLOADER_MANIFEST_SERVER}"],
                   ['${JENKINS_GCE_CLOUD_LABEL}', "${CUTTLEFISH_GCE_CLOUD_LABEL}" ],
                   ['${NODEJS_VERSION}', "${NODEJS_VERSION}"],
@@ -242,6 +254,8 @@ pipeline {
                 currentBuild.description = "$BUILD_USER" + "<br>" + "${SEED_WORKLOAD}"
 
                 replacements += [
+                  ['${GCLOUD_CLI_VERSION}', "${GCLOUD_CLI_VERSION}"],
+                  ['${KUBECTL_VERSION}', "${KUBECTL_VERSION}"],
                   ['${OPENBSW_BUILD_BUCKET_ROOT_NAME}', "${OPENBSW_BUILD_BUCKET_ROOT_NAME}"],
                   ['${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
                   ['${OPENBSW_IMAGE_TAG}', "${OPENBSW_IMAGE_TAG}"],
@@ -298,6 +312,8 @@ pipeline {
               script {
                 replacements += [
                   ['${BUILDKIT_RELEASE_TAG}', "${BUILDKIT_RELEASE_TAG}"],
+                  ['${GCLOUD_CLI_VERSION}', "${GCLOUD_CLI_VERSION}"],
+                  ['${KUBECTL_VERSION}', "${KUBECTL_VERSION}"],
                   ['${DOCKER_CREDENTIALS_URL}', "${DOCKER_CREDENTIALS_URL}"],
                   ['${UTILITIES_DOCKER_ARTIFACT_PATH_NAME}', "${UTILITIES_DOCKER_ARTIFACT_PATH_NAME}"]
                 ]

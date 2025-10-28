@@ -24,6 +24,10 @@ ARG ABFS
 ARG GOOGLE_DISTRIBUTION_REGISTRY
 ARG ABFS_DISTRIBUTION_REGISTRY
 
+# Gcloud CLI and kubectl version.
+ARG GCLOUD_CLI_VERSION="latest"
+ARG KUBECTL_VERSION="latest"
+
 # Install packages required for building AAOSP targets.
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends apt-utils && \
@@ -48,7 +52,10 @@ RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
     gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | \
     tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
-    apt-get update -y && apt-get install -y google-cloud-cli kubectl && \
+    apt-get update -y && \
+    [ "$GCLOUD_CLI_VERSION" = "latest" ] && apt-get install -y google-cloud-cli || \
+      apt-get install -y google-cloud-cli="$GCLOUD_CLI_VERSION" google-cloud-cli-anthoscli="$GCLOUD_CLI_VERSION" && \
+    [ "$KUBECTL_VERSION" = "latest" ] &&  apt-get install -y kubectl || apt-get install -y kubectl="$KUBECTL_VERSION" && \
     apt-get -y clean
 # GCS:END
 

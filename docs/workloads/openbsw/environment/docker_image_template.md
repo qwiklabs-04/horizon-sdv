@@ -98,11 +98,21 @@ URL of the treefmt tools to install in the Docker image.
 
 ### `BUILDKIT_RELEASE_TAG`
 
-The version of Builkit to use to build the container image.
+The version of Buildkit to use to build the container image.
 
 ### `DOCKER_CREDENTIALS_URL`
 
 URL of Google docker credentials helper, required to allow access to the project artifact registry.
+
+### `GCLOUD_CLI_VERSION`
+
+Version of [Google Cloud CLI](https://docs.cloud.google.com/sdk/docs/release-notes) to install.
+Define `latest` if wishing to use the latest available version.
+
+### `KUBECTL_VERSION`
+
+Version of `kubectl` to install. The version is typically `1:${GCLOUD_CLI_VERSION}`.
+Define `latest` if wishing to use the latest available version.
 
 ## SYSTEM VARIABLES <a name="system-variables"></a>
 

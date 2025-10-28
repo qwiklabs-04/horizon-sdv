@@ -23,8 +23,6 @@ CACERT=${SERVICEACCOUNT}/ca.crt
 npm install
 node keycloak.mjs
 SECRET=$(cat client-grafana.json | jq -r ".secret")
-DOMAIN_BS=$(echo $DOMAIN | sed 's:/:\\/:g')
-sed -i "s/##DOMAIN##/${DOMAIN_BS}/g" ./secret.json
 sed -i "s/##SECRET##/${SECRET}/g" ./secret.json
 
 curl --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X DELETE ${APISERVER}/api/v1/namespaces/monitoring/secrets/grafana-keycloak-secret

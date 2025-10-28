@@ -18,6 +18,7 @@ WORKDIR /home/node
 ADD package.json ./
 ADD keycloak.mjs ./
 ADD configure.sh ./
+ADD secret.json ./
 RUN chmod +x configure.sh
 USER node
 CMD ["/bin/bash", "-c", "/home/node/configure.sh"]

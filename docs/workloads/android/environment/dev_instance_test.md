@@ -41,6 +41,10 @@ Note: The value provided must correspond to a cloud instance or the job will han
 
 This is the maximum time that the instance may be running before it is automatically terminated and deleted. This is important to avoid leaving expensive instances in running state.
 
+### `NUM_HOST_INSTANCES`
+
+Number of host instances to create for test instances. This is effectively the number of devices that will be created associated with the development instance testbench in MTK Connect.
+
 ## SYSTEM VARIABLES <a name="system-variables"></a>
 
 There are a number of system environment variables that are unique to each platform but required by Jenkins build, test and environment pipelines.

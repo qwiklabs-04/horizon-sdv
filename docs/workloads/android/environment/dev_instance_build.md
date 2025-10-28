@@ -49,6 +49,10 @@ This is the maximum time that the instance may be running before it is automatic
 
 Enable if wishing to use MTK Connect to connect to the host instance rather than kubectl.
 
+### `NUM_HOST_INSTANCES`
+
+Number of host instances to create for dev instances. This is effectively the number of devices that will be created associated with the development instance testbench in MTK Connect.
+
 ## SYSTEM VARIABLES <a name="system-variables"></a>
 
 There are a number of system environment variables that are unique to each platform but required by Jenkins build, test and environment pipelines.

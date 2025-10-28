@@ -166,7 +166,7 @@ pipeline {
                     MTK_CONNECT_DOMAIN=${HORIZON_DOMAIN} \
                     MTK_CONNECT_USERNAME=${MTK_CONNECT_USERNAME} \
                     MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
-                    MTK_CONNECTED_DEVICES="1" \
+                    MTK_CONNECTED_DEVICES=${NUM_HOST_INSTANCES} \
                     MTK_CONNECT_TESTBENCH="${JOB_NAME}-${BUILD_NUMBER}" \
                     MTK_CONNECT_TESTBENCH_USER="${BUILD_USER_ID}" \
                     MTK_CONNECT_CONTAINER_ONLY="true" \

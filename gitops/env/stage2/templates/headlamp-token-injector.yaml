@@ -15,46 +15,34 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: headlamp
+  name: headlamp-token-injector
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "4"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: horizon-sdv
   source:
-    chart: headlamp
-    repoURL: https://kubernetes-sigs.github.io/headlamp/
-    targetRevision: 0.36.0
+    repoURL: {{ .Values.spec.source.repoURL }}
+    path: gitops/env/stage2/apps/token-injector
+    targetRevision: {{ .Values.spec.source.targetRevision }}
     helm:
       values: |
+        image:
+          repository: nginx
+          tag: "1.23"
+          pullPolicy: IfNotPresent
         serviceAccount:
           create: false
           name: headlamp-admin
-        clusterRoleBinding:
-          create: false
-        config:
-          baseURL: "/headlamp"
-          pluginsDir: /build/plugins
-      #  initContainers:
-      #    - command:
-      #        - /bin/sh
-      #        - '-c'
-      #        - mkdir -p /build/plugins && cp -r /plugins/* /build/plugins/
-      #      image: quay.io/kubescape/headlamp-plugin:v0.9.1
-      #      name: kubescape-plugin
-      #      volumeMounts:
-      #        - mountPath: /build/plugins
-      #          name: headlamp-plugins
-      #  volumeMounts:
-      #    - name: headlamp-plugins
-      #      mountPath: /build/plugins
-      #  volumes:
-      #    - name: headlamp-plugins
-      #      emptyDir: {}
+        upstream:
+          host: headlamp.headlamp.svc.cluster.local
+          port: 80
   destination:
-    server: https://kubernetes.default.svc
+    server: 'https://kubernetes.default.svc'
     namespace: headlamp
   syncPolicy:
-    syncOptions:
-      - CreateNamespace=true
-    automated: {}
+    automated:
+      prune: true
+      selfHeal: true

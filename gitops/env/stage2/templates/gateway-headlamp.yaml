@@ -40,7 +40,7 @@ spec:
               type: ReplacePrefixMatch
               replacePrefixMatch: /headlamp/
       backendRefs:
-        - name: headlamp
+        - name: headlamp-oauth2-proxy
           port: 80
 ---
 apiVersion: networking.gke.io/v1
@@ -59,9 +59,10 @@ spec:
     config:
       type: HTTP
       httpHealthCheck:
-        port: 4466
-        requestPath: /headlamp/
+        portSpecification: USE_SERVING_PORT
+        requestPath: /ping
+        host: {{ .Values.config.domain }}
   targetRef:
     group: ""
     kind: Service
-    name: headlamp
+    name: headlamp-oauth2-proxy

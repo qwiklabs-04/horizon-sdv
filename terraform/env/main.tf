@@ -423,7 +423,17 @@ module "base" {
         }
       ]
     }
-
+    s14 = {
+      secret_id        = "grafanaInitialPassword"
+      value            = var.sdv_gh_grafana_initial_password
+      use_github_value = true
+      gke_access = [
+        {
+          ns = "monitoring"
+          sa = "monitoring-sa"
+        },
+      ]
+    }
   }
 
   sdv_bastion_host_bash_command = <<EOT

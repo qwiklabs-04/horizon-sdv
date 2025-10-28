@@ -51,6 +51,11 @@ variable "sdv_gh_keycloak_initial_password" {
   type        = string
 }
 
+variable "sdv_gh_grafana_initial_password" {
+  description = "The secret GRAFANA_INITIAL_PASSWORD value"
+  type        = string
+}
+
 variable "sdv_gh_gerrit_admin_initial_password" {
   description = "The secret Github GERRIT_ADMIN_INITIAL_PASSWORD value"
   type        = string

@@ -165,3 +165,22 @@ spec:
     - secretKey: password
       remoteRef:
         key: jenkinsInitialPassword
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: grafana-admin-initial-secret
+  namespace: keycloak
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  refreshInterval: 10s
+  secretStoreRef:
+    kind: SecretStore
+    name: keycloak-secret-store
+  target:
+    name: keycloak-grafana-admin
+  data:
+    - secretKey: password
+      remoteRef:
+        key: grafanaInitialPassword

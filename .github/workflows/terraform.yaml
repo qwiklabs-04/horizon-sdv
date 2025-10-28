@@ -49,6 +49,9 @@ on:
       gh-keycloak-initial-password:
         required: false
         description: "Github Secret KEYCLOAK_INITIAL_PASSWORD"
+      gh-grafana-initial-password:
+        required: false
+        description: "Github Secret GRAFANA_INITIAL_PASSWORD"
       gh-gerrit-admin-initial-password:
         required: false
         description: "Github Secret GERRIT_ADMIN_INITIAL_PASSWORD"
@@ -198,6 +201,7 @@ jobs:
           echo "TF_VAR_sdv_gh_argocd_initial_password_bcrypt=${{ steps.generate-encoded-argocd-bcrypt-hash.outputs.argocd_encoded_bcrypt_hash }}" >> $GITHUB_ENV
           echo "TF_VAR_sdv_gh_jenkins_initial_password=${{ secrets.gh-jenkins-initial-password }}" >> $GITHUB_ENV
           echo "TF_VAR_sdv_gh_keycloak_initial_password=${{ secrets.gh-keycloak-initial-password }}" >> $GITHUB_ENV
+          echo "TF_VAR_sdv_gh_grafana_initial_password=${{ secrets.gh-grafana-initial-password }}" >> $GITHUB_ENV
           echo "TF_VAR_sdv_gh_gerrit_admin_initial_password=${{ secrets.gh-gerrit-admin-initial-password }}" >> $GITHUB_ENV
           echo "TF_VAR_sdv_gh_keycloak_horizon_admin_password=${{ secrets.gh-keycloak-horizon-admin-password }}" >> $GITHUB_ENV
           echo "TF_VAR_sdv_gh_abfs_license_b64=${{ secrets.gh-abfs-license-b64 }}" >> $GITHUB_ENV
@@ -332,39 +336,28 @@ jobs:
 
       - name: Reformat Plan
         if: ${{ needs.get-env.outputs.environment != '' }}
-        env:
-          TFPLAN_STDOUT: ${{ steps.tfplan.outputs.stdout }}
-          TFPLAN_STDERR: ${{ steps.tfplan.outputs.stderr }}
+        working-directory: ${{ inputs.directory }}/
         run: |
-          if [[ "${{ steps.tfplan.outcome }}" == 'success' ]]; then
-            printf '%s' "$TFPLAN_STDOUT" \
-            | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt
+          if [[ -f ./tfplan ]]; then
+            terraform show -no-color ./tfplan | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt
           else
-            printf '%s' "$TFPLAN_STDERR" \
-            | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt
+            if [[ "${{ steps.tfplan.outcome }}" == 'success' ]]; then
+              printf '%s' "${{ steps.tfplan.outputs.stdout }}" \
+                | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt || true
+            else
+              printf '%s' "${{ steps.tfplan.outputs.stderr }}" \
+                | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt || true
+            fi
           fi
 
-      - name: Put Plan in Env Var
-        if: ${{ needs.get-env.outputs.environment != '' }}
-        run: |
-          PLAN=$(cat plan.txt)
-          echo "PLAN<<EOF" >> $GITHUB_ENV
-          echo "$PLAN" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-      - name: Post Plan to GitHub PR
+      - name: Post Plan to GitHub PR (from file)
         uses: mshick/add-pr-comment@v2
         if: ${{ needs.get-env.outputs.environment != '' }}
         with:
           allow-repeats: false
-          repo-token: ${{steps.get_github_app_token.outputs.token}}
+          repo-token: ${{ steps.get_github_app_token.outputs.token }}
           message-id: plan-${{ needs.get-env.outputs.environment }}
-          message: |
-            ## Terraform plan ${{ needs.get-env.outputs.environment }}
-            ```diff
-            ${{ env.PLAN }}
-            ```
-        continue-on-error: true
+          message-path: ${{ inputs.directory }}/plan.txt
 
       - name: Check if Plan failed
         if: steps.tfplan.outcome == 'failure'

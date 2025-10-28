@@ -105,6 +105,8 @@ pipeline {
                    --opt build-arg:ARM_TOOLCHAIN_URL=${ARM_TOOLCHAIN_URL} \
                    --opt build-arg:CLANG_TOOLS_URL=${CLANG_TOOLS_URL} \
                    --opt build-arg:CMAKE_URL=${CMAKE_URL} \
+                   --opt build-arg:GCLOUD_CLI_VERSION="${GCLOUD_CLI_VERSION}" \
+                   --opt build-arg:KUBECTL_VERSION="${KUBECTL_VERSION}" \
                    --opt build-arg:LLVM_PROJECT_URL=${LLVM_PROJECT_URL} \
                    --opt build-arg:LLVM_ARM_TOOLCHAIN_URL=${LLVM_ARM_TOOLCHAIN_URL} \
                    --opt build-arg:OPENBSW_GIT_URL=${OPENBSW_GIT_URL} \

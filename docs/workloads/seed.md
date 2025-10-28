@@ -36,6 +36,20 @@ Specifies which workload(s) to seed
 - `openbsw` seed the OpenBSW workload.
 - `cloud-workstations` seed the Cloud Workstations workload.
 
+### `BUILDKIT_RELEASE_TAG`
+The version of Buildkit to use to build the container image.
+
+### `DOCKER_CREDENTIALS_URL`
+URL of Google docker credentials helper, required to allow access to the project artifact registry.
+
+### `GCLOUD_CLI_VERSION`
+Version of [Google Cloud CLI](https://docs.cloud.google.com/sdk/docs/release-notes) to install.
+Define `latest` if wishing to use the latest available version.
+
+### `KUBECTL_VERSION`
+Version of `kubectl` to install. The version is typically `1:${GCLOUD_CLI_VERSION}`.
+Define `latest` if wishing to use the latest available version.
+
 ### `REPO_SYNC_JOBS`
 Defines the number of parallel sync jobs when running `repo sync`.
 This value will propogate to Android pipeline jobs.
@@ -59,7 +73,6 @@ Use `gcloud compute images list --no-standard-images --project=cos-cloud | grep 
 Defines the artifact repository from where to retrieve the ABFS packages.
 
 ## `UPLOADER_MANIFEST_SERVER`
-
 ABFS manifest source URL. Used for seeding ABFS builds, blobs/objects.
 
 ### `OPENBSW_IMAGE_TAG`
@@ -67,12 +80,10 @@ Defines the name of the build image tag used for OpenBSW pipelines.
 This value will propogate to OpenBSW pipeline jobs.
 
 ### `OPENBSW_GIT_URL`
-
 This provides the URL for the OpenBSW repository. Such as:
 - https://github.com/eclipse-openbsw/openbsw.git
 
 ### `OPENBSW_GIT_BRANCH`
-
 This provides the branch/tag revision for the OpenBSW repository.
 
 ### Groovy Scripts <a name="groovyscripts"></a>

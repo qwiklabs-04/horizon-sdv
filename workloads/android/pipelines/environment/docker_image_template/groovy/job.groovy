@@ -56,8 +56,8 @@ pipelineJob('Android/Environment/Docker Image Template') {
     }
 
     separator {
-      name('Common Parameters: Buildkit')
-      sectionHeader('Common Parameters: Buildkit')
+      name('Common Parameters: Docker templates')
+      sectionHeader('Common Parameters: Docker templates')
       sectionHeaderStyle("${HEADER_STYLE}")
       separatorStyle("${SEPARATOR_STYLE}")
     }
@@ -72,6 +72,20 @@ pipelineJob('Android/Environment/Docker Image Template') {
       name('DOCKER_CREDENTIALS_URL')
       defaultValue("${DOCKER_CREDENTIALS_URL}")
       description('''<p>Docker credentials helper URL, e.g. <a target="_blank" href=https://cloud.google.com/artifact-registry/docs/docker/authentication#standalone-helper>credentials helper</a>.</p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('GCLOUD_CLI_VERSION')
+      defaultValue("${GCLOUD_CLI_VERSION}")
+      description('''<p>Version of <a target="_blank" https://docs.cloud.google.com/sdk/docs/release-notes>Google Cloud CLI</a>.<br/>Note: Define <code>latest</code> if wishing to use the latest available version.</p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('KUBECTL_VERSION')
+      defaultValue("${KUBECTL_VERSION}")
+      description('''<p>Version of <code>kubectl</code>. Typically based on <a target="_blank" https://docs.cloud.google.com/sdk/docs/release-notes>Google Cloud CLI</a><br/>Note: Define <code>latest</code> if wishing to use the latest available version.</p>''')
       trim(true)
     }
   }

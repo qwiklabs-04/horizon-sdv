@@ -210,6 +210,16 @@ spec:
                                 secretJsonKey: ${base64:${jenkins-gce-creds-gce-creds-json}}
                 jenkins:
                   systemMessage: Welcome to Horizon SDV server.
+                  disabledAdministrativeMonitors:
+                    # Disable: Jenkins Update Notification
+                    - "hudson.model.UpdateCenter$CoreUpdateMonitor"
+                    # Disable: Update Site WarningsSecurity
+                    - "jenkins.security.UpdateSiteWarningsMonitor"
+                    - "hudson.util.DoubleLaunchChecker"
+                    # Disable: Built-in Node With Agents Executors Configured MonitorSecurity
+                    - "jenkins.diagnostics.ControllerExecutorsAgents"
+                    # Disable: Role-Based Naming Strategy not enabled
+                    - "org.jenkinsci.plugins.rolestrategy.NamingStrategyAdministrativeMonitor"
                   authorizationStrategy:
                     roleBased:
                       permissionTemplates:

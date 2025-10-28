@@ -36,6 +36,7 @@ pipeline {
 
   environment {
     GERRIT_API_URL="https://${env.HORIZON_DOMAIN}/gerrit"
+    POD_TEMPLATE = "${USE_LOCAL_AOSP_MIRROR == "true" ? kubernetesPodTemplateWithMirror : kubernetesPodTemplateWithoutMirror}"
 
     def androidVersion="${ANDROID_VERSION != "default" ? ANDROID_VERSION : getAndroidVersion(AAOS_REVISION)}"
     def rpi="${AAOS_LUNCH_TARGET =~ "rpi" ? "-rpi" : ""}"
@@ -44,7 +45,67 @@ pipeline {
     STORAGE_SIZE="${STORAGE_CLASS_SUFFIX =~ "rpi" ? "500Gi" : "1000Gi"}"
 
     // Define Pod Template in environment so we can override storageClassName.
-    def kubernetesPodTemplate = """
+
+    // Pod template WITHOUT AOSP Mirror volume mounted
+    def kubernetesPodTemplateWithoutMirror = """
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        annotations:
+          cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+        labels:
+          aaos_pod: "true"
+      spec:
+        tolerations:
+        - key: workloadType
+          operator: Equal
+          value: android
+          effect: "NoSchedule"
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: aaos_pod
+                  operator: Exists
+              topologyKey: kubernetes.io/hostname
+        hostname: jenkins-aaos-build-pod
+        serviceAccountName: ${JENKINS_SERVICE_ACCOUNT}
+        containers:
+        - name: builder
+          image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${ANDROID_BUILD_DOCKER_ARTIFACT_PATH_NAME}:latest
+          imagePullPolicy: IfNotPresent
+          command:
+          - sleep
+          args:
+          - 5h
+          resources:
+            limits:
+              cpu: 98000m
+              memory: 180000Mi
+            requests:
+              cpu: 98000m
+              memory: 180000Mi
+          volumeMounts:
+            - mountPath: /aaos-cache
+              name: aaos-cache
+        volumes:
+          - name: aaos-cache
+            ephemeral:
+              volumeClaimTemplate:
+                spec:
+                  storageClassName: ${JENKINS_AAOS_BUILD_CACHE_STORAGE_PREFIX}-${STORAGE_CLASS_SUFFIX}
+                  resources:
+                    requests:
+                      storage: ${STORAGE_SIZE}
+                  accessModes:
+                    - ReadWriteOnce
+        nodeSelector:
+          workloadLabel: android
+    """.stripIndent()
+
+    // Pod template with AOSP Mirror volume mounted as read-only
+    def kubernetesPodTemplateWithMirror = """
       apiVersion: v1
       kind: Pod
       metadata:
@@ -90,6 +151,9 @@ pipeline {
           volumeMounts:
             - mountPath: /aaos-cache
               name: aaos-cache
+            - mountPath: ${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}
+              readOnly: true
+              name: ${AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME}
         volumes:
           - name: aaos-cache
             ephemeral:
@@ -101,6 +165,9 @@ pipeline {
                       storage: ${STORAGE_SIZE}
                   accessModes:
                     - ReadWriteOnce
+          - name: ${AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME}
+            persistentVolumeClaim:
+              claimName: ${AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME}
         nodeSelector:
           workloadLabel: android
     """.stripIndent()
@@ -108,7 +175,7 @@ pipeline {
 
   stages {
     stage ('Start VM Instance') {
-      agent { kubernetes { yaml kubernetesPodTemplate } }
+      agent { kubernetes { yaml "${POD_TEMPLATE}" } }
       stages {
         stage ('Clean') {
           when {
@@ -146,6 +213,11 @@ pipeline {
             }
             container(name: 'builder') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                // Validate AOSP Mirror directory name if using local AOSP mirror
+                if (env.USE_LOCAL_AOSP_MIRROR?.toLowerCase() == 'true' && !env.AOSP_MIRROR_DIR_NAME?.trim()) {
+                  error "USE_LOCAL_AOSP_MIRROR is true but AOSP_MIRROR_DIR_NAME is empty. Set AOSP_MIRROR_DIR_NAME or disable USE_LOCAL_AOSP_MIRROR."
+                }
+                
                 withCredentials([usernamePassword(credentialsId: env.GERRIT_CREDENTIALS_ID, passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {
                   sh '''
                     set +x
@@ -162,6 +234,8 @@ pipeline {
                     AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
                     AAOS_CLEAN="NO_CLEAN" \
                     GERRIT_SERVER_URL="${GERRIT_API_URL}" \
+                    USE_LOCAL_AOSP_MIRROR="${USE_LOCAL_AOSP_MIRROR}" \
+                    MIRROR_DIR_FULL_PATH="${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/${AOSP_MIRROR_DIR_NAME}" \
                     POST_REPO_INITIALISE_COMMAND="${POST_REPO_INITIALISE_COMMAND}" \
                     POST_REPO_COMMAND="${POST_REPO_COMMAND}" \
                     REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}" \

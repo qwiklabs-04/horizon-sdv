@@ -65,11 +65,21 @@ source "$(dirname "${BASH_SOURCE[0]}")"/aaos_environment.sh "$0"
 
 # Initialise the repository
 function initialise_repo() {
+    local LOCAL_MIRROR_REFERENCE=""
+    if [[ "${USE_LOCAL_AOSP_MIRROR}" == "true" ]]; then
+        if [[ -d "${MIRROR_DIR_FULL_PATH}/.repo" ]]; then
+            LOCAL_MIRROR_REFERENCE="--reference ${MIRROR_DIR_FULL_PATH}"
+            echo "Using local AOSP mirror at: '${MIRROR_DIR_FULL_PATH}'. \n The sync will first try to fetch objects from this local mirror. If an object is not found in the local mirror, it will be fetched from the remote source."
+        else
+            echo -e "\033[1;31mERROR: Local AOSP mirror not found at path: '${MIRROR_DIR_FULL_PATH}'. Please complete the AOSP Mirror setup first. The setup jobs are in folder 'Android Workflows > Environment > AOSP Mirror'.\033[0m"
+            exit 1
+        fi
+    fi
     # Retry 4 times, on 3rd fail, clean workspace and retry once more.
     MAX_RETRIES=4
     for ((i=1; i<="${MAX_RETRIES}"; i++)); do
         # Initialise repo checkout.
-        if ! repo init -u "${AAOS_GERRIT_MANIFEST_URL}" -b "${AAOS_REVISION}" --depth=1
+        if ! repo init -u "${AAOS_GERRIT_MANIFEST_URL}" -b "${AAOS_REVISION}" --depth=1 ${LOCAL_MIRROR_REFERENCE}
         then
             echo -e "\033[1;31mERROR: repo init failed, exit!\033[0m"
             exit 1

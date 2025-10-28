@@ -65,3 +65,26 @@ folder('Android/Tests') {
   displayName('Tests')
   description('<p>This folder contains jobs used to help test and validate Android builds.</p>')
 }
+folder('Android/Environment/AOSP-Mirror') {
+  displayName('AOSP Mirror')
+  description('''
+    <br/><h3 style="margin-bottom: 10px;">Manage AOSP Mirror</h3>
+
+    <p>This folder contains administrative jobs related to AOSP Mirror - which enables <b>faster repo sync times</b> in Android builds.</p>
+
+    <p>Follow below steps in order to provision and start using AOSP Mirror:</p>
+    <ol>
+      <li>
+        Run the job <strong><code>Docker Image Template</code></strong> to setup the environment to be used by AOSP Mirror operation pipelines.
+      </li>
+      <li>
+        Run the job <strong><code>Create Mirror</code></strong> which creates AOSP Mirror resources in your GCP project and then triggers the downstream job <strong><code>Sync Mirror</code></strong> to perform the initial population of the mirror from official AOSP repository at <i><code>https://android.googlesource.com/mirror/manifest</code></i>.
+      </li>
+      <li>
+        After mirror setup is complete, you can now select the parameter <strong><code>USE_LOCAL_AOSP_MIRROR</strong></code> in build jobs - enabling faster repo sync times.
+      </li>
+    </ol>
+    <p>Refer to <i>docs/workloads/android/environment/aosp_mirror</i> for additional details.</p>
+    <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>
+  ''')
+}

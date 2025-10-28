@@ -88,7 +88,7 @@ spec:
             allow_sign_up: true
             scopes: openid profile email
             client_id: grafana-oauth
-            client_secret: SOME_EXAMPLE_TEMPLATE_CLIENT_SECRET_123467890#@$&
+            client_secret: SOME_EXAMPLE_client_secret123456
             auth_url: https://{{ .Values.config.domain }}/auth/realms/horizon/protocol/openid-connect/auth
             token_url: https://{{ .Values.config.domain }}/auth/realms/horizon/protocol/openid-connect/token
             api_url: https://{{ .Values.config.domain }}/auth/realms/horizon/protocol/openid-connect/userinfo

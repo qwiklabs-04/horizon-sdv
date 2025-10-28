@@ -22,7 +22,7 @@ CACERT=${SERVICEACCOUNT}/ca.crt
 # define temporary files used  for file operation - grafana configmap
 # get and parese grafana-keycloak-secret from secret store, prepare format for replace
 # get current grafana configmap to file
-# replace 1st occurence of client-secret and save it as new output configmap file
+# replace 1st occurence of client_secret and save it as new output configmap file
 # apply new grafana configmap into kubernetes
 # parse pod name and reset grafana pod. New configuration will be applied into grafana
 # clean up temp files
@@ -34,7 +34,7 @@ GRAFANA_TEMP_FILE="temp_grafana_cm.yaml"
 UPDATED_GRAFANA_TEMP_FILE="updated_grafana_cm.yaml"
 
 #get grafana-keycloak-secret and prepare NEW_SECRET string
-NEW_SECRET="client_secret = "$(kubectl get secret --namespace monitoring  grafana-keycloak-secret -o jsonpath="{.data.client-secret}" | base64 --decode)
+NEW_SECRET="client_secret = "$(kubectl get secret --namespace monitoring  grafana-keycloak-secret -o jsonpath="{.data.client_secret}" | base64 --decode)
 
 
 if [[ "${DEBUG:-0}" == "1" ]]; then
@@ -46,11 +46,11 @@ fi
 kubectl get cm -n monitoring grafana -o yaml > $GRAFANA_TEMP_FILE
 
 if [[ "${DEBUG:-0}" == "1" ]]; then
-  echo "GRAFANA_TEMP_FILE with cureent secret: "
+  echo "GRAFANA_TEMP_FILE with current secret: "
   cat $GRAFANA_TEMP_FILE | grep client
 fi
 
-#replace client-secret with NEW_SECRET
+#replace client_secret with NEW_SECRET
 #eg. line :
 #"client_secret = oldsecret_1234556545643"
 # will be replaced with eg:

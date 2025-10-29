@@ -16,6 +16,9 @@
 
 set -eo pipefail
 
+# Google Repo Sync parallel jobs value (same as aaos builder)
+REPO_SYNC_JOBS=${REPO_SYNC_JOBS:-2}
+
 # ------Logging helper functions-------
 
 # Function to print a header message
@@ -362,9 +365,7 @@ sync_mirror() {
   local end_time_in_seconds
   local formatted_elapsed_time
 
-  local max_sync_jobs=32
-  local nproc=$(nproc)
-  local jobs=$((nproc > max_sync_jobs ? max_sync_jobs : nproc))
+  local jobs=$(( REPO_SYNC_JOBS < 1 ? 1 : REPO_SYNC_JOBS > $(nproc) ? $(nproc) : REPO_SYNC_JOBS ))
 
   log_info "Starting repo sync inside '${mirror_path}' with details:\n Manifest URL:'${manifest_url}'\n Manifest Ref:'${manifest_ref}'\n Manifest File:'${manifest_file}'\n Parallel jobs: ${jobs}\n Sync started at [$(date)]..."
 

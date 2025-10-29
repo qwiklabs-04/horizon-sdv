@@ -296,6 +296,7 @@ pipeline {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
               sh """
                 chmod +x "${syncMirrorScriptPath}"
+                export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                 ${syncMirrorScriptPath} ${mirrorRootSubdirPath} ${MIRROR_DIR} ${MIRROR_MANIFEST_URL} ${MIRROR_MANIFEST_REF} ${MIRROR_MANIFEST_FILE} ${BUILD_USER}
               """
             }

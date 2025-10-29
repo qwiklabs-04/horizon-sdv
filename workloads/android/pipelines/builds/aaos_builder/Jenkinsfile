@@ -213,11 +213,6 @@ pipeline {
             }
             container(name: 'builder') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                // Validate AOSP Mirror directory name if using local AOSP mirror
-                if (env.USE_LOCAL_AOSP_MIRROR?.toLowerCase() == 'true' && !env.AOSP_MIRROR_DIR_NAME?.trim()) {
-                  error "USE_LOCAL_AOSP_MIRROR is true but AOSP_MIRROR_DIR_NAME is empty. Set AOSP_MIRROR_DIR_NAME or disable USE_LOCAL_AOSP_MIRROR."
-                }
-                
                 withCredentials([usernamePassword(credentialsId: env.GERRIT_CREDENTIALS_ID, passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {
                   sh '''
                     set +x

@@ -95,10 +95,14 @@ function initialise_repo() {
             fi
         done
 
+        local repo_sync_jobs="${REPO_SYNC_JOBS_ARG}"
         # This will automatically clean any previous staged/fetched/downloaded changes.
-        if ! repo sync --no-tags --optimized-fetch --prune --retry-fetches=3 --auto-gc --no-clone-bundle --fail-fast --force-sync "${REPO_SYNC_JOBS_ARG}"
+        if ! repo sync --no-tags --optimized-fetch --prune --retry-fetches=3 --auto-gc --no-clone-bundle --fail-fast --force-sync "${repo_sync_jobs}"
         then
-            echo "WARNING: repo sync failed, sleep 60s and retrying..."
+            # reduce parallel jobs to a reasonable level because mirror failures with high job
+            # value result in Google remote repo failures (HTTP 429 errors - rate limits).
+            repo_sync_jobs="-j3"
+            echo "WARNING: repo sync failed, sleep 60s and retrying with $repo_sync_jobs..."
             sleep 60
             if [ "$i" -eq 3 ]; then
                 echo "WARNING: clean workspace and retry."

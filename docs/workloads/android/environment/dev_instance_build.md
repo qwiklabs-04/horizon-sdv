@@ -53,6 +53,20 @@ Enable if wishing to use MTK Connect to connect to the host instance rather than
 
 Number of host instances to create for dev instances. This is effectively the number of devices that will be created associated with the development instance testbench in MTK Connect.
 
+### `USE_LOCAL_AOSP_MIRROR`
+
+If checked, the build instance will mount the AOSP Mirror setup in your GCP project to fetch Android source code during `repo sync`.
+**Note:**
+-  The AOSP Mirror must be setup prior to running this job. If not setup, the job will fail.
+-  The setup jobs are in folder `Android Workflows -> Environment -> AOSP Mirror`.
+
+### `AOSP_MIRROR_DIR_NAME`
+
+This defines the directory name on the Filestore volume where the Mirror is located.
+**Note:**
+-  This is required if `USE_LOCAL_AOSP_MIRROR` is checked.
+-  e.g. If you provided `my-mirror` when creating the mirror, provide the same value here.
+
 ## SYSTEM VARIABLES <a name="system-variables"></a>
 
 There are a number of system environment variables that are unique to each platform but required by Jenkins build, test and environment pipelines.
@@ -87,3 +101,9 @@ These are as follows:
 
 -   `JENKINS_SERVICE_ACCOUNT`
     - Service account to use for pipelines. Required to ensure correct roles and permissions for GCP resources.
+
+-    `AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER`
+
+-    `AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME`
+
+-    `AOSP_MIRROR_DIR_NAME`

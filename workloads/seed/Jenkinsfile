@@ -104,6 +104,26 @@ pipeline {
            trim: true)
 
     separator(
+      name: "AOSP Mirror Parameters",
+      sectionHeader: "AOSP Mirror Parameters",
+      separatorStyle: "${SEPARATOR_STYLE}",
+      sectionHeaderStyle: "${HEADER_STYLE}"
+    )
+
+    booleanParam(name: 'USE_LOCAL_AOSP_MIRROR',
+                 defaultValue: false,
+                 description: '''<p>If checked, the build will use the AOSP Mirror setup in your GCP project to fetch Android source code during <i>repo sync</i>.<br/>
+                   <b>Note:</b> The AOSP Mirror must be setup prior to running this job. If not setup, the job will fail.<br>
+                 The setup jobs are in folder <i>Android Workflows > Environment > AOSP Mirror</i>.<br/><br/></p>''')
+
+    string(name: 'AOSP_MIRROR_DIR_NAME',
+           defaultValue: '',
+           description: '''<p>The directory name on the Filestore volume where the Mirror is located.<br/>
+             <b>Note:</b> This is required if <code>USE_LOCAL_AOSP_MIRROR</code> is checked.</p>
+             <b>Example:</b> If you provided '<i><code>my-mirror</code></i>' when creating the mirror, provide the same value here.<br/><br/></p>''',
+           trim: true)
+
+    separator(
       name: "Android ABFS Options",
       sectionHeader: "ABFS Parameters",
       separatorStyle: "${SEPARATOR_STYLE}",
@@ -205,6 +225,8 @@ pipeline {
                   ['${NODEJS_VERSION}', "${NODEJS_VERSION}"],
                   ['${BUILDKIT_RELEASE_TAG}', "${BUILDKIT_RELEASE_TAG}"],
                   ['${DOCKER_CREDENTIALS_URL}', "${DOCKER_CREDENTIALS_URL}"],
+                  ['${USE_LOCAL_AOSP_MIRROR}', "${USE_LOCAL_AOSP_MIRROR}"],
+                  ['${AOSP_MIRROR_DIR_NAME}', "${AOSP_MIRROR_DIR_NAME}"],
                   ['${AOSP_MIRROR_WORKLOADS_ENV_IMAGE_NAME}', "${AOSP_MIRROR_WORKLOADS_ENV_IMAGE_NAME}"],
                   ['${AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME}', "${AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME}"],
                   ['${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}', "${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}"],

@@ -58,6 +58,18 @@ This value will propogate to Android pipeline jobs.
 This is the label that identifies the GCE Cloud label which will be used to identify the Cuttlefish VM instance.
 This value will propogate to Android pipeline jobs.
 
+## `USE_LOCAL_AOSP_MIRROR`
+If checked, the build will use the AOSP Mirror setup in your GCP project to fetch Android source code during `repo sync`.
+**Note:**
+-  The AOSP Mirror must be setup prior to running this job. If not setup, the job will fail.
+-  The setup jobs are in folder `Android Workflows -> Environment -> AOSP Mirror`.
+
+### `AOSP_MIRROR_DIR_NAME`
+This defines the directory name on the Filestore volume where the Mirror is located.
+**Note:**
+-  This is required if `USE_LOCAL_AOSP_MIRROR` is checked.
+-  e.g. If you provided `my-mirror` when creating the mirror, provide the same value here.
+
 ## `ABFS_VERSION`
 Defines the version for use with the ABFS server, uploader and build jobs.
 

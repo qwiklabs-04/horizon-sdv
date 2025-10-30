@@ -73,6 +73,29 @@ pipelineJob('Android/Environment/Development Build Instance') {
         <p>i.e. the number of devices to create in MTK Connect testbench.</p>''')
       trim(true)
     }
+
+    separator {
+      name('AOSP Mirror Parameters')
+      sectionHeader('AOSP Mirror Parameters')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
+    }
+
+    booleanParam {
+      name('USE_LOCAL_AOSP_MIRROR')
+      defaultValue(${USE_LOCAL_AOSP_MIRROR})
+      description('''<p>If checked, the instance will mount the AOSP Mirror setup in your GCP project to fetch Android source code during <i>repo sync</i>.<br/>
+        <b>Note:</b> The AOSP Mirror must be setup prior to running this job. If not setup, the job will fail.<br> The setup jobs are in folder <i>Android Workflows > Environment > AOSP Mirror</i>.<br/><br/></p>''')
+    }
+
+    stringParam {
+      name('AOSP_MIRROR_DIR_NAME')
+      defaultValue("${AOSP_MIRROR_DIR_NAME}")
+      description('''<p>The directory name on the Filestore volume where the Mirror is located.<br/>
+        <b>Note:</b> This is required if <code>USE_LOCAL_AOSP_MIRROR</code> is checked.</p>
+        <b>Example:</b> If you provided '<i><code>my-mirror</code></i>' when creating the mirror, provide the same value here.<br/><br/></p>''')
+      trim(true)
+    }
   }
 
   logRotator {

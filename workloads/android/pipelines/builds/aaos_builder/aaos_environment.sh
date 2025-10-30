@@ -30,9 +30,9 @@
 #        artifacts (GCS_BUCKET default).
 #  - AAOS_ARTIFACT_ROOT_NAME: the name of the bucket to store artifacts.
 #  - ANDROID_VERSION: the Android version (default: 14).
-#  - REPO_SYNC_JOBS: the number of parallel repo sync jobs to use Default: 2).
+#  - REPO_SYNC_JOBS: the number of parallel repo sync jobs to use Default: 3).
 #  - MAX_REPO_SYNC_JOBS: the maximum number of parallel repo sync jobs
-#        supported. (Default: 24).
+#        supported. (Default: 14).
 #  - OVERRIDE_MAKE_COMMAND: the make command line to use
 #  - POST_REPO_INITIALISE_COMMAND: additional vendor commands for repo initialisation.
 #  - POST_REPO_COMMAND: additional vendor commands initialisation post repo sync.
@@ -96,10 +96,10 @@ ABFS_MOUNT_POINT="abfs"
 UPLOADER_MANIFEST_SERVER=${UPLOADER_MANIFEST_SERVER:-android.googlesource.com}
 
 # Google Repo Sync parallel jobs value
-REPO_SYNC_JOBS=${REPO_SYNC_JOBS:-2}
-MAX_REPO_SYNC_JOBS=${MAX_REPO_SYNC_JOBS:-24}
+REPO_SYNC_JOBS=${REPO_SYNC_JOBS:-3}
+MAX_REPO_SYNC_JOBS=${MAX_REPO_SYNC_JOBS:-14}
 # Set up the parallel sync job argument based on value.
-# Min 1, Max 24.
+# Min 1, Max 14.
 REPO_SYNC_JOBS_ARG="-j$(( REPO_SYNC_JOBS < 1 ? 1 : REPO_SYNC_JOBS > MAX_REPO_SYNC_JOBS ? MAX_REPO_SYNC_JOBS : REPO_SYNC_JOBS ))"
 # If empty let the build system decide otherwise override with -j<NUMBER>, e.g. -j64
 AAOS_PARALLEL_BUILD_JOBS=${AAOS_PARALLEL_BUILD_JOBS:-}

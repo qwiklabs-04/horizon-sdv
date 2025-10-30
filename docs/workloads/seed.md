@@ -54,6 +54,8 @@ Define `latest` if wishing to use the latest available version.
 Defines the number of parallel sync jobs when running `repo sync`.
 This value will propogate to Android pipeline jobs.
 
+Consider the value carefully and whether using Google Opensource Gerrit repos, local repos or even the AOSP Mirror.
+
 ### `CUTTLEFISH_GCE_CLOUD_LABEL`
 This is the label that identifies the GCE Cloud label which will be used to identify the Cuttlefish VM instance.
 This value will propogate to Android pipeline jobs.

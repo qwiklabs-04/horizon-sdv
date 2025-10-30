@@ -91,7 +91,10 @@ pipeline {
 
     string(name: 'REPO_SYNC_JOBS',
            defaultValue: '3',
-           description: '''<p>Number of parallel sync jobs for <i>repo sync</i>.</p>''',
+           description: '''<p>Number of parallel sync jobs for <i>repo sync</i>.<br>
+             <b>Note:</b> to avoid sync errors, consider the value carefully, e.g.<br/>
+             <ul><li>3 is recommended for Google open source gerrit.</li>
+                 <li>14 is maximum recommended when using ab AOSP Mirror .</li></ul></p>''',
            trim: true)
 
     string(name: 'CUTTLEFISH_GCE_CLOUD_LABEL',

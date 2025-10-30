@@ -28,6 +28,7 @@ Horizon SDV is designed to simplify the deployment and management of Android wor
    - [Section #5d - Jenkins Access via Keycloak Groups](#section-5d---jenkins-access-via-keycloak-groups)
    - [Section #5e - Argo CD Access via Keycloak Groups](#section-5e---argo-cd-access-via-keycloak-groups)
    - [Section #5d - Headlamp Access via Keycloak Groups](#section-5d---headlamp-access-via-keycloak-groups)
+   - [Section #5g - Grafana Access via Keycloak Groups](#section-5g---grafana-access-via-keycloak-groups)
 - [Section #6 - Run Cluster Apps](#section-6---run-cluster-apps)
    - [Section #6a - Horizon Landing Page](#section-6a---horizon-landing-page)
    - [Section #6b - Argo CD](#section-6b---argo-cd)
@@ -36,6 +37,7 @@ Horizon SDV is designed to simplify the deployment and management of Android wor
    - [Section #6e - Jenkins](#section-6e---jenkins)
    - [Section #6f - MTK connect](#section-6f---mtk-connect)
    - [Section #6g - Headlamp](#section-6g---headlamp)
+   - [Section #6h - Grafana](#section-6h---grafana)
 - [Section #7 - Deprovisioning Infrastructure](#section-7---deprovisioning-infrastructure)
     - [Section #7a - Install Terraform](#section-7a---install-terraform)
     - [Section #7b - Terraform Destroy](#section-7b---terraform-destroy)
@@ -47,7 +49,7 @@ Horizon SDV is designed to simplify the deployment and management of Android wor
    - [Create a DNS Zone (Optional)](#create-a-dns-zone-optional)
 - [LICENSE](#license)
 
-## Technologies   
+## Technologies
 Technologies being used to provision the infrastructure along with the required applications for the GKE cluster.
 * Google Cloud Platform - cloud service provider facilitating infrastructure provisioning.
 * Terraform - IaC tool used to provision the infrastructure and maintain infrastructure consistency.
@@ -517,7 +519,9 @@ Create Github Environment
       - You can create your desired strong password.
    * **KEYCLOAK_HORIZON_ADMIN_PASSWORD**
       - You can create your desired strong password.
-   * **KEYCLOAK_INITIAL_PASSWORD**   
+   * **KEYCLOAK_INITIAL_PASSWORD**
+      - You can create your desired strong password.
+   * **GRAFANA_INITIAL_PASSWORD**
       - You can create your desired strong password.
    * **ABFS_LICENSE_B64**
       - Refer [abfs.md](workloads/android/abfs.md) for detailed setup guide.
@@ -793,8 +797,42 @@ Follow the below steps to assign a user to required Keycloak group,
       - Click on the **Groups** tab.
       - Click on **Join Group** which opens a new pop-up window.
       - Select the group `horizon-headlamp-admininstrators`.
-      - Click **Join**.   
+      - Click **Join**.
          <img src="images/keycloak-headlamp-groups-1.png" width="325" />
+4. Verify Group Assignment
+   - The group should now appear under the user's "Group Membership".
+
+### Section #5g - Grafana Access via Keycloak Groups
+This section includes the steps to assign a user to a Keycloak group to enable Grafana access. Group membership determines the level of access granted to the user. 
+
+#### Available Groups
+Below table details the Keycloak to Grafana mapping with their access level granted to users within the respective groups.
+
+| Keycloak Group                                 | Access Level                                                                   |
+|------------------------------------------------|--------------------------------------------------------------------------------|
+| `horizon-grafana-administrators`               | Full admin access. Edit dashboard, and other settings admin permissions        |
+| `horizon-grafana-viewers`                      | Viewers access. Only limited access, possible to view dashboards               |
+
+#### Steps to Assign a User to a Group
+>[!NOTE]
+>Users not assigned to any group cannot log in to Grafana.
+
+Follow the below steps to assign a user to required Keycloak group,
+
+1. Keycloak UI can be accessed here from the Landing page under 'Admin Applications': `https://<SUB_DOMAIN>.<HORIZON_DOMAIN>`
+   - Login to Keycloak as admin.   
+      <img src="images/keycloak_launch.png" width="325" />
+2. Find the User
+   - Go to `Users` in the left sidebar.
+   - Use the search bar to locate the user.
+   - Click on the username to open their details.
+3. Assign the Group
+   - **horizon-grafana-admininstrators** or **horizon-grafana-viewers**
+      - Click on the **Groups** tab.
+      - Click on **Join Group** which opens a new pop-up window.
+      - Select the group `horizon-grafana-admininstrators` or `horizon-grafana-viewers`.
+      - Click **Join**.   
+         <img src="images/keycloak-grafana-groups-1.png" width="325" />
 4. Verify Group Assignment
    - The group should now appear under the user's "Group Membership".
 
@@ -909,6 +947,17 @@ The Headlamp application in Kubernetes provides, extensible web-based user inter
 
 Below is a view of the Headlamp homepage,   
 <img src="images/headlamp_home.png" width="750" />
+
+### Section #6h - Grafana
+Grafana is an open-source platform for monitoring and observability that enables users to visualize, analyze, metrics, logs, and traces from various data sources. It is widely used to build interactive dashboards for real-time system performance tracking and troubleshooting. Used to monitoring pods and intances in horizon-sdv GCP
+
+1. To Access Grafana, go to the Horizon Landing page here: `https://<SUB_DOMAIN>.<HORIZON_DOMAIN>` and click on the Launch button within the Grafana app card as below.   
+   <img src="images/grafana_launch.png" width="325" />
+2. Login using google sign-in.   
+   <img src="images/horizon_login_with_google.png" width="300" /> 
+
+Below is a view of the Grafana homepage,   
+<img src="images/grafana_home.png" width="750" />
 
 ## Section #7 - Deprovisioning Infrastructure
 This section contains the steps to destroy the environment provisioned by Terraform workflow. 

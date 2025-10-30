@@ -20,7 +20,10 @@ config:
         terraformWorkloadsSA:
           name: "terraform-workloads-sa"
     android:
-      repoSyncJobs: 2
+      helm:
+        version: '5.8.104'
+      cuttlefish:
+        tag: 'v1290'
       aospMirror:
         workloadEnv:
           image: "horizon-sdv/aosp-mirror-workloads/env"

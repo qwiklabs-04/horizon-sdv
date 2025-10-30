@@ -104,7 +104,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('OS_VERSION')
-      defaultValue('debian-12-bookworm-v20250910')
+      defaultValue('debian-12-bookworm-v20251014')
       description('''<p>Disk image OS version.<br/>
         Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk</i></p>''')
       trim(true)

@@ -53,7 +53,7 @@
 #  - MAX_RUN_DURATION: Limits how long this VM instance can run. Default: 10h
 #  - NETWORK: The name of the VPC network. Default: sdv-network
 #  - NODEJS_VERSION: The version of nodejs to install. Default: 20.9.0
-#  - OS_VERSION: Default: debian-12-bookworm-v20250910
+#  - OS_VERSION: Default: debian-12-bookworm-v20251014
 #  - PROJECT: The GCP project. Default: derived from gcloud config.
 #  - REGION: The GCP region. Default: europe-west1
 #  - SERVICE_ACCOUNT: The GCP service account. Default: derived from gcloud
@@ -127,7 +127,7 @@ NODEJS_VERSION=${NODEJS_VERSION:-20.9.0}
 NODEJS_VERSION=$(echo "${NODEJS_VERSION}" | xargs)
 OS_PROJECT=${OS_PROJECT:-debian-cloud}
 OS_PROJECT=$(echo "${OS_PROJECT}" | xargs)
-OS_VERSION=${OS_VERSION:-debian-12-bookworm-v20250910}
+OS_VERSION=${OS_VERSION:-debian-12-bookworm-v20251014}
 OS_VERSION=$(echo "${OS_VERSION}" | xargs)
 PROJECT=${PROJECT:-$(gcloud config list --format 'value(core.project)'|head -n 1)}
 REGION=${REGION:-europe-west1}

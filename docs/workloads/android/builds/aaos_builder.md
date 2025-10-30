@@ -151,6 +151,20 @@ The override must be a full GCS URI, including the `gs://` prefix, bucket name, 
 
 `gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Releases/010129`
 
+### `USE_LOCAL_AOSP_MIRROR`
+
+If checked, the build will use the AOSP Mirror setup in your GCP project to fetch Android source code during `repo sync`.
+**Note:**
+-  The AOSP Mirror must be setup prior to running this job. If not setup, the job will fail.
+-  The setup jobs are in folder `Android Workflows -> Environment -> AOSP Mirror`.
+
+### `AOSP_MIRROR_DIR_NAME`
+
+This defines the directory name on the Filestore volume where the Mirror is located.
+**Note:**
+-  This is required if `USE_LOCAL_AOSP_MIRROR` is checked.
+-  e.g. If you provided `my-mirror` when creating the mirror, provide the same value here.
+
 ### `GERRIT_PROJECT` / `GERRIT_CHANGE_NUMBER / GERRIT_PATCHSET_NUMBER`
 
 These are optional but allow the user to fetch a specific Gerrit patchset if required.
@@ -271,6 +285,12 @@ These are as follows:
 
 -   `JENKINS_SERVICE_ACCOUNT`
     - Service account to use for pipelines. Required to ensure correct roles and permissions for GCP resources.
+
+-    `AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER`
+
+-    `AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME`
+
+-    `AOSP_MIRROR_DIR_NAME`
 
 ## KNOWN ISSUES <a name="known-issues"></a>
 

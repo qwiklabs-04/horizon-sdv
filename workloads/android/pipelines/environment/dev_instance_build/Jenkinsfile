@@ -23,11 +23,11 @@ pipeline {
   agent none
 
   environment {
-    STORAGE_CLASS_SUFFIX="android-${ANDROID_VERSION}"
-    STORAGE_SIZE="${ANDROID_VERSION =~ "rpi" ? "500Gi" : "1000Gi"}"
+    STORAGE_CLASS_SUFFIX="android-${ANDROID_VOLUME}"
+    STORAGE_SIZE="${ANDROID_VOLUME =~ "rpi" ? "500Gi" : "1000Gi"}"
 
     INITIAL_POD_TEMPLATE="${USE_LOCAL_AOSP_MIRROR == "true" ? kubernetesPodTemplateWithMirror : kubernetesPodTemplateWithoutMirror}"
-    POD_TEMPLATE="${ABFS == "true" ? kubernetesAbfsPodTemplate : INITIAL_POD_TEMPLATE }"
+    POD_TEMPLATE="${ANDROID_VOLUME =~ "abfs" ? kubernetesAbfsPodTemplate : INITIAL_POD_TEMPLATE }"
 
     ABFS_STORAGE_CLASS_SUFFIX="android-abfs"
     ABFS_STORAGE_SIZE="750Gi"

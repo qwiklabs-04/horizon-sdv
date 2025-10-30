@@ -40,6 +40,9 @@
 #        to retain space for current build.
 #  - AAOS_PARALLEL_BUILD_JOBS: define the number of parallel build jobs. Default
 #        let the build run as many jobs in parallel,  otherwise define max number.
+#  - USE_LOCAL_AOSP_MIRROR: Use the AOSP Gerrit mirror to repo sync from.
+#  - AOSP_MIRROR_DIR_NAME: The mirror directory.
+#  - MIRROR_DIR_FULL_PATH: The full mirror path.
 #
 # For Gerrit review change sets:
 #  - GERRIT_SERVER_URL: URL of Gerrit server.
@@ -100,6 +103,10 @@ MAX_REPO_SYNC_JOBS=${MAX_REPO_SYNC_JOBS:-24}
 REPO_SYNC_JOBS_ARG="-j$(( REPO_SYNC_JOBS < 1 ? 1 : REPO_SYNC_JOBS > MAX_REPO_SYNC_JOBS ? MAX_REPO_SYNC_JOBS : REPO_SYNC_JOBS ))"
 # If empty let the build system decide otherwise override with -j<NUMBER>, e.g. -j64
 AAOS_PARALLEL_BUILD_JOBS=${AAOS_PARALLEL_BUILD_JOBS:-}
+
+# AOSP Mirror parameters
+USE_LOCAL_AOSP_MIRROR=${USE_LOCAL_AOSP_MIRROR:-false}
+AOSP_MIRROR_DIR_NAME=${AOSP_MIRROR_DIR_NAME:-}
 
 # Check we have a target defined.
 AAOS_LUNCH_TARGET=$(echo "${AAOS_LUNCH_TARGET}" | xargs)
@@ -545,6 +552,7 @@ case "$0" in
 
             USE_LOCAL_AOSP_MIRROR=${USE_LOCAL_AOSP_MIRROR}
             AOSP_MIRROR_DIR_NAME=${AOSP_MIRROR_DIR_NAME}
+            MIRROR_DIR_FULL_PATH=${MIRROR_DIR_FULL_PATH}
             "
         else
             VARIABLES+="

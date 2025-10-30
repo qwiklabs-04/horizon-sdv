@@ -69,9 +69,9 @@ function initialise_repo() {
     if [[ "${USE_LOCAL_AOSP_MIRROR}" == "true" ]]; then
         if [[ -d "${MIRROR_DIR_FULL_PATH}/.repo" ]]; then
             LOCAL_MIRROR_REFERENCE="--reference ${MIRROR_DIR_FULL_PATH}"
-            echo "Using local AOSP mirror at: '${MIRROR_DIR_FULL_PATH}'. \n The sync will first try to fetch objects from this local mirror. If an object is not found in the local mirror, it will be fetched from the remote source."
+            echo "Using AOSP mirror: '${MIRROR_DIR_FULL_PATH}'."
         else
-            echo -e "\033[1;31mERROR: Local AOSP mirror not found at path: '${MIRROR_DIR_FULL_PATH}'. Please complete the AOSP Mirror setup first. The setup jobs are in folder 'Android Workflows > Environment > AOSP Mirror'.\033[0m"
+            echo -e "\033[1;31mERROR: AOSP mirror not found: '${MIRROR_DIR_FULL_PATH}', ensure AOSP Mirror has been setup..\033[0m"
             exit 1
         fi
     fi
@@ -79,6 +79,7 @@ function initialise_repo() {
     MAX_RETRIES=4
     for ((i=1; i<="${MAX_RETRIES}"; i++)); do
         # Initialise repo checkout.
+        # shellcheck disable=SC2086
         if ! repo init -u "${AAOS_GERRIT_MANIFEST_URL}" -b "${AAOS_REVISION}" --depth=1 ${LOCAL_MIRROR_REFERENCE}
         then
             echo -e "\033[1;31mERROR: repo init failed, exit!\033[0m"
@@ -94,10 +95,14 @@ function initialise_repo() {
             fi
         done
 
+        local repo_sync_jobs="${REPO_SYNC_JOBS_ARG}"
         # This will automatically clean any previous staged/fetched/downloaded changes.
-        if ! repo sync --no-tags --optimized-fetch --prune --retry-fetches=3 --auto-gc --no-clone-bundle --fail-fast --force-sync "${REPO_SYNC_JOBS_ARG}"
+        if ! repo sync --no-tags --optimized-fetch --prune --retry-fetches=3 --auto-gc --no-clone-bundle --fail-fast --force-sync "${repo_sync_jobs}"
         then
-            echo "WARNING: repo sync failed, sleep 60s and retrying..."
+            # reduce parallel jobs to a reasonable level because mirror failures with high job
+            # value result in Google remote repo failures (HTTP 429 errors - rate limits).
+            repo_sync_jobs="-j3"
+            echo "WARNING: repo sync failed, sleep 60s and retrying with $repo_sync_jobs..."
             sleep 60
             if [ "$i" -eq 3 ]; then
                 echo "WARNING: clean workspace and retry."

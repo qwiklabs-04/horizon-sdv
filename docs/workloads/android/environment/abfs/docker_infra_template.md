@@ -36,6 +36,24 @@ Define the terraform version to install.
 
 Build the container image but don't push to the registry.
 
+### `BUILDKIT_RELEASE_TAG`
+
+The version of Buildkit to use to build the container image.
+
+### `DOCKER_CREDENTIALS_URL`
+
+URL of Google docker credentials helper, required to allow access to the project artifact registry.
+
+### `GCLOUD_CLI_VERSION`
+
+Version of [Google Cloud CLI](https://docs.cloud.google.com/sdk/docs/release-notes) to install.
+Define `latest` if wishing to use the latest available version.
+
+### `KUBECTL_VERSION`
+
+Version of `kubectl` to install. The version is typically `1:${GCLOUD_CLI_VERSION}`.
+Define `latest` if wishing to use the latest available version.
+
 ## SYSTEM VARIABLES <a name="system-variables"></a>
 
 There are a number of system environment variables that are unique to each platform but required by Jenkins build, test and environment pipelines.

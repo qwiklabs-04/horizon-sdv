@@ -26,15 +26,9 @@ pipelineJob('Android/Environment/Development Build Instance') {
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
 
   parameters {
-    booleanParam {
-      name('ABFS')
-      defaultValue(false)
-      description('''<p>Enable if using an ABFS instance</p>''')
-    }
-
     choiceParam {
-      name('ANDROID_VERSION')
-      description('''<p>Version of disk pool to use for the build cache:</p>
+      name('ANDROID_VOLUME')
+      description('''<p>Android disk pool to use for the build cache:</p>
           <ul>
             <li>16: Use the Android 16 disk pool.</li>
             <li>15: Use the Android 15 disk pool.</li>
@@ -42,9 +36,10 @@ pipelineJob('Android/Environment/Development Build Instance') {
             <li>16-rpi: Use the Android 16 RPi disk pool.</li>
             <li>15-rpi: Use the Android 15 RPi disk pool.</li>
             <li>14-rpi: Use the Android 14 RPi disk pool.</li>
+            <li>abfs: Select when using ABFS builds with persisted cache.</li>
           </ul>
-        <p>Not applicable for ABFS, PV only serves as cache for cacheman.</p>''')
-      choices(['16', '15', '14', '16-rpi', '15-rpi', '14-rpi'])
+        <p>For ABFS build instances you select the <code>abfs</code> version to mount the ABFS cache persistent volume.</p>''')
+      choices(['16', '15', '14', '16-rpi', '15-rpi', '14-rpi', 'abfs'])
     }
 
     stringParam {
@@ -64,6 +59,37 @@ pipelineJob('Android/Environment/Development Build Instance') {
       name('MTK_CONNECT_ENABLE')
       defaultValue(false)
       description('''<p>Enable if wishing to use MTK Connect to connect to the host instance.</p>''')
+    }
+
+    stringParam {
+      name('NUM_HOST_INSTANCES')
+      defaultValue('1')
+      description('''<p>Number of host instances to create.<p>
+        <p>i.e. the number of devices to create in MTK Connect testbench.</p>''')
+      trim(true)
+    }
+
+    separator {
+      name('AOSP Mirror Parameters')
+      sectionHeader('AOSP Mirror Parameters')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
+    }
+
+    booleanParam {
+      name('USE_LOCAL_AOSP_MIRROR')
+      defaultValue(${USE_LOCAL_AOSP_MIRROR})
+      description('''<p>If checked, the instance will mount the AOSP Mirror setup in your GCP project to fetch Android source code during <i>repo sync</i>.<br/>
+        <b>Note:</b> The AOSP Mirror must be setup prior to running this job. If not setup, the job will fail.<br> The setup jobs are in folder <i>Android Workflows > Environment > AOSP Mirror</i>.<br/><br/></p>''')
+    }
+
+    stringParam {
+      name('AOSP_MIRROR_DIR_NAME')
+      defaultValue("${AOSP_MIRROR_DIR_NAME}")
+      description('''<p>The directory name on the Filestore volume where the Mirror is located.<br/>
+        <b>Note:</b> This is required if <code>USE_LOCAL_AOSP_MIRROR</code> is checked.</p>
+        <b>Example:</b> If you provided '<i><code>my-mirror</code></i>' when creating the mirror, provide the same value here.<br/><br/></p>''')
+      trim(true)
     }
   }
 

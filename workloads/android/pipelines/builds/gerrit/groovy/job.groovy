@@ -55,6 +55,8 @@ by performing builds on that patchset and providing the user with a vote to thei
   environmentVariables {
     env('GERRIT_REPO_SYNC_JOBS', '${REPO_SYNC_JOBS}')
     env('JENKINS_GCE_CLOUD_LABEL', '${JENKINS_GCE_CLOUD_LABEL}')
+    env('USE_LOCAL_AOSP_MIRROR', ${USE_LOCAL_AOSP_MIRROR})
+    env('AOSP_MIRROR_DIR_NAME', '${AOSP_MIRROR_DIR_NAME}')
   }
 
   logRotator {

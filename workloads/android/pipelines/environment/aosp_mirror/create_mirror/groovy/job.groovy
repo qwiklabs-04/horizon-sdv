@@ -65,10 +65,10 @@ pipelineJob('Android/Environment/AOSP-Mirror/Create Mirror') {
       <strong>REQUIRED:</strong> The directory name on the Filestore volume where the Mirror will be created.<br>
       <b>Example:</b> If you provide '<i><code>my-mirror</code></i>' as value, the mirror will be created at absolute container path '<i><code>${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/my-mirror</code></i>', where '<i><code>${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}</code>.</i>' is the root subdirectory for all mirrors.
     ''')
-    stringParam('MIRROR_MANIFEST_URL', 'https://android.googlesource.com/mirror/manifest', '''
+    stringParam('MIRROR_MANIFEST_URL', 'https://android.googlesource.com/platform/manifest', '''
       <strong>REQUIRED:</strong> The URL of the manifest repository to be used for the AOSP Mirror.<br>
     ''')
-    stringParam('MIRROR_MANIFEST_REF', 'refs/heads/main', '''
+    stringParam('MIRROR_MANIFEST_REF', 'android-16.0.0_r2', '''
       <strong>REQUIRED:</strong> The manifest branch or tag to be used for the AOSP Mirror.<br>
     ''')
     stringParam('MIRROR_MANIFEST_FILE', 'default.xml', '''

@@ -120,6 +120,12 @@ These are as follows:
 -   `JENKINS_SERVICE_ACCOUNT`
     - Service account to use for pipelines. Required to ensure correct roles and permissions for GCP resources.
 
+-    `AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER`
+
+-    `AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME`
+
+-    `AOSP_MIRROR_DIR_NAME`
+
 ## KNOWN ISSUES <a name="known-issues"></a>
 
 Refer to `docs/workloads/android/builds/aaos_builder.md` for details.

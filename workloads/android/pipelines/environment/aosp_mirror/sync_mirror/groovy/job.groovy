@@ -60,23 +60,50 @@ pipelineJob('Android/Environment/AOSP-Mirror/Sync Mirror') {
   }
 
   parameters {
-    stringParam('IMAGE_TAG', 'latest', '''
-      <strong>REQUIRED:</strong> The image tag for the Docker image to be used as environment for this job.<br>
-      <b>Note:</b> Ensure you have executed that image build job prior to running this job, so that the required Docker image is available in your GCP project.
-    ''')
-    stringParam('MIRROR_DIR', '', '''
-      <strong>REQUIRED:</strong> The directory name on the Filestore volume where the Mirror will be created.<br>
-      <b>Example:</b> If you provide '<i><code>my-mirror</code></i>' as value, the mirror will be created at absolute container path '<i><code>${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/my-mirror</code></i>', where '<i><code>${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}</code>.</i>' is the root subdirectory for all mirrors.
-    ''')
-    stringParam('MIRROR_MANIFEST_URL', 'https://android.googlesource.com/mirror/manifest', '''
-      <strong>REQUIRED:</strong> The URL of the manifest repository to be used for the AOSP Mirror.<br>
-    ''')
-    stringParam('MIRROR_MANIFEST_REF', 'refs/heads/main', '''
-      <strong>REQUIRED:</strong> The manifest branch or tag to be used for the AOSP Mirror.<br>
-    ''')
-    stringParam('MIRROR_MANIFEST_FILE', 'default.xml', '''
-      <strong>REQUIRED:</strong> The manifest file name to be used for the AOSP Mirror.<br>
-    ''')
+    stringParam {
+      name('IMAGE_TAG')
+      defaultValue('latest')
+      description('''<strong>REQUIRED:</strong> The image tag for the Docker image to be used as environment for this job.<br>
+      <b>Note:</b> Ensure you have executed that image build job prior to running this job, so that the required Docker image is available in your GCP project.''')
+      trim(true)
+    }
+
+    stringParam {
+      name('MIRROR_DIR')
+      defaultValue('')
+      description('''<strong>REQUIRED:</strong> The directory name on the Filestore volume where the Mirror will be created.<br>
+      <b>Example:</b> If you provide '<i><code>my-mirror</code></i>' as value, the mirror will be created at absolute container path '<i><code>${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/my-mirror</code></i>', where '<i><code>${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}</code>.</i>' is the root subdirectory for all mirrors.''')
+      trim(true)
+    }
+
+    stringParam {
+      name('MIRROR_MANIFEST_URL')
+      defaultValue('https://android.googlesource.com/platform/manifest')
+      description('''<strong>REQUIRED:</strong> The URL of the manifest repository to be used for the AOSP Mirror.<br>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('MIRROR_MANIFEST_REF')
+      defaultValue('android-16.0.0_r2')
+      description('''<strong>REQUIRED:</strong> The manifest branch or tag to be used for the AOSP Mirror.<br>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('MIRROR_MANIFEST_FILE')
+      defaultValue('default.xml')
+      description('''<strong>REQUIRED:</strong> The manifest file name to be used for the AOSP Mirror.<br>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('GERRIT_REPO_SYNC_JOBS')
+      defaultValue("${REPO_SYNC_JOBS}")
+      description('''<p>Number of parallel sync jobs for <i>repo sync</i>.<br/>
+        Default value is defined by the Android Seed job</p>''')
+      trim(true)
+    }
   }
 
   definition {

@@ -80,11 +80,13 @@ pipeline {
             container(name: 'buildkit') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                 sh '''
-                  cd "${WORKSPACE}/workloads/common/docker_image_template/";
+                  cd "${WORKSPACE}/workloads/common/docker_infra_image_template/";
                   buildctl build \
                    --frontend=dockerfile.v0 \
                    --local=dockerfile=. \
                    --local context=. \
+                   --opt build-arg:GCLOUD_CLI_VERSION="${GCLOUD_CLI_VERSION}" \
+                   --opt build-arg:KUBECTL_VERSION="${KUBECTL_VERSION}" \
                    --registry-auth-tlscontext host=${REGISTRY},insecure=true \
                    --output=type=image,name=${DESTINATION}:${IMAGE_TAG},push=${PUSH}
                 '''

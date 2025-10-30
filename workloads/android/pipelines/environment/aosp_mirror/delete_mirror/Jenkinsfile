@@ -174,10 +174,10 @@ pipeline {
   // Post-build actions for success or failure
   post {
     success {
-      echo "Status: SUCCESS - AOSP Mirror creation job completed."
+      echo "Status: SUCCESS - AOSP Mirror deletion job completed."
     }
     failure {
-      echo "Status: FAILURE - AOSP Mirror creation job failed."
+      echo "Status: FAILURE - AOSP Mirror deletion job failed."
     }
     always {
       echo "Job finished."

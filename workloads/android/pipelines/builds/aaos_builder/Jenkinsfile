@@ -213,11 +213,6 @@ pipeline {
             }
             container(name: 'builder') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                // Validate AOSP Mirror directory name if using local AOSP mirror
-                if (env.USE_LOCAL_AOSP_MIRROR?.toLowerCase() == 'true' && !env.AOSP_MIRROR_DIR_NAME?.trim()) {
-                  error "USE_LOCAL_AOSP_MIRROR is true but AOSP_MIRROR_DIR_NAME is empty. Set AOSP_MIRROR_DIR_NAME or disable USE_LOCAL_AOSP_MIRROR."
-                }
-                
                 withCredentials([usernamePassword(credentialsId: env.GERRIT_CREDENTIALS_ID, passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {
                   sh '''
                     set +x
@@ -234,11 +229,11 @@ pipeline {
                     AAOS_LUNCH_TARGET="${AAOS_LUNCH_TARGET}" \
                     AAOS_CLEAN="NO_CLEAN" \
                     GERRIT_SERVER_URL="${GERRIT_API_URL}" \
-                    USE_LOCAL_AOSP_MIRROR="${USE_LOCAL_AOSP_MIRROR}" \
-                    MIRROR_DIR_FULL_PATH="${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/${AOSP_MIRROR_DIR_NAME}" \
                     POST_REPO_INITIALISE_COMMAND="${POST_REPO_INITIALISE_COMMAND}" \
                     POST_REPO_COMMAND="${POST_REPO_COMMAND}" \
                     REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}" \
+                    USE_LOCAL_AOSP_MIRROR="${USE_LOCAL_AOSP_MIRROR}" \
+                    MIRROR_DIR_FULL_PATH="${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/${AOSP_MIRROR_DIR_NAME}" \
                     ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
                   '''
                 }

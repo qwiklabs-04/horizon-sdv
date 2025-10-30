@@ -72,6 +72,16 @@ pipeline {
            description: '''<p>Docker credentials helper URL, e.g. <a target="_blank" href=https://cloud.google.com/artifact-registry/docs/docker/authentication#standalone-helper>credentials helper</a>.</p>''',
            trim: true)
 
+    string(name: 'GCLOUD_CLI_VERSION',
+           defaultValue: '544.0.0-0',
+           description: '''<p>Version of <a target="_blank" https://docs.cloud.google.com/sdk/docs/release-notes>Google Cloud CLI</a>.<br/>Note: Define <code>latest</code> if wishing to use the latest available version.</p>''',
+           trim: true)
+
+    string(name: 'KUBECTL_VERSION',
+           defaultValue: '1:544.0.0-0',
+           description: '''<p>Version of <code>kubectl</code>. Typically based on <a target="_blank" https://docs.cloud.google.com/sdk/docs/release-notes>Google Cloud CLI</a><br/>Note: Define <code>latest</code> if wishing to use the latest available version.</p>''',
+           trim: true)
+
     separator(
       name: "Android Workload",
       sectionHeader: "Android Parameters",
@@ -91,6 +101,26 @@ pipeline {
                           <li>cuttlefish-vm-main</li>
                           <li>cuttlefish-vm-v1270</li>
                         </ul>''',
+           trim: true)
+
+    separator(
+      name: "AOSP Mirror Parameters",
+      sectionHeader: "AOSP Mirror Parameters",
+      separatorStyle: "${SEPARATOR_STYLE}",
+      sectionHeaderStyle: "${HEADER_STYLE}"
+    )
+
+    booleanParam(name: 'USE_LOCAL_AOSP_MIRROR',
+                 defaultValue: false,
+                 description: '''<p>If checked, the build will use the AOSP Mirror setup in your GCP project to fetch Android source code during <i>repo sync</i>.<br/>
+                   <b>Note:</b> The AOSP Mirror must be setup prior to running this job. If not setup, the job will fail.<br>
+                 The setup jobs are in folder <i>Android Workflows > Environment > AOSP Mirror</i>.<br/><br/></p>''')
+
+    string(name: 'AOSP_MIRROR_DIR_NAME',
+           defaultValue: '',
+           description: '''<p>The directory name on the Filestore volume where the Mirror is located.<br/>
+             <b>Note:</b> This is required if <code>USE_LOCAL_AOSP_MIRROR</code> is checked.</p>
+             <b>Example:</b> If you provided '<i><code>my-mirror</code></i>' when creating the mirror, provide the same value here.<br/><br/></p>''',
            trim: true)
 
     separator(
@@ -188,11 +218,15 @@ pipeline {
                   ['${ABFS_COS_IMAGE_REF}', "${ABFS_COS_IMAGE_REF}" ],
                   ['${ABFS_REPOSITORY}', "${ABFS_REPOSITORY}" ],
                   ['${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${ABFS_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
+                  ['${GCLOUD_CLI_VERSION}', "${GCLOUD_CLI_VERSION}"],
+                  ['${KUBECTL_VERSION}', "${KUBECTL_VERSION}"],
                   ['${UPLOADER_MANIFEST_SERVER}', "${UPLOADER_MANIFEST_SERVER}"],
                   ['${JENKINS_GCE_CLOUD_LABEL}', "${CUTTLEFISH_GCE_CLOUD_LABEL}" ],
                   ['${NODEJS_VERSION}', "${NODEJS_VERSION}"],
                   ['${BUILDKIT_RELEASE_TAG}', "${BUILDKIT_RELEASE_TAG}"],
                   ['${DOCKER_CREDENTIALS_URL}', "${DOCKER_CREDENTIALS_URL}"],
+                  ['${USE_LOCAL_AOSP_MIRROR}', "${USE_LOCAL_AOSP_MIRROR}"],
+                  ['${AOSP_MIRROR_DIR_NAME}', "${AOSP_MIRROR_DIR_NAME}"],
                   ['${AOSP_MIRROR_WORKLOADS_ENV_IMAGE_NAME}', "${AOSP_MIRROR_WORKLOADS_ENV_IMAGE_NAME}"],
                   ['${AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME}', "${AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME}"],
                   ['${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}', "${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}"],
@@ -248,6 +282,8 @@ pipeline {
                 currentBuild.description = "$BUILD_USER" + "<br>" + "${SEED_WORKLOAD}"
 
                 replacements += [
+                  ['${GCLOUD_CLI_VERSION}', "${GCLOUD_CLI_VERSION}"],
+                  ['${KUBECTL_VERSION}', "${KUBECTL_VERSION}"],
                   ['${OPENBSW_BUILD_BUCKET_ROOT_NAME}', "${OPENBSW_BUILD_BUCKET_ROOT_NAME}"],
                   ['${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}', "${OPENBSW_BUILD_DOCKER_ARTIFACT_PATH_NAME}"],
                   ['${OPENBSW_IMAGE_TAG}', "${OPENBSW_IMAGE_TAG}"],
@@ -304,6 +340,8 @@ pipeline {
               script {
                 replacements += [
                   ['${BUILDKIT_RELEASE_TAG}', "${BUILDKIT_RELEASE_TAG}"],
+                  ['${GCLOUD_CLI_VERSION}', "${GCLOUD_CLI_VERSION}"],
+                  ['${KUBECTL_VERSION}', "${KUBECTL_VERSION}"],
                   ['${DOCKER_CREDENTIALS_URL}', "${DOCKER_CREDENTIALS_URL}"],
                   ['${UTILITIES_DOCKER_ARTIFACT_PATH_NAME}', "${UTILITIES_DOCKER_ARTIFACT_PATH_NAME}"]
                 ]

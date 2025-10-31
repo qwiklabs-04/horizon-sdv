@@ -28,7 +28,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
       description('''<p>The branch/tag version of Android Cuttlefish to use, e.g.</p>
         <ul>
           <li>main</li>
-          <li>v1.27.0</li>
+          <li>v1.29.0</li>
         </ul>
         <p>Reference: <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a></p>''')
       trim(true)
@@ -46,9 +46,9 @@ pipelineJob('Android/Environment/CF Instance Template') {
     stringParam {
       name('CUTTLEFISH_INSTANCE_UNIQUE_NAME')
       defaultValue('')
-      description('''<p>Optional parameter to define the unique name used for the instance template, e.g.  <i>cuttlefish-vm-instance-test-v1270</i><br/>
+      description('''<p>Optional parameter to define the unique name used for the instance template, e.g.  <i>cuttlefish-vm-instance-test-v1290</i><br/>
         Name must start with <i>cuttlefish-vm</i>, refer to docs for details on regex requirements for name.<br/>
-        Default: The name will be automatically derived from ANDROID_CUTTLEFISH_REVISION., e.g. <i>cuttlefish-vm-v1270</i><br/><br/></p>''')
+        Default: The name will be automatically derived from ANDROID_CUTTLEFISH_REVISION., e.g. <i>cuttlefish-vm-v1290</i><br/><br/></p>''')
       trim(true)
     }
 
@@ -104,7 +104,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('OS_VERSION')
-      defaultValue('debian-12-bookworm-v20250910')
+      defaultValue('debian-12-bookworm-v20251014')
       description('''<p>Disk image OS version.<br/>
         Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk</i></p>''')
       trim(true)

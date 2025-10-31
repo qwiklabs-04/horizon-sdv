@@ -32,6 +32,8 @@ spec:
         image:
           repository: bitnamilegacy/postgresql
         global:
+          security:
+            allowInsecureImages: true
           postgresql:
             auth:
               username: dbusername

@@ -19,6 +19,8 @@ config:
       version: "7.1.4"
     postgresql:
       version: "postgresql/17.0.1"
+    zookeeper:
+      version: "zookeeper/13.8.7"
   workloads:
     common:
       serviceAccounts:

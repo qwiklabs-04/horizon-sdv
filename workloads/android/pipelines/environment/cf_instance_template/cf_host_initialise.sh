@@ -62,7 +62,7 @@ function cuttlefish_install_additional_packages() {
     sudo apt-get update -y
     sudo apt-get install -y "${JAVA_VERSION}" || true
 
-    echo -e "${GREEN} Java version:${NC}"
+    echo -e "${GREEN}Java version:${NC}"
     java --version
 
     # Install Node version manager and nodejs.
@@ -143,8 +143,6 @@ function cuttlefish_install_cts() {
     else
         echo -e "${ORANGE} Skipped Android 14 CTS, nothing to install.${NC}"
     fi
-    # Force sync to ensure disk is updated.
-    sync
 
     local elapsed=$(( SECONDS - start ))
     m=$(( elapsed / 60 ))
@@ -188,9 +186,12 @@ function cuttlefish_user_groups() {
 }
 
 function cuttlefish_jenkins_user() {
-    # Delete any ubuntu default user (1000)
-    # shellcheck disable=SC2046
-    sudo userdel $(awk -F: '$3==1000{print $1}' /etc/passwd) > /dev/null 2>&1 || true
+    if [[ "$OS_VERSION" == *ubuntu* ]]; then
+        # Delete any ubuntu default user (1000)
+        # shellcheck disable=SC2046
+        sudo userdel $(awk -F: '$3==1000{print $1}' /etc/passwd) > /dev/null 2>&1 || true
+    fi
+
     sudo useradd -u 1000 -ms /bin/bash ${JENKINS_USER} > /dev/null 2>&1
     sudo passwd -d ${JENKINS_USER} > /dev/null 2>&1
     sudo usermod -aG google-sudoers ${JENKINS_USER} > /dev/null 2>&1
@@ -229,12 +230,19 @@ function cuttlefish_install() {
             exit 1
         else
             echo -e "${GREEN}Cuttlefish build script: ${BUILD_SCRIPT}${NC}"
-            # Avoid restart issues
             # Build cuttlefish packages
-            yes Y | "${BUILD_SCRIPT}"
+            if ! yes Y | "${BUILD_SCRIPT}"; then
+                echo -e "${RED}Error: ${CUTTLEFISH_REVISION} failed on: ${BUILD_SCRIPT}${NC}"
+                cuttlefish_cleanup
+                exit 1
+            fi
 
             # Install the cuttlefish packages
-            sudo apt install -y ./cuttlefish-base_*.deb ./cuttlefish-user_*.deb ./cuttlefish-orchestration*.deb
+            if ! sudo apt install -y ./cuttlefish-base_*.deb ./cuttlefish-user_*.deb ./cuttlefish-orchestration*.deb; then
+                echo -e "${RED}Error: ${CUTTLEFISH_REVISION} failed to install packages.${NC}"
+                cuttlefish_cleanup
+                exit 1
+            fi
 
             # Clean up
             cuttlefish_cleanup
@@ -255,6 +263,9 @@ function cuttlefish_install() {
     else
         cuttlefish_install_cts
     fi
+
+    # Force sync to ensure disk is updated.
+    sync
 }
 
 # Initialise or update Cuttlefish.

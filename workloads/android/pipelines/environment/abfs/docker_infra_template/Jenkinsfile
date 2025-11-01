@@ -87,6 +87,7 @@ pipeline {
                    --local context=. \
                    --opt build-arg:GCLOUD_CLI_VERSION="${GCLOUD_CLI_VERSION}" \
                    --opt build-arg:KUBECTL_VERSION="${KUBECTL_VERSION}" \
+                   --opt build-arg:LINUX_DISTRIBUTION=${LINUX_DISTRIBUTION} \
                    --opt build-arg:TERRAFORM_CATEGORY="${TERRAFORM_CATEGORY}" \
                    --registry-auth-tlscontext host=${REGISTRY},insecure=true \
                    --output=type=image,name=${DESTINATION}:${IMAGE_TAG},push=${PUSH}

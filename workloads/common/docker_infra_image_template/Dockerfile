@@ -16,7 +16,8 @@
 # networking utilities.
 
 # Latest stable.
-FROM --platform=linux/amd64 debian:12
+ARG LINUX_DISTRIBUTION=debian:12
+FROM ${LINUX_DISTRIBUTION}
 
 ARG TERRAFORM_CATEGORY=""
 

@@ -136,12 +136,7 @@ SUBNET=${SUBNET:-sdv-subnet}
 VM_INSTANCE_CREATE=${VM_INSTANCE_CREATE:-true}
 ZONE=${ZONE:-europe-west1-d}
 
-# Ubuntu and debian different paths.
-if [[ "$OS_VERSION" == *ubuntu* ]]; then
-    IMAGE="projects/${OS_PROJECT}/global/images/family/${OS_VERSION}"
-else
-    IMAGE="projects/${OS_PROJECT}/global/images/${OS_VERSION}"
-fi
+IMAGE="projects/${OS_PROJECT}/global/images/${OS_VERSION}"
 
 # Define architecture based on OS_VERSION as this will always include arch for arm.
 if [[ "$OS_VERSION" == *arm64* ]]; then
@@ -306,8 +301,8 @@ function create_base_template_instance() {
         --service-account="${SERVICE_ACCOUNT}" \
         --machine-type="${MACHINE_TYPE}" \
         --maintenance-policy=TERMINATE \
-        --image-project=debian-cloud \
-        --create-disk=mode=rw,architecture="${ARCHITECTURE}",boot=yes,size="${BOOT_DISK_SIZE}",auto-delete=true,type="${BOOT_DISK_TYPE}",device-name="${vm_base_instance}",image="${IMAGE}",interface=SCSI \
+        --image-project="${OS_PROJECT}" \
+        --create-disk=mode=rw,architecture="${ARCHITECTURE}",boot=yes,size="${BOOT_DISK_SIZE}",auto-delete=true,type="${BOOT_DISK_TYPE}",device-name="${vm_base_instance}",image="${IMAGE}",image-project="${OS_PROJECT}",interface=SCSI \
         --metadata=enable-oslogin=true \
         --reservation-affinity=any \
         --enable-nested-virtualization \
@@ -369,6 +364,7 @@ function install_host_tools() {
         CTS_ANDROID_14_URL=${CTS_ANDROID_14_URL} \
         JAVA_VERSION=${JAVA_VERSION} \
         NODEJS_VERSION=${NODEJS_VERSION} \
+        OS_VERSION=${OS_VERSION} \
         ./cf/cf_host_initialise.sh; \
         rm -rf cf"
     progress_spinner "$!"

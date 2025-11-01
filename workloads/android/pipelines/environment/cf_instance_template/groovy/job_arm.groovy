@@ -104,7 +104,7 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
       defaultValue('ubuntu-2204-jammy-arm64-v20251023')
       description('''<p>ARM64 Disk image OS version.<br/>
         Select the OS version name based on project and family, e.g <code>`gcloud compute images list</code>`<br/>
-        **Reference:** <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk</i></p>''')
+        Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk</i></p>''')
       trim(true)
     }
 

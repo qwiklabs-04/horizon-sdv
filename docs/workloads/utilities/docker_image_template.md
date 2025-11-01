@@ -28,6 +28,10 @@ This depends only on [`buildkit`](https://hub.docker.com/r/moby/buildkit) which 
 This is the tag that will be applied when the container image is pushed to the registry. For the current release we
 simply use `latest` because all pipelines that depend on this container image are using `latest`.
 
+### `LINUX_DISTRIBUTION`
+
+Define the Linux Distribution to create the Docker image from. Values must be supported by the Dockerfile `FROM` instruction.
+
 ### `NO_PUSH`
 
 Build the container image but don't push to the registry.

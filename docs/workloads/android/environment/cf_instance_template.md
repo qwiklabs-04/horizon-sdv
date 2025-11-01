@@ -111,11 +111,15 @@ Must be OpenJDK and headless to avoid installation issues with various operating
 Override the OS version. These regularly become deprecated and superceded, hence option to update to newer version.
 
 - x86_64: use debian only.
-- ARM64: use `ubuntu-2204-lts-arm64`
+- ARM64: use `ubuntu-2204-lts-arm64` family.
+
+Refer to `gcloud compute images list` for the version names based on family.
 
 ### `OS_PROJECT`
 
 Disk image project.
+
+Refer to `gcloud compute images list` for the project names based on family and OS version.
 
 ### `NODEJS_VERSION`
 

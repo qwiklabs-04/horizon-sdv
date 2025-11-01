@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Allow user to choose distribution, e.g. ubuntu:20.04
-ARG LINUX_DISTRIBUTION=20.04
+# Allow user to choose distribution, e.g. ubuntu:22.04
+ARG LINUX_DISTRIBUTION=ubuntu:22.04
 FROM ${LINUX_DISTRIBUTION}
 
 # Overrides

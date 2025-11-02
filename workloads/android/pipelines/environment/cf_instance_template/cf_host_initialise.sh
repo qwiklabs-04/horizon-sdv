@@ -188,12 +188,15 @@ function cuttlefish_user_groups() {
     done
 }
 
-function create_group() {
-    if ! getent group "$1"; then
-        echo -e "${ORANGE}Group $1 missing, create it.${NC}"
-        if ! sudo groupadd "$1"; then
-            echo -e "${RED}Failed to add $1!${NC}"
-        fi
+function update_sudoers() {
+    if ! getent group google-sudoers; then
+        # TAA-1216: workaround for debian updates from 20251014, google-sudoers
+        # group not created from gcloud compute instance create and as such
+        # jenkins can't access the instance without being added to the standard
+        # sudoers file. Referred to Google but workaround appears to resolve this
+        # regression.
+        echo -e "${ORANGE}Group google-sudoers missing, use sudoers instead for user $1.${NC}"
+        sudo echo "$1 ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
     fi
 }
 
@@ -202,18 +205,11 @@ function cuttlefish_jenkins_user() {
         # Delete any ubuntu default user (1000)
         # shellcheck disable=SC2046
         sudo userdel $(awk -F: '$3==1000{print $1}' /etc/passwd) > /dev/null 2>&1 || true
-    else
-        # TAA-1216: workaround for debian updates from 20251014, google-sudoers
-        # group not created from gcloud compute instance create and as such
-        # jenkins can't access the instance without being added to the standard
-        # sudoers file. Referred to Google but workaround appears to resolve this
-        # regression.
-        create_group google-sudoers
-        sudo echo "${JENKINS_USER} ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
     fi
+    update_sudoers ${JENKINS_USER}
     sudo useradd -u 1000 -ms /bin/bash ${JENKINS_USER} > /dev/null 2>&1
     sudo passwd -d ${JENKINS_USER} > /dev/null 2>&1
-    sudo usermod -aG google-sudoers ${JENKINS_USER}
+    sudo usermod -aG google-sudoers ${JENKINS_USER} > /dev/null 2>&1 || true
     cuttlefish_user_groups ${JENKINS_USER}
 }
 

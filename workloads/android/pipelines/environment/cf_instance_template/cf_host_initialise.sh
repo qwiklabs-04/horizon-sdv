@@ -197,6 +197,9 @@ function update_sudoers() {
         # regression.
         echo -e "${ORANGE}Group google-sudoers missing, use sudoers instead for user $1.${NC}"
         sudo echo "$1 ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
+    else
+        echo -e "${GREEN}Group google-sudoers exists, add user $1 to group.${NC}"
+        sudo usermod -aG google-sudoers "$1" > /dev/null 2>&1 || true
     fi
 }
 
@@ -206,10 +209,9 @@ function cuttlefish_jenkins_user() {
         # shellcheck disable=SC2046
         sudo userdel $(awk -F: '$3==1000{print $1}' /etc/passwd) > /dev/null 2>&1 || true
     fi
-    update_sudoers ${JENKINS_USER}
     sudo useradd -u 1000 -ms /bin/bash ${JENKINS_USER} > /dev/null 2>&1
     sudo passwd -d ${JENKINS_USER} > /dev/null 2>&1
-    sudo usermod -aG google-sudoers ${JENKINS_USER} > /dev/null 2>&1 || true
+    update_sudoers ${JENKINS_USER}
     cuttlefish_user_groups ${JENKINS_USER}
 }
 

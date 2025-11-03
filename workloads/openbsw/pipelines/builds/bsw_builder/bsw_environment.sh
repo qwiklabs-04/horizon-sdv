@@ -117,14 +117,14 @@ BUILD_DOCUMENTATION=${BUILD_DOCUMENTATION:-false}
 UNIT_TESTS_CMDLINE=${UNIT_TESTS_CMDLINE:-cmake --preset tests-posix-debug && cmake --build --preset tests-debug --target ${UNIT_TEST_TARGET} -j${CMAKE_SYNC_JOBS}}
 LIST_UNIT_TESTS_CMDLINE=${LIST_UNIT_TESTS_CMDLINE:-cmake --preset tests-posix-debug && cmake --build --preset tests-debug --target help -j${CMAKE_SYNC_JOBS}}
 RUN_UNIT_TESTS_CMDLINE=${RUN_UNIT_TESTS_CMDLINE:-ctest --preset tests-posix-debug --parallel ${CMAKE_SYNC_JOBS}}
-POSIX_BUILD_CMDLINE=${POSIX_BUILD_CMDLINE:-cmake --preset posix && cmake --build --preset posix -j${CMAKE_SYNC_JOBS}}
-NXP_S32K148_BUILD_CMDLINE=${NXP_S32K148_BUILD_CMDLINE:-cmake --preset s32k148-gcc && cmake --build --preset s32k148-gcc -j${CMAKE_SYNC_JOBS}}
-POSIX_PYTEST_CMDLINE=${POSIX_PYTEST_CMDLINE:-./tools/enet/bring-up-ethernet.sh && ./tools/can/bring-up-vcan0.sh && cd test/pyTest/ && pytest --target=posix}
+POSIX_BUILD_CMDLINE=${POSIX_BUILD_CMDLINE:-cmake --preset posix-freertos && cmake --build --preset posix-freertos -j${CMAKE_SYNC_JOBS}}
+NXP_S32K148_BUILD_CMDLINE=${NXP_S32K148_BUILD_CMDLINE:-cmake --preset s32k148-gcc-freertos && cmake --build --preset s32k148-gcc-freertos -j${CMAKE_SYNC_JOBS}}
+POSIX_PYTEST_CMDLINE=${POSIX_PYTEST_CMDLINE:-./tools/enet/bring-up-ethernet.sh && ./tools/can/bring-up-vcan0.sh && cd test/pyTest/ && pytest --target=posix-freertos}
 BUILD_DOCUMENTATION_CMDLINE=${BUILD_DOCUMENTATION_CMDLINE:-cd doc && doxygen Doxyfile && cd -}
 
 # Artifacts
-POSIX_ARTIFACT=${POSIX_ARTIFACT:-"build/posix/executables/referenceApp/application/Release/app.referenceApp.elf"}
-NXP_S32K148_ARTIFACT=${NXP_S32K148_ARTIFACT:-"build/s32k148-gcc/executables/referenceApp/application/RelWithDebInfo/app.referenceApp.elf"}
+POSIX_ARTIFACT=${POSIX_ARTIFACT:-"build/posix-freertos/executables/referenceApp/application/Release/app.referenceApp.elf"}
+NXP_S32K148_ARTIFACT=${NXP_S32K148_ARTIFACT:-"build/s32k148-freertos-gcc/executables/referenceApp/application/RelWithDebInfo/app.referenceApp.elf"}
 
 # Post build commands
 declare -a POST_BUILD_COMMANDS
@@ -187,8 +187,10 @@ if ${BUILD_NXP_S32K148}; then
     POST_BUILD_COMMANDS+=(
         "mkdir -p artifacts/s32k148"
         "cp -f ${NXP_S32K148_ARTIFACT} artifacts/s32k148 || true"
-        "cp -f build/s32k148-gcc/application.map artifacts/s32k148 || true"
-        "cp -f build/s32k148-clang/application.map artifacts/s32k148 || true"
+        "cp -f build/s32k148-freertos-gcc/application.map artifacts/s32k148 || true"
+        "cp -f build/s32k148-threadx-gcc/application.map artifacts/s32k148 || true"
+        "cp -f build/s32k148-freertos-clang/application.map artifacts/s32k148 || true"
+        "cp -f build/s32k148-threadx-clang/application.map artifacts/s32k148 || true"
     )
 fi
 

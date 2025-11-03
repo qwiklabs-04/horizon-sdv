@@ -28,6 +28,8 @@ CUTTLEFISH_REPO_NAME=$(basename "${CUTTLEFISH_REPO_URL}" .git)
 # version number, eg main = 1.0.0.
 CUTTLEFISH_UPDATE=${CUTTLEFISH_UPDATE:-false}
 
+# OS Version
+OS_VERSION=${OS_VERSION:-}
 # Android CTS test harness URLs, installed on host.
 # Allow override - users may install their own. Defaults set in Groovy.
 # https://source.android.com/docs/compatibility/cts/downloads
@@ -47,6 +49,7 @@ fi
 
 # Show variables.
 VARIABLES="Environment:
+        OS_VERSION=${OS_VERSION}
         CTS_ANDROID_16_URL=${CTS_ANDROID_16_URL}
         CTS_ANDROID_15_URL=${CTS_ANDROID_15_URL}
         CTS_ANDROID_14_URL=${CTS_ANDROID_14_URL}

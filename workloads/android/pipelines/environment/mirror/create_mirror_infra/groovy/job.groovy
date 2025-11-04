@@ -1,4 +1,4 @@
-// Copyright (c) 2024-2025 Accenture, All Rights Reserved.
+// Copyright (c) 2025 Accenture, All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,10 +13,9 @@
 // limitations under the License.
 
 // Description:
-// This groovy job is used by the Seed Workloads Pipeline to define template and parameters for pipeline that executes create_mirror_infra operation of an NFS-based Mirror setup.
-//
-// References:
-//
+// This groovy job is used by the Seed Workloads Pipeline to define template
+// and parameters for pipeline that executes create_mirror_infra operation of
+// an NFS-based Mirror setup.
 
 pipelineJob('Android/Environment/Mirror/Create Mirror Infra') {
   description('''
@@ -51,26 +50,41 @@ pipelineJob('Android/Environment/Mirror/Create Mirror Infra') {
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>
   ''')
 
-  logRotator {
-    daysToKeep(60)
-    numToKeep(200)
-  }
-
   parameters {
-    stringParam('IMAGE_TAG', 'latest', '''
-      <strong>REQUIRED:</strong> The image tag for the Docker image to be used as environment for this job.<br>
-      <b>Note:</b> Ensure you have executed that image build job prior to running this job, so that the required Docker image is available in your GCP project.
-    ''')
-    stringParam('MIRROR_VOLUME_CAPACITY_GB', '2048', '''
-      <strong>REQUIRED:</strong> Size of the mirror volume to be created in GiB.<br>
+    stringParam {
+      name('IMAGE_TAG')
+      defaultValue('latest')
+      description('''<strong>REQUIRED:</strong> The image tag for the Docker image to be used as environment for this job.<br>
+      <b>Note:</b> Ensure you have executed that image build job prior to running this job, so that the required Docker image is available in your GCP project.''')
+      trim(true)
+    }
+
+    stringParam {
+      name('MIRROR_VOLUME_CAPACITY_GB')
+      defaultValue('2048')
+      description('''<strong>REQUIRED:</strong> Size of the mirror volume to be created in GiB.<br>
       <b>Note:</b>
       <ul>
         <li>Minimum size is 1024Gi (1Ti).</li>
         <li>This size is for the entire Filestore NFS volume, which can host multiple mirrors (each in its own unique directory).</li>
         <li>Size CANNOT be changed once created. You will need to delete the existing volume and create a new one with the desired size.</li>
         <li>Example: A full AOSP Mirror consumes around 1946Gi (1.9Ti) of storage. So 2048Gi of total volume capacity is recommended.</li>
-      </ul>
-    ''')
+      </ul>''')
+      trim(true)
+    }
+  }
+
+  // Block build if certain jobs are running.
+  blockOn('Android/Environment/Mirror/.*(Create|Delete|Sync).*') {
+    // Possible values are 'GLOBAL' and 'NODE' (default).
+    blockLevel('GLOBAL')
+    // Possible values are 'ALL', 'BUILDABLE' and 'DISABLED' (default).
+    scanQueueFor('BUILDABLE')
+  }
+
+  logRotator {
+    daysToKeep(60)
+    numToKeep(200)
   }
 
   definition {

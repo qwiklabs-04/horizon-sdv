@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Copyright (c) 2024-2025 Accenture, All Rights Reserved.
+# Copyright (c) 2025 Accenture, All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ TF_BACKEND_BUCKET="$1"
 AOSP_MIRROR_TFVARS_JSON_FILE_PATH="$2"
 
 # Import shared utils
+# shellcheck disable=SC1091
 source "$(dirname "$0")/../utils/utils.sh"
 
 

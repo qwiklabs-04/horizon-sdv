@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (c) 2024-2025 Accenture, All Rights Reserved.
+# Copyright (c) 2025 Accenture, All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ MIRROR_DIR_FULL_PATH="${MIRROR_ROOT_SUBDIR_PATH}/${MIRROR_DIR}" # for single mir
 METADATA_FILE_ROOT_KEY=$(basename "${MIRROR_ROOT_SUBDIR_PATH}")
 
 # Import shared utils
+# shellcheck disable=SC1091
 source "$(dirname "$0")/../utils/utils.sh"
 
 # Function to process a single mirror sync (or creation)
@@ -48,7 +49,8 @@ process_single_mirror() {
   local metadata_root_key="$8"
 
   local sync_type="created"
-  local mirror_dir_name=$(basename "${mirror_dir_path}")
+  local mirror_dir_name
+  mirror_dir_name=$(basename "${mirror_dir_path}")
 
   print_header "MIRROR SETUP: SYNCING MIRROR ${mirror_dir_name}"
 

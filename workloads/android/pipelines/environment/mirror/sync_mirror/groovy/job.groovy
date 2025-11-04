@@ -1,4 +1,4 @@
-// Copyright (c) 2024-2025 Accenture, All Rights Reserved.
+// Copyright (c) 2025 Accenture, All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,10 +13,9 @@
 // limitations under the License.
 
 // Description:
-// This groovy job is used by the Seed Workloads Pipeline to define template and parameters for pipeline that executes sync_mirror operation of Mirror setup.
-//
-// References:
-//
+// This groovy job is used by the Seed Workloads Pipeline to define template
+// and parameters for pipeline that executes sync_mirror operation of Mirror
+// setup.
 
 pipelineJob('Android/Environment/Mirror/Sync Mirror') {
   description('''
@@ -58,11 +57,6 @@ pipelineJob('Android/Environment/Mirror/Sync Mirror') {
 
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>
   ''')
-
-  logRotator {
-    daysToKeep(60)
-    numToKeep(200)
-  }
 
   parameters {
     stringParam {
@@ -137,11 +131,24 @@ pipelineJob('Android/Environment/Mirror/Sync Mirror') {
         <b>Note:</b>
         <ul>
           <li>Default value is defined by the Android Seed job.</li>
-          <li>Max recommended value for AOSP mirror is 4 due to rate-limiting constraints set by Google.</li>
+          <li>Max recommended value for mirror is 4 due to rate-limiting constraints set by Google.</li>
         </ul>
       ''')
       trim(true)
     }
+  }
+
+  // Block build if certain jobs are running.
+  blockOn('Android/Environment/Mirror/.*(Create|Delete|Sync).*') {
+    // Possible values are 'GLOBAL' and 'NODE' (default).
+    blockLevel('GLOBAL')
+    // Possible values are 'ALL', 'BUILDABLE' and 'DISABLED' (default).
+    scanQueueFor('BUILDABLE')
+  }
+
+  logRotator {
+    daysToKeep(60)
+    numToKeep(200)
   }
 
   definition {

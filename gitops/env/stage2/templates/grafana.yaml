@@ -110,9 +110,8 @@ spec:
       - CreateNamespace=true
       - RespectIgnoreDifferences=true
   ignoreDifferences:
-    - group: ""
+    - jqPathExpressions:
+        - '.data["grafana.ini"]'
       kind: ConfigMap
       name: grafana
-      namespace: monitoring
-      jqPathExpressions:
-        - '.data["grafana.ini"]'
+      namespace: monitoring     

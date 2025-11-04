@@ -149,7 +149,6 @@ If enabled, this job will create a Cuttlefish VM instance from the final instanc
 state after creation. This is provided for development testing and debugging.
 
 This would allow developers to:
-- Start the instance via the bastion host
 - Connect to the instance directly
 - Run tests on the instance manually, bypassing Jenkins
 

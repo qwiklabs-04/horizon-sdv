@@ -184,9 +184,10 @@ Verify the templates have been created.
 - User has signed into Gerrit at least once before updating admin tasks.
 - PC (Mac, Linux, Windows) or cloud instance, with [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [gcloud CLI installed](https://cloud.google.com/sdk/docs/install).
 - <details><summary><code>gerrit-admin</code> password is known:</summary>
-  To obtain Gerrit admin user name and password, log on to bastion host and run the following command:<br/>
+  To obtain Gerrit admin user name and password, retrieve membership credentials from fleet management, e.g.:<br/>
   <pre>
-      gcloud container clusters get-credentials sdv-cluster --region europe-west1 --internal-ip
+      gcloud container fleet memberships list
+      gcloud container fleet memberships get-credentials sdv-cluster
   </pre>
   Retrieve username and password:<br/>
   <pre>

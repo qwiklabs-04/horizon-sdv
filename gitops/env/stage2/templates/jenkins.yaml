@@ -211,6 +211,8 @@ spec:
                 jenkins:
                   systemMessage: Welcome to Horizon SDV server.
                   disabledAdministrativeMonitors:
+                    # Disable: plugin monitor
+                    - "hudson.PluginManager$PluginUpdateMonitor"
                     # Disable: Jenkins Update Notification
                     - "hudson.model.UpdateCenter$CoreUpdateMonitor"
                     # Disable: Update Site WarningsSecurity

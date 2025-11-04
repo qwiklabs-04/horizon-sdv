@@ -25,7 +25,8 @@ folder('Android/Environment') {
     For AAOS, execute the following to ensure the environment is correctly provisioned:<br/>
     <ol><li><b>Docker Image Template:</b> create the Docker build container used for standard builds.</li>
     <li><b>CF Instance Template:</b> Create the Cuttlefish VM instance templates required for test jobs (dependent on Docker Image Template)</li>
-    <li><b>ABFS:</b> If using ABFS then ensure those jobs in this folder are executed accordingly.</li></ol>''')
+    <li><b>ABFS:</b> If using ABFS then ensure those jobs in this folder are executed accordingly.</li>
+    <li><b>Mirror:</b> If using NFS-based Mirror then ensure those jobs in this folder are executed accordingly.</li></ol>''')
 }
 folder('Android/Environment/ABFS') {
   displayName('ABFS')
@@ -65,26 +66,33 @@ folder('Android/Tests') {
   displayName('Tests')
   description('<p>This folder contains jobs used to help test and validate Android builds.</p>')
 }
-folder('Android/Environment/AOSP-Mirror') {
-  displayName('AOSP Mirror')
+folder('Android/Environment/Mirror') {
+  displayName('Mirror')
   description('''
-    <br/><h3 style="margin-bottom: 10px;">Manage AOSP Mirror</h3>
+    <br/><h3 style="margin-bottom: 10px;">Manage Local Mirrors on NFS Volume</h3>
 
-    <p>This folder contains administrative jobs related to AOSP Mirror - which enables <b>faster repo sync times</b> in Android builds.</p>
+    <p>This folder contains administrative jobs related to NFS-based Mirror setup - which primarily enables <b>faster repo sync times</b> in Android builds. <b>Multiple mirrors</b> can be created within the same NFS volume, but each mirror must have a unique directory name.</p>
 
-    <p>Follow below steps in order to provision and start using AOSP Mirror:</p>
+    <p>Follow below steps in order to provision and start using the (AOSP) Mirror:</p>
     <ol>
       <li>
-        Run the job <strong><code>Docker Image Template</code></strong> to setup the environment to be used by AOSP Mirror operation pipelines.
+        Run the job <strong><code>Docker Image Template</code></strong> to setup the environment to be used by Mirror operation pipelines.
       </li>
       <li>
-        Run the job <strong><code>Create Mirror</code></strong> which creates AOSP Mirror resources in your GCP project and then triggers the downstream job <strong><code>Sync Mirror</code></strong> to perform the initial population of the mirror from official AOSP repository at <i><code>https://android.googlesource.com/mirror/manifest</code></i>.
+        Run the job <strong><code>Create Mirror Infra</code></strong> which creates Mirror resources in your GCP project.
       </li>
       <li>
-        After mirror setup is complete, you can now select the parameter <strong><code>USE_LOCAL_AOSP_MIRROR</strong></code> in build jobs - enabling faster repo sync times.
+        To create a new mirror or update an existing one, run the job <strong><code>Sync Mirror</code></strong> with appropriate parameters. Choose a unique directory name for your new mirror.
+      <li>
+        To download AOSP source code on the Mirror for use in AAOS builds during <i>repo sync</i>, input the Mirror manifest URL for official AOSP source code: '<i><code>https://android.googlesource.com/mirror/manifest</code></i>', which is also the default value for parameter <strong><code>MIRROR_MANIFEST_URL</code></strong> in the mirror jobs.
+      </li>
+      <li>
+        After AOSP mirror setup is complete, you can then use it in AAOS builds by selecting the parameter <strong><code>USE_LOCAL_AOSP_MIRROR</strong></code> and entering your mirror directory name in <strong><code>AOSP_MIRROR_DIR_NAME</code></strong> - enabling faster repo sync times.
       </li>
     </ol>
-    <p>Refer to <i>docs/workloads/android/environment/aosp_mirror</i> for additional details.</p>
+
+    <p>Refer to <i>docs/workloads/android/environment/mirror</i> for additional details.</p>
+
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>
   ''')
 }

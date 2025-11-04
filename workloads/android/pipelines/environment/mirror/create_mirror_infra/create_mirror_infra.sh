@@ -28,29 +28,24 @@ source "$(dirname "$0")/../utils/utils.sh"
 
 validate_bucket_and_tfvars_args "$TF_BACKEND_BUCKET" "$AOSP_MIRROR_TFVARS_JSON_FILE_PATH"
 
-# Extract AOSP Mirror terraform directory path
+# Extract Mirror terraform directory path
 AOSP_MIRROR_TF_DIR=$(dirname "${AOSP_MIRROR_TFVARS_JSON_FILE_PATH}")
-# Extract AOSP Mirror tfvars file name
+# Extract Mirror tfvars file name
 AOSP_MIRROR_TFVARS_JSON_FILE=$(basename "$AOSP_MIRROR_TFVARS_JSON_FILE_PATH")
 
-# Change directory temporarily to AOSP Mirror terraform
+# Change directory temporarily to Mirror terraform
 pushd "$AOSP_MIRROR_TF_DIR" > /dev/null || log_error "Cannot cd to ${AOSP_MIRROR_TF_DIR}"
 
 
 # ------Terraform workflow begins------
 
-print_header "AOSP MIRROR SETUP: CREATE MIRROR"
+print_header "MIRROR SETUP: CREATE MIRROR INFRA"
 
 run_terraform_init "${TF_BACKEND_BUCKET}"
-
-# # ---Check AOSP Mirror already exists before proceeding---
-# if check_aosp_mirror_exists "$AOSP_MIRROR_TF_DIR" "$TF_BACKEND_BUCKET"; then
-#   log_error "AOSP Mirror exists ALREADY. Skipping..."
-# fi
 
 run_terraform_apply "${AOSP_MIRROR_TFVARS_JSON_FILE}"
 
 
-# Exit AOSP Mirror terraform directory
+# Exit Mirror terraform directory
 popd > /dev/null || log_error "Failed to return to the original working directory."
 exit 0

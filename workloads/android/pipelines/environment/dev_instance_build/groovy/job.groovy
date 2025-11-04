@@ -80,7 +80,7 @@ pipelineJob('Android/Environment/Development Build Instance') {
       name('USE_LOCAL_AOSP_MIRROR')
       defaultValue(${USE_LOCAL_AOSP_MIRROR})
       description('''<p>If checked, the instance will mount the AOSP Mirror setup in your GCP project to fetch Android source code during <i>repo sync</i>.<br/>
-        <b>Note:</b> The AOSP Mirror must be setup prior to running this job. If not setup, the job will fail.<br> The setup jobs are in folder <i>Android Workflows > Environment > AOSP Mirror</i>.<br/><br/></p>''')
+        <b>Note:</b> The AOSP Mirror must be setup prior to running this job. If not setup, the job will fail.<br> The setup jobs are in folder <i>Android Workflows > Environment > Mirror</i>.<br/><br/></p>''')
     }
 
     stringParam {

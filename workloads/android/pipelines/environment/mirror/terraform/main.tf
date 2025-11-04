@@ -24,7 +24,7 @@ data "google_compute_subnetwork" "sdv_aosp_mirror_subnetwork_data" {
   region  = var.sdv_aosp_mirror_region
 }
 
-// Create Filestore instance for AOSP Mirror
+// Create Filestore instance for Mirror
 resource "google_filestore_instance" "sdv_aosp_mirror_filestore_instance" {
   name     = var.sdv_aosp_mirror_filestore_instance_name
   location = var.sdv_aosp_mirror_zone
@@ -49,7 +49,7 @@ resource "google_filestore_instance" "sdv_aosp_mirror_filestore_instance" {
   }
 }
 
-// Create Persistent Volume for AOSP Mirror Filestore
+// Create Persistent Volume for Mirror Filestore
 resource "kubernetes_persistent_volume" "sdv_aosp_mirror_filestore_pv" {
   metadata {
     name = var.sdv_aosp_mirror_filestore_pv_name
@@ -70,7 +70,7 @@ resource "kubernetes_persistent_volume" "sdv_aosp_mirror_filestore_pv" {
   depends_on = [google_filestore_instance.sdv_aosp_mirror_filestore_instance]
 }
 
-// Create Persistent Volume Claim for AOSP Mirror Filestore
+// Create Persistent Volume Claim for Mirror Filestore
 resource "kubernetes_persistent_volume_claim" "sdv_aosp_mirror_filestore_pvc" {
   metadata {
     name      = var.sdv_aosp_mirror_filestore_pvc_name

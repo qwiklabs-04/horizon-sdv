@@ -13,22 +13,22 @@
 // limitations under the License.
 
 // Description:
-// This groovy job is used by the Seed Workloads Pipeline to define template and parameters for pipeline that executes create_mirror operation of AOSP Mirror setup.
+// This groovy job is used by the Seed Workloads Pipeline to define template and parameters for pipeline that executes create_mirror_infra operation of an NFS-based Mirror setup.
 //
 // References:
 //
 
-pipelineJob('Android/Environment/AOSP-Mirror/Create Mirror') {
+pipelineJob('Android/Environment/Mirror/Create Mirror Infra') {
   description('''
-    <br/><h3 style="margin-bottom: 10px;">Create AOSP Mirror</h3>
+    <br/><h3 style="margin-bottom: 10px;">Provision Mirror Infrastructure</h3>
 
-    <p>This job provisions the resources for AOSP Mirror in your existing GCP project, and then triggers the downstream job `Sync Mirror` to download the AOSP source code.</p>
+    <p>This job provisions the resources required for an NFS-based Mirror setup in your existing GCP project. Also, allows you to specify size of the mirror volume.</p>
 
-    <p>On the first run, it executes the following steps:</p>
+    <p>It executes the following steps:</p>
     <ol>
       <li>Creates a Filestore instance in the same region this platform is running.</li>
       <li>Creates a Persistent Volume (PV) and Persistent Volume Claim (PVC) using the Filestore instance.</li>
-      <li>Triggers the downstream job <strong><code>`AOSP Mirror > Sync Mirror`</code></strong> to perform the initial population of the mirror from official AOSP repository at <i><code>https://android.googlesource.com/mirror/manifest</code></i></li>
+      <li>The size of the mirror volume is determined by the <strong><code>MIRROR_VOLUME_CAPACITY_GB</code></strong> parameter. Minimum size is 1024Gi (1Ti).</li>
     </ol>
 
     <h4 style="margin-bottom: 10px;">Preset Properties (Non-configurable):</h4>
@@ -44,8 +44,8 @@ pipelineJob('Android/Environment/AOSP-Mirror/Create Mirror') {
 
     <h4 style="margin-bottom: 10px;">Notes</h4>
     <ul>
-      <li>For a single GCP project, there can be <b>no more than one mirror</b> at any time.</li>
-      <li>If the mirror already exists, executing this job will not create new resources but will just trigger the downstream job `Sync Mirror` to download or update the AOSP source code present on the mirror volume.</li>
+      <li><b>Multiple mirrors</b> can be created within the same NFS-based mirror volume, but each mirror must have a unique directory name.</li>
+      <li>To create a new mirror or update an existing one, execute the job `<i><code>Mirror > Sync Mirror</code></i>`.</li>
     </ul>
 
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>
@@ -61,18 +61,15 @@ pipelineJob('Android/Environment/AOSP-Mirror/Create Mirror') {
       <strong>REQUIRED:</strong> The image tag for the Docker image to be used as environment for this job.<br>
       <b>Note:</b> Ensure you have executed that image build job prior to running this job, so that the required Docker image is available in your GCP project.
     ''')
-    stringParam('MIRROR_DIR', '', '''
-      <strong>REQUIRED:</strong> The directory name on the Filestore volume where the Mirror will be created.<br>
-      <b>Example:</b> If you provide '<i><code>my-mirror</code></i>' as value, the mirror will be created at absolute container path '<i><code>${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/my-mirror</code></i>', where '<i><code>${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}</code>.</i>' is the root subdirectory for all mirrors.
-    ''')
-    stringParam('MIRROR_MANIFEST_URL', 'https://android.googlesource.com/platform/manifest', '''
-      <strong>REQUIRED:</strong> The URL of the manifest repository to be used for the AOSP Mirror.<br>
-    ''')
-    stringParam('MIRROR_MANIFEST_REF', 'android-16.0.0_r2', '''
-      <strong>REQUIRED:</strong> The manifest branch or tag to be used for the AOSP Mirror.<br>
-    ''')
-    stringParam('MIRROR_MANIFEST_FILE', 'default.xml', '''
-      <strong>REQUIRED:</strong> The manifest file name to be used for the AOSP Mirror.<br>
+    stringParam('MIRROR_VOLUME_CAPACITY_GB', '2048', '''
+      <strong>REQUIRED:</strong> Size of the mirror volume to be created in GiB.<br>
+      <b>Note:</b>
+      <ul>
+        <li>Minimum size is 1024Gi (1Ti).</li>
+        <li>This size is for the entire Filestore NFS volume, which can host multiple mirrors (each in its own unique directory).</li>
+        <li>Size CANNOT be changed once created. You will need to delete the existing volume and create a new one with the desired size.</li>
+        <li>Example: A full AOSP Mirror consumes around 1946Gi (1.9Ti) of storage. So 2048Gi of total volume capacity is recommended.</li>
+      </ul>
     ''')
   }
 
@@ -88,7 +85,7 @@ pipelineJob('Android/Environment/AOSP-Mirror/Create Mirror') {
           branch("*/${HORIZON_GITHUB_BRANCH}")
         }
       }
-      scriptPath('workloads/android/pipelines/environment/aosp_mirror/create_mirror/Jenkinsfile')
+      scriptPath('workloads/android/pipelines/environment/mirror/create_mirror_infra/Jenkinsfile')
     }
   }
 }

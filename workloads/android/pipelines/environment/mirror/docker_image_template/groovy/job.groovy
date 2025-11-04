@@ -12,19 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pipelineJob('Android/Environment/AOSP-Mirror/Docker Image Template') {
+pipelineJob('Android/Environment/Mirror/Docker Image Template') {
   description("""
     <br/><h3 style="margin-bottom: 10px;">Container Image Builder</h3>
-    <p>This job builds the container image that serves as a dependency (execution environment) for all AOSP Mirror jobs.</p>
+
+    <p>This job builds the container image that serves as a dependency (execution environment) for all Mirror jobs.</p>
+
     <h4 style="margin-bottom: 10px;">Image Configuration</h4>
-    <p>The Dockerfile specifies the installed packages and tools required by these jobs.</p>
+    <p>The Dockerfile specifies the installed packages and tools required by these jobs. Necessary packages include gcloud, kubectl, terraform, repo/git tooling (with SSH/GPG) and yq/jq.</p>
+
     <h4 style="margin-bottom: 10px;">Pushing Changes to the Registry</h4>
     <p>To push changes to the registry, set the parameter <code>NO_PUSH=false</code>.</p>
     <p>The image will be pushed to <code>${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${AOSP_MIRROR_WORKLOADS_ENV_IMAGE_NAME}</code></p>
+
     <h4 style="margin-bottom: 10px;">Verifying Changes</h4>
     <p>When working with new Dockerfile updates, it's recommended to set <code>NO_PUSH=true</code> to verify the changes before pushing the image to the registry.</p>
+
     <h4 style="margin-bottom: 10px;">Important Notes</h4>
     <p>This job need only be run once, or when there are updates to be applied based on Dockerfile changes..</p>
+    
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>
   """)
 
@@ -77,7 +83,7 @@ pipelineJob('Android/Environment/AOSP-Mirror/Docker Image Template') {
           branch("*/${HORIZON_GITHUB_BRANCH}")
         }
       }
-      scriptPath('workloads/android/pipelines/environment/aosp_mirror/docker_image_template/Jenkinsfile')
+      scriptPath('workloads/android/pipelines/environment/mirror/docker_image_template/Jenkinsfile')
     }
   }
 }

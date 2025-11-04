@@ -14,72 +14,72 @@
 
 // from jenkins env; same as horizon-sdv cluster value
 variable "sdv_aosp_mirror_project_id" {
-  description = "GCP Project ID (existing) where AOSP Mirror is deployed."
+  description = "GCP Project ID (existing) where Mirror is deployed."
   type        = string
 }
 
 // from jenkins env; same as horizon-sdv cluster value
 variable "sdv_aosp_mirror_region" {
-  description = "GCP region where AOSP Mirror is deployed."
+  description = "GCP region where Mirror is deployed."
   type        = string
 }
 
 // from jenkins env; same as horizon-sdv cluster value
 variable "sdv_aosp_mirror_zone" {
-  description = "GCP zone where AOSP Mirror is deployed."
+  description = "GCP zone where Mirror is deployed."
   type        = string
 }
 
 // from jenkins env; same as horizon-sdv cluster value
 variable "sdv_aosp_mirror_network_name" {
-  description = "GCP network (VPC) name where AOSP Mirror is deployed."
+  description = "GCP network (VPC) name where Mirror is deployed."
   type        = string
 }
 
 // from jenkins env; same as horizon-sdv cluster value
 variable "sdv_aosp_mirror_subnetwork_name" {
-  description = "GCP subnetwork (VPC subnet) name where AOSP Mirror is deployed."
+  description = "GCP subnetwork (VPC subnet) name where Mirror is deployed."
   type        = string
 }
 
 // new resource
 variable "sdv_aosp_mirror_filestore_instance_name" {
-  description = "Name of the AOSP Mirror Filestore instance."
+  description = "Name of the Mirror Filestore instance."
   type        = string
   default     = "sdv-aosp-mirror-filestore-instance"
 }
 
 // new resource
 variable "sdv_aosp_mirror_filestore_share_name" {
-  description = "Name of the AOSP Mirror Filestore share, part of the Filestore instance."
+  description = "Name of the Mirror Filestore share, part of the Filestore instance."
   type        = string
   default     = "sdv_aosp_mirror_filestore_share"
 }
 
 // new resource
 variable "sdv_aosp_mirror_filestore_share_capacity_gb" {
-  description = "Capacity (in GB) of the AOSP Mirror Filestore share."
+  description = "Capacity (in GB) of the Mirror Filestore share."
   type        = number
   default     = 2048
 }
 
 // new resource
 variable "sdv_aosp_mirror_filestore_pv_name" {
-  description = "Name of the Persistent Volume for AOSP Mirror Filestore."
+  description = "Name of the Persistent Volume for Mirror Filestore."
   type        = string
   default     = "sdv-aosp-mirror-filestore-pv"
 }
 
 // from jenkins env; same NS as android build pods in horizon-sdv cluster
 variable "sdv_aosp_mirror_filestore_pvc_namespace" {
-  description = "Namespace where the Persistent Volume Claim for AOSP Mirror Filestore is created."
+  description = "Namespace where the Persistent Volume Claim for Mirror Filestore is created."
   type        = string
   default     = "jenkins"
 }
 
 // new resource
 variable "sdv_aosp_mirror_filestore_pvc_name" {
-  description = "Name of the Persistent Volume Claim for AOSP Mirror Filestore."
+  description = "Name of the Persistent Volume Claim for Mirror Filestore."
   type        = string
   default     = "sdv-aosp-mirror-filestore-pvc"
 }

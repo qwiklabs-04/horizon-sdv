@@ -13,13 +13,12 @@
 // limitations under the License.
 
 // Description:
-// This pipeline job syncs the existing AOSP Mirror in your GCP project from official AOSP repository at https://android.googlesource.com/mirror/manifest
-//
+// This pipeline job downloads a new mirror or syncs an existing one on the NFS-based mirror volume based on provided parameters.
 // References:
 //
 
 pipeline {
-  // Parameters defined in workloads/android/pipelines/environment/aosp_mirror/sync_mirror/groovy/job.groovy
+  // Parameters defined in workloads/android/pipelines/environment/mirror/sync_mirror/groovy/job.groovy
 
   agent none
 
@@ -235,16 +234,16 @@ pipeline {
     """.stripIndent()
 
     // Path for ops scripts
-    def utilsScriptPath = "./workloads/android/pipelines/environment/aosp_mirror/utils/utils.sh"
-    def syncMirrorScriptPath = "./workloads/android/pipelines/environment/aosp_mirror/sync_mirror/sync_mirror.sh"
+    def utilsScriptPath = "./workloads/android/pipelines/environment/mirror/utils/utils.sh"
+    def syncMirrorScriptPath = "./workloads/android/pipelines/environment/mirror/sync_mirror/sync_mirror.sh"
     // Mirror root subdirectory path inside container where all mirrors live
     def mirrorRootSubdirPath = "${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}"
   }
 
   options {
-    // Prevent any other "write" operation pipeline within the AOSP Mirror domain
+    // Prevent any other "write" operation pipeline within the Mirror domain
     // from running concurrently with this job (and vice-versa).
-    buildBlocker(useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'BUILDABLE', blockingJobs: '(?i)Android/Environment/AOSP-Mirror/.*/(delete|sync).*')
+    buildBlocker(useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'BUILDABLE', blockingJobs: '(?i)Android/Environment/Mirror/.*/(create|delete|sync).*')
 
     // Prevent this specific job from running concurrently with itself.
     disableConcurrentBuilds()
@@ -257,12 +256,17 @@ pipeline {
         script {
           // Validate required parameters are provided
           if(!params.IMAGE_TAG?.trim()) {error("Required Parameter value NOT provided as input: IMAGE_TAG. An Image Tag for container is needed to use as environment for this job.")}
-          if(!params.MIRROR_DIR?.trim()) {error("Required Parameter value NOT provided as input: MIRROR_DIR. A Mirror Directory name is needed.")}
-          if(!params.MIRROR_MANIFEST_URL?.trim()) {error("Required Parameter value NOT provided as input: MIRROR_MANIFEST_URL. A Mirror Manifest URL is needed.")}
-          if(!params.MIRROR_MANIFEST_REF?.trim()) {error("Required Parameter value NOT provided as input: MIRROR_MANIFEST_REF. A Mirror Manifest Ref is needed.")}
-          if(!params.MIRROR_MANIFEST_FILE?.trim()) {error("Required Parameter value NOT provided as input: MIRROR_MANIFEST_FILE. A Mirror Manifest File is needed.")}
-
-          currentBuild.description = "$BUILD_USER" + "<br/>" + "${params.MIRROR_DIR}" + "<br/>" + "${params.MIRROR_MANIFEST_URL}"
+          if(!params.MIRROR_DIR?.trim() && !params.SYNC_ALL_EXISTING_MIRRORS) {error("Required Parameter value NOT provided as input: MIRROR_DIR. A Mirror Directory name is needed.")}
+          if(!params.MIRROR_MANIFEST_URL?.trim() && !params.SYNC_ALL_EXISTING_MIRRORS) {error("Required Parameter value NOT provided as input: MIRROR_MANIFEST_URL. A Mirror Manifest URL is needed.")}
+          if(!params.MIRROR_MANIFEST_REF?.trim() && !params.SYNC_ALL_EXISTING_MIRRORS) {error("Required Parameter value NOT provided as input: MIRROR_MANIFEST_REF. A Mirror Manifest Ref is needed.")}
+          if(!params.MIRROR_MANIFEST_FILE?.trim() && !params.SYNC_ALL_EXISTING_MIRRORS) {error("Required Parameter value NOT provided as input: MIRROR_MANIFEST_FILE. A Mirror Manifest File is needed.")}
+          if(!params.REPO_SYNC_JOBS?.trim() && !params.SYNC_ALL_EXISTING_MIRRORS) {error("Required Parameter value NOT provided as input: REPO_SYNC_JOBS. Number of parallel sync jobs for 'repo sync' is needed.")}
+          
+          if(params.SYNC_ALL_EXISTING_MIRRORS) {
+            currentBuild.description = "$BUILD_USER" + "<br/>" + "Sync All Mirrors"
+          } else {
+            currentBuild.description = "$BUILD_USER" + "<br/>" + "${params.MIRROR_DIR}" + "<br/>" + "${params.MIRROR_MANIFEST_URL}"
+          }
 
           echo 'Checking prerequisite infra exists...'
           container(name: 'aosp-mirror-pre-checks-builder-container') {
@@ -279,7 +283,7 @@ pipeline {
             }
             catch (err) {
               currentBuild.result = 'FAILURE'
-              error("${err}\n[ERROR] Prerequisites check failed. PVC '${env.AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME}' not found in namespace 'jenkins'.\nPlease run the 'AOSP Mirror > Create Mirror' pipeline first.")
+              error("${err}\n[ERROR] Prerequisites check failed. PVC '${env.AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME}' not found in namespace 'jenkins'.\nPlease run the 'Mirror > Create Mirror Infra' pipeline first.")
             }
           }
         }
@@ -290,14 +294,13 @@ pipeline {
       agent { kubernetes { yaml mainKubernetesPodTemplateHighSpec } }
       steps {
         script {
-          echo 'Syncing AOSP Mirror with remote...'
+          echo 'Syncing Mirror with remote...'
 
           container(name: 'aosp-mirror-sync-mirror-builder-container') {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
               sh """
                 chmod +x "${syncMirrorScriptPath}"
-                export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
-                ${syncMirrorScriptPath} ${mirrorRootSubdirPath} ${MIRROR_DIR} ${MIRROR_MANIFEST_URL} ${MIRROR_MANIFEST_REF} ${MIRROR_MANIFEST_FILE} ${BUILD_USER}
+                ${syncMirrorScriptPath} ${mirrorRootSubdirPath} ${SYNC_ALL_EXISTING_MIRRORS} ${MIRROR_DIR} ${MIRROR_MANIFEST_URL} ${MIRROR_MANIFEST_REF} ${MIRROR_MANIFEST_FILE} ${REPO_SYNC_JOBS} ${BUILD_USER}
               """
             }
           }
@@ -309,10 +312,10 @@ pipeline {
   // Post-build actions for success or failure
   post {
     success {
-      echo "Status: SUCCESS - AOSP Mirror sync job completed."
+      echo "Status: SUCCESS - Mirror sync job completed."
     }
     failure {
-      echo "Status: FAILURE - AOSP Mirror sync job failed."
+      echo "Status: FAILURE - Mirror sync job failed."
     }
     always {
       echo "Job finished."

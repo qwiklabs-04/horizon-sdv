@@ -71,7 +71,7 @@ function initialise_repo() {
             LOCAL_MIRROR_REFERENCE="--reference ${MIRROR_DIR_FULL_PATH}"
             echo "Using AOSP mirror: '${MIRROR_DIR_FULL_PATH}'."
         else
-            echo -e "\033[1;31mERROR: AOSP mirror not found: '${MIRROR_DIR_FULL_PATH}', ensure AOSP Mirror has been setup..\033[0m"
+            echo -e "\033[1;31mERROR: AOSP mirror not found at path: '${MIRROR_DIR_FULL_PATH}', ensure AOSP Mirror has been setup..\033[0m"
             exit 1
         fi
     fi

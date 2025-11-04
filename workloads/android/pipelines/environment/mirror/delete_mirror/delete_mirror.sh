@@ -39,7 +39,7 @@ get_aosp_mirror_pvc_storage_info "${MIRROR_ROOT_SUBDIR_PATH}"
 
 # Check if only a specific mirror directory is to be deleted
 if [[ "${DELETE_ENTIRE_MIRROR_SETUP}" != "true" && -n "${MIRROR_DIR_TO_DELETE}" ]]; then
-  print_header "AOSP MIRROR SETUP: DELETE SPECIFIC MIRROR DIRECTORY"
+  print_header "MIRROR SETUP: DELETE SPECIFIC MIRROR DIRECTORY"
 
   # Check if the specified mirror directory to delete exists
   if ! check_directory_exists "${MIRROR_DIR_TO_DELETE_FULL_PATH}"; then
@@ -61,14 +61,14 @@ elif [[ "${DELETE_ENTIRE_MIRROR_SETUP}" != "true" && -z "${MIRROR_DIR_TO_DELETE}
   log_error "Neither DELETE_ENTIRE_MIRROR_SETUP is set to true nor a specific MIRROR_DIR_TO_DELETE is provided. Aborting..."
 fi
 
-# ------Delete Entire AOSP Mirror Setup------
+# ------Delete Entire Mirror Setup------
 
 # Warn user about deleting entire mirror setup
-log_warning "Deleting entire AOSP Mirror setup including all mirror directories under ${MIRROR_ROOT_SUBDIR_PATH}..."
+log_warning "Deleting entire Mirror setup including all mirror directories under ${MIRROR_ROOT_SUBDIR_PATH}..."
 log_info "Ignoring input MIRROR_DIR_TO_DELETE: ${MIRROR_DIR_TO_DELETE}"
 log_warning "If you intended to delete only a specific mirror directory, YOU HAVE 10 SECONDS TO ABORT..."
 sleep 10
-log_info "Proceeding with deletion of entire AOSP Mirror setup..."
+log_info "Proceeding with deletion of entire Mirror setup..."
 
 validate_bucket_and_tfvars_args "$TF_BACKEND_BUCKET" "$MIRROR_TFVARS_JSON_FILE_PATH"
 
@@ -83,19 +83,14 @@ pushd "$MIRROR_TF_DIR" > /dev/null || log_error "Cannot cd to ${MIRROR_TF_DIR}"
 
 # ------Terraform workflow begins to delete the entire mirror setup------
 
-print_header "AOSP MIRROR SETUP: DELETE ENTIRE MIRROR SETUP"
+print_header "MIRROR SETUP: DELETE ENTIRE MIRROR SETUP"
 
 run_terraform_init "${TF_BACKEND_BUCKET}"
 
-# # ---Check AOSP Mirror already exists before proceeding---
-# if check_aosp_mirror_exists "$AOSP_MIRROR_TF_DIR" "$TF_BACKEND_BUCKET"; then
-#   log_error "AOSP Mirror exists ALREADY. Skipping..."
-# fi
-
 run_terraform_destroy "${MIRROR_TFVARS_JSON_FILE}"
 
-log_success "AOSP Mirror entire setup deleted successfully."
+log_success "Mirror entire setup deleted successfully."
 
-# Exit AOSP Mirror terraform directory
+# Exit Mirror terraform directory
 popd > /dev/null || log_error "Failed to return to the original working directory."
 exit 0

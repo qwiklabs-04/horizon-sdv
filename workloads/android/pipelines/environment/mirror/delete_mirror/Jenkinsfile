@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // Description:
-// This pipeline job deletes the provisioned AOSP Mirror resources in your existing GCP project.
+// This pipeline job deletes the provisioned Mirror resources in your existing GCP project.
 //
 // References:
 //
@@ -29,7 +29,7 @@ def buildTfvarsMap(env, params) {
 }
 
 pipeline {
-  // Parameters defined in workloads/android/pipelines/environment/aosp_mirror/delete_mirror/groovy/job.groovy
+  // Parameters defined in workloads/android/pipelines/environment/mirror/delete_mirror/groovy/job.groovy
 
   agent none
 
@@ -91,21 +91,21 @@ pipeline {
     // Define the tf backend bucket name from jenkins env var
     def tfBackendBucket = "${CLOUD_BACKEND_BUCKET}"
 
-    // Define the .tfvars.json file name where AOSP Mirror tf directory is located
-    def tfvarsJsonFilePath = "./workloads/android/pipelines/environment/aosp_mirror/terraform/delete_mirror.tfvars.json"
+    // Define the .tfvars.json file name where Mirror tf directory is located
+    def tfvarsJsonFilePath = "./workloads/android/pipelines/environment/mirror/terraform/delete_mirror.tfvars.json"
     // this file is populated in stage `Delete Mirror Operation`
 
     // Path for ops scripts
-    def utilsScriptPath = "./workloads/android/pipelines/environment/aosp_mirror/utils/utils.sh"
-    def deleteMirrorScriptPath = "./workloads/android/pipelines/environment/aosp_mirror/delete_mirror/delete_mirror.sh"
+    def utilsScriptPath = "./workloads/android/pipelines/environment/mirror/utils/utils.sh"
+    def deleteMirrorScriptPath = "./workloads/android/pipelines/environment/mirror/delete_mirror/delete_mirror.sh"
     // Mirror root subdirectory path inside container where all mirrors live
     def mirrorRootSubdirPath = "${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}"
   }
 
   options {
-    // Prevent any other "write" operation pipeline within the AOSP Mirror domain
+    // Prevent any other "write" operation pipeline within the Mirror domain
     // from running concurrently with this job (and vice-versa).
-    buildBlocker(useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'BUILDABLE', blockingJobs: '(?i)Android/Environment/AOSP-Mirror/.*/(create|delete|sync).*')
+    buildBlocker(useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'BUILDABLE', blockingJobs: '(?i)Android/Environment/Mirror/.*/(create|delete|sync).*')
 
     // Prevent this specific job from running concurrently with itself.
     disableConcurrentBuilds()
@@ -119,7 +119,11 @@ pipeline {
           if(!params.CONFIRM_DELETE) {error("Required Parameter value NOT set to true: CONFIRM_DELETE must be selected in order to proceed for deletion. Aborting...")}
           if(!params.IMAGE_TAG?.trim()) {error("Required Parameter value NOT provided as input: IMAGE_TAG. An Image Tag for container is needed to use as environment for this job.")}
 
-          currentBuild.description = "$BUILD_USER" + "<br/>" + "Full Destroy: ${DELETE_ENTIRE_MIRROR_SETUP}" + "<br/>" + "Dir to Delete: ${params.MIRROR_DIR_TO_DELETE}"
+          if(params.DELETE_ENTIRE_MIRROR_SETUP) {
+            currentBuild.description = "$BUILD_USER" + "<br/>" + "Destroy Entire Setup"
+          } else {
+            currentBuild.description = "$BUILD_USER" + "<br/>" + "Dir to Delete: '${params.MIRROR_DIR_TO_DELETE}'"
+          }
 
           echo 'Checking prerequisite infra exists...'
           container(name: 'aosp-mirror-pre-checks-builder-container') {
@@ -136,7 +140,7 @@ pipeline {
             }
             catch (err) {
               currentBuild.result = 'FAILURE'
-              error("${err}\n[ERROR] Prerequisites check failed. PVC '${env.AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME}' not found in namespace 'jenkins'.\nPlease run the 'AOSP Mirror > Create Mirror' pipeline first.")
+              error("${err}\n[ERROR] Prerequisites check failed. PVC '${env.AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME}' not found in namespace 'jenkins'.\nPlease run the 'Mirror > Create Mirror Infra' pipeline first.")
             }
           }
         }
@@ -151,7 +155,7 @@ pipeline {
             error("Either set DELETE_ENTIRE_MIRROR_SETUP to true or provide a valid MIRROR_DIR_TO_DELETE value to proceed with deletion. Aborting...")
           }
 
-          echo 'Deleting existing AOSP Mirror...'
+          echo 'Deleting existing Mirror...'
           // Convert the tfvars map into valid json object and format it
           def tfvarsJson = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(buildTfvarsMap(env, params)))
           // Write the content to a temporary .tfvars.json file within the tf directory
@@ -174,10 +178,10 @@ pipeline {
   // Post-build actions for success or failure
   post {
     success {
-      echo "Status: SUCCESS - AOSP Mirror deletion job completed."
+      echo "Status: SUCCESS - Mirror deletion job completed."
     }
     failure {
-      echo "Status: FAILURE - AOSP Mirror deletion job failed."
+      echo "Status: FAILURE - Mirror deletion job failed."
     }
     always {
       echo "Job finished."

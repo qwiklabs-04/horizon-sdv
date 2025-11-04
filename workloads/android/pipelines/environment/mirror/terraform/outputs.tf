@@ -13,44 +13,44 @@
 # limitations under the License.
 
 locals {
-  deleted_aosp_mirror_filestore_instance_output = "[DELETED AOSP_MIRROR FILESTORE INSTANCE] ${var.sdv_aosp_mirror_filestore_instance_name}"
+  deleted_aosp_mirror_filestore_instance_output = "[DELETED MIRROR FILESTORE INSTANCE] ${var.sdv_aosp_mirror_filestore_instance_name}"
 
-  deleted_aosp_mirror_filestore_pv_output = "[DELETED AOSP_MIRROR FILESTORE PV] ${var.sdv_aosp_mirror_filestore_pv_name}"
+  deleted_aosp_mirror_filestore_pv_output = "[DELETED MIRROR FILESTORE PV] ${var.sdv_aosp_mirror_filestore_pv_name}"
 
-  deleted_aosp_mirror_filestore_pvc_output = "[DELETED AOSP_MIRROR FILESTORE PVC] ${var.sdv_aosp_mirror_filestore_pvc_name}"
+  deleted_aosp_mirror_filestore_pvc_output = "[DELETED MIRROR FILESTORE PVC] ${var.sdv_aosp_mirror_filestore_pvc_name}"
 }
 
 output "filestore_instance_name" {
-  description = "Name of the created AOSP Mirror Filestore instance"
+  description = "Name of the created Mirror Filestore instance"
   value       = try(google_filestore_instance.sdv_aosp_mirror_filestore_instance.name, local.deleted_aosp_mirror_filestore_instance_output)
 }
 
 output "filestore_pv_name" {
-  description = "Name of the created Persistent Volume for AOSP Mirror Filestore"
+  description = "Name of the created Persistent Volume for Mirror Filestore"
   value       = try(kubernetes_persistent_volume.sdv_aosp_mirror_filestore_pv.metadata[0].name, local.deleted_aosp_mirror_filestore_pv_output)
 }
 
 output "filestore_pvc_name" {
-  description = "Name of the created Persistent Volume Claim for AOSP Mirror Filestore"
+  description = "Name of the created Persistent Volume Claim for Mirror Filestore"
   value       = try(kubernetes_persistent_volume_claim.sdv_aosp_mirror_filestore_pvc.metadata[0].name, local.deleted_aosp_mirror_filestore_pvc_output)
 }
 
 output "project_id" {
-  description = "GCP Project ID where the AOSP Mirror is deployed"
+  description = "GCP Project ID where the Mirror is deployed"
   value       = var.sdv_aosp_mirror_project_id
 }
 
 output "location" {
-  description = "Region (Location) of the AOSP Mirror Filestore instance"
+  description = "Region (Location) of the Mirror Filestore instance"
   value       = var.sdv_aosp_mirror_region
 }
 
 output "network_name" {
-  description = "GCP network (VPC) name where AOSP Mirror is deployed."
+  description = "GCP network (VPC) name where Mirror is deployed."
   value       = var.sdv_aosp_mirror_network_name
 }
 
 output "subnetwork_name" {
-  description = "GCP subnetwork (VPC subnet) name where AOSP Mirror is deployed."
+  description = "GCP subnetwork (VPC subnet) name where Mirror is deployed."
   value       = var.sdv_aosp_mirror_subnetwork_name
 }

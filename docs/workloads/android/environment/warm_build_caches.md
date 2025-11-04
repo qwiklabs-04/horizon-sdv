@@ -56,7 +56,7 @@ Option to archive the build artifacts to bucket.
 If checked, the build will use the AOSP Mirror setup in your GCP project to fetch Android source code during `repo sync`.
 **Note:**
 -  The AOSP Mirror must be setup prior to running this job. If not setup, the job will fail.
--  The setup jobs are in folder `Android Workflows -> Environment -> AOSP Mirror`.
+-  The setup jobs are in folder `Android Workflows -> Environment -> Mirror`.
 
 ### `AOSP_MIRROR_DIR_NAME`
 

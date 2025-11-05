@@ -1,4 +1,4 @@
-// Copyright (c) 2024-2025 Accenture, All Rights Reserved.
+// Copyright (c) 2025 Accenture, All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,10 +13,8 @@
 // limitations under the License.
 
 // Description:
-// This pipeline job deletes the provisioned Mirror resources in your existing GCP project.
-//
-// References:
-//
+// This pipeline job deletes the provisioned Mirror resources in your
+// existing GCP project.
 
 // Function to create a json object for the .tfvars.json file (on the fly)
 def buildTfvarsMap(env, params) {
@@ -102,15 +100,6 @@ pipeline {
     def mirrorRootSubdirPath = "${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}"
   }
 
-  options {
-    // Prevent any other "write" operation pipeline within the Mirror domain
-    // from running concurrently with this job (and vice-versa).
-    buildBlocker(useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'BUILDABLE', blockingJobs: '(?i)Android/Environment/Mirror/.*/(create|delete|sync).*')
-
-    // Prevent this specific job from running concurrently with itself.
-    disableConcurrentBuilds()
-  }
-  
   stages {
     stage('Prerequisite Infra Check') {
       agent { kubernetes { yaml preChecksKubernetesPodTemplate } }

@@ -28,9 +28,9 @@ config:
           name: "terraform-workloads-sa"
     android:
       helm:
-        version: '5.8.104'
+        version: '5.8.106'
       cuttlefish:
-        tag: 'v1290'
+        tag: 'v1300'
       aospMirror:
         workloadEnv:
           image: "horizon-sdv/aosp-mirror-workloads/env"

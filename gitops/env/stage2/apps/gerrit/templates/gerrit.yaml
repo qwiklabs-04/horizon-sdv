@@ -22,7 +22,7 @@ metadata:
 spec:
   containerImages:
     gerritImages:
-      tag: v0.1-764-g2f33a537b8-3.11.1-489-g177cc22f91
+      tag: v0.1-767-g7c0185d9f1-3.11.1-657-g998b07ccfc
   eventsBroker:
     brokerType: NONE
   storage:
@@ -84,12 +84,12 @@ spec:
         site:
           size: 5Gi
         plugins:
-          - name: download-commands
           - name: delete-project
-          - name: gitiles
+          - name: download-commands
           - name: gerrit-oauth-provider
             url: https://github.com/davido/gerrit-oauth-provider/releases/download/v3.5.1/gerrit-oauth-provider.jar
             sha1: 8e3903ec02900fdec20208242959724cc10f240c
+          - name: gitiles
         configFiles:
           gerrit.config: |-
             [gerrit]

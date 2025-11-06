@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Copyright (c) 2024-2025 Accenture, All Rights Reserved.
+# Copyright (c) 2025 Accenture, All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ MIRROR_DIR_TO_DELETE_FULL_PATH="${MIRROR_ROOT_SUBDIR_PATH}/${MIRROR_DIR_TO_DELET
 METADATA_FILE_ROOT_KEY=$(basename "${MIRROR_ROOT_SUBDIR_PATH}")
 
 # Import shared utils
+# shellcheck disable=SC1091
 source "$(dirname "$0")/../utils/utils.sh"
 
 log_info "Storage info for Mirror PVC before deletion:"

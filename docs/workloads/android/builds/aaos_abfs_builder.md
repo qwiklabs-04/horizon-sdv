@@ -113,7 +113,11 @@ These are optional but allow the user to fetch a specific Gerrit patchset if req
 
 Keep the build VM instance and container running to allow user to connect to it. Useful for debugging build issues, determining target output archives etc. Time in minutes.
 
-Access using `kubectl` e.g. `kubectl exec -it -n jenkins <pod name> -- bash` from `bastion` host.
+Access using `kubectl` e.g. `kubectl exec -it -n jenkins <pod name> -- bash` .
+
+Reference [Fleet management](https://docs.cloud.google.com/kubernetes-engine/enterprise/multicluster-management/gateway) to fetch credentials for a fleet-registered cluster to be used in Connect Gateway, e.g.
+- `gcloud container fleet memberships list`
+- `gcloud container fleet memberships get-credentials sdv-cluster`
 
 ### `ABFS_VERSION`
 

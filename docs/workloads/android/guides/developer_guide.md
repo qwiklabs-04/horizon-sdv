@@ -184,9 +184,10 @@ Verify the templates have been created.
 - User has signed into Gerrit at least once before updating admin tasks.
 - PC (Mac, Linux, Windows) or cloud instance, with [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [gcloud CLI installed](https://cloud.google.com/sdk/docs/install).
 - <details><summary><code>gerrit-admin</code> password is known:</summary>
-  To obtain Gerrit admin user name and password, log on to bastion host and run the following command:<br/>
+  To obtain Gerrit admin user name and password, retrieve membership credentials from fleet management, e.g.:<br/>
   <pre>
-      gcloud container clusters get-credentials sdv-cluster --region europe-west1 --internal-ip
+      gcloud container fleet memberships list
+      gcloud container fleet memberships get-credentials sdv-cluster
   </pre>
   Retrieve username and password:<br/>
   <pre>
@@ -2020,7 +2021,7 @@ Gerrit triggers are based on a single project/repo build, i.e. build one compone
 Cuttlefish instance templates are instances pre-installed with Android cuttlefish debian host packages, Android 14, 15 and 16 CTS, together with other tools required to launch CVD and run CTS tests. There are two instances we have created ahead of time:
 
 - `cuttlefish-vm-main` based on [android-cuttlefish.git main branch](https://github.com/google/android-cuttlefish/tree/main)
-- `cuttlefish-vm-v1290` based on [android-cuttlefish.git v1.29.0 tag](https://github.com/google/android-cuttlefish/tree/v1.29.0)
+- `cuttlefish-vm-v1300` based on [android-cuttlefish.git v1.30.0 tag](https://github.com/google/android-cuttlefish/tree/v1.30.0)
 
 Users may wish to create newer versions as the android-cuttlefish repo is updated and new tagged versions appear. This section describes how to create the instance templates and configure the test jobs to use those instances.
 

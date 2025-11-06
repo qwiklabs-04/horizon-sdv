@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Copyright (c) 2024-2025 Accenture, All Rights Reserved.
+# Copyright (c) 2025 Accenture, All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -75,7 +75,8 @@ get_formatted_elapsed_time() {
   local remaining_seconds=$((elapsed_time_in_seconds % 3600))
   local minutes=$((remaining_seconds / 60))
   local seconds=$((remaining_seconds % 60))
-  local formatted_elapsed_time=$(printf '%02dh %02dm %02ds' $hours $minutes $seconds)
+  local formatted_elapsed_time
+  formatted_elapsed_time=$(printf '%02dh %02dm %02ds' $hours $minutes $seconds)
 
   echo "$formatted_elapsed_time"
 }
@@ -136,7 +137,8 @@ check_file_exists() {
   local file_path=$1
   check_missing_func_args file_path
 
-  local file_name=$(basename "$file_path")
+  local file_name
+  file_name=$(basename "$file_path")
 
   log_info "Checking if file '${file_name}' exists at path '${file_path}'..."
 
@@ -154,7 +156,8 @@ check_directory_exists() {
   local dir_path=$1
   check_missing_func_args dir_path
 
-  local dir_name=$(basename "$dir_path")
+  local dir_name
+  dir_name=$(basename "$dir_path")
 
   log_info "Checking if directory '${dir_name}' exists at path '${dir_path}'..."
 
@@ -172,7 +175,8 @@ create_directory() {
   local dir_path=$1
   check_missing_func_args dir_path
 
-  local dir_name=$(basename "$dir_path")
+  local dir_name
+  dir_name=$(basename "$dir_path")
 
   log_info "Creating new directory '${dir_name}' at path '${dir_path}'..."
 
@@ -205,7 +209,8 @@ check_mirror_metadata_entry_exists() {
 
   log_info "Checking if metadata entry exists for mirror directory '$mirror_dir_name'..."
 
-  local exists=$(yq ".${root_key} | has(\"${mirror_dir_name}\")" "${metadata_file_path}")
+  local exists
+  exists=$(yq ".${root_key} | has(\"${mirror_dir_name}\")" "${metadata_file_path}")
   if [[ "$exists" != "true" ]]; then
     log_warning "Metadata entry NOT found for mirror directory '$mirror_dir_name'."
     return 1
@@ -223,7 +228,8 @@ get_mirror_list_from_metadata() {
 
   log_info "Fetching mirror directory names from metadata file '${metadata_file_path}'..."
 
-  local mirror_list=$(yq ".${root_key} | keys | .[]" "${metadata_file_path}") || log_error "Failed to fetch mirror directory names from metadata file '${metadata_file_path}'."
+  local mirror_list
+  mirror_list=$(yq ".${root_key} | keys | .[]" "${metadata_file_path}") || log_error "Failed to fetch mirror directory names from metadata file '${metadata_file_path}'."
 
   echo "$mirror_list"
 }
@@ -239,7 +245,8 @@ get_value_from_metadata() {
 
   log_info "Fetching value for '${nested_key}' from mirror directory '${mirror_dir_name}' in metadata file '${metadata_file_path}'..."
 
-  local value=$(yq ".${root_key}.${mirror_dir_name}.${nested_key}" "${metadata_file_path}") || log_error "Failed to fetch value for '${nested_key}' from mirror directory '${mirror_dir_name}' in metadata file '${metadata_file_path}'."
+  local value
+  value=$(yq ".${root_key}.${mirror_dir_name}.${nested_key}" "${metadata_file_path}") || log_error "Failed to fetch value for '${nested_key}' from mirror directory '${mirror_dir_name}' in metadata file '${metadata_file_path}'."
 
   echo "$value"
 }
@@ -341,7 +348,8 @@ delete_mirror_directory() {
   local mirror_dir_full_path=$1
   check_missing_func_args mirror_dir_full_path
 
-  local mirror_dir_name=$(basename "$mirror_dir_full_path")
+  local mirror_dir_name
+  mirror_dir_name=$(basename "$mirror_dir_full_path")
 
   log_info "Deleting mirror directory '${mirror_dir_name}' at path '${mirror_dir_full_path}'..."
 
@@ -418,13 +426,15 @@ sync_mirror() {
   local operation_type=${6:-"updated"} # Default to "updated" if no argument is provided
   check_missing_func_args mirror_path manifest_url manifest_ref manifest_file repo_sync_jobs operation_type
 
-  local start_time_in_seconds=$(date +%s)
+  local start_time_in_seconds
+  start_time_in_seconds=$(date +%s)
   local end_time_in_seconds
   local formatted_elapsed_time
 
   # Ensure parallel sync jobs are at least 1, and not more than nproc value
   local jobs=$repo_sync_jobs
-  local max_jobs=$(nproc)
+  local max_jobs
+  max_jobs=$(nproc)
   if (( jobs < 1 )); then
     jobs=1
   elif (( jobs > max_jobs )); then
@@ -446,7 +456,7 @@ sync_mirror() {
   local sync_status=$?
 
   end_time_in_seconds=$(date +%s)
-  formatted_elapsed_time=$(get_formatted_elapsed_time $start_time_in_seconds $end_time_in_seconds)
+  formatted_elapsed_time=$(get_formatted_elapsed_time "$start_time_in_seconds" "$end_time_in_seconds")
 
   if [[ $sync_status -ne 0 ]]; then
     log_warning "Failed to perform repo sync. Time elapsed: [${formatted_elapsed_time}]"
@@ -474,7 +484,8 @@ sync_mirror_with_retries() {
   local metadata_root_key="$8"
   check_missing_func_args mirror_path manifest_url manifest_ref manifest_file repo_sync_jobs operation_type metadata_file_path metadata_root_key
 
-  local mirror_dir_name=$(basename "$mirror_path")
+  local mirror_dir_name
+  mirror_dir_name=$(basename "$mirror_path")
   local log_file="/tmp/sync_mirror_${mirror_dir_name}.log"
   local attempt=1
   local max_retries=3
@@ -502,7 +513,7 @@ sync_mirror_with_retries() {
       update_mirror_metadata_value "${metadata_file_path}" "${metadata_root_key}" "${mirror_dir_name}" "status" "error"
 
       # Check if this is the final attempt
-      if (( attempt >= $max_retries )); then
+      if (( attempt >= max_retries )); then
         log_warning "Max retries reached. Final sync failure.\n Repo sync failed after ${max_retries} attempts."
         return 1
       fi

@@ -1,4 +1,4 @@
-// Copyright (c) 2024-2025 Accenture, All Rights Reserved.
+// Copyright (c) 2025 Accenture, All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,10 +13,9 @@
 // limitations under the License.
 
 // Description:
-// This groovy job is used by the Seed Workloads Pipeline to define template and parameters for pipeline that executes delete-mirror operation of the NFS-based Mirror setup.
-//
-// References:
-//
+// This groovy job is used by the Seed Workloads Pipeline to define template
+// and parameters for pipeline that executes delete-mirror operation of the
+// NFS-based Mirror setup.
 
 pipelineJob('Android/Environment/Mirror/Delete Mirror') {
   description('''
@@ -55,18 +54,20 @@ pipelineJob('Android/Environment/Mirror/Delete Mirror') {
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>
   ''')
 
-  logRotator {
-    daysToKeep(60)
-    numToKeep(200)
-  }
-
   parameters {
-    stringParam('IMAGE_TAG', 'latest', '''
-      <strong>REQUIRED:</strong> The image tag for the Docker image to be used as environment for this job.<br/>
-      <b>Note</b>: Ensure you have executed that image build job prior to running this job, so that the required Docker image is available in your GCP project.
-    ''')
+    stringParam {
+      name('IMAGE_TAG')
+      defaultValue('latest')
+      description('''<strong>REQUIRED:</strong> The image tag for the Docker image to be used as environment for this job.<br/>
+      <b>Note</b>: Ensure you have executed that image build job prior to running this job, so that the required Docker image is available in your GCP project.''')
+      trim(true)
+    }
 
-    booleanParam('CONFIRM_DELETE', false, '<strong>REQUIRED:</strong> Check this box to confirm deletion. This action is irreversible.')
+    booleanParam {
+      name('CONFIRM_DELETE')
+      defaultValue(false)
+      description('<strong>REQUIRED:</strong> Check this box to confirm deletion. This action is irreversible.')
+    }
 
     separator {
       name('SINGLE_MIRROR_DELETION_PARAMETERS')
@@ -75,11 +76,14 @@ pipelineJob('Android/Environment/Mirror/Delete Mirror') {
       separatorStyle("${SEPARATOR_STYLE}")
     }
 
-    stringParam('MIRROR_DIR_TO_DELETE', '', '''
-      Optional: The specific mirror directory to delete.<br/>
+    stringParam {
+      name('MIRROR_DIR_TO_DELETE')
+      defaultValue('')
+      description('''Optional: The specific mirror directory to delete.<br/>
       Example: If you provided '<i><code>my-mirror</code></i>' when creating the mirror, provide the same value here to delete that specific mirror.<br/>
-      <b>Note</b>: When <code>DELETE_ENTIRE_MIRROR_SETUP</code> is set to true, this parameter is ignored and the entire setup is deleted.<br/><br/>
-    ''')
+      <b>Note</b>: When <code>DELETE_ENTIRE_MIRROR_SETUP</code> is set to true, this parameter is ignored and the entire setup is deleted.<br/>''')
+      trim(true)
+    }
 
     separator {
       name('DELETE_ENTIRE_MIRROR_SETUP_SEPARATOR')
@@ -88,11 +92,26 @@ pipelineJob('Android/Environment/Mirror/Delete Mirror') {
       separatorStyle("${SEPARATOR_STYLE}")
     }
 
-    booleanParam('DELETE_ENTIRE_MIRROR_SETUP', false, '''
-      Optional: <strong>[CAUTION] If set to true, deletes the entire Mirror setup including all infrastructure and data.</strong><br/>
+    booleanParam {
+      name('DELETE_ENTIRE_MIRROR_SETUP')
+      defaultValue(false)
+      description('''Optional: <strong>[CAUTION] If set to true, deletes the entire Mirror setup including all infrastructure and data.</strong><br/>
       If set to false, only the specified mirror directory will be deleted from the Filestore instance, rest will remain intact.<br/>
-      <b>Note:</b> When set to true, the <code>MIRROR_DIR_TO_DELETE</code> parameter is ignored.
-    ''')
+      <b>Note:</b> When set to true, the <code>MIRROR_DIR_TO_DELETE</code> parameter is ignored.''')
+    }
+  }
+
+  // Block build if certain jobs are running.
+  blockOn('Android/Environment/Mirror/.*(Create|Delete|Sync).*') {
+    // Possible values are 'GLOBAL' and 'NODE' (default).
+    blockLevel('GLOBAL')
+    // Possible values are 'ALL', 'BUILDABLE' and 'DISABLED' (default).
+    scanQueueFor('BUILDABLE')
+  }
+
+  logRotator {
+    daysToKeep(60)
+    numToKeep(200)
   }
 
   definition {

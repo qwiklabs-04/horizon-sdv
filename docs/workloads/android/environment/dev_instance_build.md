@@ -10,11 +10,15 @@
 
 During developing the Android workload and workflow/pipelines, sometimes it may be necessary to gain access to a VM build instance in order to develop build jobs. The instance will have the build caches, persistent storage mounted.
 
-Those that require access must be able to connect to the `bastion` host and then access the pod using `kubectl`, e.g.
+Those that require access must be able to connect to the pod using `kubectl`, e.g.
 
 ```
 kubectl exec -it -n jenkins <pod name> -- bash
 ```
+
+Reference [Fleet management](https://docs.cloud.google.com/kubernetes-engine/enterprise/multicluster-management/gateway) to fetch credentials for a fleet-registered cluster to be used in Connect Gateway, e.g.
+- `gcloud container fleet memberships list`
+- `gcloud container fleet memberships get-credentials sdv-cluster`
 
 Alternatively access Host via MTK Connect by enabling MTK_CONNECT_ENABLE.
 

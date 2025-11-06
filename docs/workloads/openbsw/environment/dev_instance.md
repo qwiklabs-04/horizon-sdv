@@ -10,12 +10,16 @@
 
 During developing the OpenBSW workload and workflow/pipelines, sometimes it may be necessary to gain access to a VM build instance in order to develop build jobs.
 
-Users may gain access via MTK Connect HOST interface by selecting `MTK_CONNECT_ENABLE`, alternatively via `bastion` host and accessing the pod using `kubectl`, e.g.
+Users may gain access via MTK Connect HOST interface by selecting `MTK_CONNECT_ENABLE`, alternatively accessing the pod using `kubectl`, e.g.
 
 ```
 kubectl exec -it -n jenkins <pod name> -- bash
 ```
+Reference [Fleet management](https://docs.cloud.google.com/kubernetes-engine/enterprise/multicluster-management/gateway) to fetch credentials for a fleet-registered cluster to be used in Connect Gateway, e.g.
+- `gcloud container fleet memberships list`
+- `gcloud container fleet memberships get-credentials sdv-cluster`
 
+**Note:**
 - These instances only remain active for a limited time, defined by `INSTANCE_MAX_UPTIME`.
 - User can find `<pod name>` from either the Jenkins UI console log or from the Jenkins Build Executor nodes.
 - Users are responsible for managing their work and saving to their own storage, that's beyond the purpose of this job.

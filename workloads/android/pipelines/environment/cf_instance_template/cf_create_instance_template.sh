@@ -24,7 +24,7 @@
 # From command line, such as Google Cloud Shell, create templates for all
 # versions of android-cuttlefish host tools/packages:
 #
-#  CUTTLEFISH_REVISION=v1.29.0 ./cf_create_instance_template.sh && \
+#  CUTTLEFISH_REVISION=v1.30.0 ./cf_create_instance_template.sh && \
 #  CUTTLEFISH_REVISION=main ./cf_create_instance_template.sh
 #
 # The following variables are required to run the script, choose to use
@@ -202,6 +202,8 @@ function progress_spinner() {
     rc=$?
     if [ "${rc}" -ne 0 ]; then
         echo -e "${RED}Process $1 failed, exit.${NC}"
+        # Ensure we cleanup leftovers
+        delete_instances
         exit "${rc}"
     fi
 }
@@ -355,7 +357,7 @@ function install_host_tools() {
 
     # Keep debug so we can see what's happening.
     echo -e "${GREEN}Installing CF host ....${NC}"
-    gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" \
+    if ! gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" \
         --command="CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION} \
         ANDROID_CUTTLEFISH_PREBUILT=${ANDROID_CUTTLEFISH_PREBUILT} \
         ARCHITECTURE=${ARCHITECTURE} \
@@ -365,10 +367,16 @@ function install_host_tools() {
         JAVA_VERSION=${JAVA_VERSION} \
         NODEJS_VERSION=${NODEJS_VERSION} \
         OS_VERSION=${OS_VERSION} \
-        ./cf/cf_host_initialise.sh; \
-        rm -rf cf"
-    progress_spinner "$!"
+        ./cf/cf_host_initialise.sh; exit \$?"; then
+        echo -e "${RED}Installing CF host failed.${NC}"
+        delete_instances
+        exit 1
+    fi
     echo -e "${GREEN}Installing CF host completed.${NC}"
+
+    echo -e "${GREEN}Cleanup CF host files.${NC}"
+    gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" \
+        --command="rm -rf ~/cf" >/dev/null 2>&1 || true
 
     # Alternative to reboot instance. Must be rebooted/restarted to ensure
     # user/groups are applied correctly before image is created from the
@@ -530,32 +538,25 @@ function create_cuttlefish_boilerplate_template() {
 function delete_instances() {
     echo_formatted "6. Delete VM instances and artifacts"
 
-    yes Y | gcloud compute instance-templates delete "${vm_base_instance_template}" >/dev/null 2>&1 || true &
-    progress_spinner "$!"
+    yes Y | gcloud compute instance-templates delete "${vm_base_instance_template}" >/dev/null 2>&1 || true
     echo_formatted "   Deleted ${vm_base_instance_template}"
 
-    yes Y | gcloud compute instance-templates delete "${vm_cuttlefish_instance_template}" >/dev/null 2>&1 || true &
-    progress_spinner "$!"
+    yes Y | gcloud compute instance-templates delete "${vm_cuttlefish_instance_template}" >/dev/null 2>&1 || true
     echo_formatted "   Deleted ${vm_cuttlefish_instance_template}"
 
-    yes Y | gcloud compute images delete "${vm_cuttlefish_image}" >/dev/null 2>&1 || true &
-    progress_spinner "$!"
+    yes Y | gcloud compute images delete "${vm_cuttlefish_image}" >/dev/null 2>&1 || true
     echo_formatted "   Deleted ${vm_cuttlefish_image}"
 
-    gcloud compute instances stop "${vm_base_instance}" --zone="${ZONE}" >/dev/null 2>&1 || true &
-    progress_spinner "$!"
+    gcloud compute instances stop "${vm_base_instance}" --zone="${ZONE}" >/dev/null 2>&1 || true
     echo_formatted "   Stopped ${vm_base_instance}"
 
-    yes Y | gcloud compute instances delete "${vm_base_instance}" --zone="${ZONE}" >/dev/null 2>&1 || true &
-    progress_spinner "$!"
+    yes Y | gcloud compute instances delete "${vm_base_instance}" --zone="${ZONE}" >/dev/null 2>&1 || true
     echo_formatted "   Deleted ${vm_base_instance}"
 
-    gcloud compute instances stop "${vm_cuttlefish_instance}" --zone="${ZONE}" >/dev/null 2>&1 || true &
-    progress_spinner "$!"
+    gcloud compute instances stop "${vm_cuttlefish_instance}" --zone="${ZONE}" >/dev/null 2>&1 || true
     echo_formatted "   Stopped ${vm_cuttlefish_instance}"
 
-    yes Y | gcloud compute instances delete "${vm_cuttlefish_instance}" --zone="${ZONE}" >/dev/null 2>&1 || true &
-    progress_spinner "$!"
+    yes Y | gcloud compute instances delete "${vm_cuttlefish_instance}" --zone="${ZONE}" >/dev/null 2>&1 || true
     echo_formatted "   Deleted ${vm_cuttlefish_instance}"
 }
 

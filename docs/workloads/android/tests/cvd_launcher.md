@@ -103,12 +103,13 @@ From `Workloads/Android/Environment/CF Instance Template` create a Cuttlefish te
 Connect to the instance, e.g.
 
 ```
-# SSH to bastion host
-gcloud compute ssh --zone "europe-west1-d" "sdv-bastion-host" --tunnel-through-iap --project "sdva-2108202401"
-# Set up credentials to connect to the VM instance
-gcloud container clusters get-credentials sdv-cluster --region europe-west1 --internal-ip
 
-# If user wishes to use MTK Connect then retrieve the MTK Connect API key via bastion:
+# Set up fleet management:
+gcloud container fleet memberships list
+# sdv-cluster may be default but derive the membership name from list
+gcloud container fleet memberships get-credentials sdv-cluster
+
+# If user wishes to use MTK Connect then retrieve the MTK Connect API key:
 # Retrieve the MTK_CONNECT_USERNAME:
 kubectl get secrets -n mtk-connect mtk-connect-apikey -o json | jq -r '.data.username' | base64 -d
 # Retrieve the MTK_CONNECT_PASSWORD:

@@ -155,6 +155,14 @@ The override must be a full GCS URI, including the `gs://` prefix, bucket name, 
 
 `gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Releases/010129`
 
+### `STORAGE_LABELS`
+
+Lets you add labels to the artifacts being uploaded to storage.
+
+For GCS buckets, these labels can be applied as key=value pairs and can be provided as a comma-separated or space-separated list.
+
+E.g. `Release=X.Y.Z,Workload=Android`
+
 ### `USE_LOCAL_AOSP_MIRROR`
 
 If checked, the build will use the AOSP Mirror setup in your GCP project to fetch Android source code during `repo sync`.

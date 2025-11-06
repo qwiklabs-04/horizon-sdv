@@ -140,6 +140,14 @@ git fetch https://android.googlesource.com/platform/build/soong refs/changes/92/
       trim(true)
     }
 
+    stringParam {
+      name('STORAGE_LABELS')
+      defaultValue('')
+      description('''<p>Optional, list one or more labels to be applied to the artifacts being uploaded to storage.
+      <br>Use spaces or commas to seperate. Neither keys nor values should contain spaces. (e.g. Release=X.Y.Z,Workload=Android)</p>''')
+      trim(true)
+    }
+
     separator {
       name('ABFS Version Options')
       sectionHeader('ABFS Version Options')

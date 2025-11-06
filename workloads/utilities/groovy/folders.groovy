@@ -15,3 +15,11 @@ folder('Utilities') {
   displayName('Utilities')
   description('<p>This folder contains utility functionality common across workloads.</p>')
 }
+folder('Utilities/Storage') {
+  displayName('Storage')
+  description('<p>This folder contains storage-related jobs.</p>')
+}
+folder('Utilities/Storage/GCS') {
+  displayName('GCS')
+  description('<p>This folder contains storage-related jobs specific to Google Cloud Storage (GCS).</p>')
+}

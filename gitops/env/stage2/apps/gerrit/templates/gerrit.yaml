@@ -22,7 +22,7 @@ metadata:
 spec:
   containerImages:
     gerritImages:
-      tag: v0.1-765-gf712bdd781-3.11.1-584-g7a995dcf47
+      tag: v0.1-764-g2f33a537b8-3.11.1-489-g177cc22f91
   eventsBroker:
     brokerType: NONE
   storage:

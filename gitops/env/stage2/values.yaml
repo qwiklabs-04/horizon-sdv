@@ -30,7 +30,7 @@ config:
       helm:
         version: '5.8.106'
       cuttlefish:
-        tag: 'v1300'
+        tag: 'v1310'
       aospMirror:
         workloadEnv:
           image: "horizon-sdv/aosp-mirror-workloads/env"

@@ -96,7 +96,7 @@ pipeline {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
               sh """
                 chmod +x "${scriptPath}"
-                ${scriptPath} ${tfBackendBucket} ${tfvarsJsonFilePath}
+                "${scriptPath}" "${tfBackendBucket}" "${tfvarsJsonFilePath}"
               """
             }
           }

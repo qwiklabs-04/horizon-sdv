@@ -49,6 +49,21 @@ pipeline {
         labels:
           aosp_mirror_build_pod: "true"
       spec:
+        # Use machines from openbsw node pool (c2d-highcpu-8)
+        nodeSelector:
+            workloadLabel: "openbsw"
+        tolerations:
+        - key: "workloadType"
+          value: "openbsw"
+          effect: "NoSchedule"
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: openbsw_pod
+                  operator: Exists
+              topologyKey: kubernetes.io/hostname
         # GID (1000) is set at the Pod level
         securityContext:
           runAsUser: 1000
@@ -98,6 +113,13 @@ pipeline {
         - name: aosp-mirror-sync-mirror-builder-container
           image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${AOSP_MIRROR_WORKLOADS_ENV_IMAGE_NAME}:latest
           imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: 7000m
+              memory: 13000Mi
+            requests:
+              cpu: 7000m
+              memory: 13000Mi
           # Runs as the non-root user (UID 1000)
           securityContext:
             runAsUser: 1000
@@ -263,9 +285,9 @@ pipeline {
             try {
               sh """/bin/bash -c '
                 chmod +x "${utilsScriptPath}"
-                source ${utilsScriptPath}
+                source "${utilsScriptPath}"
                 if check_aosp_mirror_pvc_exists ${env.AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME} "jenkins"; then
-                  echo "[SUCCESS] Prerequisite check passed. PVC "${env.AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME}" found in namespace "jenkins"."
+                  echo "[SUCCESS] Prerequisite check passed. PVC ${env.AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME} found in namespace jenkins."
                 else
                   exit 1
                 fi
@@ -290,7 +312,7 @@ pipeline {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
               sh """
                 chmod +x "${syncMirrorScriptPath}"
-                ${syncMirrorScriptPath} ${mirrorRootSubdirPath} ${SYNC_ALL_EXISTING_MIRRORS} ${MIRROR_DIR} ${MIRROR_MANIFEST_URL} ${MIRROR_MANIFEST_REF} ${MIRROR_MANIFEST_FILE} ${REPO_SYNC_JOBS} ${BUILD_USER}
+                "${syncMirrorScriptPath}" "${mirrorRootSubdirPath}" "${SYNC_ALL_EXISTING_MIRRORS}" "${MIRROR_DIR}" "${MIRROR_MANIFEST_URL}" "${MIRROR_MANIFEST_REF}" "${MIRROR_MANIFEST_FILE}" "${REPO_SYNC_JOBS}" "${BUILD_USER}"
               """
             }
           }

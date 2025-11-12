@@ -12,5 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM nginx:1.27.4-alpine
+ARG NGINX_VERSION
+FROM nginx:${NGINX_VERSION}
 COPY html /usr/share/nginx/html

@@ -35,6 +35,11 @@ output "filestore_pvc_name" {
   value       = try(kubernetes_persistent_volume_claim.sdv_aosp_mirror_filestore_pvc.metadata[0].name, local.deleted_aosp_mirror_filestore_pvc_output)
 }
 
+output "filestore_pvc_size" {
+  description = "Size of the created Persistent Volume Claim for Mirror Filestore"
+  value       = try(kubernetes_persistent_volume_claim.sdv_aosp_mirror_filestore_pvc.spec[0].resources[0].requests.storage, local.deleted_aosp_mirror_filestore_pvc_output)
+}
+
 output "project_id" {
   description = "GCP Project ID where the Mirror is deployed"
   value       = var.sdv_aosp_mirror_project_id

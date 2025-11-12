@@ -21,6 +21,7 @@ def buildTfvarsMap(env, params) {
   return [
     sdv_aosp_mirror_project_id: "${env.CLOUD_PROJECT}",
     sdv_aosp_mirror_region: "${env.CLOUD_REGION}",
+    sdv_aosp_mirror_zone: "${env.CLOUD_ZONE}",
     sdv_aosp_mirror_network_name: "${env.AOSP_MIRROR_PRESET_NETWORK_NAME}",
     sdv_aosp_mirror_subnetwork_name: "${env.AOSP_MIRROR_PRESET_SUBNETWORK_NAME}"
   ]
@@ -32,8 +33,10 @@ pipeline {
   agent none
 
   environment {
+    POD_TEMPLATE = "${DELETE_ENTIRE_MIRROR_SETUP == "true" ? kubernetesPodTemplateWithoutMirror : kubernetesPodTemplateWithMirror}"
+    
     // Pod template for pre-checks stage
-    def preChecksKubernetesPodTemplate = """\
+    def kubernetesPodTemplateWithoutMirror = """\
       apiVersion: v1
       kind: Pod
       metadata:
@@ -44,14 +47,18 @@ pipeline {
         hostname: jenkins-aosp-mirror-pre-checks-build-pod
         serviceAccountName: ${TERRAFORM_WORKLOADS_SERVICE_ACCOUNT}
         containers:
-        - name: aosp-mirror-pre-checks-builder-container
+        - name: aosp-mirror-delete-mirror-builder-container
           image: ${CLOUD_REGION}-docker.pkg.dev/${CLOUD_PROJECT}/${AOSP_MIRROR_WORKLOADS_ENV_IMAGE_NAME}:${IMAGE_TAG}
           imagePullPolicy: Always
+          command:
+          - sleep
+          args:
+          - 5h
           tty: true
     """.stripIndent()
 
     // Pod template for main stage
-    def mainKubernetesPodTemplate = """\
+    def kubernetesPodTemplateWithMirror = """\
       apiVersion: v1
       kind: Pod
       metadata:
@@ -102,7 +109,7 @@ pipeline {
 
   stages {
     stage('Prerequisite Infra Check') {
-      agent { kubernetes { yaml preChecksKubernetesPodTemplate } }
+      agent { kubernetes { yaml kubernetesPodTemplateWithoutMirror } }
       steps {
         script {
           if(!params.CONFIRM_DELETE) {error("Required Parameter value NOT set to true: CONFIRM_DELETE must be selected in order to proceed for deletion. Aborting...")}
@@ -115,13 +122,13 @@ pipeline {
           }
 
           echo 'Checking prerequisite infra exists...'
-          container(name: 'aosp-mirror-pre-checks-builder-container') {
+          container(name: 'aosp-mirror-delete-mirror-builder-container') {
             try {
               sh """/bin/bash -c '
                 chmod +x "${utilsScriptPath}"
-                source ${utilsScriptPath}
-                if check_aosp_mirror_pvc_exists ${env.AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME} "jenkins"; then
-                  echo "[SUCCESS] Prerequisite check passed. PVC "${env.AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME}" found in namespace "jenkins"."
+                source "${utilsScriptPath}"
+                if check_aosp_mirror_pvc_exists "${env.AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME}" "jenkins"; then
+                  echo "[SUCCESS] Prerequisite check passed. PVC ${env.AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME} found in namespace jenkins."
                 else
                   exit 1
                 fi
@@ -137,7 +144,7 @@ pipeline {
     }
 
     stage('Delete Mirror Operation') {
-      agent { kubernetes { yaml mainKubernetesPodTemplate } }
+      agent { kubernetes { yaml "${POD_TEMPLATE}" } }
       steps {
         script {
           if(!params.DELETE_ENTIRE_MIRROR_SETUP && !params.MIRROR_DIR_TO_DELETE?.trim()) {
@@ -154,7 +161,7 @@ pipeline {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
               sh """
                 chmod +x "${deleteMirrorScriptPath}"
-                ${deleteMirrorScriptPath} ${mirrorRootSubdirPath} ${params.MIRROR_DIR_TO_DELETE} ${params.DELETE_ENTIRE_MIRROR_SETUP} ${tfBackendBucket} ${tfvarsJsonFilePath}
+                "${deleteMirrorScriptPath}" "${mirrorRootSubdirPath}" "${params.MIRROR_DIR_TO_DELETE}" "${params.DELETE_ENTIRE_MIRROR_SETUP}" "${tfBackendBucket}" "${tfvarsJsonFilePath}"
               """
               echo '[SUCCESS] Deletion completed successfully.'
             }

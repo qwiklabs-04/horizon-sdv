@@ -438,6 +438,7 @@ sync_mirror() {
   if (( jobs < 1 )); then
     jobs=1
   elif (( jobs > max_jobs )); then
+    log_info "Input 'repo_sync_jobs' is higher than the machine's ${max_jobs} cores. Reducing it to ${max_jobs} value for optimal performance."
     jobs=$max_jobs
   fi
 
@@ -467,8 +468,8 @@ sync_mirror() {
 
   return 0
 
-  # log_info "Performing garbage collection..."
-  # repo forall -c "git gc --aggressive --prune=all" || log_error "Failed to perform garbage collection post repo sync."
+  log_info "Performing aggressive garbage collection..."
+  repo forall -c "git gc --aggressive --prune=all" || log_error "Failed to perform garbage collection post repo sync."
 }
 
 # Function to sync mirror with retries (and handling git lock errors)
@@ -523,11 +524,19 @@ sync_mirror_with_retries() {
       if grep -qE "${GIT_LOCK_ERR_PATTERN}" "${log_file}"; then
         log_info "Detected Git lock error. Removing stale git lock files (expected to take 20-30 mins)..."
         remove_stale_git_locks "${mirror_path}"
+        ((attempt+=1))
+        continue
       fi
-      # Reduce parallel jobs for last attempt to avoid potential rate-limiting (when syncing AOSP from Google)
-      if (( attempt + 1 == max_retries )); then
-        log_info "Reducing parallel sync jobs to 3 for last attempt."
+
+      # Reduce parallel jobs to 3 for second attempt to avoid potential rate-limiting (when syncing AOSP from Google)
+      if (( attempt + 1 == 2 )); then
+        log_info "Reducing parallel sync jobs to 3 for second attempt."
         repo_sync_jobs=3
+        update_mirror_metadata_value "${metadata_file_path}" "${metadata_root_key}" "${mirror_dir_name}" "repo_sync_jobs" "${repo_sync_jobs}"
+      # Reduce parallel jobs to 1 for third and last attempt to avoid potential rate-limiting (when syncing AOSP from Google)
+      elif (( attempt + 1 == max_retries )); then
+        log_info "Reducing parallel sync jobs to 1 for last attempt."
+        repo_sync_jobs=1
         update_mirror_metadata_value "${metadata_file_path}" "${metadata_root_key}" "${mirror_dir_name}" "repo_sync_jobs" "${repo_sync_jobs}"
       fi
 

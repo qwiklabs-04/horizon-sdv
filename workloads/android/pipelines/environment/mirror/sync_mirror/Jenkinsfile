@@ -49,19 +49,18 @@ pipeline {
         labels:
           aosp_mirror_build_pod: "true"
       spec:
-        # Use machines from openbsw node pool (c2d-highcpu-8)
         nodeSelector:
-            workloadLabel: "openbsw"
+            workloadLabel: "android"
         tolerations:
         - key: "workloadType"
-          value: "openbsw"
+          value: "android"
           effect: "NoSchedule"
         affinity:
           podAntiAffinity:
             requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
                 matchExpressions:
-                - key: openbsw_pod
+                - key: aaos_pod
                   operator: Exists
               topologyKey: kubernetes.io/hostname
         # GID (1000) is set at the Pod level

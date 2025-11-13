@@ -21,6 +21,8 @@ config:
       version: "postgresql/17.0.1"
     zookeeper:
       version: "zookeeper/13.8.7"
+    kubescape_operator:
+      version: "1.29.11"
   workloads:
     common:
       serviceAccounts:

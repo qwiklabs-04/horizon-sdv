@@ -268,6 +268,14 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
         Alternatively, override path, e.g gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Releases/010129</p>''')
       trim(true)
     }
+
+    stringParam {
+      name('STORAGE_LABELS')
+      defaultValue('')
+      description('''<p>Optional, list one or more labels to be applied to the artifacts being uploaded to storage.
+      <br>Use spaces or commas to seperate. Neither keys nor values should contain spaces. (e.g. Release=X.Y.Z,Workload=OpenBSW)</p>''')
+      trim(true)
+    }
   }
 
   logRotator {

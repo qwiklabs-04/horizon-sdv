@@ -67,4 +67,16 @@ export ARTIFACT_STORAGE_SOLUTION="${AAOS_ARTIFACT_STORAGE_SOLUTION}"
 export ARTIFACT_STORAGE_SOLUTION_FUNCTION="${AAOS_ARTIFACT_STORAGE_SOLUTION_FUNCTION}"
 export WORKSPACE="${ORIG_WORKSPACE}"
 "${ORIG_WORKSPACE}"/workloads/common/storage/storage.sh
+
+export STORAGE_LABELS="${STORAGE_LABELS}"
+case "${ARTIFACT_STORAGE_SOLUTION}" in
+    GCS_BUCKET)
+        export URL_PATH="${STORAGE_BUCKET_DESTINATION}/"
+        export KEYVALUE_PAIRS="${STORAGE_LABELS}"
+        "${ORIG_WORKSPACE}"/workloads/common/storage/gcs_utilities.sh ADD_OBJECT_METADATA || true
+        ;;
+    *)
+        echo "Utility to add metadata using $ARTIFACT_STORAGE_SOLUTION not available"
+        ;;
+esac
 exit "$?"

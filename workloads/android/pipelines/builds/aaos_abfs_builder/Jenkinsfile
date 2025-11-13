@@ -234,6 +234,7 @@ pipeline {
                   AAOS_ARTIFACT_STORAGE_SOLUTION="${AAOS_ARTIFACT_STORAGE_SOLUTION}" \
                   ABFS_BUILDER="true" \
                   STORAGE_BUCKET_DESTINATION="${STORAGE_BUCKET_DESTINATION}" \
+                  STORAGE_LABELS="${STORAGE_LABELS}" \
                   ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
                 '''
                 archiveArtifacts artifacts: '*artifacts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true

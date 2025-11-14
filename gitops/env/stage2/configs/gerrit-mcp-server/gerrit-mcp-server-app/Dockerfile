@@ -29,7 +29,8 @@ WORKDIR /app
 COPY configure.sh .
 
 # Run the configuration script to clone the repository, install dependencies and the server app
-RUN ./configure.sh
+RUN chmod +x configure.sh &&\
+    ./configure.sh
 
 # --- Stage 2: Final Runtime Image ---
 FROM python:3.12-slim-bookworm AS final

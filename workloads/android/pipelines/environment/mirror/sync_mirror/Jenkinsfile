@@ -283,7 +283,6 @@ pipeline {
           container(name: 'aosp-mirror-pre-checks-builder-container') {
             try {
               sh """/bin/bash -c '
-                chmod +x "${utilsScriptPath}"
                 source "${utilsScriptPath}"
                 if check_aosp_mirror_pvc_exists ${env.AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME} "jenkins"; then
                   echo "[SUCCESS] Prerequisite check passed. PVC ${env.AOSP_MIRROR_PRESET_FILESTORE_PVC_NAME} found in namespace jenkins."
@@ -310,7 +309,6 @@ pipeline {
           container(name: 'aosp-mirror-sync-mirror-builder-container') {
             catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
               sh """
-                chmod +x "${syncMirrorScriptPath}"
                 "${syncMirrorScriptPath}" "${mirrorRootSubdirPath}" "${SYNC_ALL_EXISTING_MIRRORS}" "${MIRROR_DIR}" "${MIRROR_MANIFEST_URL}" "${MIRROR_MANIFEST_REF}" "${MIRROR_MANIFEST_FILE}" "${REPO_SYNC_JOBS}" "${BUILD_USER}"
               """
             }

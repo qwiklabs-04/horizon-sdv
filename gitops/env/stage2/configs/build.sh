@@ -19,7 +19,7 @@ NGINX_VERSION=1.28.0-alpine
 #GCP_PROJECT_ID=<PROJECT_ID>
 #GCP_CLOUD_REGION=<REGION_NAME>
 
-declare -a configs=("landingpage-app")
+declare -a configs=("landingpage-app" "gerrit-mcp-server-app")
 substr="-app"
 for config in "${configs[@]}"; do
   docker build --build-arg NGINX_VERSION=${NGINX_VERSION} \

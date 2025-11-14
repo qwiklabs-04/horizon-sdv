@@ -23,6 +23,8 @@ until [ "$n" -ge 4 ]; do
     sleep 30
     n=$((n + 1))
   else
+    # Just a settling time
+    sleep 30
     echo "gerrit-init running, continue with gerrit setup."
     break
   fi

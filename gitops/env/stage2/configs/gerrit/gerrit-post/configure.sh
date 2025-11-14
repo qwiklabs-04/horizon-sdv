@@ -339,7 +339,8 @@ function gerrit-craft-all-users() {
       # password if this fails.
       n=1
       until [ "$n" -ge 4 ]; do
-        if ! ssh -q -o LogLevel=ERROR -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit set-account gerrit-admin --http-password ${HTTP_PASSWORD}; then
+        # if ! ssh -q -o LogLevel=ERROR -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit set-account gerrit-admin --http-password ${HTTP_PASSWORD}; then
+        if ! ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit set-account gerrit-admin --http-password "${HTTP_PASSWORD}"; then
           echo "Gerrit Admin http-password failed, sleep 30s and retry (loop=$n)"
           n=$((n + 1))
           sleep 30

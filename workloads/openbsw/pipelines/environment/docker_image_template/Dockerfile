@@ -18,8 +18,8 @@
 # necessary tools and dependencies required for building OpenBSW targets,
 # such as the ARM toolchain, CMake, Clang tools, and other utilities.
 
-# Allow user to choose distribution, e.g. ubuntu:20.04
-ARG LINUX_DISTRIBUTION=20.04
+# Allow user to choose distribution, e.g. ubuntu:22.04
+ARG LINUX_DISTRIBUTION=22.04
 FROM ${LINUX_DISTRIBUTION}
 
 # Overrides
@@ -33,6 +33,7 @@ ARG LLVM_PROJECT_URL
 ARG NODEJS_VERSION
 ARG OPENBSW_GIT_URL
 ARG OPENBSW_GIT_BRANCH
+ARG PLANTUML_URL
 ARG POST_GIT_CLONE_COMMAND
 ARG PYTHON_VERSION
 ARG PYELFTOOLS_VERSION
@@ -45,11 +46,11 @@ RUN apt-get update -y && \
     apt-get -y upgrade && \
     apt-get install -y --no-install-recommends \
     apt-transport-https ca-certificates \
-    build-essential bzip2 clang-tidy curl doxygen file gawk \
-    gcc-11 g++11 gettext gettext-base git git-core gnupg \
-    htop iproute2 iputils-ping kmod less lcov ninja-build \
-    python"${PYTHON_VERSION}" python3-setuptools python3-pip \
-    python3-requests python3-venv python3-virtualenv \
+    build-essential bzip2 clang-tidy curl default-jdk-headless \
+    doxygen file gawk gcc-11 g++11 gettext gettext-base git \
+    git-core gnupg graphviz htop iproute2 iputils-ping kmod less \
+    lcov ninja-build python"${PYTHON_VERSION}" python3-setuptools \
+    python3-pip python3-requests python3-venv python3-virtualenv \
     rsync ruby-rubygems ssh sudo tar tmux unzip vim wget \
     xz-utils zip && \
     apt-get update -y && apt install -y npm && \
@@ -99,6 +100,10 @@ RUN echo "\033[1;32mInstall ${CMAKE_URL}\033[0m" \
     && rm -f sccache.tar.gz \
     && chmod a+x /usr/local/bin/sccache \
     && rm -rf sccache-*-x86_64-unknown-linux-musl \
+    && echo "\033[1;32mInstall ${CPLANTUML_URL}\033[0m" \
+    && curl -L "${PLANTUML_URL}" -o /usr/local/bin/plantuml.jar \
+    && echo '#!/bin/sh\njava -jar /usr/local/bin/plantuml.jar "$@"' > /usr/local/bin/plantuml \
+    && chmod +x /usr/local/bin/plantuml \
     && echo 'export HISTFILE=/root/.bash_history/history' >> /root/.bashrc
 
 RUN gem install esr-rim

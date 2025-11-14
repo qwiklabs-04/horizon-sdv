@@ -44,9 +44,9 @@ pipelineJob('OpenBSW/Tests/POSIX') {
     <h4 style="margin-bottom: 10px;">Run POSIX pyTest:</h4>
     <p>Execute pyTests targeting the POSIX build::</p></br><br/>
     <b>posix-freertos</b><br/>
-    <pre><code>cd posix/test/pyTest/ && pytest --target=posix-freertos</code></pre>
+    <pre><code>cd posix/test/pyTest/ && pytest --target=posix --app=freertos</code></pre>
     <b>posix-threadx</b><br/>
-    <pre><code>cd posix/test/pyTest/ && pytest --target=posix-threadx</code></pre>
+    <pre><code>cd posix/test/pyTest/ && pytest --target=posix --app=threadx</code></pre>
     <h3>Reference documentation:</h3>
     <ul>
       <li><a href="https://eclipse-openbsw.github.io/openbsw/sphinx_docs/doc/learning/console/index.html" target="_blank">Application Console.</a></li>

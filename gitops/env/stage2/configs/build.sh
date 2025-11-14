@@ -22,8 +22,10 @@ NGINX_VERSION=1.28.0-alpine
 declare -a configs=("landingpage-app" "gerrit-mcp-server-app")
 substr="-app"
 for config in "${configs[@]}"; do
-  docker build --build-arg NGINX_VERSION=${NGINX_VERSION} \
-  docker build -t ${GCP_CLOUD_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/horizon-sdv/${config}:${VERSION} ${config%$substr*}/${config}
+  docker build \
+    --build-arg NGINX_VERSION=${NGINX_VERSION} \
+    -t ${GCP_CLOUD_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/horizon-sdv/${config}:${VERSION} \
+    ${config%$substr*}/${config}
   docker push ${GCP_CLOUD_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/horizon-sdv/${config}:${VERSION}
 done
 

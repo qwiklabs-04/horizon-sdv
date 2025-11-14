@@ -25,7 +25,7 @@ This will allow users to execute and operate the POSIX reference application.
 
 This will allow users to run pyTest on the reference application, and debug failures etc:
 
-`./posix/tools/enet/bring-up-ethernet.sh && ./posix/tools/can/bring-up-vcan0.sh && cd posix/test/pyTest/ && pytest --target=posix`
+`./posix/tools/enet/bring-up-ethernet.sh && ./posix/tools/can/bring-up-vcan0.sh && cd posix/test/pyTest/ && pytest --target=posix --app=freertos`
 
 
 ### References <a name="references"></a>

@@ -52,7 +52,7 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('POST_GIT_CLONE_COMMAND')
-      defaultValue('cd openbsw && git checkout ab773f2d && cd -')
+      defaultValue('cd openbsw && git checkout 36ec596a && cd -')
       description('''<p>Optional additional commands post git clone and prior to build/make.<br/>
         <b>Note: </b>Single command line only, use logical operators to execute subsequent commands.<br/></p>''')
       trim(true)
@@ -198,9 +198,9 @@ pipelineJob('OpenBSW/Builds/BSW Builder') {
 
     stringParam {
       name('POSIX_PYTEST_CMDLINE')
-      defaultValue('./tools/enet/bring-up-ethernet.sh && ./tools/can/bring-up-vcan0.sh && cd test/pyTest/ && pytest --target=posix-freertos')
+      defaultValue('./tools/enet/bring-up-ethernet.sh && ./tools/can/bring-up-vcan0.sh && cd test/pyTest/ && pytest --target=posix --app=freertos')
       description('''<p>Default POSIX pyTest command line<br/><br/>
-      <b>Options:</b><ul><li><code>posix-freertos</code></li><li><code>posix-threadx</code></li></ul></p>''')
+      <b>Options:</b><ul><li><code>--app=freertos</code></li><li><code>--app=threadx</code></li></ul></p>''')
       trim(true)
     }
 

@@ -81,13 +81,13 @@ function gerrit-restart() {
   kubectl delete pod gerrit-0 -n gerrit
   echo "Testing SSH connection again (after restart)..."
 
-  n=1
+  local n=1
   until [ "$n" -ge 400 ]; do
     ERR_MSG=$(ssh -o LogLevel=ERROR -o ConnectTimeout=1 -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit version 2>&1)
     if [[ $ERR_MSG == *"gerrit version"* ]]; then
       echo "SSH connection worked !!!"
       retVal="RETVAL_OK"
-      break
+      return
     else
       # Debug: show SSH stderr/stdout when debug enabled
       if [[ "${DEBUG:-0}" == "1" ]]; then
@@ -347,16 +347,15 @@ function gerrit-craft-all-users() {
     else
       # Update gerrit-admin HTTP password. If SSH fails, retry. Don't exit on error, we'll manually override the HTTP
       # password if this fails.
-      n=1
-      until [ "$n" -gt 30 ]; do
+      local n=1
+      until [ "$n" -gt 20 ]; do
+        if (( n % 5 == 0 )); then
+          # Try restart on every 10th to see if it alleviates ssh unavailable issue.
+          gerrit-restart
+        fi
         if ! ssh -q -o LogLevel=ERROR -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit set-account gerrit-admin --http-password "${HTTP_PASSWORD}"; then
           echo "Gerrit Admin http-password failed, sleep and retry (loop=$n)"
-          if (( n % 10 == 0 )); then
-            # Try restart on every 10th to see if it alleviates ssh unavailable issue.
-            gerrit-restart
-          else
-            sleep 10
-          fi
+          sleep 10
           n=$((n + 1))
         else
           echo "Gerrit Admin http-password updated"

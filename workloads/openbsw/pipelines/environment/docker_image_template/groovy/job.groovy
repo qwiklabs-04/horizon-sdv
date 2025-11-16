@@ -65,7 +65,7 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
     }
     stringParam {
       name('POST_GIT_CLONE_COMMAND')
-      defaultValue('git checkout 36ec596a')
+      defaultValue('git checkout b4bf4f51')
       description('''<p>Optional additional commands post git clone and prior to build/make.<br/>
         <b>Note: </b>Single command line only, use logical operators to execute subsequent commands.<br/></p>''')
       trim(true)

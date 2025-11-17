@@ -12,21 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-config:
-  name: Horizon SDV
-  applications:
-    keycloak:
-      version: "7.1.4"
-    postgresql:
-      version: "postgresql/17.0.1"
-    zookeeper:
-      version: "zookeeper/13.8.7"
-    kubescape_operator:
-      version: "1.29.11"
-  workloads:
-    android:
-      helm:
-        version: '5.8.106'
 spec:
   destination:
     server: https://kubernetes.default.svc
+

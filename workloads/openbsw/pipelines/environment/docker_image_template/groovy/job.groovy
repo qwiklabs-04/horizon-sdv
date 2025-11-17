@@ -65,7 +65,7 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
     }
     stringParam {
       name('POST_GIT_CLONE_COMMAND')
-      defaultValue('git checkout ab773f2d')
+      defaultValue('git checkout b4bf4f51')
       description('''<p>Optional additional commands post git clone and prior to build/make.<br/>
         <b>Note: </b>Single command line only, use logical operators to execute subsequent commands.<br/></p>''')
       trim(true)
@@ -118,6 +118,12 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
       defaultValue("${NODEJS_VERSION}")
       description('''<p>NodeJS version.<br/>
         This is installed using <i>nvm</i> on the instance template to be compatible with other tooling.</p>''')
+      trim(true)
+    }
+    stringParam {
+      name('PLANTUML_URL')
+      defaultValue('https://github.com/plantuml/plantuml/releases/download/v1.2025.10/plantuml.jar')
+      description('''<p>PlantUML Java archive URL.</p>''')
       trim(true)
     }
     stringParam {

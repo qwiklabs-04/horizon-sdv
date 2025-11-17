@@ -15,7 +15,20 @@
 # limitations under the License.
 
 # Important delay ! Actions below cannot be done while Init stage is ongoing
-sleep 30
+n=1
+until [ "$n" -ge 4 ]; do
+  if ! kubectl get pods -n gerrit -o jsonpath="{.items[*].spec.initContainers[*].image}" | tr -s ' ' '\n' | grep gerrit-init
+  then
+    echo "gerrit-init not yet running, wait 30s (loop=$n)"
+    sleep 30
+    n=$((n + 1))
+  else
+    # Just a settling time
+    sleep 30
+    echo "gerrit-init running, continue with gerrit setup."
+    break
+  fi
+done
 
 APISERVER=https://kubernetes.default.svc
 SERVICEACCOUNT=/var/run/secrets/kubernetes.io/serviceaccount
@@ -45,7 +58,7 @@ function gerrit-test-connection() {
     ERR_MSG=$(ssh -o LogLevel=ERROR -o ConnectTimeout=1 -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit version 2>&1)
     if [[ $ERR_MSG == *"gerrit version"* ]]; then
       echo "SSH connection worked, no need to craft All-Users repository. Just retrieve HTTP PASSWORD"
-      HTTP_PASSWORD=$(kubectl get secrets -n gerrit gerrit-http-password -o json | jq -r ".data[]" | base64 -d)
+      HTTP_PASSWORD=$(kubectl get secrets -n jenkins jenkins-gerrit-http-password -o json | jq -r "(.data.password)" | base64 -d)
       if [ -z "${HTTP_PASSWORD}" ]; then
         echo "ERROR: HTTP_PASSWORD is empty."
         retVal="RETVAL_OK"
@@ -62,6 +75,32 @@ function gerrit-test-connection() {
   done
   retVal="RETVAL_OK"
   return
+}
+
+function gerrit-restart() {
+  retVal="RETVAL_NOK"
+  echo "Restarting Gerrit..."
+  kubectl delete pod gerrit-0 -n gerrit
+  echo "Testing SSH connection again (after restart)..."
+
+  local n=1
+  until [ "$n" -ge 400 ]; do
+    ERR_MSG=$(ssh -o LogLevel=ERROR -o ConnectTimeout=1 -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit version 2>&1)
+    if [[ $ERR_MSG == *"gerrit version"* ]]; then
+      echo "SSH connection worked !!!"
+      retVal="RETVAL_OK"
+      return
+    else
+      # Debug: show SSH stderr/stdout when debug enabled
+      if [[ "${DEBUG:-0}" == "1" ]]; then
+        echo "[DEBUG] Post-restart SSH attempt #$n output:"
+        printf '%s\n' "$ERR_MSG"
+      fi
+      echo "No SSH connection, retrying... #$n"
+      n=$((n + 1))
+      sleep 1
+    fi
+  done
 }
 
 function gerrit-craft-all-users() {
@@ -272,29 +311,13 @@ function gerrit-craft-all-users() {
   done
 
   if [[ "$STAGE4_COMPLETED" != true ]]; then
-    # Restart gerrit to refresh external-ids and make it possible to generate the HTTP token, getting SSH to work again requires around 300 seconds.
-    echo "Restarting Gerrit..."
-    kubectl delete pod gerrit-0 -n gerrit
-    echo "Testing SSH connection again (after restart)..."
-
-    n=1
-    until [ "$n" -ge 400 ]; do
-      ERR_MSG=$(ssh -o LogLevel=ERROR -o ConnectTimeout=1 -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit version 2>&1)
-      if [[ $ERR_MSG == *"gerrit version"* ]]; then
-        echo "SSH connection worked !!!"
-        STAGE5_COMPLETED=true
-        break
-      else
-        # Debug: show SSH stderr/stdout when debug enabled
-        if [[ "${DEBUG:-0}" == "1" ]]; then
-          echo "[DEBUG] Post-restart SSH attempt #$n output:"
-          printf '%s\n' "$ERR_MSG"
-        fi
-        echo "No SSH connection, retrying... #$n"
-        n=$((n + 1))
-        sleep 1
-      fi
-    done
+    gerrit-restart
+    if [[ "${retVal}" == "RETVAL_NOK" ]]; then
+      echo "gerrit-restart failed"
+    else
+      echo "gerrit-restart success"
+      STAGE5_COMPLETED=true
+    fi
   else
     echo "No need to restart Gerrit, SSH connection works."
     STAGE5_COMPLETED=true
@@ -305,20 +328,43 @@ function gerrit-craft-all-users() {
     retVal="RETVAL_NOK"
     return
   else
+    local httpPassword
     # HTTP password logic: add debug with date/time here (no masking)
-    HTTP_PASSWORD=$(cat /root/.ssh/privatekey | head -2 | tail -1 | cut -c1-30)
+    httpPassword=$(cat /root/.ssh/privatekey | head -2 | tail -1 | cut -c1-30)
+
+    if [ "$httpPassword" != "$HTTP_PASSWORD" ]; then
+      HTTP_PASSWORD=$httpPassword
+      echo "WARNING: HTTP passwords differ or 1st time setup."
+    fi
     
     # Debug: show contents of HTTP_PASSWORD
     if [[ "${DEBUG:-0}" == "1" ]]; then
       echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') [DEBUG] Extracted HTTP_PASSWORD: ${HTTP_PASSWORD}"
     fi
 
-    ERR_MSG=$(ssh -q -o LogLevel=ERROR -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit set-account gerrit-admin --http-password ${HTTP_PASSWORD})
     if [ -z "${HTTP_PASSWORD}" ]; then
       echo "ERROR: HTTP_PASSWORD is empty."
       retVal="RETVAL_NOK"
       return
     else
+      # Update gerrit-admin HTTP password. If SSH fails, retry. Don't exit on error, we'll manually override the HTTP
+      # password if this fails.
+      local n=1
+      until [ "$n" -gt 20 ]; do
+        if (( n % 5 == 0 )); then
+          # Try restart on every 10th to see if it alleviates ssh unavailable issue.
+          gerrit-restart
+        fi
+        if ! ssh -q -o LogLevel=ERROR -o BatchMode=yes -o UserKnownHostsFile=/dev/null -o StrictHostKeychecking=no -p 29418 -i /root/.ssh/privatekey gerrit-admin@gerrit-service gerrit set-account gerrit-admin --http-password "${HTTP_PASSWORD}"; then
+          echo "Gerrit Admin http-password failed, sleep and retry (loop=$n)"
+          sleep 10
+          n=$((n + 1))
+        else
+          echo "Gerrit Admin http-password updated"
+          break
+        fi
+      done
+
       cd /root
       HTTP_PASSWORD_BASE64=$(echo -n $HTTP_PASSWORD | base64 -w0)
 

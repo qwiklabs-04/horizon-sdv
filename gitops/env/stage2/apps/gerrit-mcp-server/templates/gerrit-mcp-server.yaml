@@ -1,10 +1,26 @@
+{{- $gerrit_external_url := .Values.server.config.external_url | replace "##DOMAIN##" .Values.config.gitops.domain -}}
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gerrit-mcp-server-config
 data:
   gerrit_config.json: |-
-    {{ .Values.server.config.json | indent 4 }}
+    {
+      "default_gerrit_base_url": "{{ .Values.server.config.default_gerrit_base_url }}",
+      "gerrit_hosts": [
+        {
+          "name": "{{  .Values.server.config.name }}",
+          "internal_url": "{{ .Values.server.config.internal_url }}",
+          "external_url": "{{ $gerrit_external_url }}",
+          "authentication": {
+            "type": "http_basic",
+            "username": "##USERNAME##",
+            "auth_token": "##PASSWORD##"
+          }
+        }
+      ]
+    }
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -37,12 +53,12 @@ spec:
         - name: GERRIT_USERNAME
           valueFrom:
             secretKeyRef:
-              name: jenkins-gerrit-http-password
+              name: gerrit-http-password
               key: username
         - name: GERRIT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: jenkins-gerrit-http-password
+              name: gerrit-http-password
               key: password
 ---
 apiVersion: v1

@@ -14,22 +14,11 @@
 
 server:
   port: 6322
-  config.json: |
-    {
-      "default_gerrit_base_url": "http://gerrit-service.gerrit.svc.cluster.local/a",
-      "gerrit_hosts": [
-        {
-          "name": "horizon-sdv-gerrit",
-          "internal_url": "http://gerrit-service.gerrit.svc.cluster.local/a",
-          "external_url": "https://{{ .Values.config.gitops.domain }}/gerrit/a",
-          "authentication": {
-            "type": "http_basic",
-            "username": "##USERNAME##",
-            "auth_token": "##PASSWORD##"
-          }
-        }
-      ]
-    }
+  config:
+    name: "horizon-sdv-gerrit"
+    default_gerrit_base_url: "http://gerrit-service.gerrit.svc.cluster.local/a"
+    internal_url: "http://gerrit-service.gerrit.svc.cluster.local/a"
+    external_url: "https://##DOMAIN##/gerrit/a"
 
 spec:
   destination:

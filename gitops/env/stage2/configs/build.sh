@@ -15,13 +15,17 @@
 # limitations under the License.
 
 VERSION=1.0.0
+NGINX_VERSION=1.28.0-alpine
 #GCP_PROJECT_ID=<PROJECT_ID>
 #GCP_CLOUD_REGION=<REGION_NAME>
 
-declare -a configs=("landingpage-app")
+declare -a configs=("landingpage-app" "gerrit-mcp-server-app")
 substr="-app"
 for config in "${configs[@]}"; do
-  docker build -t ${GCP_CLOUD_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/horizon-sdv/${config}:${VERSION} ${config%$substr*}/${config}
+  docker build \
+    --build-arg NGINX_VERSION=${NGINX_VERSION} \
+    -t ${GCP_CLOUD_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/horizon-sdv/${config}:${VERSION} \
+    ${config%$substr*}/${config}
   docker push ${GCP_CLOUD_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/horizon-sdv/${config}:${VERSION}
 done
 

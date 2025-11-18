@@ -20,7 +20,7 @@ CACERT=${SERVICEACCOUNT}/ca.crt
 
 # script steps:
 # define temporary files used  for file operation - grafana configmap
-# get and parese grafana-keycloak-secret from secret store, prepare format for replace
+# get and parse grafana-keycloak-secret from secret store, prepare format for replace
 # get current grafana configmap to file
 # replace 1st occurence of client_secret and save it as new output configmap file
 # apply new grafana configmap into kubernetes
@@ -75,7 +75,7 @@ fi
 # apply configMap with new secret into K8s
 kubectl apply -f $UPDATED_GRAFANA_TEMP_FILE
 
- # reset grafana pod to aplly changes
+ # reset grafana pod to apply changes
 POD_NAME=$(kubectl get pods -n monitoring | grep grafana | grep -v post | awk '{print $1}')
 kubectl delete pod $POD_NAME -n monitoring
 

@@ -14,7 +14,8 @@
 
 FROM debian:12.9
 ADD configure.sh /root
-ADD secret.json /root
+ADD gerrit-secret.json /root
+ADD jenkins-gerrit-secret.json /root
 COPY account.config /root
 COPY externalId-keycloak-oauth-gerrit-admin /root
 COPY externalId-username-gerrit-admin /root

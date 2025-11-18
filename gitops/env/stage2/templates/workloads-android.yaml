@@ -15,40 +15,28 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kubescape-operator
+  name: workloads-android
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/sync-wave: "2"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: horizon-sdv
   source:
-    chart: kubescape-operator
-    repoURL: https://kubescape.github.io/helm-charts/
-    targetRevision: {{ .Values.config.applications.kubescape_operator.version }}
+    repoURL: {{ .Values.spec.source.repoURL }}
+    targetRevision: {{ .Values.spec.source.targetRevision }}
     helm:
       values: |
-        clusterName: "gke_{{ .Values.config.projectID }}_{{ .Values.config.region }}_sdv-cluster"
-        persistence:
-          storageClass: "horizon-rwo"
-        storage:
-          mtls:
-            enabled: false
+        spec:
+          source:
+            repoURL: {{ .Values.spec.source.repoURL }}
+            targetRevision: {{ .Values.spec.source.targetRevision }}
+    path: gitops/env/stage2/workloads/android
   destination:
     server: https://kubernetes.default.svc
-    namespace: kubescape
+    namespace: dynpvc
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
-      - RespectIgnoreDifferences=true
     automated: {}
-  ignoreDifferences:
-    - kind: Secret
-      name: kubescape-admission-webhook.kubescape.svc-kubescape-tls-pair
-      namespace: kubescape
-      jqPathExpressions:
-        - .data
-    - kind: ValidatingWebhookConfiguration
-      name: validation
-      namespace: kubescape

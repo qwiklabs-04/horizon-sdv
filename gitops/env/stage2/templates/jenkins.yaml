@@ -48,6 +48,7 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: jenkins
-  syncOptions:
-    - CreateNamespace=true
-  automated: {}
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated: {}

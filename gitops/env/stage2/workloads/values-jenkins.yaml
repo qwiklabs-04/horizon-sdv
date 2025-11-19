@@ -215,7 +215,7 @@ controller:
                             serviceAccountConfig:
                               json:
                                 filename: {{ .Values.config.projectID }}.json
-                                secretJsonKey: ${base64:${jenkins-gce-creds-gce-creds-json}
+                                secretJsonKey: ${base64:${jenkins-gce-creds-gce-creds-json}}
                 jenkins:
                   systemMessage: Welcome to Horizon SDV server.
                   disabledAdministrativeMonitors:

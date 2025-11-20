@@ -26,7 +26,8 @@ module "vpc" {
   network_name = var.network
   routing_mode = "GLOBAL"
 
-  subnets = [
+  subnets = concat(
+    [
     {
       subnet_name              = var.subnetwork
       subnet_region            = var.region
@@ -34,9 +35,20 @@ module "vpc" {
       enable_ula_internal_ipv6 = true
       private_ip_google_access = false
     }
-  ]
+  ],
+      var.enable_arm64 ? [
+      {
+        subnet_name              = var.arm64_subnetwork
+        subnet_region            = var.arm64_region
+        subnet_ip                = "10.2.0.0/24"      
+        enable_ula_internal_ipv6 = true
+        private_ip_google_access = false
+      }
+    ] : []
+  )
 
-  secondary_ranges = {
+  secondary_ranges = merge(
+    {
     "${var.subnetwork}" = [
       {
         range_name    = "pods-range"
@@ -47,7 +59,20 @@ module "vpc" {
         ip_cidr_range = "10.12.0.0/16"
       },
     ]
-  }
+  },
+      var.enable_arm64 ? {
+      "${var.arm64_subnetwork}" = [
+        {
+          range_name    = "pods-range-us"
+          ip_cidr_range = var.arm64_pods_range
+        },
+        {
+          range_name    = "services-range-us"
+          ip_cidr_range = var.arm64_services_range 
+        }
+      ]
+    } : {}
+  )
 
   routes = [
     {

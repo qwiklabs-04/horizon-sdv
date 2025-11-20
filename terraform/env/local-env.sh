@@ -41,3 +41,6 @@ export TF_VAR_sdv_computer_sa="123"
 export TF_VAR_sdv_gcp_cloud_region="123"
 export TF_VAR_sdv_gcp_cloud_zone="123"
 export TF_VAR_sdv_gcp_backend_bucket_name="123"
+
+#ARM64 enablement
+export TF_VAR_enable_arm64="false"

@@ -446,4 +446,6 @@ module "base" {
     cd -
   EOT
 
+  #ARM64_ENABLEMENT
+  enable_arm64 = var.enable_arm64
 }

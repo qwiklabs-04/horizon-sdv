@@ -38,11 +38,19 @@ function cts_info() {
     ./cts-tradefed list modules > "${WORKSPACE}"/cts-modules.txt
 }
 
+# Show disk space
+function cts_disk_usage() {
+    echo -e "\033[1;32mCurrent Disk Usage:\033[0m"
+    # Use tmp because disk differs on arch and it's /tmp that tests complain about.
+    df -h /tmp || true
+}
+
 # Wait for timeout or tradefed completion.
 function cts_wait_for_completion() {
     local -r time_max="$((CTS_TIMEOUT * 60))"
     local -r timeout="${SECONDS}"+"${time_max}"
     local -r pid="$1"
+    local n=0
     echo "Sleep for ${time_max} seconds and wait on PID ${pid}"
     while (( "${SECONDS}" < "${timeout}" )); do
         sleep 60
@@ -53,7 +61,14 @@ function cts_wait_for_completion() {
             break
         fi
         echo "Still waiting on completion ..." 
+        # Show usage stats periodically (every 10m)
+        if (( n % 10 == 0 )); then
+            cts_disk_usage
+            n=0
+        fi
+        n=$((n + 1))
     done
+    cts_disk_usage
     echo "Tests completed or timed out."
 }
 

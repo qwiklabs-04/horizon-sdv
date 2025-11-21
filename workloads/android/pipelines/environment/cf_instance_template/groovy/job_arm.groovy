@@ -65,11 +65,11 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
 
     stringParam {
       name('BOOT_DISK_SIZE')
-      defaultValue('250GB')
+      defaultValue('500GB')
       description('''<p>The boot disk size for the instance template image, e.g..</p>
         <ul>
-          <li>250GB</li>
           <li>500GB</li>
+          <li>250GB</li>
         </ul>
         <p>Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk=[PROPERTY=VALUE,…]</i></p>''')
       trim(true)

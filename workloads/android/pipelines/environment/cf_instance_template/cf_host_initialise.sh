@@ -218,7 +218,9 @@ function cuttlefish_jenkins_user() {
 function cuttlefish_cleanup() {
     # Clean up
     cd ..
-    rm -rf "${CUTTLEFISH_REPO_NAME}"
+    sudo rm -rf "${HOME}/${CUTTLEFISH_REPO_NAME}"
+    # Remove bazel cache to save space before disk image is created.
+    sudo rm -rf "${HOME}"/.cache/bazel/
 }
 
 # Install the Cuttlefish packages.

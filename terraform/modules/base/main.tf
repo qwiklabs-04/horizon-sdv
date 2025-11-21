@@ -68,6 +68,11 @@ module "sdv_network" {
   subnetwork  = var.sdv_subnetwork
   region      = var.sdv_region
   router_name = var.sdv_network_egress_router_name
+  enable_arm64         = var.enable_arm64
+  arm64_region         = var.arm64_region
+  arm64_subnetwork     = var.arm64_subnetwork
+  arm64_pods_range     = var.arm64_pods_range
+  arm64_services_range = var.arm64_services_range
 }
 
 module "sdv_bastion_host" {

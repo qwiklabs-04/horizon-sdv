@@ -39,6 +39,35 @@ spec:
               android:
                 url: {{ .Values.config.workloads.android.url }}
                 branch: {{ .Values.config.workloads.android.branch }}
+          controller:
+            jenkinsUrl: https://{{ .Values.config.domain }}/jenkins
+            jenkinsUriPrefix: /jenkins
+            additionalExistingSecrets:
+              - name: jenkins-keycloak
+                keyName: keycloakJson
+              - name: jenkins-gerrit-ssh-private-key
+                keyName: privateKey
+              - name: jenkins-gerrit-http-password
+                keyName: password
+            JCasC:
+              securityRealm: |-
+                keycloak:
+                  keycloakJson: ${jenkins-keycloak-keycloakJson}
+                  keycloakRespectAccessTokenTimeout: false
+                  keycloakValidate: false
+          agent:
+            containerCap: 15
+          persistence:
+            accessMode: "ReadWriteOnce"
+            enabled: true
+            existingClaim: "jenkins-home-volume"
+          rbac:
+            readSecrets: true
+          admin:
+            createSecret: true
+            existingSecret: jenkins-initial-creds
+            userkey: jenkins-admin-user
+            passwordkey: jenkins-admin-password
         valueFiles:
           - $values/gitops/env/stage2/workloads/values-jenkins.yaml
     - repoURL: {{ .Values.spec.source.repoURL }}

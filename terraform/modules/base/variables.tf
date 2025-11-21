@@ -280,3 +280,33 @@ variable "sdv_gh_abfs_license_b64" {
   type        = string
 }
 
+variable "enable_arm64" {
+  description = "Enable or disable ARM64 networking resources"
+  type        = bool
+}
+
+variable "arm64_region" {
+  description = "ARM64 region (example: us-central1)"
+  type        = string
+  default     = "us-central1"
+}
+
+variable "arm64_subnetwork" {
+  description = "ARM64 subnet name"
+  type        = string
+  default     = "sdv-subnet-us"
+}
+
+variable "arm64_pods_range" {
+  description = "ARM64 pod CIDR"
+  type        = string
+  default     = "10.20.0.0/16"
+}
+
+variable "arm64_services_range" {
+  description = "ARM64 service CIDR"
+  type        = string
+  default     = "10.22.0.0/16"
+}
+
+

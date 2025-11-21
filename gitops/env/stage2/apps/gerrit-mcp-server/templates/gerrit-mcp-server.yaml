@@ -45,21 +45,21 @@ spec:
             - name: config
               mountPath: "/app/gerrit-mcp-server/gerrit_config.json"
               subPath: gerrit_config.json
+          env:
+            - name: GERRIT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: gerrit-http-password
+                  key: username
+            - name: GERRIT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gerrit-http-password
+                  key: password
       volumes:
         - name: config
           configMap:
             name: gerrit-mcp-server-config
-      env:
-        - name: GERRIT_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: gerrit-http-password
-              key: username
-        - name: GERRIT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: gerrit-http-password
-              key: password
 ---
 apiVersion: v1
 kind: Service

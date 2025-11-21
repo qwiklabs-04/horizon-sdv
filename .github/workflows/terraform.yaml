@@ -257,6 +257,12 @@ jobs:
             echo "VARS=false" >> $GITHUB_ENV;
           fi
 
+          if [[ ! -z "${{ vars.FEATURES_BARE_METAL_ARM64 }}" ]]; then
+             echo "TF_VAR_enable_arm64=${{ vars.FEATURES_BARE_METAL_ARM64 }}" >> $GITHUB_ENV
+          else
+             echo "TF_VAR_enable_arm64=false" >> $GITHUB_ENV
+          fi
+
       - name: Get Terraform fetcher GitHub App token
         uses: tibdex/github-app-token@v1
         id: get_github_app_token

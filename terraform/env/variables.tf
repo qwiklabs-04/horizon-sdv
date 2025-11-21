@@ -125,3 +125,7 @@ variable "sdv_gcp_backend_bucket_name" {
   description = "GCP cloud bucket name that stores tfstate file"
   type        = string
 }
+
+variable "enable_arm64" {
+  type        = bool
+}

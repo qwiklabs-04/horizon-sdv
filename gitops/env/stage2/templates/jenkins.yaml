@@ -56,7 +56,7 @@ spec:
                   keycloakRespectAccessTokenTimeout: false
                   keycloakValidate: false
           agent:
-            containerCap: 15
+            containerCap: 20
           persistence:
             accessMode: "ReadWriteOnce"
             enabled: true

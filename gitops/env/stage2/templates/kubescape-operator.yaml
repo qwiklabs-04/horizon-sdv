@@ -52,3 +52,9 @@ spec:
     - kind: ValidatingWebhookConfiguration
       name: validation
       namespace: kubescape
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      name: validation
+      namespace: kubescape
+      jqPathExpressions:
+        - '.webhooks[].clientConfig.caBundle'

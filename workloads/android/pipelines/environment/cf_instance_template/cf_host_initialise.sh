@@ -236,12 +236,19 @@ function cuttlefish_install() {
     # Prebuilts are only supported on X86_64 and main currently, fall through to build on error.
     if [ "${ANDROID_CUTTLEFISH_PREBUILT}" != "true" ] || ! cuttlefish_install_prebuilt "${CUTTLEFISH_REVISION}"; then
         echo -e "${GREEN}Cuttlefish Building from ${CUTTLEFISH_REVISION}.${NC}"; echo
-        git clone "${CUTTLEFISH_REPO_URL}" -b "${CUTTLEFISH_REVISION}" > /dev/null 2>&1
+        git clone "${CUTTLEFISH_REPO_URL}" >/dev/null 2>&1
         cd "${CUTTLEFISH_REPO_NAME}" || exit
+        git checkout "${CUTTLEFISH_REVISION}" > /dev/null 2>&1
+
+        # Fake config ahead of post command
+        git config --global user.email "android@example.com"
+        git config --global user.name "Android Cuttlefish"
 
         if [ -n "${CUTTLEFISH_POST_COMMAND}" ]; then
-            CMD="${CUTTLEFISH_POST_COMMAND} >/dev/null 2>&1"
-            if ! eval "${CMD}"; then
+            CMD="${CUTTLEFISH_POST_COMMAND};"
+            echo -e "${ORANGE}Running ${CMD} in ${CUTTLEFISH_REPO_NAME}${NC}"
+            if ! eval "${CMD}"
+            then
                 echo -e "${RED}Error: ${CUTTLEFISH_POST_COMMAND} failed,${NC}"
                 cuttlefish_cleanup
                 exit 1

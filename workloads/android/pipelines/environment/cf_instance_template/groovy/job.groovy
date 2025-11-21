@@ -68,11 +68,11 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('BOOT_DISK_SIZE')
-      defaultValue('250GB')
+      defaultValue('500GB')
       description('''<p>The boot disk size for the instance template image, e.g..</p>
         <ul>
-          <li>250GB</li>
           <li>500GB</li>
+          <li>250GB</li>
         </ul>
         <p>Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk=[PROPERTY=VALUE,…]</i></p>''')
       trim(true)
@@ -104,7 +104,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('OS_VERSION')
-      defaultValue('debian-12-bookworm-v20251014')
+      defaultValue('debian-12-bookworm-v20251111')
       description('''<p>Disk image OS version.<br/>
         Select the OS version name based on project and family, e.g <code>`gcloud compute images list</code>`<br/>
         Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk</i></p>''')

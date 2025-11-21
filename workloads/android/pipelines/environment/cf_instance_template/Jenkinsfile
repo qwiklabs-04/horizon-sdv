@@ -80,7 +80,7 @@ pipeline {
       steps {
         container(name: 'builder') {
           script {
-            currentBuild.description = "Revision: ${env.ANDROID_CUTTLEFISH_REVISION}" + "<br/>" + "${env.MACHINE_TYPE}" + "<br/>" + "$BUILD_USER" 
+            currentBuild.description = "Revision: ${env.ANDROID_CUTTLEFISH_REVISION}" + "<br/>" + "Prebuilt: ${env.ANDROID_CUTTLEFISH_PREBUILT}" + "<br/>" + "${env.MACHINE_TYPE}" + "<br/>" + "$BUILD_USER"
           }
           sh '''
             ADDITIONAL_NETWORKING="${ADDITIONAL_NETWORKING}" \

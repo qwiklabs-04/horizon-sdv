@@ -2,7 +2,7 @@ config:
   workloads:
     android:
       cuttlefish:
-        tag: "v1310"
+        tag: "v1320"
       aospMirror:
         workloadEnv:
           image: "horizon-sdv/aosp-mirror-workloads/env"

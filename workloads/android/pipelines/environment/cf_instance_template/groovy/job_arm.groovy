@@ -44,6 +44,15 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
     }
 
     stringParam {
+      name('ANDROID_CUTTLEFISH_POST_COMMAND')
+      defaultValue('')
+      description('''<p>Command to run in <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a>.</p>
+        e.g. To fix the netsimd build issues with cxxbridge:<br/>
+        <code>git cherry-pick 78b66377</code></p>''')
+      trim(true)
+    }
+
+    stringParam {
       name('CUTTLEFISH_INSTANCE_UNIQUE_NAME')
       defaultValue('')
       description('''<p>Optional parameter to define the unique name used for the instance template, e.g.  <i>cuttlefish-vm-instance-test-v1310</i><br/>

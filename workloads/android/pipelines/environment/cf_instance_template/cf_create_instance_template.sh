@@ -35,6 +35,7 @@
 #  - ADDITIONAL_NETWORKING: ARM64 Bare metal requires IDPF network interface.
 #  - CUTTLEFISH_REVISION: the branch/tag version of Android Cuttlefish
 #        to use. Default: main
+#  - CUTTLEFISH_POST_COMMAND: command to run in android-cuttlefish repo.
 #  - BOOT_DISK_SIZE: Disk image size in GB. Default: 250GB
 #  - BOOT_DISK_TYPE: Disk image disk type.
 #  - JAVA_VERSION: Update Java version (must be openjdk headless)
@@ -115,6 +116,7 @@ CUTTLEFISH_INSTANCE_UNIQUE_NAME=${CUTTLEFISH_INSTANCE_UNIQUE_NAME:-cuttlefish-vm
 CUTTLEFISH_INSTANCE_UNIQUE_NAME=$(echo "${CUTTLEFISH_INSTANCE_UNIQUE_NAME}" | awk '{print tolower($0)}' | xargs)
 CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION:-main}
 CUTTLEFISH_REVISION=$(echo "${CUTTLEFISH_REVISION}" | xargs)
+CUTTLEFISH_POST_COMMAND=${CUTTLEFISH_POST_COMMAND:-}
 JAVA_VERSION=${JAVA_VERSION:-openjdk-17-jdk-headless}
 JENKINS_NAMESPACE=${JENKINS_NAMESPACE:-jenkins}
 JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME:-jenkins-cuttlefish-vm-ssh-private-key}
@@ -223,6 +225,7 @@ function echo_environment() {
     echo "BOOT_DISK_TYPE=${BOOT_DISK_TYPE}"
     echo "CUTTLEFISH_INSTANCE_UNIQUE_NAME=${cuttlefish_unique_name}"
     echo "CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION}"
+    echo "CUTTLEFISH_POST_COMMAND=${CUTTLEFISH_POST_COMMAND}"
     echo "IMAGE=${IMAGE}"
     echo "JAVA_VERSION=${JAVA_VERSION}"
     echo "JENKINS_NAMESPACE=${JENKINS_NAMESPACE}"
@@ -251,6 +254,7 @@ function print_usage() {
       ADDITIONAL_NETWORKING=${ADDITIONAL_NETWORKING} \\
       CUTTLEFISH_INSTANCE_UNIQUE_NAME=${cuttlefish_unique_name} \\
       CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION} \\
+      CUTTLEFISH_POST_COMMAND=${CUTTLEFISH_POST_COMMAND} \\
       BOOT_DISK_SIZE=${BOOT_DISK_SIZE} \\
       BOOT_DISK_TYPE=${BOOT_DISK_TYPE} \\
       IMAGE=${IMAGE} \\
@@ -364,6 +368,7 @@ function install_host_tools() {
         CTS_ANDROID_16_URL=${CTS_ANDROID_16_URL} \
         CTS_ANDROID_15_URL=${CTS_ANDROID_15_URL} \
         CTS_ANDROID_14_URL=${CTS_ANDROID_14_URL} \
+        CUTTLEFISH_POST_COMMAND=${CUTTLEFISH_POST_COMMAND} \
         JAVA_VERSION=${JAVA_VERSION} \
         NODEJS_VERSION=${NODEJS_VERSION} \
         OS_VERSION=${OS_VERSION} \

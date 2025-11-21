@@ -28,6 +28,9 @@ CUTTLEFISH_REPO_NAME=$(basename "${CUTTLEFISH_REPO_URL}" .git)
 # version number, eg main = 1.0.0.
 CUTTLEFISH_UPDATE=${CUTTLEFISH_UPDATE:-false}
 
+# Command tin run in android-cuttlefish repo.
+CUTTLEFISH_POST_COMMAND=${CUTTLEFISH_POST_COMMAND:-}
+
 # OS Version
 OS_VERSION=${OS_VERSION:-}
 # Android CTS test harness URLs, installed on host.
@@ -69,6 +72,8 @@ case "$0" in
         CUTTLEFISH_REPO_NAME=${CUTTLEFISH_REPO_NAME}
         CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION}
         CUTTLEFISH_UPDATE=${CUTTLEFISH_UPDATE}
+
+        CUTTLEFISH_POST_COMMAND=${CUTTLEFISH_POST_COMMAND}
         "
         ;;
     *)

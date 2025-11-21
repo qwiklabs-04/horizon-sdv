@@ -56,12 +56,18 @@ User may define any valid version so long as that version contains `tools/buildu
 
 ### `ANDROID_CUTTLEFISH_PREBUILT`
 
-Users have the option to build cuttlefish from scratch, ie. from <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a> repository. Alternatively they may choose to install Google prebuilt versions of cuttlefish.
+Users have the option to build cuttlefish from scratch, ie. from [android-cuttlefish.git](https://github.com/google/android-cuttlefish.git) repository. Alternatively they may choose to install Google prebuilt versions of cuttlefish.
 
 Disabled: build and install from repo.
 Enabled:  download and install Google prebuilt versions.
 
 Note: this is only applicable to `ANDROID_CUTTLEFISH_REVISION` `main` branch currently, and if packages are not found it will default to building cuttlefish from scratch.
+
+### `ANDROID_CUTTLEFISH_POST_COMMAND`
+
+Command to run in the [android-cuttlefish.git](https://github.com/google/android-cuttlefish.git) repo.
+e.g. To fix the netsimd build issues with cxxbridge:<br/>
+    `git cherry-pick 78b66377`
 
 ### `CUTTLEFISH_INSTANCE_UNIQUE_NAME`
 **Note:** Name must be a match of regex `(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)`, i.e lower case.

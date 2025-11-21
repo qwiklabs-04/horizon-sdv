@@ -239,6 +239,17 @@ function cuttlefish_install() {
         git clone "${CUTTLEFISH_REPO_URL}" -b "${CUTTLEFISH_REVISION}" > /dev/null 2>&1
         cd "${CUTTLEFISH_REPO_NAME}" || exit
 
+        if [ -n "${CUTTLEFISH_POST_COMMAND}" ]; then
+            CMD="${CUTTLEFISH_POST_COMMAND} >/dev/null 2>&1"
+            if ! eval "${CMD}"; then
+                echo -e "${RED}Error: ${CUTTLEFISH_POST_COMMAND} failed,${NC}"
+                cuttlefish_cleanup
+                exit 1
+            else
+                echo -e "${GREEN}SUCCESS: ${CUTTLEFISH_POST_COMMAND}${NC}"
+            fi
+        fi
+
         declare -r BUILD_SCRIPT=./tools/buildutils/build_packages.sh
 
         # Build and install the cuttlefish packages

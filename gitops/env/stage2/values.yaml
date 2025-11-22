@@ -26,7 +26,7 @@ config:
   workloads:
     android:
       helm:
-        version: '5.8.106'
+        version: '5.8.110'
 spec:
   destination:
     server: https://kubernetes.default.svc

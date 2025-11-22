@@ -37,6 +37,11 @@ This is the label that identifies the GCE Cloud label which will be used to iden
 
 Note: The value provided must correspond to a cloud instance or the job will hang.
 
+### `MTK_CONNECT_PUBLIC`
+
+When checked, the MTK Connect testbench is visible to everyone and can be shared.
+By default, testbenches are private and only visible to their creator and MTK Connect administrators.
+
 ### `INSTANCE_MAX_UPTIME`
 
 This is the maximum time that the instance may be running before it is automatically terminated and deleted. This is important to avoid leaving expensive instances in running state.

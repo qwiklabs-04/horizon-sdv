@@ -85,6 +85,11 @@ Defines total memory available to guest.
 
 This applies to CVD `memory_mb` parameter.
 
+### `MTK_CONNECT_PUBLIC`
+
+When checked, the MTK Connect testbench is visible to everyone and can be shared.
+By default, testbenches are private and only visible to their creator and MTK Connect administrators.
+
 ### `CVD_ADDITIONAL_FLAGS`
 
 Append additional flags to `cvd` command, e.g. --display0=width=1920,height=1080,dpi=160

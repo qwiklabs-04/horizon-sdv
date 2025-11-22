@@ -49,6 +49,11 @@ This is the maximum time that the instance may be running before it is automatic
 
 Enable if user wishes to connect to the HOST via MTK Connect.
 
+### `MTK_CONNECT_PUBLIC`
+
+When checked, the MTK Connect testbench is visible to everyone and can be shared.
+By default, testbenches are private and only visible to their creator and MTK Connect administrators.
+
 ### `NUM_HOST_INSTANCES`
 
 Number of host instances to create for testing the POSIX application. This is effectively the number of devices that

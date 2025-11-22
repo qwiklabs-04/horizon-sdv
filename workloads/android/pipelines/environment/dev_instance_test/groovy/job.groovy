@@ -35,6 +35,13 @@ pipelineJob('Android/Environment/Development Test Instance') {
       trim(true)
     }
 
+    booleanParam {
+      name('MTK_CONNECT_PUBLIC')
+      defaultValue(false)
+      description('''<p>When checked, the MTK Connect testbench is visible to everyone.<br/>
+        By default, testbenches are private and only visible to their creator and MTK Connect administrators.</p>''')
+    }
+
     choiceParam {
       name('INSTANCE_MAX_UPTIME')
       choices(['1', '2', '4', '8'])

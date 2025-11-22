@@ -137,7 +137,7 @@ def call(Map config = [:]) {
                     MTK_CONNECTED_DEVICES="${NUM_INSTANCES}" \
                     MTK_CONNECT_TEST_ARTIFACT="${CUTTLEFISH_DOWNLOAD_URL}" \
                     MTK_CONNECT_TESTBENCH="${JOB_NAME}-${BUILD_NUMBER}" \
-                    MTK_CONNECT_TESTBENCH_USER="${BUILD_USER_ID}" \
+                    MTK_CONNECT_TESTBENCH_USER=$([ "$MTK_CONNECT_PUBLIC" = "true" ] && echo "everyone" || echo "$BUILD_USER_ID") \
                     timeout 15m ./mtk_connect.sh --start
                     cd - || true
                   '''

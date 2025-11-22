@@ -54,6 +54,13 @@ pipelineJob('OpenBSW/Environment/Development Instance') {
       description('''<p>Enable if wishing to use MTK Connect to connect to the host instance.</p>''')
     }
 
+    booleanParam {
+      name('MTK_CONNECT_PUBLIC')
+      defaultValue(false)
+      description('''<p>When checked, the MTK Connect testbench is visible to everyone.<br/>
+        By default, testbenches are private and only visible to their creator and MTK Connect administrators.</p>''')
+    }
+
     stringParam {
       name('NUM_HOST_INSTANCES')
       defaultValue('1')

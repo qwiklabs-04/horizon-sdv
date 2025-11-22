@@ -161,6 +161,13 @@ e.g.<br/>gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/Builds/AAOS_Builder/&lt;
       description('''<p>Enable if wishing to use MTK Connect to view UI of CTS tests on virtual devices</p>''')
     }
 
+    booleanParam {
+      name('MTK_CONNECT_PUBLIC')
+      defaultValue(false)
+      description('''<p>When checked, the MTK Connect testbench is visible to everyone.<br/>
+        By default, testbenches are private and only visible to their creator and MTK Connect administrators.</p>''')
+    }
+
     choiceParam {
       name('CUTTLEFISH_KEEP_ALIVE_TIME')
       choices(['0', '5', '15', '30', '60', '90', '120', '180'])

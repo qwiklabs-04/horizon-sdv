@@ -215,7 +215,7 @@ def call(Map config = [:]) {
                     ./workloads/android/pipelines/tests/cvd_launcher/cvd_start_stop.sh --stop || true
                   '''
                   archiveArtifacts artifacts: 'cvd*.log', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
-                  archiveArtifacts artifacts: 'cuttlefish*.tgz', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+                  archiveArtifacts artifacts: 'cuttlefish*.zip', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
                 }
               }
             }

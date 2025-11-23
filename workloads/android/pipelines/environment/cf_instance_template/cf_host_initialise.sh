@@ -104,6 +104,7 @@ function download_cts() {
         echo "echo 'Unknown URL scheme (${url})."
         exit 1
     fi
+    su -l "${JENKINS_USER}" -c "du -sh ${dest}"
 }
 
 # Install CTS test harness on instance to avoid lengthy CTS runs.

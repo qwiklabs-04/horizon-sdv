@@ -159,7 +159,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('CTS_ANDROID_16_URL')
-      defaultValue("https://dl.google.com/dl/android/cts/android-cts-16_r2-linux_x86-x86.zip")
+      defaultValue("https://dl.google.com/dl/android/cts/android-cts-16_r3-linux_x86-x86.zip")
       description('''<p>Leave blank if a version is not needed, or specify your preferred version.<br/>
       Enter the full bucket URL, including <code>android-cts.zip</code>, for example:<br/>
       <code>gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/01/android-cts.zip</code></p>''')
@@ -168,7 +168,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('CTS_ANDROID_15_URL')
-      defaultValue("https://dl.google.com/dl/android/cts/android-cts-15_r5-linux_x86-x86.zip")
+      defaultValue("https://dl.google.com/dl/android/cts/android-cts-15_r6-linux_x86-x86.zip")
       description('''<p>Leave blank if a version is not needed, or specify your preferred version.<br/>
       Enter the full bucket URL, including <code>android-cts.zip</code>, for example:<br/>
       <code>gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/02/android-cts.zip</code></p>''')
@@ -177,7 +177,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('CTS_ANDROID_14_URL')
-      defaultValue("https://dl.google.com/dl/android/cts/android-cts-14_r9-linux_x86-x86.zip")
+      defaultValue("https://dl.google.com/dl/android/cts/android-cts-14_r10-linux_x86-x86.zip")
       description('''<p>Leave blank if a version is not needed, or specify your preferred version.<br/>
       Enter the full bucket URL, including <code>android-cts.zip</code>, for example:<br/>
       <code>gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/04/android-cts.zip</code></p>''')

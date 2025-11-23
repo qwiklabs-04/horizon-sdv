@@ -72,6 +72,8 @@ pipeline {
           imagePullPolicy: Always
           securityContext:
             privileged: true
+            appArmorProfile:
+              type: Unconfined
           command:
           - sleep
           args:
@@ -189,9 +191,11 @@ pipeline {
                   if ( "${env.GERRIT_BRANCH}" =~ "android-14.0.0_r30" ) env.ANDROID_BUILD_ID="ap1a-"
                   if ( "${env.GERRIT_BRANCH}" =~ "android-15.0.0_r36" ) env.ANDROID_BUILD_ID="bp1a-"
                   if ( "${env.GERRIT_BRANCH}" =~ "android-16.0.0_r2" ) env.ANDROID_BUILD_ID="bp2a-"
+                  if ( "${env.GERRIT_BRANCH}" =~ "android-16.0.0_r3" ) env.ANDROID_BUILD_ID="bp3a-"
 
                   if ( "$ANDROID_BUILD_ID" =~ "bp1a" ) env.ANDROID_VERSION=15
                   if ( "$ANDROID_BUILD_ID" =~ "bp2a" ) env.ANDROID_VERSION=16
+                  if ( "$ANDROID_BUILD_ID" =~ "bp3a" ) env.ANDROID_VERSION=16
                 }
                 sh '''
                   set +x
@@ -325,7 +329,7 @@ pipeline {
           when {
             allOf {
               expression { env.GERRIT_CHANGE_NUMBER }
-              expression { !(env.GERRIT_BRANCH ?: '').contains('android-16.0.0_r2') }
+              expression { !(env.GERRIT_BRANCH ?: '').contains('android-16.0.0_r') }
             }
           }
           steps {
@@ -377,7 +381,7 @@ pipeline {
                 ./workloads/android/pipelines/tests/cvd_launcher/cvd_start_stop.sh --stop || true
               '''
               archiveArtifacts artifacts: 'cvd*.log', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
-              archiveArtifacts artifacts: 'cuttlefish*.tgz', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+              archiveArtifacts artifacts: 'cuttlefish*.zip', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
               archiveArtifacts artifacts: 'cts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
               archiveArtifacts artifacts: 'android-cts-results/invocation_summary.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
               archiveArtifacts artifacts: 'android-cts-results/*.zip', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true

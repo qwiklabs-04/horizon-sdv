@@ -97,7 +97,7 @@ Once Google provide you the ABFS license in JSON form, you will be required to c
      - Select `Build`.
      - Job will report failure if any of the uploader instances have not been provisioned correctly for ABFS.
    - **Note**:
-      - There are additional parameters, currently set to defaults, e.g. `UPLOADER_GIT_BRANCH` is set to seed `android-16.0.0_r2`
+      - There are additional parameters, currently set to defaults, e.g. `UPLOADER_GIT_BRANCH` is set to seed `android-16.0.0_r3`
       - Refer to specific README files and parameter descriptions for additional details.
       - This task can take ~24 hours per branch/tag and the only way of knowing it is complete is to monitor the docker
         logs on the uploader instances to ensure all repositories have been seeded fully. Discuss with Google for details.

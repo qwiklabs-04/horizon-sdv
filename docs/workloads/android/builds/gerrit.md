@@ -9,13 +9,13 @@ It supports the following branches:
 
 -   `horizon/android-14.0.0_r30`
 -   `horizon/android-15.0.0_r36`
--   `horizon/android-16.0.0_r2`
+-   `horizon/android-16.0.0_r3`
 
 The branch is used to derive the full name (build identifier) of the build targets, e.g.
 
 -   `android-14.0.0_r30` -> `sdk_car_x86_64-ap1a-userdebug`
 -   `android-15.0.0_r36` -> `sdk_car_x86_64-bp1a-userdebug`
--   `android-16.0.0_r2` -> `sdk_car_x86_64-bp2a-userdebug`
+-   `android-16.0.0_r3` -> `sdk_car_x86_64-bp3a-userdebug`
 
 It builds the following targets:
 

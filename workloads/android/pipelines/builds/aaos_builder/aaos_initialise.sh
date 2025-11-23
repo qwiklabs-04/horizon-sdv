@@ -200,9 +200,6 @@ EOL
 
     sudo mv systemctl /usr/bin
     sudo chmod +x /usr/bin/systemctl
-    # Now configured in pod template security.
-    # sudo sysctl -w kernel.apparmor_restrict_unprivileged_unconfined=0
-    # sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 }
 
 # ABFS: install aptitude binaries for abfs

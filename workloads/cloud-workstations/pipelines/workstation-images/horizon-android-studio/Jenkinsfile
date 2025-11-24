@@ -118,9 +118,6 @@ pipeline {
                    --frontend=dockerfile.v0 \
                    --local=dockerfile=. \
                    --local context=. \
-                   --opt build-arg:ABFS="false" \
-                   --opt build-arg:LINUX_DISTRIBUTION=${LINUX_DISTRIBUTION} \
-                   --opt build-arg:NODEJS_VERSION=${NODEJS_VERSION} \
                    --opt platform=linux/amd64 \
                    --registry-auth-tlscontext host=${REGISTRY},insecure=true \
                    --output=type=image,name=${DESTINATION}:${IMAGE_TAG},push=${PUSH}

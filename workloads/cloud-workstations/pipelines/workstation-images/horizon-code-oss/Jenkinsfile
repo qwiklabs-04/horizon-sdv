@@ -53,11 +53,6 @@ pipeline {
       """.stripIndent()
   }
 
-  // Block concurrent builds to avoid clashing.
-  options {
-    buildBlocker (useBuildBlocker: true, blockLevel: 'GLOBAL', scanQueueFor: 'BUILDABLE', blockingJobs: '(?i)Cloud-Workstations/.*/Workstation-Images/.*Docker.*')
-  }
-
   stages {
     stage ('Start instance'){
       agent { kubernetes { yaml kubernetesPodTemplate } }

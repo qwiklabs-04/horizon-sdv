@@ -155,9 +155,6 @@ controller:
     - ssh-slaves:3.1085.vc64d040efa_85
     - startup-trigger-plugin:2.9.4
     - timestamper:1.30
-  additionalExistingSecrets:
-    - name: jenkins-gce-creds
-      keyName: gce-creds-json
   javaOpts: "-Dcom.cloudbees.workflow.rest.external.JobExt.maxRunsPerJob=50"
   enableRawHtmlMarkupFormatter: true
   markupFormatter: rawHtml

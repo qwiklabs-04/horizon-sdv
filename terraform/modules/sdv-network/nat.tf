@@ -77,4 +77,3 @@ resource "google_compute_router_nat" "arm64_nat" {
     enable = true
   }
 }
-

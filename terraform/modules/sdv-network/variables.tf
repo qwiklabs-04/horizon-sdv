@@ -57,4 +57,3 @@ variable "arm64_pods_range" {
 variable "arm64_services_range" {
   type        = string
 }
-

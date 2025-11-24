@@ -32,7 +32,7 @@ pipelineJob('Cloud-Workstations/Workstation-Images/Horizon Code OSS') {
     stringParam {
       name('IMAGE_TAG')
       defaultValue('latest')
-      description('''<p>Image tag for the Workstation image.</p>''')
+      description('''<p><b>Mandatory:</b> Image tag for the Workstation image.</p>''')
       trim(true)
     }
     booleanParam {

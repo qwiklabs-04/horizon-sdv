@@ -41,7 +41,7 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
     stringParam {
       name('IMAGE_TAG')
       defaultValue("${OPENBSW_IMAGE_TAG}")
-      description('''<p>Docker image template to use.<p>
+      description('''<p><b>Mandatory:</b> Image tag for the builder image.</p>
         <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''')
       trim(true)
     }

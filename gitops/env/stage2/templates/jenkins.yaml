@@ -49,6 +49,8 @@ spec:
                 keyName: privateKey
               - name: jenkins-gerrit-http-password
                 keyName: password
+              - name: jenkins-gce-creds
+                keyName: gce-creds-json
             JCasC:
               securityRealm: |-
                 keycloak:

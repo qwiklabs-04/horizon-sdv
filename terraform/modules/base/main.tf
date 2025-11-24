@@ -202,7 +202,6 @@ module "sdv_bash_on_bastion_host" {
   ]
 }
 
-
 module "sdv_sa_key_secret_gce_creds" {
   source = "../sdv-sa-key-secret"
 
@@ -300,4 +299,3 @@ resource "google_compute_firewall" "allow_tcp_22" {
   ]
 
 }
-

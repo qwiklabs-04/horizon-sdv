@@ -308,5 +308,3 @@ variable "arm64_services_range" {
   type        = string
   default     = "10.22.0.0/16"
 }
-
-

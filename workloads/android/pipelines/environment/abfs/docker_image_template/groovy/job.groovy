@@ -35,7 +35,7 @@ pipelineJob('Android/Environment/ABFS/Docker Image Template') {
     stringParam {
       name('IMAGE_TAG')
       defaultValue('latest')
-      description('''<p>Image tag for the builder image.</p>''')
+      description('''<p><b>Mandatory:</b> Image tag for the builder image.</p>''')
       trim(true)
     }
     stringParam {

@@ -108,6 +108,7 @@ pipeline {
         }
 
         stage ('Build Docker Image'){
+          when { expression { env.IMAGE_TAG } }
           steps {
             container(name: 'buildkit') {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {

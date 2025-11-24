@@ -324,8 +324,8 @@ git checkout -b horizon/android-14.0.0_r30 android-14.0.0_r30
 git push -o skip-validation horizon horizon/android-14.0.0_r30
 git checkout -b horizon/android-15.0.0_r36 android-15.0.0_r36
 git push -o skip-validation horizon horizon/android-15.0.0_r36
-git checkout -b horizon/android-16.0.0_r2 android-16.0.0_r2
-git push -o skip-validation horizon horizon/android-16.0.0_r2
+git checkout -b horizon/android-16.0.0_r3 android-16.0.0_r3
+git push -o skip-validation horizon horizon/android-16.0.0_r3
 cd ..
 rm -rf manifest
 </pre>
@@ -341,8 +341,8 @@ git checkout -b horizon/android-14.0.0_r30 android-14.0.0_r30
 git push -o skip-validation horizon horizon/android-14.0.0_r30
 git checkout -b horizon/android-15.0.0_r36 android-15.0.0_r36
 git push -o skip-validation horizon horizon/android-15.0.0_r36
-git checkout -b horizon/android-16.0.0_r2 android-16.0.0_r2
-git push -o skip-validation horizon horizon/android-16.0.0_r2
+git checkout -b horizon/android-16.0.0_r3 android-16.0.0_r3
+git push -o skip-validation horizon horizon/android-16.0.0_r3
 cd ..
 rm -rf native
 </pre>
@@ -359,8 +359,8 @@ git checkout -b horizon/android-14.0.0_r30 android-14.0.0_r30
 git push -o skip-validation horizon horizon/android-14.0.0_r30
 git checkout -b horizon/android-15.0.0_r36 android-15.0.0_r36
 git push -o skip-validation horizon horizon/android-15.0.0_r36
-git checkout -b horizon/android-16.0.0_r2 android-16.0.0_r2
-git push -o skip-validation horizon horizon/android-16.0.0_r2
+git checkout -b horizon/android-16.0.0_r3 android-16.0.0_r3
+git push -o skip-validation horizon horizon/android-16.0.0_r3
 cd ..
 rm -rf Car
 </pre>
@@ -377,8 +377,8 @@ git checkout -b horizon/android-14.0.0_r30 android-14.0.0_r30
 git push -o skip-validation horizon horizon/android-14.0.0_r30
 git checkout -b horizon/android-15.0.0_r36 android-15.0.0_r36
 git push -o skip-validation horizon horizon/android-15.0.0_r36
-git checkout -b horizon/android-16.0.0_r2 android-16.0.0_r2
-git push -o skip-validation horizon horizon/android-16.0.0_r2
+git checkout -b horizon/android-16.0.0_r3 android-16.0.0_r3
+git push -o skip-validation horizon horizon/android-16.0.0_r3
 cd ..
 rm -rf platform_testing
 </pre>
@@ -395,8 +395,8 @@ git checkout -b horizon/android-14.0.0_r30 android-14.0.0_r30
 git push -o skip-validation horizon horizon/android-14.0.0_r30
 git checkout -b horizon/android-15.0.0_r36 android-15.0.0_r36
 git push -o skip-validation horizon horizon/android-15.0.0_r36
-git checkout -b horizon/android-16.0.0_r2 android-16.0.0_r2
-git push -o skip-validation horizon horizon/android-16.0.0_r2
+git checkout -b horizon/android-16.0.0_r3 android-16.0.0_r3
+git push -o skip-validation horizon horizon/android-16.0.0_r3
 cd ..
 rm -rf interfaces
 </pre>
@@ -413,8 +413,8 @@ git checkout -b horizon/android-14.0.0_r30 android-14.0.0_r30
 git push -o skip-validation horizon horizon/android-14.0.0_r30
 git checkout -b horizon/android-15.0.0_r36 android-15.0.0_r36
 git push -o skip-validation horizon horizon/android-15.0.0_36
-git checkout -b horizon/android-16.0.0_r2 android-16.0.0_r2
-git push -o skip-validation horizon horizon/android-16.0.0_r2
+git checkout -b horizon/android-16.0.0_r3 android-16.0.0_r3
+git push -o skip-validation horizon horizon/android-16.0.0_r3
 cd ..
 rm -rf Launcher
 </pre>
@@ -505,11 +505,11 @@ Repeat the steps for the following branches:
 <li>Review and submit the change: <code>REPLY</code> → <code>CODE-REVIEW+2</code> → <code>SUBMIT</code> → <code>CONTINUE</code></li></ul></ul>
 </details>
 
-<details><summary><code>android-16.0.0_r2</code></summary>
+<details><summary><code>android-16.0.0_r3</code></summary>
 <ul>
-<li>Update <code>android-16.0.0_r2</code></li>
+<li>Update <code>android-16.0.0_r3</code></li>
   <pre>
-     git checkout horizon/android-16.0.0_r2</pre>
+     git checkout horizon/android-16.0.0_r3</pre>
 <li>Update <code>default.xml</code> remotes as follows and add the <code>gerrit</code> remote and ensure the URL  matches your domain:</li>
   <pre>
       &lt;remote name="aosp"
@@ -518,19 +518,19 @@ Repeat the steps for the following branches:
       &lt;remote name="gerrit"
               fetch="https://example.horizon-sdv.com/gerrit"
               review="https://example.horizon-sdv.com/gerrit/" /&gt;
-      &lt;default revision="refs/tags/android-16.0.0_r2"
+      &lt;default revision="refs/tags/android-16.0.0_r3"
                remote="aosp"
                sync-j="4" /&gt; </pre>
 <li>Change the following <code>&lt;project path</code> entries: update <code>name</code> to include <code>android</code> prefix and add <code>gerrit</code> <code>remote</code> and <code>revision</code> in <code>default.xml</code>, e.g.:</li>
-<pre><code>&lt;project path="frameworks/native" name="android/platform/frameworks/native" groups="pdk" remote="gerrit" revision="horizon/android-16.0.0_r2" /&gt;
-&lt;project path="hardware/interfaces" name="android/platform/hardware/interfaces" groups="pdk,sysui- studio" remote="gerrit" revision="horizon/android-16.0.0_r2" /&gt;
-&lt;project path="packages/apps/Car/Launcher" name="android/platform/packages/apps/Car/Launcher" groups="pdk-fs" remote="gerrit" revision="horizon/android-16.0.0_r2" /&gt;
-&lt;project path="packages/services/Car" name="android/platform/packages/services/Car" groups="pdk-cw- fs,pdk-fs" remote="gerrit" revision="horizon/android-16.0.0_r2" /&gt;
+<pre><code>&lt;project path="frameworks/native" name="android/platform/frameworks/native" groups="pdk" remote="gerrit" revision="horizon/android-16.0.0_r3" /&gt;
+&lt;project path="hardware/interfaces" name="android/platform/hardware/interfaces" groups="pdk,sysui- studio" remote="gerrit" revision="horizon/android-16.0.0_r3" /&gt;
+&lt;project path="packages/apps/Car/Launcher" name="android/platform/packages/apps/Car/Launcher" groups="pdk-fs" remote="gerrit" revision="horizon/android-16.0.0_r3" /&gt;
+&lt;project path="packages/services/Car" name="android/platform/packages/services/Car" groups="pdk-cw- fs,pdk-fs" remote="gerrit" revision="horizon/android-16.0.0_r3" /&gt;
 &lt;project path="platform_testing" name="android/platform/platform_testing" groups="pdk-fs,pdk-cw- fs,cts,sysui-studio" remote="gerrit" revision="horizon/android-16.0.0_r2" /&gt;
 </code></pre>
-<li>Commit: <code>git commit -am "Update android-16.0.0_r2 manifest"</code></li>
+<li>Commit: <code>git commit -am "Update android-16.0.0_r3 manifest"</code></li>
 <li>Update commit-id: <code>git commit --amend --no-edit</code></li>
-<li>Push for review: <code>git push origin HEAD:refs/for/horizon/android-16.0.0_r2</code></li>
+<li>Push for review: <code>git push origin HEAD:refs/for/horizon/android-16.0.0_r3</code></li>
 <li>Review and Submit change in Gerrit:</li>
 <ul><li>In Gerrit, select <code>CHANGES</code> → <code>OPEN</code> and click on the change or open the CLI link reported in the console after <code>push</code>.</li>
 <li>Review and submit the change: <code>REPLY</code> → <code>CODE-REVIEW+2</code> → <code>SUBMIT</code> → <code>CONTINUE</code></li></ul></ul>
@@ -670,7 +670,7 @@ ___
 - Open Jenkins Dashboard (e.g. https://example.horizon-sdv.com/jenkins/) and navigate to AAOS Builder pipeline job to prepare build targets that will be used in this exercise.
 - Select `Android Workflows` → `Builds` → `AAOS Builder` → `Build with Parameters` and define the `AAOS_LUNCH_TARGET` and select `Build`
 
-  - `sdk_car_x86_64-bp2a-userdebug` or `sdk_car_arm64-bp2a-userdebug` (choose based on you local PC architecture)
+  - `sdk_car_x86_64-bp3a-userdebug` or `sdk_car_arm64-bp3a-userdebug` (choose based on you local PC architecture)
 
     <img src="images/section.5/5.1.1_aaos_builder.png" width="200" />
 
@@ -764,14 +764,14 @@ Application developers may not use Cuttlefish to any great extent, but this lab 
 **_Create Cuttlefish Virtual Device target:_**
 
 - Open Jenkins Dashboard (e.g. https://example.horizon-sdv.com/jenkins/) and navigate to AAOS Builder pipeline job to prepare build targets that will be used in this lab exercise.
-- Select `Android Workflows` → `Builds` → `AAOS Builder` → `Build with Parameters` and define the `AAOS_LUNCH_TARGET` as `aosp_cf_x86_64_auto-bp2a-userdebug` and select `Build`
+- Select `Android Workflows` → `Builds` → `AAOS Builder` → `Build with Parameters` and define the `AAOS_LUNCH_TARGET` as `aosp_cf_x86_64_auto-bp3a-userdebug` and select `Build`
 
   - When the build completes, the job will show the artifacts it has stored. These help the user locate the build artifacts within the
 Google Cloud Storage bucket for use with testing CF Virtual Devices and connecting to the device through Android Studio.  e.g.
 
     <img src="images/section.5/5.1.2_aaos_builder_artifact_1.png" width="400" />
 
-  - Open the `aosp_cf_x86_64_auto-bp2a-userdebug-artifacts.txt` which will show you were the artfifacts are stored, e.g.
+  - Open the `aosp_cf_x86_64_auto-bp3a-userdebug-artifacts.txt` which will show you were the artfifacts are stored, e.g.
 
     <img src="images/section.5/5.1.2_aaos_builder_artifact_2.png" width="600" />
 
@@ -873,7 +873,7 @@ Cloning / editing of code should be performed as per usual methods - it is not i
 - Save and push the change for review:
   - Commit: `git commit -am "Car Launcher weather app update"`
   - Update Change ID if one was not automatically generated in your commit: `git commit --amend --no-edit`
-  - Push for Review: `git push origin HEAD:refs/for/horizon/android-16.0.0_r2`
+  - Push for Review: `git push origin HEAD:refs/for/horizon/android-16.0.0_r3`
     - The remote should report success and provide a link back to the Gerrit review, e.g.
       - `https://example.horizon-sdv.com/gerrit/c/android/platform/packages/apps/Car/Launcher/+/182 Car Launcher weather app update [NEW]`
 
@@ -1198,11 +1198,11 @@ In this exercise, we will walk you through the process of building your own CTS 
 
 - Open Jenkins Dashboard (e.g. https://example.horizon-sdv.com/jenkins/) and navigate to `AAOS Builder` pipeline job to prepare build targets that will be used in this lab exercise.
 - Select `Android Workflows` → `Builds` → `AAOS Builder`
-  - Select `Build with Parameters`, set the `AAOS_LUNCH_TARGET` to `aosp_cf_x86_64_auto-bp2a-userdebug`, set AAOS_BUILD_CTS to true, and select `Build`
+  - Select `Build with Parameters`, set the `AAOS_LUNCH_TARGET` to `aosp_cf_x86_64_auto-bp3a-userdebug`, set AAOS_BUILD_CTS to true, and select `Build`
 
   - When the build completes, the job will show the artifacts it has stored. These help the user locate the build artifacts within the Google Cloud Storage bucket.
 
-  - Open the `aosp_cf_x86_64_auto-bp2a-userdebug-artifacts.txt` which will show you how to retrieve the artifacts.
+  - Open the `aosp_cf_x86_64_auto-bp3a-userdebug-artifacts.txt` which will show you how to retrieve the artifacts.
 
     - Note the storage URL for `android-cts.zip` for later use in test jobs, e.g. `gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/03/android-cts.zip`. You do not need to download these artifacts, later jobs will simply reference the URL.
 
@@ -1264,12 +1264,12 @@ You will build a Cuttlefish Virtual Device target and test it using `CVD launche
 
 - Open Jenkins Dashboard (e.g. https://example.horizon-sdv.com/jenkins/) and navigate to `AAOS Builder` pipeline job to prepare build targets that will be used in this lab exercise.
 - Select `Android Workflows` → `Builds` → `AAOS Builder`
-  - Select `Build with Parameters` and set the `AAOS_LUNCH_TARGET` to `aosp_cf_x86_64_auto-bp2a-userdebug` and select `Build`
+  - Select `Build with Parameters` and set the `AAOS_LUNCH_TARGET` to `aosp_cf_x86_64_auto-bp3a-userdebug` and select `Build`
   - When build completes, the job will show the artifacts it has stored. These help the user locate the build artifacts within the Google Cloud Storage bucket for use with testing CF Virtual Devices and connecting to the device through Android Studio.
 
     <img src="images/section.6/6.1.3_cf_build.png" width="300" />
 
-  - Open the `aosp_cf_x86_64_auto-bp2a-userdebug-artifacts.txt` which will show you were the artfifacts are stored, e.g.
+  - Open the `aosp_cf_x86_64_auto-bp3a-userdebug-artifacts.txt` which will show you were the artfifacts are stored, e.g.
 
     <img src="images/section.6/6.1.3_cf_build_artifacts.png" width="500" />
 
@@ -1430,7 +1430,7 @@ ___
 - Save and push the change for review:
   - Commit: `git commit -am "Surface Flinger basic test"`
   - Update Change ID if one was not automatically generated in your commit: `git commit --amend --no-edit`
-  - Push for Review: `git push origin HEAD:refs/for/horizon/android-16.0.0_r2`
+  - Push for Review: `git push origin HEAD:refs/for/horizon/android-16.0.0_r3`
     - The remote should report success and provide a link back to the Gerrit review, e.g.
       - `https://example.horizon-sdv.com/gerrit/c/android/platform/frameworks/native/+/184 Surface Flinger basic test [NEW]`
 
@@ -1534,7 +1534,7 @@ ___
 
 - If you can’t wait for the Gerrit build to complete the SDK AVD and CF Virtual device builds, then you may run the build manually as per Foundation,
   - `Android Workflows` → `Builds` → `AAOS Builder` → `Build with Parameters`
-  - Define the `AAOS_LUNCH_TARGET` to build `aosp_cf_x86_64_auto-bp2a-userdebug` and update the `GERRIT_PROJECT`, `GERRIT_CHANGE_NUMBER` and `GERRIT_PATCHSET_NUMBER` parameters to identify the change you wish to include in the build (note that the required details are shown in the Gerrit build job that was triggered by the change), e.g.
+  - Define the `AAOS_LUNCH_TARGET` to build `aosp_cf_x86_64_auto-bp3a-userdebug` and update the `GERRIT_PROJECT`, `GERRIT_CHANGE_NUMBER` and `GERRIT_PATCHSET_NUMBER` parameters to identify the change you wish to include in the build (note that the required details are shown in the Gerrit build job that was triggered by the change), e.g.
 
     <img src="images/section.6/6.2.1_gerrit_build_params.png" width="200" />
 
@@ -1753,7 +1753,7 @@ This lab exercise shows how the user may override make commands, such as require
   - The Gerrit build will fail because the AIDL must be rebuilt, hence manual build following to include the additional make command step.
 
 - In Jenkins, select `Android Workflows` → `Builds` → `AAOS Builder` → `Build with Parameters` and define the `AAOS_LUNCH_TARGET` and select ` Build`
-  - `AAOS_LUNCH_TARGET` `aosp_cf_x86_64_auto-bp2a-userdebug`
+  - `AAOS_LUNCH_TARGET` `aosp_cf_x86_64_auto-bp3a-userdebug`
   - `OVERRIDE_MAKE_COMMAND` `m android.hardware.automotive.vehicle.property-update-api && m dist`
   - `GERRIT_PROJECT` `android/platform/hardware/interfaces`
   - `GERRIT_CHANGE_NUMBER` to the number of the change in Gerrit
@@ -1787,7 +1787,7 @@ ___
 > **Note:**
 > This is optional. Included if developer is interested in changing the Android Boot Animation.
 >
-> Refer to Google [README](https://android.googlesource.com/platform/packages/services/Car/+/refs/tags/android-16.0.0_r2/car_product/car_ui_portrait/bootanimation/README) and [FORMAT.md](https://android.googlesource.com/platform/frameworks/base/+/master/cmds/bootanimation/FORMAT.md) for further details.
+> Refer to Google [README](https://android.googlesource.com/platform/packages/services/Car/+/refs/tags/android-16.0.0_32/car_product/car_ui_portrait/bootanimation/README) and [FORMAT.md](https://android.googlesource.com/platform/frameworks/base/+/master/cmds/bootanimation/FORMAT.md) for further details.
 
 **_Clone Repo:_**
 
@@ -1900,7 +1900,7 @@ The default manifest used is that of the Horizon SDV Gerrit and that supports th
 
 - `horizon/android-14.0.0_r30`
 - `horizon/android-15.0.0_r36`
-- `horizon/android-16.0.0_r2`
+- `horizon/android-16.0.0_r3`
 
 If you wish to host additional repos, or use different versions using the default Horizon SDV manifest, then refer to section 7.3.
 
@@ -1941,7 +1941,7 @@ And those forks have the following branches hosted:
 
 - `android-14.0.0_r30`
 - `android-15.0.0_r36`
-- `android-16.0.0_r2`
+- `android-16.0.0_r3`
 
 Note: Horizon SDV add `horizon` as a prefix to the branch name, e.g. `android-14.0.0_r30` becomes `horizon/android-14.0.0_r30`.
 
@@ -2012,7 +2012,7 @@ This example shows you how to update an existing manifest to include a new forke
 
 #### <span style="color:#335bff">7.3.3 Gerrit Triggers <a name="7-3-3-gerrit-triggers"></a></span>
 
-If user decides to utilise more than the default set of forked branches/tags identified earlier, they must update the Gerrit Build job in the OSS repo, see `workloads/android/pipelines/builds/gerrit/Jenkinsfile` and the logic to determine the build version (e.g. `ap1a`, `ap2a` …. `bp1a`, `bp2a`). The logic is vital for the job to determine the lunch target name vs android revision.
+If user decides to utilise more than the default set of forked branches/tags identified earlier, they must update the Gerrit Build job in the OSS repo, see `workloads/android/pipelines/builds/gerrit/Jenkinsfile` and the logic to determine the build version (e.g. `ap1a`, `ap2a` …. `bp1a`, `bp2a`, `bp3a`). The logic is vital for the job to determine the lunch target name vs android revision.
 
 Gerrit triggers are based on a single project/repo build, i.e. build one component change. There is currently no support for cross/multi project changes such as those identified by topic. Support for topic and multi-repo changes may be provided in the next release.
 
@@ -2021,7 +2021,7 @@ Gerrit triggers are based on a single project/repo build, i.e. build one compone
 Cuttlefish instance templates are instances pre-installed with Android cuttlefish debian host packages, Android 14, 15 and 16 CTS, together with other tools required to launch CVD and run CTS tests. There are two instances we have created ahead of time:
 
 - `cuttlefish-vm-main` based on [android-cuttlefish.git main branch](https://github.com/google/android-cuttlefish/tree/main)
-- `cuttlefish-vm-v1310` based on [android-cuttlefish.git v1.31.0 tag](https://github.com/google/android-cuttlefish/tree/v1.31.0)
+- `cuttlefish-vm-v1320` based on [android-cuttlefish.git v1.32.0 tag](https://github.com/google/android-cuttlefish/tree/v1.32.0)
 
 Users may wish to create newer versions as the android-cuttlefish repo is updated and new tagged versions appear. This section describes how to create the instance templates and configure the test jobs to use those instances.
 
@@ -2190,8 +2190,8 @@ Users will require roles/permissions setup to utilise these facilities. To do so
 The builds support Raspberry Pi targets. This is based on [Raspberry Vanilla](https://github.com/raspberry-vanilla).
 
 - Select `Android Workflows` → `Builds` → `AAOS Builder` → `Build with Parameters` and define the following:
-  - `AAOS_REVISION` `horizon/android-16.0.0_r2`
-  - `AAOS_LUNCH_TARGET` `aosp_rpi5_car-bp2a-userdebug` or `aosp_rpi4_car-bp2a-userdebug`
+  - `AAOS_REVISION` `horizon/android-16.0.0_r3`
+  - `AAOS_LUNCH_TARGET` `aosp_rpi5_car-bp3a-userdebug` or `aosp_rpi4_car-bp3a-userdebug`
   - Select `Build`
 
 - The build artifacts will show where in Google cloud storage to retrieve the following files:
@@ -2206,11 +2206,11 @@ The builds support Raspberry Pi targets. This is based on [Raspberry Vanilla](ht
   ```
   # CHANGE ANDROID_PRODUCT_OUT <path to img files> with the path to the downloaded files
   # Change TARGET_PRODUCT to match the AAOS_LUNCH_TARGET
-  TARGET_PRODUCT=aosp_rpi5_car-bp2a-userdebug \
+  TARGET_PRODUCT=aosp_rpi5_car-bp3a-userdebug \
   ANDROID_PRODUCT_OUT=<path to img files> \
   ./mkimg.sh
    ```
-- The `mkimg.sh` script will create the flashable image, e.g. `RaspberryVanillaAOSP15-<date>-rpi5_car-bp2a-userdebug.img`.
+- The `mkimg.sh` script will create the flashable image, e.g. `RaspberryVanillaAOSP15-<date>-rpi5_car-bp3a-userdebug.img`.
 
 > [!NOTE]
 > - User may wish to build from a different release, if so, use the Google AOSP manifest and updated versions, e.g.

@@ -36,9 +36,9 @@ pipelineJob('Android/Tests/CVD Launcher') {
       description('''<p>The Jenkins GCE Clouds label for the Cuttlefish instance template, e.g.<br/></p>
         <ul>
           <li>cuttlefish-vm-main</li>
-          <li>cuttlefish-vm-v1310</li>
+          <li>cuttlefish-vm-v1320</li>
           <li>cuttlefish-vm-main-arm64</li>
-          <li>cuttlefish-vm-v1310-arm64</li>
+          <li>cuttlefish-vm-v1320-arm64</li>
         </ul>''')
       trim(true)
     }
@@ -92,6 +92,13 @@ pipelineJob('Android/Tests/CVD Launcher') {
       defaultValue('16384')
       description('''<p>total memory available to guest (memory_mb option)</p>''')
       trim(true)
+    }
+
+    booleanParam {
+      name('MTK_CONNECT_PUBLIC')
+      defaultValue(false)
+      description('''<p>When checked, the MTK Connect testbench is visible to everyone.<br/>
+        By default, testbenches are private and only visible to their creator and MTK Connect administrators.</p>''')
     }
 
     stringParam {

@@ -43,7 +43,7 @@ function cuttlefish_virtualization() {
 
 # Install additional packages.
 function cuttlefish_install_additional_packages() {
-    local -a package_list=("default-jdk" "adb" "git" "npm" "aapt" "htop" "unzip")
+    local -a package_list=("default-jdk" "adb" "git" "npm" "aapt" "htop" "zip" "unzip")
 
     echo -e "${GREEN}Installing additional packages.${NC}"
 
@@ -104,6 +104,7 @@ function download_cts() {
         echo "echo 'Unknown URL scheme (${url})."
         exit 1
     fi
+    su -l "${JENKINS_USER}" -c "du -sh ${dest}"
 }
 
 # Install CTS test harness on instance to avoid lengthy CTS runs.
@@ -218,7 +219,9 @@ function cuttlefish_jenkins_user() {
 function cuttlefish_cleanup() {
     # Clean up
     cd ..
-    rm -rf "${CUTTLEFISH_REPO_NAME}"
+    sudo rm -rf "${HOME}/${CUTTLEFISH_REPO_NAME}"
+    # Remove bazel cache to save space before disk image is created.
+    sudo rm -rf "${HOME}"/.cache/bazel/
 }
 
 # Install the Cuttlefish packages.
@@ -234,8 +237,26 @@ function cuttlefish_install() {
     # Prebuilts are only supported on X86_64 and main currently, fall through to build on error.
     if [ "${ANDROID_CUTTLEFISH_PREBUILT}" != "true" ] || ! cuttlefish_install_prebuilt "${CUTTLEFISH_REVISION}"; then
         echo -e "${GREEN}Cuttlefish Building from ${CUTTLEFISH_REVISION}.${NC}"; echo
-        git clone "${CUTTLEFISH_REPO_URL}" -b "${CUTTLEFISH_REVISION}" > /dev/null 2>&1
+        git clone "${CUTTLEFISH_REPO_URL}" >/dev/null 2>&1
         cd "${CUTTLEFISH_REPO_NAME}" || exit
+        git checkout "${CUTTLEFISH_REVISION}" > /dev/null 2>&1
+
+        # Fake config ahead of post command
+        git config --global user.email "android@example.com"
+        git config --global user.name "Android Cuttlefish"
+
+        if [ -n "${CUTTLEFISH_POST_COMMAND}" ]; then
+            CMD="${CUTTLEFISH_POST_COMMAND};"
+            echo -e "${ORANGE}Running ${CMD} in ${CUTTLEFISH_REPO_NAME}${NC}"
+            if ! eval "${CMD}"
+            then
+                echo -e "${RED}Error: ${CUTTLEFISH_POST_COMMAND} failed,${NC}"
+                cuttlefish_cleanup
+                exit 1
+            else
+                echo -e "${GREEN}SUCCESS: ${CUTTLEFISH_POST_COMMAND}${NC}"
+            fi
+        fi
 
         declare -r BUILD_SCRIPT=./tools/buildutils/build_packages.sh
 

@@ -41,7 +41,7 @@ pipeline {
                   MTK_CONNECT_PASSWORD=${MTK_CONNECT_PASSWORD} \
                   MTK_CONNECTED_DEVICES=${NUM_HOST_INSTANCES} \
                   MTK_CONNECT_TESTBENCH="${JOB_NAME}-${BUILD_NUMBER}" \
-                  MTK_CONNECT_TESTBENCH_USER="${BUILD_USER_ID}" \
+                  MTK_CONNECT_TESTBENCH_USER=$([ "$MTK_CONNECT_PUBLIC" = "true" ] && echo "everyone" || echo "$BUILD_USER_ID") \
                   MTK_CONNECT_HOST_ONLY="true" \
                   timeout 15m ./mtk_connect.sh --start
                    cd - || true

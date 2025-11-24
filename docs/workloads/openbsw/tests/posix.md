@@ -64,6 +64,11 @@ will be created associated with the development instance testbench in MTK Connec
 When using MTK Connect to test the POSIX images, the VM instance must be allowed to continue to run. This timeout, in
 minutes, gives the tester time to keep the instance alive so they may work with the devices via MTK Connect.
 
+### `MTK_CONNECT_PUBLIC`
+
+When checked, the MTK Connect testbench is visible to everyone and can be shared.
+By default, testbenches are private and only visible to their creator and MTK Connect administrators.
+
 ## SYSTEM VARIABLES <a name="system-variables"></a>
 
 There are a number of system environment variables that are unique to each platform but required by Jenkins build, test and environment pipelines.

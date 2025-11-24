@@ -51,6 +51,11 @@ This is the maximum time that the instance may be running before it is automatic
 
 Enable if wishing to use MTK Connect to connect to the host instance rather than kubectl.
 
+### `MTK_CONNECT_PUBLIC`
+
+When checked, the MTK Connect testbench is visible to everyone and can be shared.
+By default, testbenches are private and only visible to their creator and MTK Connect administrators.
+
 ### `NUM_HOST_INSTANCES`
 
 Number of host instances to create for dev instances. This is effectively the number of devices that will be created associated with the development instance testbench in MTK Connect.

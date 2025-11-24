@@ -82,6 +82,13 @@ pipelineJob('OpenBSW/Tests/POSIX') {
         <p>i.e. the number of devices to create in MTK Connect testbench.</p>''')
       trim(true)
     }
+
+    booleanParam {
+      name('MTK_CONNECT_PUBLIC')
+      defaultValue(false)
+      description('''<p>When checked, the MTK Connect testbench is visible to everyone.<br/>
+        By default, testbenches are private and only visible to their creator and MTK Connect administrators.</p>''')
+    }
   }
 
   logRotator {

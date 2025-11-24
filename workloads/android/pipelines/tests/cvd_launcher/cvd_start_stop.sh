@@ -212,8 +212,9 @@ function cuttlefish_stop() {
 
 # Archive logs
 function cuttlefish_archive_logs() {
-    cd "${HOME}"/cf/cuttlefish_runtime.1/ || true
-    tar -czf "${WORKSPACE}"/cuttlefish_logs-"${BUILD_NUMBER}".tgz logs || true
+    cd "${HOME}"/cf/cuttlefish/instances/ || true
+    zip -r "${WORKSPACE}"/cuttlefish_logs-"${BUILD_NUMBER}".zip cvd*/logs/ || true
+    cd - || true
 }
 
 case "${1}" in

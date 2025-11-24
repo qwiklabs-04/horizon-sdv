@@ -140,6 +140,11 @@ This defines the maximum time, in minutes, to wait for CTS to complete.
 
 Enable if user wishes to view devices via MTK Connect (e.g. to watch UI tests).
 
+### `MTK_CONNECT_PUBLIC`
+
+When checked, the MTK Connect testbench is visible to everyone and can be shared.
+By default, testbenches are private and only visible to their creator and MTK Connect administrators.
+
 ### `CUTTLEFISH_KEEP_ALIVE_TIME`
 
 If wishing to debug HOST using MTK Connect, Cuttlefish VM instance must be allowed to continue to run. This timeout, in

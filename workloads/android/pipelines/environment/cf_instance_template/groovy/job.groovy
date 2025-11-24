@@ -28,7 +28,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
       description('''<p>The branch/tag version of Android Cuttlefish to use, e.g.</p>
         <ul>
           <li>main</li>
-          <li>v1.31.0</li>
+          <li>v1.32.0</li>
         </ul>
         <p>Reference: <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a></p>''')
       trim(true)
@@ -44,11 +44,20 @@ pipelineJob('Android/Environment/CF Instance Template') {
     }
 
     stringParam {
+      name('ANDROID_CUTTLEFISH_POST_COMMAND')
+      defaultValue('')
+      description('''<p>Command to run in <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a>.</p>
+        e.g. To fix the netsimd build issues with cxxbridge:<br/>
+        <code>git cherry-pick 78b66377</code></p>''')
+      trim(true)
+   }
+
+    stringParam {
       name('CUTTLEFISH_INSTANCE_UNIQUE_NAME')
       defaultValue('')
-      description('''<p>Optional parameter to define the unique name used for the instance template, e.g.  <i>cuttlefish-vm-instance-test-v1310</i><br/>
+      description('''<p>Optional parameter to define the unique name used for the instance template, e.g.  <i>cuttlefish-vm-instance-test-v1320</i><br/>
         Name must start with <i>cuttlefish-vm</i>, refer to docs for details on regex requirements for name.<br/>
-        Default: The name will be automatically derived from ANDROID_CUTTLEFISH_REVISION., e.g. <i>cuttlefish-vm-v1310</i><br/><br/></p>''')
+        Default: The name will be automatically derived from ANDROID_CUTTLEFISH_REVISION., e.g. <i>cuttlefish-vm-v1320</i><br/><br/></p>''')
       trim(true)
     }
 
@@ -68,11 +77,11 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('BOOT_DISK_SIZE')
-      defaultValue('250GB')
+      defaultValue('500GB')
       description('''<p>The boot disk size for the instance template image, e.g..</p>
         <ul>
-          <li>250GB</li>
           <li>500GB</li>
+          <li>250GB</li>
         </ul>
         <p>Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk=[PROPERTY=VALUE,…]</i></p>''')
       trim(true)
@@ -104,7 +113,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('OS_VERSION')
-      defaultValue('debian-12-bookworm-v20251014')
+      defaultValue('debian-12-bookworm-v20251111')
       description('''<p>Disk image OS version.<br/>
         Select the OS version name based on project and family, e.g <code>`gcloud compute images list</code>`<br/>
         Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk</i></p>''')
@@ -150,7 +159,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('CTS_ANDROID_16_URL')
-      defaultValue("https://dl.google.com/dl/android/cts/android-cts-16_r2-linux_x86-x86.zip")
+      defaultValue("https://dl.google.com/dl/android/cts/android-cts-16_r3-linux_x86-x86.zip")
       description('''<p>Leave blank if a version is not needed, or specify your preferred version.<br/>
       Enter the full bucket URL, including <code>android-cts.zip</code>, for example:<br/>
       <code>gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/01/android-cts.zip</code></p>''')
@@ -159,7 +168,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('CTS_ANDROID_15_URL')
-      defaultValue("https://dl.google.com/dl/android/cts/android-cts-15_r5-linux_x86-x86.zip")
+      defaultValue("https://dl.google.com/dl/android/cts/android-cts-15_r6-linux_x86-x86.zip")
       description('''<p>Leave blank if a version is not needed, or specify your preferred version.<br/>
       Enter the full bucket URL, including <code>android-cts.zip</code>, for example:<br/>
       <code>gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/02/android-cts.zip</code></p>''')
@@ -168,7 +177,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('CTS_ANDROID_14_URL')
-      defaultValue("https://dl.google.com/dl/android/cts/android-cts-14_r9-linux_x86-x86.zip")
+      defaultValue("https://dl.google.com/dl/android/cts/android-cts-14_r10-linux_x86-x86.zip")
       description('''<p>Leave blank if a version is not needed, or specify your preferred version.<br/>
       Enter the full bucket URL, including <code>android-cts.zip</code>, for example:<br/>
       <code>gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/04/android-cts.zip</code></p>''')

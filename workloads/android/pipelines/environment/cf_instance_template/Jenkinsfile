@@ -152,6 +152,7 @@ pipeline {
             ZONE=${ZONE:-${CLOUD_ZONE}} \
             ./workloads/android/pipelines/environment/cf_instance_template/cf_create_instance_template.sh 3
           '''
+          archiveArtifacts artifacts: 'android*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
         }
       }
     }

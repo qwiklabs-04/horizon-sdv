@@ -24,6 +24,7 @@ CUTTLEFISH_REPO_URL=$(echo "${CUTTLEFISH_REPO_URL}" | xargs)
 CUTTLEFISH_REPO_URL=${CUTTLEFISH_REPO_URL:-https://github.com/google/android-cuttlefish.git}
 CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION:-main}
 CUTTLEFISH_REPO_NAME=$(basename "${CUTTLEFISH_REPO_URL}" .git)
+
 # Must use flag because there is inconsistency between tag/branch and dpkg
 # version number, eg main = 1.0.0.
 CUTTLEFISH_UPDATE=${CUTTLEFISH_UPDATE:-false}
@@ -49,6 +50,7 @@ if [ -z "${WORKSPACE}" ]; then
 else
     CF_SCRIPT_PATH=workloads/android/pipelines/environment/cf_instance_template
 fi
+CUTTLEFISH_LATEST_SHA1_FILENAME="android-cuttlefish-sha1.txt"
 
 # Show variables.
 VARIABLES="Environment:
@@ -72,6 +74,8 @@ case "$0" in
         CUTTLEFISH_REPO_NAME=${CUTTLEFISH_REPO_NAME}
         CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION}
         CUTTLEFISH_UPDATE=${CUTTLEFISH_UPDATE}
+
+        CUTTLEFISH_LATEST_SHA1_FILENAME=${CUTTLEFISH_LATEST_SHA1_FILENAME}
 
         CUTTLEFISH_POST_COMMAND=${CUTTLEFISH_POST_COMMAND}
         "

@@ -26,6 +26,7 @@
 source "$(dirname "${BASH_SOURCE[0]}")"/cf_environment.sh "$0"
 
 declare -r JENKINS_USER="jenkins"
+declare -r sha1File="${HOME}/${CUTTLEFISH_LATEST_SHA1_FILENAME}"
 
 # Colours for logging.
 GREEN='\033[1;32m'
@@ -236,7 +237,7 @@ function cuttlefish_install() {
     export NEEDRESTART_MODE=a
     # Prebuilts are only supported on X86_64 and main currently, fall through to build on error.
     if [ "${ANDROID_CUTTLEFISH_PREBUILT}" != "true" ] || ! cuttlefish_install_prebuilt "${CUTTLEFISH_REVISION}"; then
-        echo -e "${GREEN}Cuttlefish Building from ${CUTTLEFISH_REVISION}.${NC}"; echo
+        echo -e "${GREEN}Cuttlefish Building from ${CUTTLEFISH_REPO_URL} ${CUTTLEFISH_REVISION}.${NC}"; echo
         git clone "${CUTTLEFISH_REPO_URL}" >/dev/null 2>&1
         cd "${CUTTLEFISH_REPO_NAME}" || exit
         git checkout "${CUTTLEFISH_REVISION}" > /dev/null 2>&1
@@ -244,6 +245,11 @@ function cuttlefish_install() {
         # Fake config ahead of post command
         git config --global user.email "android@example.com"
         git config --global user.name "Android Cuttlefish"
+
+        # Store the sha1 and last commit to file for future reference (branches move).
+        echo -e "${GREEN}android-cuttlefish:${CUTTLEFISH_REVISION} sha1:${NC}"
+        { echo "android-cuttlefish sha1:"; echo; } | tee "${sha1File}"
+        git log -1 | tee -a "${sha1File}"
 
         if [ -n "${CUTTLEFISH_POST_COMMAND}" ]; then
             CMD="${CUTTLEFISH_POST_COMMAND};"
@@ -255,6 +261,9 @@ function cuttlefish_install() {
                 exit 1
             else
                 echo -e "${GREEN}SUCCESS: ${CUTTLEFISH_POST_COMMAND}${NC}"
+                echo -e "${GREEN}android-cuttlefish:${CUTTLEFISH_REVISION} sha1:${NC}"
+                { echo ; echo "Post ${CUTTLEFISH_POST_COMMAND}"; echo; } |  tee -a "${sha1File}"
+                git log -1 | tee -a "${sha1File}"
             fi
         fi
 

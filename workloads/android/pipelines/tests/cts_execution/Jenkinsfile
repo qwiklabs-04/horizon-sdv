@@ -45,7 +45,7 @@ cvdPipeline(
       steps: {
         if (env.CTS_TEST_LISTS_ONLY == 'true') {
           script {
-            currentBuild.description = "${params.JENKINS_GCE_CLOUD_LABEL}" + "<br/>" + "$BUILD_USER"
+            currentBuild.description = "${params.JENKINS_GCE_CLOUD_LABEL}" + "<br/>" + "Android Version: ${params.ANDROID_VERSION}" + "<br/>" + "$BUILD_USER"
           }
           sh '''
             ANDROID_VERSION=${ANDROID_VERSION} \

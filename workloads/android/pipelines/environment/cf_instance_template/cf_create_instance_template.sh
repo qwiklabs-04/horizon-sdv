@@ -243,6 +243,7 @@ function echo_environment() {
     echo "SUBNET=${SUBNET}"
     echo "VM_INSTANCE_CREATE=${VM_INSTANCE_CREATE}"
     echo "VM_SUFFIX=${VM_SUFFIX}"
+    echo "WORKSPACE=${WORKSPACE}"
     echo "ZONE=${ZONE}"
     echo
 }
@@ -274,6 +275,7 @@ function print_usage() {
       SUBNET=${SUBNET} \\
       VM_INSTANCE_CREATE=${VM_INSTANCE_CREATE} \\
       VM_SUFFIX=${VM_SUFFIX} \\
+      WORKSPACE=${WORKSPACE} \\
       ZONE=${ZONE} \\
       ./${SCRIPT_NAME}"
     echo "Use defaults or override environment variables."
@@ -372,12 +374,17 @@ function install_host_tools() {
         JAVA_VERSION=${JAVA_VERSION} \
         NODEJS_VERSION=${NODEJS_VERSION} \
         OS_VERSION=${OS_VERSION} \
+        WORKSPACE=\"${WORKSPACE}\" \
         ./cf/cf_host_initialise.sh; exit \$?"; then
         echo -e "${RED}Installing CF host failed.${NC}"
         delete_instances
         exit 1
     fi
     echo -e "${GREEN}Installing CF host completed.${NC}"
+
+    echo -e "${GREEN}Copying ${CUTTLEFISH_LATEST_SHA1_FILENAME}${NC}"
+    gcloud compute scp "${vm_base_instance}":~/"${CUTTLEFISH_LATEST_SHA1_FILENAME}" "${WORKSPACE}"/ --zone="${ZONE}" >/dev/null &
+    progress_spinner "$!"
 
     echo -e "${GREEN}Cleanup CF host files.${NC}"
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" \

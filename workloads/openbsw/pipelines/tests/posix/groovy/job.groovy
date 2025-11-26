@@ -57,7 +57,9 @@ pipelineJob('OpenBSW/Tests/POSIX') {
     stringParam {
       name('OPENBSW_DOWNLOAD_URL')
       defaultValue('')
-      description("""<p>Storage URL pointing to the location of the test image, e.g.<br/>gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Builds/BSW_Builder/&lt;BUILD_NUMBER&gt;/posix/</p>""")
+      description("""<p>Storage URL pointing to the location of the test image, e.g.<br/>gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Builds/BSW_Builder/&lt;BUILD_NUMBER&gt;/posix/<br/><br/>
+        <b>Note:</b>
+          <ul><li>if build number is less than 2 digits, then zero pad , i.e. 1 to 9 must be 01 to 09.</li></ul)</p>""")
       trim(true)
     }
 

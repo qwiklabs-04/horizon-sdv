@@ -189,9 +189,10 @@ pipeline {
     )
 
     string(name: 'NODEJS_VERSION',
-           defaultValue: "25.0.0",
+           defaultValue: "25.2.1",
            description: '''<p>NodeJS version.<br/>
-             This is installed using <i>nvm</i> on the instance template to be compatible with other tooling.</p>''',
+             This is installed using <i>nvm</i> on the instance template to be compatible with other tooling.<br/><br>
+             <b>Reference:</b> <a href="https://nodejs.org/en/about/previous-releases" target="_blank<NodeJS Releases</a></p>''',
            trim: true)
   }
 

@@ -33,6 +33,11 @@
 #  - ANDROID_CUTTLEFISH_PREBUILT: build or install prebuilt versions of
 #        cuttlefish.
 #  - ADDITIONAL_NETWORKING: ARM64 Bare metal requires IDPF network interface.
+#  - CURL_UPDATE_COMMAND: command to update/upgrade Curl
+#        eg. Debian backports: apt install -t bookworm-backports -y curl libcurl4
+#  - CUSTOM_VM_TYPE: Custom machine VM type.
+#  - CUSTOM_CPU: Custom machine CPUs.
+#  - CUSTOM_MEMORY: Custom machine memory.
 #  - CUTTLEFISH_REVISION: the branch/tag version of Android Cuttlefish
 #        to use. Default: main
 #  - CUTTLEFISH_POST_COMMAND: command to run in android-cuttlefish repo.
@@ -49,8 +54,8 @@
 #        Default: jenkins-cuttlefish-vm-ssh-private-key
 #  - JENKINS_SSH_PUB_KEY_FILE: Public key file name.
 #        Default: jenkins_rsa.pub
-#  - MACHINE_TYPE: The machine type to create instance templates for. Default:
-#        n1-standard-64
+#  - MACHINE_TYPE: The machine type to create instance templates for.
+#       If undefined, the CUSTOM_ parameters must be.
 #  - MAX_RUN_DURATION: Limits how long this VM instance can run. Default: 10h
 #  - NETWORK: The name of the VPC network. Default: sdv-network
 #  - NODEJS_VERSION: The version of nodejs to install. Default: 20.9.0
@@ -112,6 +117,7 @@ ADDITIONAL_NETWORKING=${ADDITIONAL_NETWORKING:-}
 BOOT_DISK_SIZE=${BOOT_DISK_SIZE:-500GB}
 BOOT_DISK_SIZE=$(echo "${BOOT_DISK_SIZE}" | awk '{print toupper($0)}' | xargs)
 BOOT_DISK_TYPE=${BOOT_DISK_TYPE:-pd-balanced}
+CURL_UPDATE_COMMAND=${CURL_UPDATE_COMMAND:-}
 CUTTLEFISH_INSTANCE_UNIQUE_NAME=${CUTTLEFISH_INSTANCE_UNIQUE_NAME:-cuttlefish-vm}
 CUTTLEFISH_INSTANCE_UNIQUE_NAME=$(echo "${CUTTLEFISH_INSTANCE_UNIQUE_NAME}" | awk '{print tolower($0)}' | xargs)
 CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION:-main}
@@ -121,7 +127,7 @@ JAVA_VERSION=${JAVA_VERSION:-openjdk-17-jdk-headless}
 JENKINS_NAMESPACE=${JENKINS_NAMESPACE:-jenkins}
 JENKINS_PRIVATE_SSH_KEY_NAME=${JENKINS_PRIVATE_SSH_KEY_NAME:-jenkins-cuttlefish-vm-ssh-private-key}
 JENKINS_SSH_PUB_KEY_FILE=${JENKINS_SSH_PUB_KEY_FILE:-jenkins_rsa.pub}
-MACHINE_TYPE=${MACHINE_TYPE:-n1-standard-64}
+MACHINE_TYPE=${MACHINE_TYPE:-}
 MACHINE_TYPE=$(echo "${MACHINE_TYPE}" | xargs)
 MAX_RUN_DURATION=${MAX_RUN_DURATION:-10h}
 NETWORK=${NETWORK:-sdv-network}
@@ -146,6 +152,18 @@ if [[ "$OS_VERSION" == *arm64* ]]; then
     VM_SUFFIX="-arm64"
 else
     ARCHITECTURE="X86_64"
+fi
+# Machine type or custom type
+declare machine_type_args=""
+if [ -z "${MACHINE_TYPE}" ]; then
+    if [[ -z "${CUSTOM_VM_TYPE}" || -z "${CUSTOM_CPU}"  || -z "${CUSTOM_VM_TYPE}" ]]; then
+        echo -e "${RED}ERROR: MACHINE_TYPE or CUSTOM options must be defined.${NC}"
+        exit 1
+    else
+        machine_type_args="--custom-vm-type=${CUSTOM_VM_TYPE} --custom-cpu=${CUSTOM_CPU} --custom-memory=${CUSTOM_MEMORY}"
+    fi
+else
+    machine_type_args="--machine-type=${MACHINE_TYPE}"
 fi
 VM_SUFFIX=${VM_SUFFIX:-}
 
@@ -223,6 +241,10 @@ function echo_environment() {
     echo "ADDITIONAL_NETWORKING=${ADDITIONAL_NETWORKING}"
     echo "BOOT_DISK_SIZE=${BOOT_DISK_SIZE}"
     echo "BOOT_DISK_TYPE=${BOOT_DISK_TYPE}"
+    echo "CURL_UPDATE_COMMAND=${CURL_UPDATE_COMMAND}"
+    echo "CUSTOM_VM_TYPE=${CUSTOM_VM_TYPE}"
+    echo "CUSTOM_CPU=${CUSTOM_CPU}"
+    echo "CUSTOM_MEMORY=${CUSTOM_MEMORY}"
     echo "CUTTLEFISH_INSTANCE_UNIQUE_NAME=${cuttlefish_unique_name}"
     echo "CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION}"
     echo "CUTTLEFISH_POST_COMMAND=${CUTTLEFISH_POST_COMMAND}"
@@ -253,6 +275,10 @@ function print_usage() {
       ANDROID_CUTTLEFISH_PREBUILT=${ANDROID_CUTTLEFISH_PREBUILT} \\
       ARCHITECTURE=${ARCHITECTURE} \\
       ADDITIONAL_NETWORKING=${ADDITIONAL_NETWORKING} \\
+      CURL_UPDATE_COMMAND=${CURL_UPDATE_COMMAND} \\
+      CUSTOM_VM_TYPE=${CUSTOM_VM_TYPE} \\
+      CUSTOM_CPU=${CUSTOM_CPU} \\
+      CUSTOM_MEMORY=${CUSTOM_MEMORY} \\
       CUTTLEFISH_INSTANCE_UNIQUE_NAME=${cuttlefish_unique_name} \\
       CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION} \\
       CUTTLEFISH_POST_COMMAND=${CUTTLEFISH_POST_COMMAND} \\
@@ -307,7 +333,7 @@ function create_base_template_instance() {
         --shielded-integrity-monitoring \
         --key-revocation-action-type=none \
         --service-account="${SERVICE_ACCOUNT}" \
-        --machine-type="${MACHINE_TYPE}" \
+        ${machine_type_args} \
         --maintenance-policy=TERMINATE \
         --image-project="${OS_PROJECT}" \
         --create-disk=mode=rw,architecture="${ARCHITECTURE}",boot=yes,size="${BOOT_DISK_SIZE}",auto-delete=true,type="${BOOT_DISK_TYPE}",device-name="${vm_base_instance}",image="${IMAGE}",image-project="${OS_PROJECT}",interface=SCSI \
@@ -358,7 +384,8 @@ function install_host_tools() {
     progress_spinner "$!"
 
     echo -e "${GREEN}Copy CF host install scripts${NC}"
-    gcloud compute scp "${CF_SCRIPT_PATH}"/*.sh "${vm_base_instance}":~/cf/ --zone="${ZONE}" >/dev/null &
+    gcloud compute scp "${CF_SCRIPT_PATH}"/*.sh "${vm_base_instance}":~/cf/ --zone="${ZONE}" \
+        --tunnel-through-iap --project "${PROJECT}" >/dev/null &
     progress_spinner "$!"
 
     # Keep debug so we can see what's happening.
@@ -367,6 +394,7 @@ function install_host_tools() {
         --command="CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION} \
         ANDROID_CUTTLEFISH_PREBUILT=${ANDROID_CUTTLEFISH_PREBUILT} \
         ARCHITECTURE=${ARCHITECTURE} \
+        CURL_UPDATE_COMMAND=\"${CURL_UPDATE_COMMAND}\" \
         CTS_ANDROID_16_URL=${CTS_ANDROID_16_URL} \
         CTS_ANDROID_15_URL=${CTS_ANDROID_15_URL} \
         CTS_ANDROID_14_URL=${CTS_ANDROID_14_URL} \
@@ -383,7 +411,8 @@ function install_host_tools() {
     echo -e "${GREEN}Installing CF host completed.${NC}"
 
     echo -e "${GREEN}Copying ${CUTTLEFISH_LATEST_SHA1_FILENAME}${NC}"
-    gcloud compute scp "${vm_base_instance}":~/"${CUTTLEFISH_LATEST_SHA1_FILENAME}" "${WORKSPACE}"/ --zone="${ZONE}" >/dev/null &
+    gcloud compute scp "${vm_base_instance}":~/"${CUTTLEFISH_LATEST_SHA1_FILENAME}" "${WORKSPACE}"/ --zone="${ZONE}" \
+         --tunnel-through-iap --project "${PROJECT}" >/dev/null &
     progress_spinner "$!"
 
     echo -e "${GREEN}Cleanup CF host files.${NC}"
@@ -440,13 +469,14 @@ function create_ssh_key() {
     echo -e "${GREEN}SSH Public key:${NC}"
     cat "${JENKINS_SSH_PUB_KEY_FILE}"
 
+    gcloud compute ssh --quiet --zone="${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" --command=""
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap \
         --project "${PROJECT}" \
         --command='sudo rm -rf /home/jenkins/.ssh && sudo mkdir /home/jenkins/.ssh && sudo chmod 700 /home/jenkins/.ssh && sudo chown jenkins:jenkins /home/jenkins/.ssh' >/dev/null &
     progress_spinner "$!"
 
     gcloud compute scp "${JENKINS_SSH_PUB_KEY_FILE}" "${vm_base_instance}":/tmp/authorized_keys \
-        --zone="${ZONE}" >/dev/null &
+        --zone="${ZONE}" >/dev/null --tunnel-through-iap --project "${PROJECT}" &
     progress_spinner "$!"
 
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap \
@@ -496,7 +526,7 @@ function create_cuttlefish_boilerplate_template() {
         --shielded-integrity-monitoring \
         --key-revocation-action-type=none \
         --service-account="${SERVICE_ACCOUNT}" \
-        --machine-type="${MACHINE_TYPE}" \
+        ${machine_type_args} \
         --maintenance-policy=TERMINATE \
         --image-project="${OS_PROJECT}" \
         --create-disk=image="${vm_cuttlefish_image}",boot=yes,auto-delete=yes,type="${BOOT_DISK_TYPE}" \
@@ -510,7 +540,7 @@ function create_cuttlefish_boilerplate_template() {
 
     # Check the instance template was created.
     template_exists=$(gcloud compute instance-templates list --filter="name=${vm_cuttlefish_instance_template}" --format='get(name)')
-     if [ "${template_exists}" != "${vm_cuttlefish_instance_template}" ]; then
+    if [ "${template_exists}" != "${vm_cuttlefish_instance_template}" ]; then
        echo -e "${RED}ERROR: Failed to create template: ${vm_cuttlefish_instance_template}, review logs.${NC}"
        return 1
     else

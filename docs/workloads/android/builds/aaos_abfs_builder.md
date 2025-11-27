@@ -105,7 +105,7 @@ This provides the URL for the Android repo manifest. Such as:
 
 This is required in order to derive the path to patch within the source tree from the project name.
 
-### `GERRIT_PROJECT` / `GERRIT_CHANGE_NUMBER / GERRIT_PATCHSET_NUMBER`
+### `GERRIT_PROJECT` / `GERRIT_CHANGE_NUMBER / GERRIT_PATCHSET_NUMBER / GERRIT_TOPIC`
 
 These are optional but allow the user to fetch a specific Gerrit patchset if required.
 

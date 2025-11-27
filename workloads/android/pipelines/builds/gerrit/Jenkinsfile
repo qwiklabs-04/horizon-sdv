@@ -177,7 +177,12 @@ pipeline {
       agent { kubernetes { yaml "${POD_TEMPLATE}" } }
       stages {
         stage ('Initialise') {
-          when { expression { env.GERRIT_CHANGE_NUMBER } }
+          when {
+            anyOf {
+              expression { env.GERRIT_CHANGE_NUMBER }
+              expression { env.GERRIT_TOPIC }
+            }
+          }
           steps {
             script {
               currentBuild.description = "Project: ${env.GERRIT_PROJECT}" + "<br>" + "${env.GERRIT_BRANCH}"
@@ -214,7 +219,12 @@ pipeline {
         }
 
         stage ('Build: sdk_car_x86_64') {
-          when { expression { env.GERRIT_CHANGE_NUMBER } }
+          when {
+            anyOf {
+              expression { env.GERRIT_CHANGE_NUMBER }
+              expression { env.GERRIT_TOPIC }
+            }
+          }
           steps {
             container(name: 'builder') {
               withCredentials([usernamePassword(credentialsId: env.GERRIT_CREDENTIALS_ID, passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {
@@ -228,6 +238,8 @@ pipeline {
                   export ANDROID_VERSION="${SDK_ANDROID_VERSION}"
                   export AAOS_CLEAN="NO_CLEAN"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export GERRIT_USERNAME="${GERRIT_USERNAME}"
+                  export GERRIT_PASSWORD="${GERRIT_PASSWORD}"
                   export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                   export USE_LOCAL_AOSP_MIRROR="${USE_LOCAL_AOSP_MIRROR}"
                   export MIRROR_DIR_FULL_PATH="${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/${AOSP_MIRROR_DIR_NAME}"
@@ -243,7 +255,12 @@ pipeline {
         }
 
         stage ('Build: sdk_car_arm64') {
-          when { expression { env.GERRIT_CHANGE_NUMBER } }
+          when {
+            anyOf {
+              expression { env.GERRIT_CHANGE_NUMBER }
+              expression { env.GERRIT_TOPIC }
+            }
+          }
           steps {
             container(name: 'builder') {
               withCredentials([usernamePassword(credentialsId: 'jenkins-gerrit-http-password', passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {
@@ -257,6 +274,8 @@ pipeline {
                   export ANDROID_VERSION="${SDK_ANDROID_VERSION}"
                   export AAOS_CLEAN="NO_CLEAN"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export GERRIT_USERNAME="${GERRIT_USERNAME}"
+                  export GERRIT_PASSWORD="${GERRIT_PASSWORD}"
                   export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                   export USE_LOCAL_AOSP_MIRROR="${USE_LOCAL_AOSP_MIRROR}"
                   export MIRROR_DIR_FULL_PATH="${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/${AOSP_MIRROR_DIR_NAME}"
@@ -272,7 +291,12 @@ pipeline {
         }
 
         stage ('Build: aosp_cf_x86_64_auto') {
-          when { expression { env.GERRIT_CHANGE_NUMBER } }
+          when {
+            anyOf {
+              expression { env.GERRIT_CHANGE_NUMBER }
+              expression { env.GERRIT_TOPIC }
+            }
+          }
           steps {
             container(name: 'builder') {
               withCredentials([usernamePassword(credentialsId: 'jenkins-gerrit-http-password', passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {
@@ -285,6 +309,8 @@ pipeline {
                   export AAOS_BUILD_NUMBER=${BUILD_NUMBER}/${AAOS_LUNCH_TARGET}
                   export AAOS_CLEAN="NO_CLEAN"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export GERRIT_USERNAME="${GERRIT_USERNAME}"
+                  export GERRIT_PASSWORD="${GERRIT_PASSWORD}"
                   export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                   export USE_LOCAL_AOSP_MIRROR="${USE_LOCAL_AOSP_MIRROR}"
                   export MIRROR_DIR_FULL_PATH="${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/${AOSP_MIRROR_DIR_NAME}"
@@ -299,7 +325,12 @@ pipeline {
         }
 
         stage ('Build: aosp_cf_arm64_auto') {
-          when { expression { env.GERRIT_CHANGE_NUMBER } }
+          when {
+            anyOf {
+              expression { env.GERRIT_CHANGE_NUMBER }
+              expression { env.GERRIT_TOPIC }
+            }
+          }
           steps {
             container(name: 'builder') {
               withCredentials([usernamePassword(credentialsId: 'jenkins-gerrit-http-password', passwordVariable: 'GERRIT_PASSWORD', usernameVariable: 'GERRIT_USERNAME')]) {
@@ -312,6 +343,8 @@ pipeline {
                   export AAOS_BUILD_NUMBER=${BUILD_NUMBER}/${AAOS_LUNCH_TARGET}
                   export AAOS_CLEAN="NO_CLEAN"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export GERRIT_USERNAME="${GERRIT_USERNAME}"
+                  export GERRIT_PASSWORD="${GERRIT_PASSWORD}"
                   export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                   export USE_LOCAL_AOSP_MIRROR="${USE_LOCAL_AOSP_MIRROR}"
                   export MIRROR_DIR_FULL_PATH="${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/${AOSP_MIRROR_DIR_NAME}"
@@ -328,7 +361,10 @@ pipeline {
         stage ('Build: aosp_tangorpro_car') {
           when {
             allOf {
-              expression { env.GERRIT_CHANGE_NUMBER }
+              anyOf {
+                expression { env.GERRIT_CHANGE_NUMBER }
+                expression { env.GERRIT_TOPIC }
+              }
               expression { !(env.GERRIT_BRANCH ?: '').contains('android-16.0.0_r') }
             }
           }
@@ -344,6 +380,8 @@ pipeline {
                   export AAOS_BUILD_NUMBER=${BUILD_NUMBER}/${AAOS_LUNCH_TARGET}
                   export AAOS_CLEAN="NO_CLEAN"
                   export GERRIT_SERVER_URL="${GERRIT_API_URL}"
+                  export GERRIT_USERNAME="${GERRIT_USERNAME}"
+                  export GERRIT_PASSWORD="${GERRIT_PASSWORD}"
                   export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                   export USE_LOCAL_AOSP_MIRROR="${USE_LOCAL_AOSP_MIRROR}"
                   export MIRROR_DIR_FULL_PATH="${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/${AOSP_MIRROR_DIR_NAME}"
@@ -363,7 +401,12 @@ pipeline {
       agent { label "${env.JENKINS_GCE_CLOUD_LABEL}" }
       stages {
         stage ('Test: aosp_cf_x86_64_auto') {
-          when { expression { env.GERRIT_CHANGE_NUMBER } }
+          when {
+            anyOf {
+              expression { env.GERRIT_CHANGE_NUMBER }
+              expression { env.GERRIT_TOPIC }
+            }
+          }
           steps {
             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
               sh '''

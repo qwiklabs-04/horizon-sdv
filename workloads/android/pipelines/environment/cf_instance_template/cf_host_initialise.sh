@@ -81,6 +81,22 @@ function cuttlefish_install_additional_packages() {
     echo -e "${GREEN}Installing additional packages completed.${NC}"
 }
 
+function update_curl() {
+    if [ -n "${CURL_UPDATE_COMMAND}" ]; then
+        echo -e "${GREEN}Curl update: ${CURL_UPDATE_COMMAND}.${NC}"
+        sudo apt update -y
+        if ! eval "${CURL_UPDATE_COMMAND}"
+        then
+            echo -e "${RED}Curl update failed, exit!${NC}"
+            exit 1
+        else
+            echo -e "${ORANGE}Curl version and path:${NC}"
+            which curl && curl --version
+        fi
+        echo -e "${GREEN}Curl update complete.${NC}"
+    fi
+}
+
 # Disable unattended-upgrades
 function disable_unattended_upgrades() {
     sudo systemctl status unattended-upgrades || true
@@ -248,7 +264,7 @@ function cuttlefish_install() {
 
         # Store the sha1 and last commit to file for future reference (branches move).
         echo -e "${GREEN}android-cuttlefish:${CUTTLEFISH_REVISION} sha1:${NC}"
-        { echo "android-cuttlefish sha1:"; echo; } | tee "${sha1File}"
+        { echo "android-cuttlefish:${CUTTLEFISH_REVISION} sha1:"; echo; } | tee "${sha1File}"
         git log -1 | tee -a "${sha1File}"
 
         if [ -n "${CUTTLEFISH_POST_COMMAND}" ]; then
@@ -310,6 +326,9 @@ function cuttlefish_install() {
     else
         cuttlefish_install_cts
     fi
+
+    # Update curl on debian
+    update_curl
 
     # Force sync to ensure disk is updated.
     sync

@@ -11,6 +11,12 @@
 
 This pipeline creates (or deletes) ARM64 and x86_64 Cuttlefish instance templates which are used by the Jenkins test pipelines to spin up cloud instances which are cuttlefish-ready and CTS-ready; these cloud instances are then used to launch CVD and run CTS tests.
 
+Users may select from standard machine types or create custom machine types.  If the `MACHINE_TYPE` parameter is set to an empty string, the custom parameter values will be used to create the machine type, i.e.:
+
+- `CUSTOM_VM_TYPE`
+- `CUSTOM_CPUS`
+- `CUSTOM_MEMORY`
+
 During the process of creating an instance template, this pipeline also creates a custom image which is referenced by the created instance template. This image is created using the same naming convention as the instance template.
 
 For example:
@@ -85,10 +91,64 @@ If user defines a unique name, ensure the following is met:
   - Once synced, this new cloud will appear in `Manage Jenkins` -> `Clouds`
   - Tests jobs may then reference that unique instance by setting the `JENKINS_GCE_CLOUD_LABEL` parameter to the new cloud label (`cloudName`).
 
+### `DELETE`
+
+Allows deletion of an existing instance templates and its referenced image.
+
+If deleting a standard instance template (i.e. name auto-generated), simply define the version in `ANDROID_CUTTLEFISH_REVISION` and the required names will be derived automatically.
+
+- `ANDROID_CUTTLEFISH_REVISION`: choose the version you wish to delete
+- `DELETE`: This ensures the instance template, disk image and VM instance are deleted.
+- `Build` : trigger build to delete all artifacts.
+
+If user is deleting a uniquely-created instance template (i.e. name specified by `CUTTLEFISH_INSTANCE_UNIQUE_NAME`), then define `CUTTLEFISH_INSTANCE_UNIQUE_NAME` as was used to create it (i.e. the same name as the instance template with the "instance-template" prefix removed).
+
+- `CUTTLEFISH_INSTANCE_UNIQUE_NAME`: choose the template unique name you wish to delete
+- `DELETE`: This ensures the instance template, disk image and VM instance are deleted.
+- `Build` : trigger build to delete all artifacts.
+
+### `VM_INSTANCE_CREATE`
+
+**Enable Stopped VM Instance Creation**
+
+If enabled, this job will create a Cuttlefish VM instance from the final instance template. It will be placed in stop
+state after creation. This is provided for development testing and debugging.
+
+This would allow developers to:
+- Connect to the instance directly
+- Run tests on the instance manually, bypassing Jenkins
+
+**Important:**
+- Be aware that creating this instance may incur additional costs for your project.
+- Enable this only for instance templates created for developement purposes that are created with a well defined `CUTTLEFISH_INSTANCE_UNIQUE_NAME`.
+- Set `MAX_RUN_DURATION` to 0 to ensure VM instance is never deleted on runtime expiry.
+- It is advisable to `DELETE` these development instances when testing is completed.
 
 ### `MACHINE_TYPE`
 
 The machine type to be used for the VM instance. For x86, the default is `n1-standard-64`. Whereas ARM64 currently only `c4a-highmem-96-metal` is available.
+
+Defines the (--machine-type)[https://cloud.google.com/compute/docs/general-purpose-machines] parameter.
+
+To create a custom machine type, do not define `MACHINE_TYPE` and instead define the 3 `CUSTOM` options which will specify the machine type.
+
+### `CUSTOM_VM_TYPE`
+
+Specifies a custom machine type.
+
+Defines the (--custom-vm-type)[https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create] parameter.
+
+### `CUSTOM_CPU`
+
+Specifies the number of cores needed for custom machine type.
+
+Defines the (--custom-cpu)[https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create] parameter.
+
+### `CUSTOM_MEMORY`
+
+Specifies the memory needed for custom machine type.
+
+Defines the (--custom-memory)[https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create] parameter.
 
 ### `BOOT_DISK_SIZE`
 
@@ -127,42 +187,17 @@ Disk image project.
 
 Refer to `gcloud compute images list` for the project names based on family and OS version.
 
+### `CURL_UPDATE_COMMAND`
+
+Command provided to upgrade Curl from standard OS release versions. In the case of debian, bakports are used.
+
+e.g. `"sudo apt install -t bookworm-backports -y curl libcurl4` will update Curl to latest from Debian backports.
+
+Only applicable to x86_64 instances, ARM64 is still in early development support.
+
 ### `NODEJS_VERSION`
 
 MTK Connect requires NodeJS; this option allows you to update the version to install on the instance template.
-
-### `DELETE`
-
-Allows deletion of an existing instance templates and its referenced image.
-
-If deleting a standard instance template (i.e. name auto-generated), simply define the version in `ANDROID_CUTTLEFISH_REVISION` and the required names will be derived automatically.
-
-- `ANDROID_CUTTLEFISH_REVISION`: choose the version you wish to delete
-- `DELETE`: This ensures the instance template, disk image and VM instance are deleted.
-- `Build` : trigger build to delete all artifacts.
-
-If user is deleting a uniquely-created instance template (i.e. name specified by `CUTTLEFISH_INSTANCE_UNIQUE_NAME`), then define `CUTTLEFISH_INSTANCE_UNIQUE_NAME` as was used to create it (i.e. the same name as the instance template with the "instance-template" prefix removed).
-
-- `CUTTLEFISH_INSTANCE_UNIQUE_NAME`: choose the template unique name you wish to delete
-- `DELETE`: This ensures the instance template, disk image and VM instance are deleted.
-- `Build` : trigger build to delete all artifacts.
-
-### `VM_INSTANCE_CREATE`
-
-**Enable Stopped VM Instance Creation**
-
-If enabled, this job will create a Cuttlefish VM instance from the final instance template. It will be placed in stop
-state after creation. This is provided for development testing and debugging.
-
-This would allow developers to:
-- Connect to the instance directly
-- Run tests on the instance manually, bypassing Jenkins
-
-**Important:**
-- Be aware that creating this instance may incur additional costs for your project.
-- Enable this only for instance templates created for developement purposes that are created with a well defined `CUTTLEFISH_INSTANCE_UNIQUE_NAME`.
-- Set `MAX_RUN_DURATION` to 0 to ensure VM instance is never deleted on runtime expiry.
-- It is advisable to `DELETE` these development instances when testing is completed.
 
 ### `CTS_ANDROID_<14|15|16>_URL`
 
@@ -175,6 +210,8 @@ The following are unique to ARM64 support because support is currently in previe
 therefore users may need to override if their projects are not located within `us-central1`.
 
 #### `ADDITIONAL_NETWORKING`
+
+Only applicable to ARM64 instances is still in early development support.
 
 ARM64 bare metal currently require `nic-type=IDPF`
 

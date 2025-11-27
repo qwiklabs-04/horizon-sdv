@@ -80,7 +80,13 @@ pipeline {
       steps {
         container(name: 'builder') {
           script {
-            currentBuild.description = "Revision: ${env.ANDROID_CUTTLEFISH_REVISION}" + "<br/>" + "Prebuilt: ${env.ANDROID_CUTTLEFISH_PREBUILT}" + "<br/>" + "${env.MACHINE_TYPE}" + "<br/>" + "$BUILD_USER"
+            env.MACHINE_TYPE_DESCRIPTION=''
+            if ( "${env.MACHINE_TYPE}" != "" ) {
+              env.MACHINE_TYPE_DESCRIPTION="${env.MACHINE_TYPE}"
+            } else {
+              env.MACHINE_TYPE_DESCRIPTION="${env.CUSTOM_VM_TYPE}-custom-${env.CUSTOM_CPU}"
+            }
+            currentBuild.description = "Revision: ${env.ANDROID_CUTTLEFISH_REVISION}" + "<br/>" + "Prebuilt: ${env.ANDROID_CUTTLEFISH_PREBUILT}" + "<br/>" + "${env.MACHINE_TYPE_DESCRIPTION}" + "<br/>" + "$BUILD_USER"
           }
           sh '''
             ADDITIONAL_NETWORKING="${ADDITIONAL_NETWORKING}" \
@@ -89,6 +95,9 @@ pipeline {
             CUTTLEFISH_POST_COMMAND="${ANDROID_CUTTLEFISH_POST_COMMAND}" \
             CUTTLEFISH_REVISION="${ANDROID_CUTTLEFISH_REVISION}" \
             MACHINE_TYPE="${MACHINE_TYPE}" \
+            CUSTOM_VM_TYPE="${CUSTOM_VM_TYPE}" \
+            CUSTOM_CPU="${CUSTOM_CPU}" \
+            CUSTOM_MEMORY="${CUSTOM_MEMORY}" \
             PROJECT=${CLOUD_PROJECT} \
             REGION=${REGION:-${CLOUD_REGION}} \
             CUTTLEFISH_INSTANCE_UNIQUE_NAME="${CUTTLEFISH_INSTANCE_UNIQUE_NAME}" \
@@ -143,6 +152,7 @@ pipeline {
             ANDROID_CUTTLEFISH_PREBUILT="${ANDROID_CUTTLEFISH_PREBUILT}" \
             CUTTLEFISH_POST_COMMAND="${ANDROID_CUTTLEFISH_POST_COMMAND}" \
             CUTTLEFISH_REVISION="${ANDROID_CUTTLEFISH_REVISION}" \
+            CURL_UPDATE_COMMAND=\""${CURL_UPDATE_COMMAND}"\" \
             JAVA_VERSION="${JAVA_VERSION}" \
             NODEJS_VERSION="${NODEJS_VERSION}" \
             PROJECT=${CLOUD_PROJECT} \
@@ -214,6 +224,9 @@ pipeline {
             CUTTLEFISH_REVISION="${ANDROID_CUTTLEFISH_REVISION}" \
             VM_INSTANCE_CREATE="${VM_INSTANCE_CREATE}" \
             MACHINE_TYPE="${MACHINE_TYPE}" \
+            CUSTOM_VM_TYPE="${CUSTOM_VM_TYPE}" \
+            CUSTOM_CPU="${CUSTOM_CPU}" \
+            CUSTOM_MEMORY="${CUSTOM_MEMORY}" \
             OS_PROJECT="${OS_PROJECT}" \
             PROJECT=${CLOUD_PROJECT} \
             REGION=${REGION:-${CLOUD_REGION}} \

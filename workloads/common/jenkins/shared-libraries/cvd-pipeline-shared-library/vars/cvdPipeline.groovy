@@ -108,7 +108,7 @@ def call(Map config = [:]) {
                   NUM_INSTANCES="${NUM_INSTANCES}" \
                   VM_CPUS="${VM_CPUS}" \
                   VM_MEMORY_MB="${VM_MEMORY_MB}" \
-                  CVD_ADDITIONAL_ARGUMENTS="${CVD_ADDITIONAL_ARGUMENTS}" \
+                  CVD_ADDITIONAL_FLAGS="${CVD_ADDITIONAL_FLAGS}" \
                   ./workloads/android/pipelines/tests/cvd_launcher/cvd_start_stop.sh --start
                 '''
               }

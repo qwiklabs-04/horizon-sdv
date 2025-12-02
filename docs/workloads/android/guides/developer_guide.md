@@ -2060,7 +2060,7 @@ ___
 
 ___
 
-- Normally we define a new `computeEngine` entry, or replace an existing `computeEngine` entry within Jenkins CasC (`gitops/env/stage2/templates/jenkins.yaml` in the [horizon-sdv](https://github.com/googlecloudplatform/horizon-sdv) repo) and let ArgoCD deploy the change which will create the new cloud entry in Jenkins.
+- Normally we define a new `computeEngine` entry, or replace an existing `computeEngine` entry within Jenkins CasC (`gitops/env/stage2/workloads/values-jenkins.yaml` in the [horizon-sdv](https://github.com/googlecloudplatform/horizon-sdv) repo) and let ArgoCD deploy the change which will create the new cloud entry in Jenkins.
 - If you do not create in CasC the new cloud entry will not persist across Jenkins restarts.
 - For sake of time, for this exercise we will create a new cloud entry manually in Jenkins.
   - In Jenkins navigate to `Manage Jenkins` → `Clouds` → `New Cloud`
@@ -2102,7 +2102,7 @@ As per previous lab exercises, once the job transitions to the `Keep Devices Ali
 
 You may also repeat previous `CTS Execution` exercises but using `JENKINS_GCE_CLOUD_LABEL` `cuttlefish-vm-v120`, to verify CTS running on the virtual devices within that Cuttlefish VM instance.
 
-Feel free to experiment with `android-cuttlefish` revisions and also the CasC approach where cloud configuration is managed in `gitops/env/stage2/templates/jenkins.yaml`.
+Feel free to experiment with `android-cuttlefish` revisions and also the CasC approach where cloud configuration is managed in `gitops/env/stage2/workloads/values-jenkins.yaml`.
 
 ___
 

@@ -45,7 +45,7 @@ One-time setup requirements.
 
 - Before running this pipeline job, ensure that the following template has been created by running the corresponding job:
   - Docker image template: ``Android Workflows/Environment/Docker Image Template`
-- The Google Compute Engine is configured with `noDelayProvisioning: false` in `gitops/env/stage2/templates/jenkins.yaml` to help reduce costs. With this setting, multiple VM instances are not started immediately, which lowers expenses for each run. However, disabling immediate provisioning may slightly increase VM startup times. This trade-off allows users to choose between faster VM availability and lower operational costs.
+- The Google Compute Engine is configured with `noDelayProvisioning: false` in `gitops/env/stage2/workloads/values-jenkins.yaml` to help reduce costs. With this setting, multiple VM instances are not started immediately, which lowers expenses for each run. However, disabling immediate provisioning may slightly increase VM startup times. This trade-off allows users to choose between faster VM availability and lower operational costs.
 
 ## Environment Variables/Parameters <a name="environment-variables"></a>
 
@@ -86,7 +86,7 @@ an instance template `instance-template-cuttlefish-vm-main` and an image `image-
 If user defines a unique name, ensure the following is met:
 
 - The name should start with `cuttlefish-vm`
-- Jenkins CasC (`jenkins.yaml`) must be updated to provide a new `computeEngine` entry for this unique template. For reference, see existing entry for `cuttlefish-vm-main`.
+- Jenkins CasC (`values-jenkins.yaml`) must be updated to provide a new `computeEngine` entry for this unique template. For reference, see existing entry for `cuttlefish-vm-main`.
   - Choose a sensible `cloudName`, such as `cuttlefish-vm-unique-name` (e.g. the same name as the instance template with the "instance-template" prefix removed).
   - Once synced, this new cloud will appear in `Manage Jenkins` -> `Clouds`
   - Tests jobs may then reference that unique instance by setting the `JENKINS_GCE_CLOUD_LABEL` parameter to the new cloud label (`cloudName`).
@@ -245,7 +245,7 @@ Once they have finished with the instances, they should delete to avoid excessiv
 
 There are a number of system environment variables that are unique to each platform but required by Jenkins build, test and environment pipelines.
 
-These are defined in Jenkins CasC `jenkins.yaml` and can be viewed in Jenkins UI under `Manage Jenkins` -> `System` -> `Global Properties` -> `Environment variables`.
+These are defined in Jenkins CasC `values-jenkins.yaml` and can be viewed in Jenkins UI under `Manage Jenkins` -> `System` -> `Global Properties` -> `Environment variables`.
 
 These are as follows:
 

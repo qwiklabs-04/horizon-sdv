@@ -9,7 +9,7 @@
 
 ## Overview <a name="overview"></a>
 
-Immediately after initial launch, Jenkins contains a single job - _Seed Workloads_ - which is defined in `gitops/env/stage2/templates/jenkins.yaml` (CasC).
+Immediately after initial launch, Jenkins contains a single job - _Seed Workloads_ - which is defined in `gitops/env/stage2/workloads/values-jenkins.yaml` (CasC).
 
 The _Seed Workloads_ job uses the groovy definitions to initialise the jobs required for each workload.
 <br>It also allows users to update Jenkins to pull in any changes made to the groovy definitions - these can be new job definitions and/or changes to existing jobs.

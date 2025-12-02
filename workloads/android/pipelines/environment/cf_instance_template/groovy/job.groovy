@@ -33,8 +33,8 @@ pipelineJob('Android/Environment/CF Instance Template') {
       defaultValue('')
       description('''<p>The branch/tag version of Android Cuttlefish to use, e.g.</p>
         <ul>
+          <li>v1.31.0</li>
           <li>main</li>
-          <li>v1.32.0</li>
         </ul>
         <p>Reference: <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a></p>''')
       trim(true)
@@ -54,16 +54,17 @@ pipelineJob('Android/Environment/CF Instance Template') {
       defaultValue('')
       description('''<p>Command to run in <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a>,  e.g.
         <ul><li>Cherry pick: <code>git cherry-pick 655de58f</code></li>
-            <li>Checkout commit: <code>git checkout 655de58f</code></li></ul></p>''')
+            <li>Checkout commit: <code>git checkout 655de58f</code></li>
+            <li>Revert commit: <code>git revert 2a786b0a</code></li></ul></p>''')
       trim(true)
    }
 
     stringParam {
       name('CUTTLEFISH_INSTANCE_UNIQUE_NAME')
       defaultValue('')
-      description('''<p>Optional parameter to define the unique name used for the instance template, e.g.  <i>cuttlefish-vm-instance-test-main</i><br/>
+      description('''<p>Optional parameter to define the unique name used for the instance template, e.g.  <i>cuttlefish-vm-instance-test-v1310</i><br/>
         Name must start with <i>cuttlefish-vm</i>, refer to docs for details on regex requirements for name.<br/>
-        Default: The name will be automatically derived from <code>ANDROID_CUTTLEFISH_REVISION</code>, e.g.  <i>cuttlefish-vm-main</i><br/><br/></p>''')
+        Default: The name will be automatically derived from <code>ANDROID_CUTTLEFISH_REVISION</code>, e.g. <i>cuttlefish-vm-v1310</i><br/><br/></p>''')
       trim(true)
     }
 
@@ -92,13 +93,11 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('MACHINE_TYPE')
-      defaultValue('n1-standard-64')
+      defaultValue('n2-standard-32')
       description('''<p><strong>Optional:</strong> The machine type to use when creating the instance, e.g.</p>
         <ul>
+          <li>n2-standard-32</li>
           <li>n1-standard-64</li>
-          <li>n1-standard-32</li>
-          <li>n1-standard-16</li>
-          <li>n1-standard-8</li>
         </ul>
         <p>Leave empty if creating custom machine type using options below.</p>
         <p>Refer to <a href="https://cloud.google.com/compute/docs/general-purpose-machines" target="_blank">General-purpose machine family for Compute Engine</a> for additional details, i.e. <code>--machine-type=MACHINE_TYPE</code></li></uL></p>''')
@@ -110,8 +109,8 @@ pipelineJob('Android/Environment/CF Instance Template') {
       defaultValue('')
       description('''<p><strong>Optional:</strong> Specifies a custom machine type, e.g.<br/>
         <ul>
-          <li>n1</li>
           <li>n2</li>
+          <li>n1</li>
         </ul>
         <p><b>Note:</b>
         <ul><li>Option is only valid when <code>MACHINE_TYPE</code> is undefined.</li>
@@ -210,7 +209,7 @@ pipelineJob('Android/Environment/CF Instance Template') {
 
     stringParam {
       name('CURL_UPDATE_COMMAND')
-      defaultValue("sudo apt install -t bookworm-backports -y curl libcurl4")
+      defaultValue('sudo apt install -t bookworm-backports -y curl libcurl4')
       description('''<p>Update Curl from debian backports.<br/>
         Users may choose to tailor the installation command to suit their requirements.</p>''')
       trim(true)
@@ -234,27 +233,30 @@ pipelineJob('Android/Environment/CF Instance Template') {
     stringParam {
       name('CTS_ANDROID_16_URL')
       defaultValue("https://dl.google.com/dl/android/cts/android-cts-16_r3-linux_x86-x86.zip")
-      description('''<p>Leave blank if a version is not needed, or specify your preferred version.<br/>
-      Enter the full bucket URL, including <code>android-cts.zip</code>, for example:<br/>
-      <code>gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/01/android-cts.zip</code></p>''')
+      description('''<p>Leave blank if the version is not needed, or specify your preferred version.<br/>
+      Either download from official site, or from a local bucket if stored locally to improve download times, e.g.
+      <ul><li>Official downloads: <code>https://dl.google.com/dl/android/cts/android-cts-16_r3-linux_x86-x86.zip/code></li>
+          <li>Local GCS bucket download: <code>gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/CTS/android-cts-16_r3-linux_x86-x86.zip</code></li></ul></p>''')
       trim(true)
     }
 
     stringParam {
       name('CTS_ANDROID_15_URL')
       defaultValue("https://dl.google.com/dl/android/cts/android-cts-15_r6-linux_x86-x86.zip")
-      description('''<p>Leave blank if a version is not needed, or specify your preferred version.<br/>
-      Enter the full bucket URL, including <code>android-cts.zip</code>, for example:<br/>
-      <code>gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/02/android-cts.zip</code></p>''')
+      description('''<p>Leave blank if the version is not needed, or specify your preferred version.<br/>
+      Either download from official site, or from a local bucket if stored locally to improve download times, e.g.
+      <ul><li>Official downloads: <code>https://dl.google.com/dl/android/cts/android-cts-15_r6-linux_x86-x86.zip/code></li>
+          <li>Local GCS bucket download: <code>gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/CTS/android-cts-15_r6-linux_x86-x86.zip</code></li></ul></p>''')
       trim(true)
     }
 
     stringParam {
       name('CTS_ANDROID_14_URL')
       defaultValue("https://dl.google.com/dl/android/cts/android-cts-14_r10-linux_x86-x86.zip")
-      description('''<p>Leave blank if a version is not needed, or specify your preferred version.<br/>
-      Enter the full bucket URL, including <code>android-cts.zip</code>, for example:<br/>
-      <code>gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/04/android-cts.zip</code></p>''')
+      description('''<p>Leave blank if the version is not needed, or specify your preferred version.<br/>
+      Either download from official site, or from a local bucket if stored locally to improve download times, e.g.
+      <ul><li>Official downloads: <code>https://dl.google.com/dl/android/cts/android-cts-14_r10-linux_x86-x86.zip/code></li>
+          <li>Local GCS bucket download: <code>gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/CTS/android-cts-14_r10-linux_x86-x86.zip</code></li></ul></p>''')
       trim(true)
     }
   }

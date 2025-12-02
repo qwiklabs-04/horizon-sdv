@@ -20,6 +20,10 @@ Note:
 - It allows user to enable MTK Connect should they wish to view the virtual devices during testing (e.g. useful for UI tests).
 - It allows users to keep the cuttlefish virtual devices alive for a certain amount of time after the CTS run has completed in order to facilitate debugging via MTK Connect. MTK Connect must be enabled for this option.
 
+**Resources:**
+
+Ensure you select appropriate values for `NUM_INSTANCES`, `VM_CPUS`, `VM_MEMORY_MB` that align with the VM instance used for test, ie `JENKINS_GCE_CLOUD_LABEL`.
+
 ### References <a name="references"></a>
 
 - [Cuttlefish Virtual Devices](https://source.android.com/docs/devices/cuttlefish) for use with [CTS](https://source.android.com/docs/compatibility/cts) and emulators.
@@ -83,18 +87,17 @@ URL is of the form `gs://<ANDROID_BUILD_BUCKET_ROOT_NAME>/Android/Builds/AAOS_Bu
 
 ### `CTS_TESTPLAN`
 
+Mandatory.
+
 This defines the CTS test plan that will be run. Default is: `cts-system-virtual` which is only available in Android 15 and 16.
 
-Android 14 users should pick a test plan that is compatible with their version of Cuttlefish.
-
-Note: `cts-virtual-device-stable` was the previous default and takes less time than `cts-system-virtual`.
+Android 14 users should pick a test plan that is compatible with their version of Cuttlefish, e.g `cts-virtual-device-stable`.
 
 ### `CTS_MODULE`
 
 Optional.
 
-This defines the CTS test module that will be run. Default is: `CtsDeqpTestCases` but if field is left empty, all CTS test modules will be run.
-Note: `CtsHostsideNumberBlockingTestCases` is the previous default simply because it was quick.
+This defines the CTS test module that will be run, e.g. Android 14 `CtsHostsideNumberBlockingTestCases`, Android 15 and later, `CtsDeqpTestCases` but if field is left empty, all CTS test modules will be run.
 
 ### `CTS_RETRY_STRATEGY`
 
@@ -154,7 +157,10 @@ It is only applicable when `MTK_CONNECT_ENABLE` is enabled.
 
 ### `CVD_ADDITIONAL_FLAGS`
 
-Append additional flags to `cvd` command, e.g. --display0=width=1920,height=1080,dpi=160
+Append additional flags to `cvd` command, e.g.
+
+- `--setupwizard_mode DISABLED --enable_host_bluetooth false --gpu_mode guest_swiftshader`
+- `--display0=width=1920,height=1080,dpi=160`
 
 ## Example Usage <a name="examples"></a>
 

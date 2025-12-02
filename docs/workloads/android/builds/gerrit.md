@@ -43,7 +43,7 @@ To successfully run the pipeline, ensure that the referenced Cuttlefish instance
 
 ## Gerrit Triggers
 
-The pipeline is triggered by a Gerrit patchset change based on Gerrit Triggers plugin. It uses the Horizon default path and branch name prefixes:
+The pipeline is triggered by a Gerrit patchset change, or topic update based on Gerrit Triggers plugin. It uses the Horizon default path and branch name prefixes:
 - Project prefix path: `android` separates projects into Android workload.
 - Branch prefix path: `horizon` and separates branch names from upstream branches.
 
@@ -54,6 +54,12 @@ properties{
   pipelineTriggers{
     triggers{
       gerrit{
+        buildCancellationPolicy{
+          abortAbandonedPatchsets(false)
+          abortManualPatchsets(true)
+          abortNewPatchsets(false)
+          abortSameTopic(true)
+        }
         gerritProjects{
           gerritProject{
             compareType('REG_EXP')

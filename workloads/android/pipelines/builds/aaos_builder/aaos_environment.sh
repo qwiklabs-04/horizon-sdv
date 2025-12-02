@@ -49,6 +49,7 @@
 #  - GERRIT_PROJECT: the name of the project to download.
 #  - GERRIT_CHANGE_NUMBER: the change number of the changeset to download.
 #  - GERRIT_PATCHSET_NUMBER: the patchset number of the changeset to download.
+#  - GERRIT_TOPIC: the topic identifying the changes to fetch.
 #
 # If running standalone, only AAOS_CLEAN and AAOS_LUNCH_TARGET apply, eg.
 #
@@ -513,6 +514,7 @@ GERRIT_SERVER_URL=${GERRIT_SERVER_URL%/}
 GERRIT_PROJECT=$(echo "${GERRIT_PROJECT}" | xargs)
 GERRIT_CHANGE_NUMBER=$(echo "${GERRIT_CHANGE_NUMBER}" | xargs)
 GERRIT_PATCHSET_NUMBER=$(echo "${GERRIT_PATCHSET_NUMBER}" | xargs)
+GERRIT_TOPIC=$(echo "${GERRIT_TOPIC}" | xargs)
 
 # Define artifact storage strategy and functions.
 AAOS_ARTIFACT_STORAGE_SOLUTION=${AAOS_ARTIFACT_STORAGE_SOLUTION:-"GCS_BUCKET"}
@@ -549,6 +551,7 @@ case "$0" in
             GERRIT_PROJECT=${GERRIT_PROJECT}
             GERRIT_CHANGE_NUMBER=${GERRIT_CHANGE_NUMBER}
             GERRIT_PATCHSET_NUMBER=${GERRIT_PATCHSET_NUMBER}
+            GERRIT_TOPIC=${GERRIT_TOPIC}
 
             USE_LOCAL_AOSP_MIRROR=${USE_LOCAL_AOSP_MIRROR}
             AOSP_MIRROR_DIR_NAME=${AOSP_MIRROR_DIR_NAME}

@@ -185,6 +185,13 @@ pipelineJob('Android/Builds/AAOS Builder') {
     }
 
     stringParam {
+      name('GERRIT_TOPIC')
+      defaultValue('')
+      description('''<p>Optional, define the Gerrit Topic to build multiple changes.</p>''')
+      trim(true)
+    }
+
+    stringParam {
       name('GERRIT_PROJECT')
       defaultValue('')
       description('''<p>Optional, define Gerrit Project with open review.</p>''')

@@ -183,7 +183,7 @@ This defines the directory name on the Filestore volume where the Mirror is loca
 -  This is required if `USE_LOCAL_AOSP_MIRROR` is checked.
 -  e.g. If you provided `my-mirror` when creating the mirror, provide the same value here.
 
-### `GERRIT_PROJECT` / `GERRIT_CHANGE_NUMBER / GERRIT_PATCHSET_NUMBER`
+### `GERRIT_PROJECT` / `GERRIT_CHANGE_NUMBER / GERRIT_PATCHSET_NUMBER / GERRIT_TOPIC`
 
 These are optional but allow the user to fetch a specific Gerrit patchset if required.
 

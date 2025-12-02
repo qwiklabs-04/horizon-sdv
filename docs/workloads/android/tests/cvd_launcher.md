@@ -92,7 +92,10 @@ By default, testbenches are private and only visible to their creator and MTK Co
 
 ### `CVD_ADDITIONAL_FLAGS`
 
-Append additional flags to `cvd` command, e.g. --display0=width=1920,height=1080,dpi=160
+Append additional flags to `cvd` command, e.g.
+
+- `--setupwizard_mode DISABLED --enable_host_bluetooth false --gpu_mode guest_swiftshader`
+- `--display0=width=1920,height=1080,dpi=160`
 
 ## Example Usage <a name="examples"></a>
 

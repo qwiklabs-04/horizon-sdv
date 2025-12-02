@@ -85,6 +85,16 @@ cvdPipeline(
               archiveArtifacts artifacts: 'cts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
               archiveArtifacts artifacts: 'android-cts-results/invocation_summary.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
               archiveArtifacts artifacts: 'android-cts-results/*.zip', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+              archiveArtifacts artifacts: 'android-cts-results-html/*.html', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
+
+              publishHTML target: [
+                allowMissing: true,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: "android-cts-results-html",
+                reportFiles: 'test_result_failures_suite.html',
+                reportName: 'CTS Test Failures'
+              ]
             }
           } else {
             sh 'echo "Skip CTS execution based on expressions"'

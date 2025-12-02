@@ -24,7 +24,7 @@
 # From command line, such as Google Cloud Shell, create templates for all
 # versions of android-cuttlefish host tools/packages:
 #
-#  CUTTLEFISH_REVISION=v1.32.0 ./cf_create_instance_template.sh && \
+#  CUTTLEFISH_REVISION=v1.31.0 ./cf_create_instance_template.sh && \
 #  CUTTLEFISH_REVISION=main ./cf_create_instance_template.sh
 #
 # The following variables are required to run the script, choose to use
@@ -120,7 +120,7 @@ BOOT_DISK_TYPE=${BOOT_DISK_TYPE:-pd-balanced}
 CURL_UPDATE_COMMAND=${CURL_UPDATE_COMMAND:-}
 CUTTLEFISH_INSTANCE_UNIQUE_NAME=${CUTTLEFISH_INSTANCE_UNIQUE_NAME:-cuttlefish-vm}
 CUTTLEFISH_INSTANCE_UNIQUE_NAME=$(echo "${CUTTLEFISH_INSTANCE_UNIQUE_NAME}" | awk '{print tolower($0)}' | xargs)
-CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION:-main}
+CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION:-v1.31.0}
 CUTTLEFISH_REVISION=$(echo "${CUTTLEFISH_REVISION}" | xargs)
 CUTTLEFISH_POST_COMMAND=${CUTTLEFISH_POST_COMMAND:-}
 JAVA_VERSION=${JAVA_VERSION:-openjdk-17-jdk-headless}

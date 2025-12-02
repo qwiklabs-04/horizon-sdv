@@ -191,9 +191,7 @@ Refer to `gcloud compute images list` for the project names based on family and 
 
 Command provided to upgrade Curl from standard OS release versions. In the case of debian, bakports are used.
 
-e.g. `"sudo apt install -t bookworm-backports -y curl libcurl4` will update Curl to latest from Debian backports.
-
-Only applicable to x86_64 instances, ARM64 is still in early development support.
+e.g. `"sudo apt install -t bookworm-backports -y curl libcurl4` would update Curl to latest from Debian backports.
 
 ### `NODEJS_VERSION`
 

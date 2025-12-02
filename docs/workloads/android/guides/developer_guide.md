@@ -2021,8 +2021,8 @@ Gerrit triggers are based on a single project/repo build, i.e. build one compone
 
 Cuttlefish instance templates are instances pre-installed with Android cuttlefish debian host packages, Android 14, 15 and 16 CTS, together with other tools required to launch CVD and run CTS tests. There are two instances we have created ahead of time:
 
+- `cuttlefish-vm-v1310` based on [android-cuttlefish.git v1.31.0 tag](https://github.com/google/android-cuttlefish/tree/v1.31.0)
 - `cuttlefish-vm-main` based on [android-cuttlefish.git main branch](https://github.com/google/android-cuttlefish/tree/main)
-- `cuttlefish-vm-v1320` based on [android-cuttlefish.git v1.32.0 tag](https://github.com/google/android-cuttlefish/tree/v1.32.0)
 
 Users may wish to create newer versions as the android-cuttlefish repo is updated and new tagged versions appear. This section describes how to create the instance templates and configure the test jobs to use those instances.
 
@@ -2127,7 +2127,7 @@ The table below shows the templates and machine types used for the Android workf
 
 <sup>1: Uses any available node: Horizon standard nodes are `n1-standard-4` shared across tools and platform.</sup><br/>
 <sup>2: Uses build nodes: `c2d-highcpu-112`</sup><br/>
-<sup>3: Uses test nodes: `n1-standard-64`</sup>
+<sup>3: Uses test nodes: `n2-standard-32`</sup>
 
 If users are interested in how these machine types are configured, then refer to the following within the OSS repo: [horizon-sdv](https://github.com/googlecloudplatform/horizon-sdv)
 
@@ -2147,7 +2147,7 @@ If users are interested in how these machine types are configured, then refer to
 - `./terraform/modules/base/variables.tf`: ` default     = "n1-standard-8"`
   - Requires GitHub actions to run the Terraform workflow to apply any changes.
 
-**Test Jobs: `n1-standard-64`**
+**Test Jobs: `n2-standard-32`**
 - This is part of the `Android Workflows` → `Environment` → `CF Instance Template` configuration.
 - Change `MACHINE_TYPE` parameter to the machine type you wish to use and regenerate the Instance Templates.
 

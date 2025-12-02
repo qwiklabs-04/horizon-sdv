@@ -16,62 +16,62 @@
 # Configuration file containing variables for the main env configuration.
 
 
-variable "sdv_gh_app_id" {
+variable "sdv_gh_app_id_b64" {
   description = "The var gh_app_id value"
   type        = string
 }
 
-variable "sdv_gh_installation_id" {
+variable "sdv_gh_installation_id_b64" {
   description = "The var gh_installation_id value"
   type        = string
 }
 
-variable "sdv_gh_app_key" {
+variable "sdv_gh_app_key_b64" {
   description = "The secret GH_APP_KEY value"
   type        = string
 }
 
-variable "sdv_gh_app_key_pkcs8" {
+variable "sdv_gh_app_key_pkcs8_b64" {
   description = "The secret GH_APP_KEY converted to pkcs8 value"
   type        = string
 }
 
-variable "sdv_gh_argocd_initial_password_bcrypt" {
+variable "sdv_gh_argocd_initial_password_bcrypt_b64" {
   description = "The secret ARGOCD_INITIAL_PASSWORD_BCRYPT value"
   type        = string
 }
 
-variable "sdv_gh_jenkins_initial_password" {
+variable "sdv_gh_jenkins_initial_password_b64" {
   description = "The secret JENKINS_INITIAL_PASSWORD value"
   type        = string
 }
 
-variable "sdv_gh_keycloak_initial_password" {
+variable "sdv_gh_keycloak_initial_password_b64" {
   description = "The secret KEYCLOAK_INITIAL_PASSWORD value"
   type        = string
 }
 
-variable "sdv_gh_grafana_initial_password" {
+variable "sdv_gh_grafana_initial_password_b64" {
   description = "The secret GRAFANA_INITIAL_PASSWORD value"
   type        = string
 }
 
-variable "sdv_gh_gerrit_admin_initial_password" {
+variable "sdv_gh_gerrit_admin_initial_password_b64" {
   description = "The secret Github GERRIT_ADMIN_INITIAL_PASSWORD value"
   type        = string
 }
 
-variable "sdv_gh_gerrit_admin_private_key" {
+variable "sdv_gh_gerrit_admin_private_key_b64" {
   description = "The secret Github GERRIT_ADMIN_PRIVATE_KEY value"
   type        = string
 }
 
-variable "sdv_gh_keycloak_horizon_admin_password" {
+variable "sdv_gh_keycloak_horizon_admin_password_b64" {
   description = "The secret Github KEYCLOAK_HORIZON_ADMIN_PASSWORD value"
   type        = string
 }
 
-variable "sdv_gh_cuttlefish_vm_ssh_private_key" {
+variable "sdv_gh_cuttlefish_vm_ssh_private_key_b64" {
   description = "The secret Github CUTTLEFISH_VM_SSH_PRIVATE_KEY value"
   type        = string
 }
@@ -96,32 +96,32 @@ variable "sdv_gh_env_name" {
   type        = string
 }
 
-variable "sdv_gh_domain_name" {
+variable "sdv_gh_domain_name_b64" {
   description = "Horizon domain name"
   type        = string
 }
 
-variable "sdv_gcp_project_id" {
+variable "sdv_gcp_project_id_b64" {
   description = "GCP project id"
   type        = string
 }
 
-variable "sdv_computer_sa" {
+variable "sdv_computer_sa_b64" {
   description = "GCP computer SA"
   type        = string
 }
 
-variable "sdv_gcp_cloud_region" {
+variable "sdv_gcp_cloud_region_b64" {
   description = "GCP cloud region"
   type        = string
 }
 
-variable "sdv_gcp_cloud_zone" {
+variable "sdv_gcp_cloud_zone_b64" {
   description = "GCP cloud zone"
   type        = string
 }
 
-variable "sdv_gcp_backend_bucket_name" {
+variable "sdv_gcp_backend_bucket_name_b64" {
   description = "GCP cloud bucket name that stores tfstate file"
   type        = string
 }

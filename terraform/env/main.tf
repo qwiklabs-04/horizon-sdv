@@ -17,19 +17,30 @@
 # project ID, region, zone, network etc. Set up service accounts and
 # the required secrets.
 
+locals {
+  decoded = {
+    region       = base64decode(var.sdv_gcp_cloud_region_b64)
+    zone         = base64decode(var.sdv_gcp_cloud_zone_b64)
+    project_id   = base64decode(var.sdv_gcp_project_id_b64)
+    computer_sa  = base64decode(var.sdv_computer_sa_b64)
+    bucket_name  = base64decode(var.sdv_gcp_backend_bucket_name_b64)
+    domain_name = base64decode(var.sdv_gh_domain_name_b64)
+  }
+}
+
 module "base" {
   source = "../modules/base"
 
   # The project is used by provider.tf to define the GCP project
-  sdv_project  = var.sdv_gcp_project_id
-  sdv_location = var.sdv_gcp_cloud_region
-  sdv_region   = var.sdv_gcp_cloud_region
-  sdv_zone     = var.sdv_gcp_cloud_zone
+  sdv_project  = local.decoded.project_id
+  sdv_location = local.decoded.region
+  sdv_region   = local.decoded.region
+  sdv_zone     = local.decoded.zone
 
   sdv_network    = "sdv-network"
   sdv_subnetwork = "sdv-subnet"
 
-  sdv_computer_sa = var.sdv_computer_sa
+  sdv_computer_sa = local.decoded.computer_sa
 
   sdv_list_of_apis = toset([
     "compute.googleapis.com",
@@ -58,7 +69,7 @@ module "base" {
   sdv_cluster_node_pool_machine_type = "n1-standard-4"
   sdv_cluster_node_pool_count        = 3
   sdv_cluster_node_locations = [
-    "${var.sdv_gcp_cloud_zone}"
+    "${local.decoded.zone}"
   ]
 
   sdv_build_node_pool_machine_type   = "c2d-highcpu-112"
@@ -76,11 +87,11 @@ module "base" {
   sdv_artifact_registry_repository_id      = "horizon-sdv"
   sdv_artifact_registry_repository_members = []
   sdv_artifact_registry_repository_reader_members = [
-    "serviceAccount:${var.sdv_computer_sa}",
+    "serviceAccount:${local.decoded.computer_sa}",
   ]
 
   sdv_ssl_certificate_name   = "horizon-sdv"
-  sdv_ssl_certificate_domain = "${var.sdv_gh_env_name}.${var.sdv_gh_domain_name}"
+  sdv_ssl_certificate_domain = "${var.sdv_gh_env_name}.${local.decoded.domain_name}"
 
   sdv_gh_abfs_license_b64 = var.sdv_gh_abfs_license_b64
   #
@@ -244,8 +255,8 @@ module "base" {
   # Define the secrets and values and gke access rules
   sdv_gcp_secrets_map = {
     s1 = {
-      secret_id        = "githubAppID"
-      value            = var.sdv_gh_app_id
+      secret_id        = "githubAppIDB64"
+      value            = var.sdv_gh_app_id_b64
       use_github_value = true
       gke_access = [
         {
@@ -259,8 +270,8 @@ module "base" {
       ]
     }
     s2 = {
-      secret_id        = "githubAppInstallationID"
-      value            = var.sdv_gh_installation_id
+      secret_id        = "githubAppInstallationIDB64"
+      value            = var.sdv_gh_installation_id_b64
       use_github_value = true
       gke_access = [
         {
@@ -274,8 +285,8 @@ module "base" {
       ]
     }
     s3 = {
-      secret_id        = "githubAppPrivateKey"
-      value            = var.sdv_gh_app_key
+      secret_id        = "githubAppPrivateKeyB64"
+      value            = var.sdv_gh_app_key_b64
       use_github_value = true
       gke_access = [
         {
@@ -300,8 +311,8 @@ module "base" {
       ]
     }
     s5 = {
-      secret_id        = "argocdInitialPassword"
-      value            = var.sdv_gh_argocd_initial_password_bcrypt
+      secret_id        = "argocdInitialPasswordB64"
+      value            = var.sdv_gh_argocd_initial_password_bcrypt_b64
       use_github_value = true
       gke_access = [
         {
@@ -311,8 +322,8 @@ module "base" {
       ]
     }
     s6 = {
-      secret_id        = "jenkinsInitialPassword"
-      value            = var.sdv_gh_jenkins_initial_password
+      secret_id        = "jenkinsInitialPasswordB64"
+      value            = var.sdv_gh_jenkins_initial_password_b64
       use_github_value = true
       gke_access = [
         {
@@ -322,8 +333,8 @@ module "base" {
       ]
     }
     s7 = {
-      secret_id        = "keycloakInitialPassword"
-      value            = var.sdv_gh_keycloak_initial_password
+      secret_id        = "keycloakInitialPasswordB64"
+      value            = var.sdv_gh_keycloak_initial_password_b64
       use_github_value = true
       gke_access = [
         {
@@ -333,8 +344,8 @@ module "base" {
       ]
     }
     s8 = {
-      secret_id        = "githubAppPrivateKeyPKCS8"
-      value            = var.sdv_gh_app_key_pkcs8
+      secret_id        = "githubAppPrivateKeyPKCS8B64"
+      value            = var.sdv_gh_app_key_pkcs8_b64
       use_github_value = true
       gke_access = [
         {
@@ -346,8 +357,8 @@ module "base" {
     # GCP secret name:  gerrit-admin-initial-password
     # WI to GKE at ns/gerrit/sa/gerrit-sa.
     s9 = {
-      secret_id        = "gerritAdminInitialPassword"
-      value            = var.sdv_gh_gerrit_admin_initial_password
+      secret_id        = "gerritAdminInitialPasswordB64"
+      value            = var.sdv_gh_gerrit_admin_initial_password_b64
       use_github_value = true
       gke_access = [
         {
@@ -359,8 +370,8 @@ module "base" {
     # GCP secret name:  gh-gerrit-admin-private-key
     # WI to GKE at ns/gerrit/sa/gerrit-sa.
     s10 = {
-      secret_id        = "gerritAdminPrivateKey"
-      value            = var.sdv_gh_gerrit_admin_private_key
+      secret_id        = "gerritAdminPrivateKeyB64"
+      value            = var.sdv_gh_gerrit_admin_private_key_b64
       use_github_value = true
       gke_access = [
         {
@@ -372,8 +383,8 @@ module "base" {
     # GCP secret name:  gh-keycloak-horizon-admin-password
     # WI to GKE at ns/jenkins/sa/jenkins-sa.
     s11 = {
-      secret_id        = "keycloakHorizonAdminPassword"
-      value            = var.sdv_gh_keycloak_horizon_admin_password
+      secret_id        = "keycloakHorizonAdminPasswordB64"
+      value            = var.sdv_gh_keycloak_horizon_admin_password_b64
       use_github_value = true
       gke_access = [
         {
@@ -385,8 +396,8 @@ module "base" {
     # GCP secret name:  gh-cuttlefish-vm-ssh-private-key
     # WI to GKE at ns/jenkins/sa/jenkins-sa.
     s12 = {
-      secret_id        = "jenkinsCuttlefishVmSshPrivateKey"
-      value            = var.sdv_gh_cuttlefish_vm_ssh_private_key
+      secret_id        = "jenkinsCuttlefishVmSshPrivateKeyB64"
+      value            = var.sdv_gh_cuttlefish_vm_ssh_private_key_b64
       use_github_value = true
       gke_access = [
         {
@@ -409,8 +420,8 @@ module "base" {
       ]
     }
     s14 = {
-      secret_id        = "grafanaInitialPassword"
-      value            = var.sdv_gh_grafana_initial_password
+      secret_id        = "grafanaInitialPasswordB64"
+      value            = var.sdv_gh_grafana_initial_password_b64
       use_github_value = true
       gke_access = [
         {
@@ -428,17 +439,17 @@ module "base" {
     echo $GITHUB_REPO_NAME
     export GITHUB_ENV_NAME=${var.sdv_gh_env_name}
     echo $GITHUB_ENV_NAME
-    export GITHUB_DOMAIN_NAME=${var.sdv_gh_domain_name}
+    export GITHUB_DOMAIN_NAME=${local.decoded.domain_name}
     echo $GITHUB_DOMAIN_NAME
-    export GCP_PROJECT_ID=${var.sdv_gcp_project_id}
+    export GCP_PROJECT_ID=${local.decoded.project_id}
     echo $GCP_PROJECT_ID
-    export GCP_COMPUTER_SA=${var.sdv_computer_sa}
+    export GCP_COMPUTER_SA=${local.decoded.computer_sa}
     echo $GCP_COMPUTER_SA
-    export GCP_CLOUD_REGION=${var.sdv_gcp_cloud_region}
+    export GCP_CLOUD_REGION=${local.decoded.region}
     echo $GCP_CLOUD_REGION
-    export GCP_CLOUD_ZONE=${var.sdv_gcp_cloud_zone}
+    export GCP_CLOUD_ZONE=${local.decoded.zone}
     echo $GCP_CLOUD_ZONE
-    export GCP_BACKEND_BUCKET_NAME=${var.sdv_gcp_backend_bucket_name}
+    export GCP_BACKEND_BUCKET_NAME=${local.decoded.bucket_name}
     echo $GCP_BACKEND_BUCKET_NAME
     cd bash-scripts
     chmod +x stage1.sh

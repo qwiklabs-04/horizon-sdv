@@ -41,6 +41,7 @@ declare -r wifilogfile="${WORKSPACE}"/wifi_connection_status.log
 
 # Download CVD host package and Cuttlefish AVD artifacts
 function cuttlefish_extract_artifacts() {
+    sudo rm -rf "${HOME}"/cf
     mkdir -p "${HOME}"/cf
     cd "${HOME}"/cf || exit
 

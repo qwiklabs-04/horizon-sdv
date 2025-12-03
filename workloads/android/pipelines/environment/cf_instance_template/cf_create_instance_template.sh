@@ -377,8 +377,8 @@ function install_host_tools() {
         sleep 1m
     done
 
+    gcloud compute ssh --quiet --zone="${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" --command="" --ssh-flag="-T" >/dev/null 2>&1 || true
     echo -e "${GREEN}Create CF directory for scripts${NC}"
-    gcloud compute ssh --quiet --zone="${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" --command=""
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" \
         --command='mkdir -p cf' >/dev/null &
     progress_spinner "$!"
@@ -410,14 +410,14 @@ function install_host_tools() {
     fi
     echo -e "${GREEN}Installing CF host completed.${NC}"
 
+    gcloud compute ssh --quiet --zone="${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" --command="sudo ufw allow 22 || true" --ssh-flag="-T"  >/dev/null 2>&1|| true
     echo -e "${GREEN}Copying ${CUTTLEFISH_LATEST_SHA1_FILENAME}${NC}"
     gcloud compute scp "${vm_base_instance}":~/"${CUTTLEFISH_LATEST_SHA1_FILENAME}" "${WORKSPACE}"/ --zone="${ZONE}" \
-         --tunnel-through-iap --project "${PROJECT}" >/dev/null &
-    progress_spinner "$!"
+         --tunnel-through-iap --project "${PROJECT}" >/dev/null 2>&1 || true
 
     echo -e "${GREEN}Cleanup CF host files.${NC}"
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" \
-        --command="rm -rf ~/cf" >/dev/null 2>&1 || true
+        --command="rm -rf ~/cf && sudo ufw allow 22 || true" >/dev/null 2>&1 || true
 
     # Alternative to reboot instance. Must be rebooted/restarted to ensure
     # user/groups are applied correctly before image is created from the
@@ -469,7 +469,7 @@ function create_ssh_key() {
     echo -e "${GREEN}SSH Public key:${NC}"
     cat "${JENKINS_SSH_PUB_KEY_FILE}"
 
-    gcloud compute ssh --quiet --zone="${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" --command=""
+    gcloud compute ssh --quiet --zone="${ZONE}" "${vm_base_instance}" --tunnel-through-iap --project "${PROJECT}" --command="" --ssh-flag="-T" || true
     gcloud compute ssh --zone "${ZONE}" "${vm_base_instance}" --tunnel-through-iap \
         --project "${PROJECT}" \
         --command='sudo rm -rf /home/jenkins/.ssh && sudo mkdir /home/jenkins/.ssh && sudo chmod 700 /home/jenkins/.ssh && sudo chown jenkins:jenkins /home/jenkins/.ssh' >/dev/null &

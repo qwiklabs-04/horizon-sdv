@@ -80,7 +80,8 @@ spec:
   data:
     - secretKey: privatekey
       remoteRef:
-        key: gerritAdminPrivateKey
+        key: gerritAdminPrivateKeyB64
+        decodingStrategy: Base64
 ---
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
@@ -100,4 +101,5 @@ spec:
   data:
     - secretKey: privateKey
       remoteRef:
-        key: gerritAdminPrivateKey
+        key: gerritAdminPrivateKeyB64
+        decodingStrategy: Base64

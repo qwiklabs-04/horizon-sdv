@@ -51,11 +51,9 @@ The Android revision, i.e. branch or tag to build. Tested versions are below:
 
 - `horizon/android-14.0.0_r30` (ap1a)
 - `horizon/android-15.0.0_r36` (bp1a)
-- `horizon/android-16.0.0_r2` (bp2a)
 - `horizon/android-16.0.0_r3` (bp3a - default)
 - `android-14.0.0_r30` (ap1a)
 - `android-15.0.0_r36` (bp1a)
-- `android-16.0.0_r2` (bp2a)
 - `android-16.0.0_r3` (bp3a)
 
 ### `AAOS_LUNCH_TARGET` <a name="targets"></a>
@@ -69,19 +67,15 @@ Examples:
 - Virtual Devices:
     -   `sdk_car_x86_64-ap1a-userdebug` (`android-14.0.0_r30`)
     -   `sdk_car_x86_64-bp1a-userdebug` (`android-15.0.0_r36` )
-    -   `sdk_car_x86_64-bp2a-userdebug` (`android-16.0.0_r2`)
     -   `sdk_car_x86_64-bp3a-userdebug` (`android-16.0.0_r3`)
     -   `sdk_car_arm64-ap1a-userdebug` (`android-14.0.0_r30`)
     -   `sdk_car_arm64-bp1a-userdebug` (`android-15.0.0_r36` )
-    -   `sdk_car_arm64-bp2a-userdebug` (`android-16.0.0_r2`)
     -   `sdk_car_arm64-bp3a-userdebug` (`android-16.0.0_r3`)
     -   `aosp_cf_x86_64_auto-ap1a-userdebug` (`android-14.0.0_r30`)
     -   `aosp_cf_x86_64_auto-bp1a-userdebug` (`android-15.0.0_r36` )
-    -   `aosp_cf_x86_64_auto-bp2a-userdebug` (`android-16.0.0_r2`)
     -   `aosp_cf_x86_64_auto-bp3a-userdebug` (`android-16.0.0_r3`)
     -   `aosp_cf_arm64_auto-ap1a-userdebug` (`android-14.0.0_r30`)
     -   `aosp_cf_arm64_auto-bp1a-userdebug` (`android-15.0.0_r36` )
-    -   `aosp_cf_arm64_auto-bp2a-userdebug` (`android-16.0.0_r2`)
     -   `aosp_cf_arm64_auto-bp3a-userdebug` (`android-16.0.0_r3`)
 -   Pixel Devices:
     -   `aosp_tangorpro_car-ap1a-userdebug` (`android-14.0.0_r30`)

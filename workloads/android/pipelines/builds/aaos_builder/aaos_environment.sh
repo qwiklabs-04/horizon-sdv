@@ -338,11 +338,11 @@ case "${AAOS_LUNCH_TARGET}" in
                     "curl -o .repo/local_manifests/remove_projects.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-15.0/remove_projects.xml"
                 )
                 ;;
-            *bp2a*|*bp3a*)
-                # bp2a/bp3a fallthrough: android-16.0.0_r2/r3
+            *bp3a*)
+                # bp3a fallthrough: android-16.0.0_r2/r3
                 POST_REPO_INITIALISE_COMMANDS_LIST=(
-                    "curl -o .repo/local_manifests/manifest_brcm_rpi.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-16.0/manifest_brcm_rpi.xml --create-dirs"
-                    "curl -o .repo/local_manifests/remove_projects.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-16.0/remove_projects.xml"
+                    "curl -o .repo/local_manifests/manifest_brcm_rpi.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-16.0.0_r3/manifest_brcm_rpi.xml --create-dirs"
+                    "curl -o .repo/local_manifests/remove_projects.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-16.0.0_r3/remove_projects.xml"
                 )
                 ;;
         esac
@@ -442,7 +442,7 @@ case "${AAOS_LUNCH_TARGET}" in
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
                 )
                 ;;
-            *bp2a*|*bp3a*)
+            *bp3a*)
                 echo -e "\033[1;31mTAA-1094: ${AAOS_LUNCH_TARGET} is not currently supported on ${AAOS_REVISION}!\033[0m"
                 exit 1
                 ;;

@@ -38,11 +38,9 @@ The Android revision, i.e. branch or tag to build. Tested versions are below:
 
 - `horizon/android-14.0.0_r30` (ap1a)
 - `horizon/android-15.0.0_r36` (bp1a)
-- `horizon/android-16.0.0_r2` (bp2a)
 - `horizon/android-16.0.0_r3` (bp3a  - default)
 - `android-14.0.0_r30` (ap1a)
 - `android-15.0.0_r36` (bp1a)
-- `android-16.0.0_r2` (bp2a)
 - `android-16.0.0_r3` (bp3a)
 
 ### `ANDROID_VERSION`

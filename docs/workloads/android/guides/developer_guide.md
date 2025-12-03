@@ -2013,7 +2013,7 @@ This example shows you how to update an existing manifest to include a new forke
 
 #### <span style="color:#335bff">7.3.3 Gerrit Triggers <a name="7-3-3-gerrit-triggers"></a></span>
 
-If user decides to utilise more than the default set of forked branches/tags identified earlier, they must update the Gerrit Build job in the OSS repo, see `workloads/android/pipelines/builds/gerrit/Jenkinsfile` and the logic to determine the build version (e.g. `ap1a`, `ap2a` …. `bp1a`, `bp2a`, `bp3a`). The logic is vital for the job to determine the lunch target name vs android revision.
+If user decides to utilise more than the default set of forked branches/tags identified earlier, they must update the Gerrit Build job in the OSS repo, see `workloads/android/pipelines/builds/gerrit/Jenkinsfile` and the logic to determine the build version (e.g. `ap1a`, `ap2a` …. `bp1a`, `bp3a`). The logic is vital for the job to determine the lunch target name vs android revision.
 
 Gerrit triggers are based on a single project/repo build, i.e. build one component change. There is currently no support for cross/multi project changes such as those identified by topic. Support for topic and multi-repo changes may be provided in the next release.
 

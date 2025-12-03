@@ -195,11 +195,9 @@ pipeline {
                   env.ANDROID_VERSION=14
                   if ( "${env.GERRIT_BRANCH}" =~ "android-14.0.0_r30" ) env.ANDROID_BUILD_ID="ap1a-"
                   if ( "${env.GERRIT_BRANCH}" =~ "android-15.0.0_r36" ) env.ANDROID_BUILD_ID="bp1a-"
-                  if ( "${env.GERRIT_BRANCH}" =~ "android-16.0.0_r2" ) env.ANDROID_BUILD_ID="bp2a-"
                   if ( "${env.GERRIT_BRANCH}" =~ "android-16.0.0_r3" ) env.ANDROID_BUILD_ID="bp3a-"
 
                   if ( "$ANDROID_BUILD_ID" =~ "bp1a" ) env.ANDROID_VERSION=15
-                  if ( "$ANDROID_BUILD_ID" =~ "bp2a" ) env.ANDROID_VERSION=16
                   if ( "$ANDROID_BUILD_ID" =~ "bp3a" ) env.ANDROID_VERSION=16
                 }
                 sh '''

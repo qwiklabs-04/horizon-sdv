@@ -93,7 +93,7 @@ cvdPipeline(
                 keepAll: true,
                 reportDir: "android-cts-results-html",
                 reportFiles: 'test_result_failures_suite.html',
-                reportName: 'CTS Test Failures'
+                reportName: 'CTS Results'
               ]
             }
           } else {

@@ -148,7 +148,7 @@ controller:
     - job-dsl:1.93
     - keycloak:2.3.2
     - kubernetes-credentials-provider:1.299.v610fa_e76761a_
-    - kubernetes:4392.v19cea_fdb_5913
+    - kubernetes:4398.vb_b_33d9e7fe23
     - parameter-separator:296.v9b_a_90c81160d
     - pipeline-stage-view:2.38
     - role-strategy:848.va_a_ea_673cf0b_c

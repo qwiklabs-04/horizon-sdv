@@ -289,7 +289,7 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
 
     stringParam {
       name('ZONE')
-      defaultValue("us-central1-b")
+      defaultValue("us-central1-f")
       description('''<p>ARM64 zone or leave blank to use default platform value.</p>''')
       trim(true)
     }

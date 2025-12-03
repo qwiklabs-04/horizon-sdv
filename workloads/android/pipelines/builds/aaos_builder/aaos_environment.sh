@@ -339,12 +339,18 @@ case "${AAOS_LUNCH_TARGET}" in
                 )
                 ;;
             *bp3a*)
-                # bp3a fallthrough: android-16.0.0_r2/r3
+                # bp3a fallthrough: android-16.0.0_r3
                 POST_REPO_INITIALISE_COMMANDS_LIST=(
                     "curl -o .repo/local_manifests/manifest_brcm_rpi.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-16.0.0_r3/manifest_brcm_rpi.xml --create-dirs"
                     "curl -o .repo/local_manifests/remove_projects.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-16.0.0_r3/remove_projects.xml"
                 )
                 ;;
+            *bp4a*)
+                # bp3a fallthrough: android-16.0.0_r4
+                POST_REPO_INITIALISE_COMMANDS_LIST=(
+                    "curl -o .repo/local_manifests/manifest_brcm_rpi.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-16.0/manifest_brcm_rpi.xml --create-dirs"
+                    "curl -o .repo/local_manifests/remove_projects.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-16.0/remove_projects.xml"
+                )
         esac
 
         # Clean up the manifests to avoid issues when versions change.

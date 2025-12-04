@@ -301,7 +301,6 @@ jobs:
           echo "TF_VAR_sdv_gh_keycloak_initial_password_b64=${{ steps.encode-initial-password-b64.outputs.keycloak_initial_password_b64 }}" >> $GITHUB_ENV
 
           #TF_VAR_Vars
-          echo "TF_VAR_features_bare_metal_arm64_b64=${{ steps.encode-initial-password-b64.outputs.features_bare_metal_arm64_b64 }}" >> $GITHUB_ENV;
           echo "TF_VAR_sdv_computer_sa_b64=${{ steps.encode-initial-password-b64.outputs.gcp_computer_sa_b64 }}" >> $GITHUB_ENV;
           echo "TF_VAR_sdv_gcp_backend_bucket_name_b64=${{ steps.encode-initial-password-b64.outputs.gcp_backend_bucket_name_b64 }}" >> $GITHUB_ENV;
           echo "TF_VAR_sdv_gcp_cloud_region_b64=${{ steps.encode-initial-password-b64.outputs.gcp_cloud_region_b64 }}" >> $GITHUB_ENV;
@@ -354,10 +353,11 @@ jobs:
             echo "VARS=false" >> $GITHUB_ENV;
           fi
 
-          # Decode the base64 ARM64 flag
-          ARM64_RAW=$(echo "$TF_VAR_features_bare_metal_arm64_b64" | base64 --decode)
+          # Decode FEATURES_BARE_METAL_ARM64 and set TF_VAR_enable_arm64
+          ARM64_B64="${{ steps.encode-initial-password-b64.outputs.features_bare_metal_arm64_b64 }}"
+          ARM64_RAW=$(echo "$ARM64_B64" | base64 --decode | tr -d '[:space:]')
 
-          # Convert decoded string to real boolean for Terraform
+          # Convert to Terraform boolean
           if [[ "$ARM64_RAW" == "true" ]]; then
             echo "TF_VAR_enable_arm64=true" >> $GITHUB_ENV
           else

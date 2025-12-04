@@ -240,8 +240,7 @@ spec:
   data:
     - secretKey: jenkins-admin-password
       remoteRef:
-        key: jenkinsInitialPasswordB64
-        decodingStrategy: Base64
+        key: jenkinsInitialPassword
 ---
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
@@ -261,12 +260,10 @@ spec:
   data:
     - secretKey: appID
       remoteRef:
-        key: githubAppIDB64
-        decodingStrategy: Base64
+        key: githubAppID
     - secretKey: privateKey
       remoteRef:
-        key: githubAppPrivateKeyPKCS8B64
-        decodingStrategy: Base64
+        key: githubAppPrivateKeyPKCS8
 ---
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
@@ -306,8 +303,7 @@ spec:
   data:
     - secretKey: privateKey
       remoteRef:
-        key: jenkinsCuttlefishVmSshPrivateKeyB64
-        decodingStrategy: Base64
+        key: jenkinsCuttlefishVmSshPrivateKey
 ---
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret

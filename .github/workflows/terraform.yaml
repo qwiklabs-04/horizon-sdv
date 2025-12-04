@@ -153,27 +153,14 @@ jobs:
         env:
           GH_APP_KEY: ${{ secrets.gh-app-key }}
         run: |
-          # Convert the GitHub App private key to PKCS#8 format
           echo "$GH_APP_KEY" | openssl pkcs8 -topk8 -nocrypt -outform PEM > key.pem
-
           PKCS8_KEY=$(<key.pem)
-          GH_APP_KEY_B64=$(printf '%s' "$GH_APP_KEY" | base64 -w0)
-          PKCS8_KEY_B64=$(printf '%s' "$PKCS8_KEY" | base64 -w0)
-
           while IFS= read -r each_line; do
             echo "::add-mask::$each_line"
           done <<< "$PKCS8_KEY"
-
-          echo "::add-mask::$GH_APP_KEY_B64"
-          echo "::add-mask::$PKCS8_KEY_B64"
-
-          {
-            echo "TF_VAR_sdv_gh_app_key_pkcs8<<EOF"
-            echo "$PKCS8_KEY"
-            echo "EOF"
-            echo "TF_VAR_sdv_gh_app_key_b64=$GH_APP_KEY_B64"
-            echo "TF_VAR_sdv_gh_app_key_pkcs8_b64=$PKCS8_KEY_B64"
-          } >> $GITHUB_ENV
+          echo "TF_VAR_sdv_gh_app_key_pkcs8<<EOF" >> $GITHUB_ENV
+          echo "$PKCS8_KEY" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Generate encoded argocd bcrypt hash
         id: generate-encoded-argocd-bcrypt-hash
@@ -185,100 +172,13 @@ jobs:
 
           # Generate bcrypt hash for argocd password
           HASH=$(./argocd account bcrypt --password "${{ secrets.gh-argocd-initial-password }}")
-
           # Encode the hash with base64
           ENCODED_HASH=$(echo -n "$HASH" | base64 -w0)
-
-          # Mask output value
-          echo "::add-mask::${ENCODED_HASH}"
-
           # Save the encoded hash as an output variable
-          echo "argocd_bcrypt_b64=$ENCODED_HASH" >> $GITHUB_OUTPUT
-          
+          echo "argocd_encoded_bcrypt_hash=$ENCODED_HASH" >> $GITHUB_OUTPUT
+
           # Clean up the downloaded binary
           rm argocd
-
-      - name: Encode password (base64)
-        id: encode-initial-password-b64
-        shell: bash
-        env:
-          #Github_Secrets
-          CUTTLEFISH_VM_SSH_PRIVATE_KEY: ${{ secrets.gh-cuttlefish-vm-ssh-private-key }}
-          GERRIT_ADMIN_PRIVATE_KEY: ${{ secrets.gh-gerrit-admin-private-key }}
-          GERRIT_RAW_SECRET: ${{ secrets.gh-gerrit-admin-initial-password }}
-          GH_APP_ID: ${{ secrets.gh-app-id }}
-          GH_INSTALLATION_ID: ${{ secrets.gh-installation-id }}
-          GRAFANA_RAW_SECRET: ${{ secrets.gh-grafana-initial-password }}
-          JENKINS_RAW_SECRET: ${{ secrets.gh-jenkins-initial-password }}
-          KEYCLOAK_HORIZON_RAW_SECRET: ${{ secrets.gh-keycloak-horizon-admin-password }}
-          KEYCLOAK_RAW_SECRET: ${{ secrets.gh-keycloak-initial-password }}
-          #Github_Variables
-          FEATURES_BARE_METAL_ARM64: ${{ vars.FEATURES_BARE_METAL_ARM64 }}
-          GCP_BACKEND_BUCKET_NAME: ${{ vars.GCP_BACKEND_BUCKET_NAME }}
-          GCP_CLOUD_REGION: ${{ vars.GCP_CLOUD_REGION }}
-          GCP_CLOUD_ZONE: ${{ vars.GCP_CLOUD_ZONE }}
-          GCP_COMPUTER_SA: ${{ vars.GCP_COMPUTER_SA }}
-          HORIZON_DOMAIN: ${{ vars.HORIZON_DOMAIN }}
-          PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
-
-        run: |
-          set -euo pipefail
-
-          vars=(
-            #Github_Secrets
-            CUTTLEFISH_VM_SSH_PRIVATE_KEY
-            GERRIT_ADMIN_PRIVATE_KEY
-            GERRIT_RAW_SECRET
-            GH_APP_ID
-            GH_INSTALLATION_ID
-            GRAFANA_RAW_SECRET
-            JENKINS_RAW_SECRET
-            KEYCLOAK_HORIZON_RAW_SECRET
-            KEYCLOAK_RAW_SECRET
-            #Github_Vars
-            FEATURES_BARE_METAL_ARM64
-            GCP_BACKEND_BUCKET_NAME
-            GCP_CLOUD_REGION
-            GCP_CLOUD_ZONE
-            GCP_COMPUTER_SA
-            HORIZON_DOMAIN
-            PROJECT_ID
-          )
-
-          for v in "${vars[@]}"; do
-            raw_val="${!v}"
-            b64_val=$(printf '%s' "$raw_val" | base64 -w0)
-            eval "${v}_B64=\"$b64_val\""
-          done
-
-          mask_list=(
-            GERRIT_ADMIN_PRIVATE_KEY_B64
-            CUTTLEFISH_VM_SSH_PRIVATE_KEY_B64
-          )
-
-          for secret in "${mask_list[@]}"; do
-            echo "::add-mask::${!secret}"
-          done
-
-          #Github_Secrets
-          echo "cuttlefish_vm_ssh_private_key_b64=$CUTTLEFISH_VM_SSH_PRIVATE_KEY_B64" >> "$GITHUB_OUTPUT"
-          echo "gerrit_admin_initial_password_b64=$GERRIT_RAW_SECRET_B64" >> "$GITHUB_OUTPUT"
-          echo "gerrit_admin_private_key_b64=$GERRIT_ADMIN_PRIVATE_KEY_B64" >> "$GITHUB_OUTPUT"
-          echo "gh_app_id_b64=$GH_APP_ID_B64" >> "$GITHUB_OUTPUT"
-          echo "gh_installation_id_b64=$GH_INSTALLATION_ID_B64" >> "$GITHUB_OUTPUT"
-          echo "grafana_initial_password_b64=$GRAFANA_RAW_SECRET_B64" >> "$GITHUB_OUTPUT"
-          echo "jenkins_initial_password_b64=$JENKINS_RAW_SECRET_B64" >> "$GITHUB_OUTPUT"
-          echo "keycloak_horizon_admin_password_b64=$KEYCLOAK_HORIZON_RAW_SECRET_B64" >> "$GITHUB_OUTPUT"
-          echo "keycloak_initial_password_b64=$KEYCLOAK_RAW_SECRET_B64" >> "$GITHUB_OUTPUT"
-
-          #Github_Vars
-          echo "features_bare_metal_arm64_b64=$FEATURES_BARE_METAL_ARM64_B64" >> "$GITHUB_OUTPUT"
-          echo "gcp_backend_bucket_name_b64=$GCP_BACKEND_BUCKET_NAME_B64" >> "$GITHUB_OUTPUT"
-          echo "gcp_cloud_region_b64=$GCP_CLOUD_REGION_B64" >> "$GITHUB_OUTPUT"
-          echo "gcp_cloud_zone_b64=$GCP_CLOUD_ZONE_B64" >> "$GITHUB_OUTPUT"
-          echo "gcp_computer_sa_b64=$GCP_COMPUTER_SA_B64" >> "$GITHUB_OUTPUT"
-          echo "horizon_domain_b64=$HORIZON_DOMAIN_B64" >> "$GITHUB_OUTPUT"
-          echo "project_id_b64=$PROJECT_ID_B64" >> "$GITHUB_OUTPUT"
 
       - name: set environment variables
         id: set-vars
@@ -287,27 +187,30 @@ jobs:
           JSON_SECRETS: ${{ secrets.json-secrets }}
 
         run: |
-          #TF_VAR_Secrets
+          echo "TF_VAR_sdv_gh_app_id=${{ secrets.gh-app-id }}" >> $GITHUB_ENV;
+          echo "TF_VAR_sdv_gh_installation_id=${{ secrets.gh-installation-id }}" >> $GITHUB_ENV;
+          echo "TF_VAR_sdv_gh_app_key<<EOF" >> $GITHUB_ENV
+          echo  "${{ secrets.gh-app-key }}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          echo "TF_VAR_sdv_gh_gerrit_admin_private_key<<EOF">> $GITHUB_ENV
+          echo  "${{ secrets.gh-gerrit-admin-private-key }}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          echo "TF_VAR_sdv_gh_cuttlefish_vm_ssh_private_key<<EOF">> $GITHUB_ENV
+          echo  "${{ secrets.gh-cuttlefish-vm-ssh-private-key }}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          echo "TF_VAR_sdv_gh_argocd_initial_password_bcrypt=${{ steps.generate-encoded-argocd-bcrypt-hash.outputs.argocd_encoded_bcrypt_hash }}" >> $GITHUB_ENV
+          echo "TF_VAR_sdv_gh_jenkins_initial_password=${{ secrets.gh-jenkins-initial-password }}" >> $GITHUB_ENV
+          echo "TF_VAR_sdv_gh_keycloak_initial_password=${{ secrets.gh-keycloak-initial-password }}" >> $GITHUB_ENV
+          echo "TF_VAR_sdv_gh_grafana_initial_password=${{ secrets.gh-grafana-initial-password }}" >> $GITHUB_ENV
+          echo "TF_VAR_sdv_gh_gerrit_admin_initial_password=${{ secrets.gh-gerrit-admin-initial-password }}" >> $GITHUB_ENV
+          echo "TF_VAR_sdv_gh_keycloak_horizon_admin_password=${{ secrets.gh-keycloak-horizon-admin-password }}" >> $GITHUB_ENV
           echo "TF_VAR_sdv_gh_abfs_license_b64=${{ secrets.gh-abfs-license-b64 }}" >> $GITHUB_ENV
-          echo "TF_VAR_sdv_gh_app_id_b64=${{ steps.encode-initial-password-b64.outputs.gh_app_id_b64 }}" >> $GITHUB_ENV
-          echo "TF_VAR_sdv_gh_argocd_initial_password_bcrypt_b64=${{ steps.generate-encoded-argocd-bcrypt-hash.outputs.argocd_bcrypt_b64 }}" >> $GITHUB_ENV
-          echo "TF_VAR_sdv_gh_cuttlefish_vm_ssh_private_key_b64=${{ steps.encode-initial-password-b64.outputs.cuttlefish_vm_ssh_private_key_b64 }}" >> $GITHUB_ENV
-          echo "TF_VAR_sdv_gh_gerrit_admin_initial_password_b64=${{ steps.encode-initial-password-b64.outputs.gerrit_admin_initial_password_b64 }}" >> $GITHUB_ENV
-          echo "TF_VAR_sdv_gh_gerrit_admin_private_key_b64=${{ steps.encode-initial-password-b64.outputs.gerrit_admin_private_key_b64 }}" >> $GITHUB_ENV
-          echo "TF_VAR_sdv_gh_grafana_initial_password_b64=${{ steps.encode-initial-password-b64.outputs.grafana_initial_password_b64 }}" >> $GITHUB_ENV
-          echo "TF_VAR_sdv_gh_installation_id_b64=${{ steps.encode-initial-password-b64.outputs.gh_installation_id_b64 }}" >> $GITHUB_ENV
-          echo "TF_VAR_sdv_gh_jenkins_initial_password_b64=${{ steps.encode-initial-password-b64.outputs.jenkins_initial_password_b64 }}" >> $GITHUB_ENV
-          echo "TF_VAR_sdv_gh_keycloak_horizon_admin_password_b64=${{ steps.encode-initial-password-b64.outputs.keycloak_horizon_admin_password_b64 }}" >> $GITHUB_ENV
-          echo "TF_VAR_sdv_gh_keycloak_initial_password_b64=${{ steps.encode-initial-password-b64.outputs.keycloak_initial_password_b64 }}" >> $GITHUB_ENV
-
-          #TF_VAR_Vars
-          echo "TF_VAR_features_bare_metal_arm64_b64=${{ steps.encode-initial-password-b64.outputs.features_bare_metal_arm64_b64 }}" >> $GITHUB_ENV;
-          echo "TF_VAR_sdv_computer_sa_b64=${{ steps.encode-initial-password-b64.outputs.gcp_computer_sa_b64 }}" >> $GITHUB_ENV;
-          echo "TF_VAR_sdv_gcp_backend_bucket_name_b64=${{ steps.encode-initial-password-b64.outputs.gcp_backend_bucket_name_b64 }}" >> $GITHUB_ENV;
-          echo "TF_VAR_sdv_gcp_cloud_region_b64=${{ steps.encode-initial-password-b64.outputs.gcp_cloud_region_b64 }}" >> $GITHUB_ENV;
-          echo "TF_VAR_sdv_gcp_cloud_zone_b64=${{ steps.encode-initial-password-b64.outputs.gcp_cloud_zone_b64 }}" >> $GITHUB_ENV;
-          echo "TF_VAR_sdv_gcp_project_id_b64=${{ steps.encode-initial-password-b64.outputs.project_id_b64 }}" >> $GITHUB_ENV;
-          echo "TF_VAR_sdv_gh_domain_name_b64=${{ steps.encode-initial-password-b64.outputs.horizon_domain_b64 }}" >> $GITHUB_ENV;
+          echo "TF_VAR_sdv_gcp_project_id=${{ vars.GCP_PROJECT_ID }}" >> $GITHUB_ENV;
+          echo "TF_VAR_sdv_computer_sa=${{ vars.GCP_COMPUTER_SA }}" >> $GITHUB_ENV;
+          echo "TF_VAR_sdv_gcp_cloud_region=${{ vars.GCP_CLOUD_REGION }}" >> $GITHUB_ENV;
+          echo "TF_VAR_sdv_gcp_cloud_zone=${{ vars.GCP_CLOUD_ZONE }}" >> $GITHUB_ENV;
+          echo "TF_VAR_sdv_gcp_backend_bucket_name=${{ vars.GCP_BACKEND_BUCKET_NAME }}" >> $GITHUB_ENV;
+          echo "TF_VAR_sdv_gh_domain_name=${{ vars.HORIZON_DOMAIN }}" >> $GITHUB_ENV;
 
           if [[ "${{ secrets.gcp-sa }}" != '' && "${{ secrets.wif-provider }}" != '' ]]; then
             echo "GCP_SA=${{ secrets.gcp-sa }}" >> $GITHUB_ENV;
@@ -354,14 +257,10 @@ jobs:
             echo "VARS=false" >> $GITHUB_ENV;
           fi
 
-          # Decode the base64 ARM64 flag
-          ARM64_RAW=$(echo "$TF_VAR_features_bare_metal_arm64_b64" | base64 --decode)
-
-          # Convert decoded string to real boolean for Terraform
-          if [[ "$ARM64_RAW" == "true" ]]; then
-            echo "TF_VAR_enable_arm64=true" >> $GITHUB_ENV
+          if [[ ! -z "${{ vars.FEATURES_BARE_METAL_ARM64 }}" ]]; then
+             echo "TF_VAR_enable_arm64=${{ vars.FEATURES_BARE_METAL_ARM64 }}" >> $GITHUB_ENV
           else
-            echo "TF_VAR_enable_arm64=false" >> $GITHUB_ENV
+             echo "TF_VAR_enable_arm64=false" >> $GITHUB_ENV
           fi
 
       - name: Get Terraform fetcher GitHub App token

@@ -115,8 +115,7 @@ spec:
   data:
     - secretKey: password
       remoteRef:
-        key: keycloakInitialPasswordB64
-        decodingStrategy: Base64
+        key: keycloakInitialPassword
 ---
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
@@ -136,8 +135,7 @@ spec:
   data:
     - secretKey: password
       remoteRef:
-        key: keycloakHorizonAdminPasswordB64
-        decodingStrategy: Base64
+        key: keycloakHorizonAdminPassword
 ---
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
@@ -157,8 +155,7 @@ spec:
   data:
     - secretKey: password
       remoteRef:
-        key: gerritAdminInitialPasswordB64
-        decodingStrategy: Base64
+        key: gerritAdminInitialPassword
 ---
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
@@ -178,8 +175,7 @@ spec:
   data:
     - secretKey: password
       remoteRef:
-        key: jenkinsInitialPasswordB64
-        decodingStrategy: Base64
+        key: jenkinsInitialPassword
 ---
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
@@ -199,5 +195,6 @@ spec:
   data:
     - secretKey: password
       remoteRef:
-        key: grafanaInitialPasswordB64
-        decodingStrategy: Base64
+        key: grafanaInitialPassword
+
+

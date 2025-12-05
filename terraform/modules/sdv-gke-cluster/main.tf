@@ -80,7 +80,7 @@ resource "google_container_cluster" "sdv_cluster" {
 
   addons_config {
     http_load_balancing {
-      disabled = true
+      disabled = false
     }
     gcp_filestore_csi_driver_config {
       enabled = true

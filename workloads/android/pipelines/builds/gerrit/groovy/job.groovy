@@ -59,7 +59,7 @@ by performing builds on that patchset and providing the user with a vote to thei
   }
 
   // Delay to avoid multiple gerrit triggers for TOPIC related changes
-  quietPeriod(30)
+  quietPeriod(180)
 
   environmentVariables {
     env('GERRIT_REPO_SYNC_JOBS', '${REPO_SYNC_JOBS}')

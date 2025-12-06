@@ -36,7 +36,10 @@ pipelineJob('OpenBSW/Tests/POSIX') {
 ./posix/tools/can/bring-up-vcan0.sh</code></pre>
     <h4 style="margin-bottom: 10px;">Launch the Reference Application:</h4>
     <p>Starts the POSIX reference application console:</p>
-    <pre><code class="language-bash">./posix/build/posix/executables/referenceApp/application/Release/app.referenceApp.elf</code></pre>
+    <b>posix-freertos</b><br/>
+    <pre><code class="language-bash">./posix/build/posix-freertos/executables/referenceApp/application/Release/app.referenceApp.elf</code></pre>
+    <b>posix-threadx</b><br/>
+    <pre><code class="language-bash">./posix/build/posix-threadx/executables/referenceApp/application/Release/app.referenceApp.elf</code></pre>
     <ul>
       <li>Keep this running while testing.</li>
       <li>Stop with Ctrl+C when done.</li>

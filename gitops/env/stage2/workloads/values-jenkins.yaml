@@ -62,7 +62,7 @@ controller:
     - credentials-binding:702.vfe613e537e88
     - credentials:1453.v9b_a_29777a_b_fd
     - display-url-api:2.217.va_6b_de84cc74b_
-    - durable-task:635.v3733cef34b_5e
+    - durable-task:639.vefb_3d8372f6d
     - echarts-api:6.0.0-1165.vd1283a_3e37d4
     - eddsa-api:0.3.0.1-19.vc432d923e5ee
     - font-awesome-api:7.1.0-882.v1dfb_771e3278
@@ -119,7 +119,7 @@ controller:
     - sshd:3.374.v19b_d59ce6610
     - structs:362.va_b_695ef4fdf9
     - token-macro:477.vd4f0dc3cb_cf1
-    - trilead-api:2.209.v0e69b_c43c245
+    - trilead-api:2.284.v1974ea_324382
     - variant:70.va_d9f17f859e0
     - workflow-aggregator:608.v67378e9d3db_1
     - workflow-api:1384.vdc05a_48f535f
@@ -130,7 +130,7 @@ controller:
     - workflow-multibranch:821.vc3b_4ea_780798
     - workflow-scm-step:466.va_d69e602552b_
     - workflow-step-api:710.v3e456cc85233
-    - workflow-support:1004.veee3a_d67cdb_9
+    - workflow-support:1010.vb_b_39488a_9841
   additionalPlugins:
     - ansicolor:1.0.6
     - authorize-project:2.0.0

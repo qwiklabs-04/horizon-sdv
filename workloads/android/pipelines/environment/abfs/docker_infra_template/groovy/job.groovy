@@ -38,7 +38,8 @@ pipelineJob('Android/Environment/ABFS/Docker Infra Image Template') {
       defaultValue('debian:12')
       description('''<p>Define the Linux distribution to use, e.g.</p></br>
         <ul><li>debian:12</li>
-            <li>ubuntu:22.04</li></ul>''')
+            <li>ubuntu:22.04</li>
+            <li>ubuntu:jammy-20251203</li></ul>''')
       trim(true)
     }
     stringParam {

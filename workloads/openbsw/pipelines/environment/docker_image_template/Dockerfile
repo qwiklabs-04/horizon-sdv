@@ -18,7 +18,7 @@
 # necessary tools and dependencies required for building OpenBSW targets,
 # such as the ARM toolchain, CMake, Clang tools, and other utilities.
 
-# Allow user to choose distribution, e.g. ubuntu:22.04
+# Allow user to choose distribution, e.g. ubuntu:22.04, ubuntu:jammy-20251203
 ARG LINUX_DISTRIBUTION=22.04
 FROM ${LINUX_DISTRIBUTION}
 

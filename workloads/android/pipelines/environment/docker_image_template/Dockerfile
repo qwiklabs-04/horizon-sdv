@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Allow user to choose distribution, e.g. ubuntu:22.04
+# Allow user to choose distribution, e.g. ubuntu:22.04, ubuntu:jammy-20251203
 ARG LINUX_DISTRIBUTION=ubuntu:22.04
 FROM ${LINUX_DISTRIBUTION}
 

@@ -43,7 +43,7 @@ pipelineJob('Android/Environment/ABFS/Docker Image Template') {
       defaultValue('ubuntu:22.04')
       description('''<p>Define the Linux distribution to use, e.g.</p></br>
         <ul><li>ubuntu:22.04</li>
-            <li>ubuntu:20.04</li></ul>''')
+            <li>ubuntu:jammy-20251203</li></ul>''')
       trim(true)
     }
     stringParam {

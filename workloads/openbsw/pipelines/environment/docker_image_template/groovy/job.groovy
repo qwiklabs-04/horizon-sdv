@@ -74,7 +74,8 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
       name('LINUX_DISTRIBUTION')
       defaultValue('ubuntu:22.04')
       description('''<p>Define the Linux distribution to use, e.g.</p></br>
-        <ul><li>ubuntu:22.04</li></ul>''')
+        <ul><li>ubuntu:22.04</li>
+        <ul><li>ubuntu:jammy-20251203</li></ul>''')
       trim(true)
     }
     separator {

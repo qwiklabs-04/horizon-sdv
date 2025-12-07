@@ -412,9 +412,12 @@ pipeline {
       stages {
         stage ('Test: aosp_cf_x86_64_auto') {
           when {
-            anyOf {
-              expression { env.GERRIT_CHANGE_NUMBER }
-              expression { env.GERRIT_TOPIC }
+            allOf {
+              anyOf {
+                expression { env.GERRIT_CHANGE_NUMBER }
+                expression { env.GERRIT_TOPIC }
+              }
+              expression { currentBuild.currentResult == 'SUCCESS' }
             }
           }
           steps {

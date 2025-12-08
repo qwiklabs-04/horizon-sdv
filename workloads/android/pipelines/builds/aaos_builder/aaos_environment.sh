@@ -521,6 +521,8 @@ GERRIT_PROJECT=$(echo "${GERRIT_PROJECT}" | xargs)
 GERRIT_CHANGE_NUMBER=$(echo "${GERRIT_CHANGE_NUMBER}" | xargs)
 GERRIT_PATCHSET_NUMBER=$(echo "${GERRIT_PATCHSET_NUMBER}" | xargs)
 GERRIT_TOPIC=$(echo "${GERRIT_TOPIC}" | xargs)
+# Holds changes that will be used to provide vote on verified label.
+GERRIT_CHANGES_FILE="${ORIG_WORKSPACE}/gerrit-changes.txt"
 
 # Define artifact storage strategy and functions.
 AAOS_ARTIFACT_STORAGE_SOLUTION=${AAOS_ARTIFACT_STORAGE_SOLUTION:-"GCS_BUCKET"}

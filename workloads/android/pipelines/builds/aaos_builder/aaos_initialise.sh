@@ -130,10 +130,18 @@ function initialise_repo() {
 # Fetch and apply all changes based on GERRIT_TOPIC
 function fetch_from_topic() {
     echo "Fetching ${GERRIT_TOPIC}"
-    while IFS=$'\t' read -r project url ref; do
+
+    local createChangesFile=1
+    if [ -f "${GERRIT_CHANGES_FILE}" ]; then
+        echo "${GERRIT_CHANGES_FILE} exists, so do not replace."
+        createChangesFile=0
+    fi
+
+    while IFS=$'\t' read -r project url ref rev; do
         echo "Fetch Project: ${project}"
         echo "Fetch HTTP URL    : $url"
         echo "Fetch HTTP Ref    : $ref"
+        echo "Current Revision  | $rev"
 
         # Derive project path from manifest
         PROJECT_PATH=$(grep "name=\"${project}\"" .repo/manifests/default.xml | sed -r 's/.*path="([^"]+)".*/\1/')
@@ -146,6 +154,10 @@ function fetch_from_topic() {
             # Clean up so pv is not left in limbo (and thus removed)
             git cherry-pick --abort || true  && git reset --hard HEAD || true
             exit 1
+        else
+            if (( createChangesFile == 1 )); then
+                echo "$rev" | tee -a  "${GERRIT_CHANGES_FILE}"
+            fi
         fi
     done < <(curl -sS -u "${GERRIT_USERNAME}:${GERRIT_PASSWORD}" \
         "${GERRIT_SERVER_URL}/a/changes/?q=topic:${GERRIT_TOPIC}+status:open&o=CURRENT_REVISION" \
@@ -155,7 +167,10 @@ function fetch_from_topic() {
              then .revisions[.current_revision].fetch.http?
              else (.revisions | to_entries | first.value.fetch.http?)
              end) as $http |
-                 [$project, ($http.url // ""), ($http.ref // "")] | @tsv')
+                 [$project, ($http.url // ""), ($http.ref // ""), .current_revision] | @tsv')
+    echo "Changes ->"
+    cat "${GERRIT_CHANGES_FILE}"
+    echo "<-"
 }
 
 # Pull in change set from Gerrit.
@@ -219,6 +234,12 @@ function fetch_patchset() {
         then
             echo -e "\033[1;31mERROR: git fetch failed, exit!\033[0m"
             exit 1
+        fi
+
+        if [ -f "${GERRIT_CHANGES_FILE}" ]; then
+            echo "${GERRIT_CHANGES_FILE} exists, so do not replace."
+        else
+            echo "$GERRIT_CHANGE_ID" | tee -a  "${GERRIT_CHANGES_FILE}"
         fi
     fi
 }

@@ -212,6 +212,9 @@ pipeline {
                   git config --global url."https://${GERRIT_USERNAME}@${HORIZON_DOMAIN}/gerrit".insteadOf "https://${HORIZON_DOMAIN}/gerrit"
                   echo https://"${GERRIT_USERNAME}":"${GERRIT_PASSWORD}"@"${HORIZON_DOMAIN}/gerrit" > ~/.git-credentials
                 '''
+                sh '''
+                  rm -f "${WORKSPACE}"/gerrit-failed.txt
+                '''
               }
               archiveArtifacts artifacts: 'build_cache*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
             }
@@ -244,10 +247,20 @@ pipeline {
                     export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                     export USE_LOCAL_AOSP_MIRROR="${USE_LOCAL_AOSP_MIRROR}"
                     export MIRROR_DIR_FULL_PATH="${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/${AOSP_MIRROR_DIR_NAME}"
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh || true
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
+                    if ! ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh || \
+                       ! ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh || \
+                       ! ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh || \
+                       ! ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh; then
+                      export MESSAGE="Build $BUILD_URL: $AAOS_LUNCH_TARGET failed."
+                      touch "${WORKSPACE}"/gerrit-failed.txt
+                      export VOTE="-1"
+                      RESULT=1
+                    else
+                      export MESSAGE="Build $BUILD_URL: $AAOS_LUNCH_TARGET successful."
+                      RESULT=0
+                    fi
+                    ./workloads/android/pipelines/builds/gerrit/gerrit_review.sh || true
+                    exit $RESULT
                   '''
                   archiveArtifacts artifacts: '*artifacts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
                 }
@@ -282,10 +295,20 @@ pipeline {
                     export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                     export USE_LOCAL_AOSP_MIRROR="${USE_LOCAL_AOSP_MIRROR}"
                     export MIRROR_DIR_FULL_PATH="${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/${AOSP_MIRROR_DIR_NAME}"
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh || true
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
+                    if ! ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh || \
+                       ! ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh || \
+                       ! ./workloads/android/pipelines/builds/aaos_builder/aaos_avd_sdk.sh || \
+                       ! ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh; then
+                      export MESSAGE="Build $BUILD_URL: $AAOS_LUNCH_TARGET failed."
+                      touch "${WORKSPACE}"/gerrit-failed.txt
+                      export VOTE="-1"
+                      RESULT=1
+                    else
+                      export MESSAGE="Build $BUILD_URL: $AAOS_LUNCH_TARGET successful."
+                      RESULT=0
+                    fi
+                    ./workloads/android/pipelines/builds/gerrit/gerrit_review.sh || true
+                    exit $RESULT
                   '''
                   archiveArtifacts artifacts: '*artifacts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
                 }
@@ -319,9 +342,19 @@ pipeline {
                     export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                     export USE_LOCAL_AOSP_MIRROR="${USE_LOCAL_AOSP_MIRROR}"
                     export MIRROR_DIR_FULL_PATH="${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/${AOSP_MIRROR_DIR_NAME}"
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
+                    if ! ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh || \
+                       ! ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh || \
+                       ! ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh; then
+                      export MESSAGE="Build $BUILD_URL: $AAOS_LUNCH_TARGET failed."
+                      touch "${WORKSPACE}"/gerrit-failed.txt
+                      export VOTE="-1"
+                      RESULT=1
+                    else
+                      export MESSAGE="Build $BUILD_URL: $AAOS_LUNCH_TARGET successful."
+                      RESULT=0
+                    fi
+                    ./workloads/android/pipelines/builds/gerrit/gerrit_review.sh || true
+                    exit $RESULT
                   '''
                   archiveArtifacts artifacts: '*artifacts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
                 }
@@ -355,9 +388,26 @@ pipeline {
                     export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                     export USE_LOCAL_AOSP_MIRROR="${USE_LOCAL_AOSP_MIRROR}"
                     export MIRROR_DIR_FULL_PATH="${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/${AOSP_MIRROR_DIR_NAME}"
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
+                    if ! ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh || \
+                       ! ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh || \
+                       ! ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh; then
+                      export MESSAGE="Build $BUILD_URL: $AAOS_LUNCH_TARGET failed."
+                      touch "${WORKSPACE}"/gerrit-failed.txt
+                      RESULT=1
+                    else
+                      export MESSAGE="Build $BUILD_URL: $AAOS_LUNCH_TARGET successful."
+                      RESULT=0
+                    fi
+                    ./workloads/android/pipelines/builds/gerrit/gerrit_review.sh || true
+                    if [ -f "${WORKSPACE}"/gerrit-failed.txt ]; then
+                      export MESSAGE="Build failed: $BUILD_URL"
+                      export VOTE="-1"
+                    else
+                      export MESSAGE="Build successful: $BUILD_URL"
+                      export VOTE="+1"
+                    fi
+                    ./workloads/android/pipelines/builds/gerrit/gerrit_review.sh || true
+                    exit $RESULT
                   '''
                   archiveArtifacts artifacts: '*artifacts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
                 }
@@ -394,9 +444,26 @@ pipeline {
                     export REPO_SYNC_JOBS="${GERRIT_REPO_SYNC_JOBS}"
                     export USE_LOCAL_AOSP_MIRROR="${USE_LOCAL_AOSP_MIRROR}"
                     export MIRROR_DIR_FULL_PATH="${AOSP_MIRROR_PRESET_FILESTORE_PVC_MOUNT_PATH_IN_CONTAINER}/${AOSP_MIRROR_PRESET_MIRROR_ROOT_SUBDIR_NAME}/${AOSP_MIRROR_DIR_NAME}"
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh
-                    ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh
+                    if ! ./workloads/android/pipelines/builds/aaos_builder/aaos_initialise.sh || \
+                       ! ./workloads/android/pipelines/builds/aaos_builder/aaos_build.sh || \
+                       ! ./workloads/android/pipelines/builds/aaos_builder/aaos_storage.sh; then
+                      export MESSAGE="Build $BUILD_URL: $AAOS_LUNCH_TARGET failed."
+                      touch "${WORKSPACE}"/gerrit-failed.txt
+                      RESULT=1
+                    else
+                      export MESSAGE="Build $BUILD_URL: $AAOS_LUNCH_TARGET successful."
+                      RESULT=0
+                    fi
+                    ./workloads/android/pipelines/builds/gerrit/gerrit_review.sh || true
+                    if [ -f "${WORKSPACE}"/gerrit-failed.txt ]; then
+                      export MESSAGE="Build failed: $BUILD_URL"
+                      export VOTE="-1"
+                    else
+                      export MESSAGE="Build successful: $BUILD_URL"
+                      export VOTE="+1"
+                    fi
+                    ./workloads/android/pipelines/builds/gerrit/gerrit_review.sh || true
+                    exit $RESULT
                   '''
                   archiveArtifacts artifacts: '*artifacts*.txt', followSymlinks: false, onlyIfSuccessful: false, allowEmptyArchive: true
                 }

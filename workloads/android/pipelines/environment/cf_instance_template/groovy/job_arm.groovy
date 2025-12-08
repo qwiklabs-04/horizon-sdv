@@ -33,7 +33,7 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
       defaultValue('')
       description('''<p>The branch/tag version of Android Cuttlefish to use, e.g.</p>
         <ul>
-          <li>v1.31.0</li>
+          <li>v1.28.0</li>
           <li>main</li>
         </ul>
         <p>Reference: <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a></p>''')
@@ -62,9 +62,9 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
     stringParam {
       name('CUTTLEFISH_INSTANCE_UNIQUE_NAME')
       defaultValue('')
-      description('''<p>Optional parameter to define the unique name used for the instance template, e.g.  <i>cuttlefish-vm-instance-test-v1310</i><br/>
+      description('''<p>Optional parameter to define the unique name used for the instance template, e.g.  <i>cuttlefish-vm-instance-test-v1280</i><br/>
         Name must start with <i>cuttlefish-vm</i>, refer to docs for details on regex requirements for name.<br/>
-        Default: The name will be automatically derived from ANDROID_CUTTLEFISH_REVISION., e.g. <i>cuttlefish-vm-v1310</i><br/><br/></p>''')
+        Default: The name will be automatically derived from ANDROID_CUTTLEFISH_REVISION., e.g. <i>cuttlefish-vm-v1280</i><br/><br/></p>''')
       trim(true)
     }
 
@@ -155,11 +155,11 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
 
     stringParam {
       name('BOOT_DISK_SIZE')
-      defaultValue('500GB')
+      defaultValue('250GB')
       description('''<p>The boot disk size for the instance template image, e.g.</p>
         <ul>
-          <li>500GB</li>
           <li>250GB</li>
+          <li>500GB</li>
         </ul>
         <p>Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk=[PROPERTY=VALUE,…]</i></p>''')
       trim(true)

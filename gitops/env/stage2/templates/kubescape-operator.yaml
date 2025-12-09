@@ -27,7 +27,7 @@ spec:
     chart: kubescape-operator
     repoURL: https://kubescape.github.io/helm-charts/
     targetRevision:
-      { { .Values.config.applications.kubescape_operator.version } }
+      "{{ .Values.config.applications.kubescape_operator.version }}"
     helm:
       values: |
         clusterName: "gke_{{ .Values.config.projectID }}_{{ .Values.config.region }}_sdv-cluster"

@@ -35,7 +35,7 @@ pipelineJob('Android/Environment/Docker Image Template') {
     stringParam {
       name('IMAGE_TAG')
       defaultValue('latest')
-      description('''<p>Image tag for the builder image.</p>''')
+      description('''<p><b>Mandatory:</b> Image tag for the builder image.</p>''')
       trim(true)
     }
 
@@ -44,7 +44,8 @@ pipelineJob('Android/Environment/Docker Image Template') {
       defaultValue('ubuntu:22.04')
       description('''<p>Define the Linux distribution to use, e.g.</p></br>
         <ul><li>debian:12</li>
-            <li>ubuntu:22.04</li></ul>''')
+            <li>ubuntu:22.04</li>
+            <li>ubuntu:jammy-20251203</li></ul>''')
       trim(true)
     }
     stringParam {

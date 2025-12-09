@@ -43,6 +43,7 @@
 #  - GERRIT_PROJECT: the name of the project to download.
 #  - GERRIT_CHANGE_NUMBER: the change number of the changeset to download.
 #  - GERRIT_PATCHSET_NUMBER: the patchset number of the changeset to download.
+#  - GERRIT_TOPIC: the topic identifying the changes to fetch.
 #
 # Example usage:
 # AAOS_GERRIT_MANIFEST_URL=https://dev.horizon-sdv.scpmtk.com/android/platform/manifest \
@@ -126,9 +127,57 @@ function initialise_repo() {
     echo "SUCCESS: repo sync complete."
 }
 
+# Fetch and apply all changes based on GERRIT_TOPIC
+function fetch_from_topic() {
+    echo "Fetching ${GERRIT_TOPIC}"
+
+    local createChangesFile=1
+    if [ -f "${GERRIT_CHANGES_FILE}" ]; then
+        echo "${GERRIT_CHANGES_FILE} exists, so do not replace."
+        createChangesFile=0
+    fi
+
+    while IFS=$'\t' read -r project url ref rev; do
+        echo "Fetch Project: ${project}"
+        echo "Fetch HTTP URL    : $url"
+        echo "Fetch HTTP Ref    : $ref"
+        echo "Current Revision  | $rev"
+
+        # Derive project path from manifest
+        PROJECT_PATH=$(grep "name=\"${project}\"" .repo/manifests/default.xml | sed -r 's/.*path="([^"]+)".*/\1/')
+        # Create the command to apply the patchset from topic.
+        REPO_CMD="cd ${PROJECT_PATH} && git fetch ${url} ${ref} && git cherry-pick FETCH_HEAD && cd -"
+        echo "Running: ${REPO_CMD}"
+        if ! eval "${REPO_CMD}"
+        then
+            echo -e "\033[1;31mERROR: git fetch failed, exit!\033[0m"
+            # Clean up so pv is not left in limbo (and thus removed)
+            git cherry-pick --abort || true  && git reset --hard HEAD || true
+            exit 1
+        else
+            if (( createChangesFile == 1 )); then
+                echo "$rev" | tee -a  "${GERRIT_CHANGES_FILE}"
+            fi
+        fi
+    done < <(curl -sS -u "${GERRIT_USERNAME}:${GERRIT_PASSWORD}" \
+        "${GERRIT_SERVER_URL}/a/changes/?q=topic:${GERRIT_TOPIC}+status:open&o=CURRENT_REVISION" \
+        | sed '1d' | jq -r ' .[] |
+            .project as $project |
+            (if .current_revision != null
+             then .revisions[.current_revision].fetch.http?
+             else (.revisions | to_entries | first.value.fetch.http?)
+             end) as $http |
+                 [$project, ($http.url // ""), ($http.ref // ""), .current_revision] | @tsv')
+    echo "Changes ->"
+    cat "${GERRIT_CHANGES_FILE}"
+    echo "<-"
+}
+
 # Pull in change set from Gerrit.
 function fetch_patchset() {
-    if [[ -n "${GERRIT_PROJECT}" && -n "${GERRIT_CHANGE_NUMBER}" && -n "${GERRIT_PATCHSET_NUMBER}" ]]; then
+    if [[ -n "${GERRIT_TOPIC}" ]]; then
+        fetch_from_topic
+    elif [[ -n "${GERRIT_PROJECT}" && -n "${GERRIT_CHANGE_NUMBER}" && -n "${GERRIT_PATCHSET_NUMBER}" ]]; then
         if [[ "${ABFS_BUILDER}" == "false" ]]; then
             # Use standard git fetch to retrieve the change.
             # Find the project name from the manifest.
@@ -185,6 +234,12 @@ function fetch_patchset() {
         then
             echo -e "\033[1;31mERROR: git fetch failed, exit!\033[0m"
             exit 1
+        fi
+
+        if [ -f "${GERRIT_CHANGES_FILE}" ]; then
+            echo "${GERRIT_CHANGES_FILE} exists, so do not replace."
+        else
+            echo "$GERRIT_CHANGE_ID" | tee -a  "${GERRIT_CHANGES_FILE}"
         fi
     fi
 }

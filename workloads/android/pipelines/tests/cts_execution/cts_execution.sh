@@ -103,8 +103,14 @@ function cts_run() {
 function cts_store_results() {
     # Place in WORKSPACE for Jenkins artifact archive to store with job!
     rm -rf "${WORKSPACE}"/android-cts-results
-    cp -rf "${HOME}"/android-cts/results  "${WORKSPACE}"/android-cts-results
-    cp -f "${HOME}"/android-cts/results/latest/invocation_summary.txt  "${WORKSPACE}"/android-cts-results
+    cp -rf "${HOME}"/android-cts/results "${WORKSPACE}"/android-cts-results
+    cp -f "${HOME}"/android-cts/results/latest/invocation_summary.txt "${WORKSPACE}"/android-cts-results
+
+    # Publish HTML failures
+    mkdir -p "${WORKSPACE}"/android-cts-results-html
+    cp -f "${HOME}"/android-cts/results/latest/test_result_failures_suite.html "${WORKSPACE}"/android-cts-results-html || true
+    cp -f "${HOME}"/android-cts/results/latest/logo.png "${WORKSPACE}"/android-cts-results-html || true
+    cp -f "${HOME}"/android-cts/results/latest/compatibility_result.css "${WORKSPACE}"/android-cts-results-html || true
     # Clean up.
     rm -rf "${HOME}"/android-cts/results
 }

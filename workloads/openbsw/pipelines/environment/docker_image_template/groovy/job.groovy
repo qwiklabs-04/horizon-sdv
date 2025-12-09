@@ -41,7 +41,7 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
     stringParam {
       name('IMAGE_TAG')
       defaultValue("${OPENBSW_IMAGE_TAG}")
-      description('''<p>Docker image template to use.<p>
+      description('''<p><b>Mandatory:</b> Image tag for the builder image.</p>
         <p>Note: tag may only contain 'abcdefghijklmnopqrstuvwxyz0123456789_-./'</p>''')
       trim(true)
     }
@@ -74,7 +74,8 @@ pipelineJob('OpenBSW/Environment/Docker Image Template') {
       name('LINUX_DISTRIBUTION')
       defaultValue('ubuntu:22.04')
       description('''<p>Define the Linux distribution to use, e.g.</p></br>
-        <ul><li>ubuntu:22.04</li></ul>''')
+        <ul><li>ubuntu:22.04</li>
+        <ul><li>ubuntu:jammy-20251203</li></ul>''')
       trim(true)
     }
     separator {

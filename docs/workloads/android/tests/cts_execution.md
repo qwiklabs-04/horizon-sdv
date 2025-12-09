@@ -19,6 +19,11 @@ Note:
 - This pipeline offers the flexibility to run using a user-defined CTS suite (built by the `AAOS Builder` pipeline with `AAOS_BUILD_CTS` enabled) instead of the default Android 14, 15 and 16 CTS suites provided by google.
 - It allows user to enable MTK Connect should they wish to view the virtual devices during testing (e.g. useful for UI tests).
 - It allows users to keep the cuttlefish virtual devices alive for a certain amount of time after the CTS run has completed in order to facilitate debugging via MTK Connect. MTK Connect must be enabled for this option.
+- To view Test Results in Jenkins with CSS, you may wish to lower the [content security level](https://www.jenkins.io/doc/book/security/configuring-content-security-policy/) from `Script Console`, allowing the full HTML to be accessible, e.g. `System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "")`
+
+**Resources:**
+
+Ensure you select appropriate values for `NUM_INSTANCES`, `VM_CPUS`, `VM_MEMORY_MB` that align with the VM instance used for test, ie `JENKINS_GCE_CLOUD_LABEL`.
 
 ### References <a name="references"></a>
 
@@ -59,7 +64,7 @@ The URL must point to the bucket where the host packages and virtual devices ima
 - `cvd-host_package.tar.gz`
 - `osp_cf_x86_64_auto-img-builder.zip`
 
-URL is of the form `gs://<ANDROID_BUILD_BUCKET_ROOT_NAME>/Android/Builds/AAOS_Builder/<BUILD_NUMBER>` where `ANDROID_BUILD_BUCKET_ROOT_NAME` is a system environment variable defined in Jenkins CasC `jenkins.yaml` and `BUILD_NUMBER` is the Jenkins build number. Alternatively, `<STORAGE_BUCKET_DESTINATION>` if destination was overridden.
+URL is of the form `gs://<ANDROID_BUILD_BUCKET_ROOT_NAME>/Android/Builds/AAOS_Builder/<BUILD_NUMBER>` where `ANDROID_BUILD_BUCKET_ROOT_NAME` is a system environment variable defined in Jenkins CasC `values-jenkins.yaml` and `BUILD_NUMBER` is the Jenkins build number. Alternatively, `<STORAGE_BUCKET_DESTINATION>` if destination was overridden.
 
 ### `CUTTLEFISH_INSTALL_WIFI`
 
@@ -79,22 +84,21 @@ The URL must point to the bucket where the Android CTS archive is stored:
 
 - `android-cts.zip`
 
-URL is of the form `gs://<ANDROID_BUILD_BUCKET_ROOT_NAME>/Android/Builds/AAOS_Builder/<BUILD_NUMBER>/android-cts.zip` where `ANDROID_BUILD_BUCKET_ROOT_NAME` is a system environment variable defined in Jenkins CasC `jenkins.yaml` and `BUILD_NUMBER` is the Jenkins build number. Alternatively, `<STORAGE_BUCKET_DESTINATION>/android-cts.zip` if destination was overridden.
+URL is of the form `gs://<ANDROID_BUILD_BUCKET_ROOT_NAME>/Android/Builds/AAOS_Builder/<BUILD_NUMBER>/android-cts.zip` where `ANDROID_BUILD_BUCKET_ROOT_NAME` is a system environment variable defined in Jenkins CasC `values-jenkins.yaml` and `BUILD_NUMBER` is the Jenkins build number. Alternatively, `<STORAGE_BUCKET_DESTINATION>/android-cts.zip` if destination was overridden.
 
 ### `CTS_TESTPLAN`
 
+Mandatory.
+
 This defines the CTS test plan that will be run. Default is: `cts-system-virtual` which is only available in Android 15 and 16.
 
-Android 14 users should pick a test plan that is compatible with their version of Cuttlefish.
-
-Note: `cts-virtual-device-stable` was the previous default and takes less time than `cts-system-virtual`.
+Android 14 users should pick a test plan that is compatible with their version of Cuttlefish, e.g `cts-virtual-device-stable`.
 
 ### `CTS_MODULE`
 
 Optional.
 
-This defines the CTS test module that will be run. Default is: `CtsDeqpTestCases` but if field is left empty, all CTS test modules will be run.
-Note: `CtsHostsideNumberBlockingTestCases` is the previous default simply because it was quick.
+This defines the CTS test module that will be run, e.g. Android 14 `CtsHostsideNumberBlockingTestCases`, Android 15 and later, `CtsDeqpTestCases` but if field is left empty, all CTS test modules will be run.
 
 ### `CTS_RETRY_STRATEGY`
 
@@ -154,7 +158,10 @@ It is only applicable when `MTK_CONNECT_ENABLE` is enabled.
 
 ### `CVD_ADDITIONAL_FLAGS`
 
-Append additional flags to `cvd` command, e.g. --display0=width=1920,height=1080,dpi=160
+Append additional flags to `cvd` command, e.g.
+
+- `--setupwizard_mode DISABLED --enable_host_bluetooth false --gpu_mode guest_swiftshader`
+- `--display0=width=1920,height=1080,dpi=160`
 
 ## Example Usage <a name="examples"></a>
 
@@ -175,7 +182,7 @@ SHARD_COUNT=1 \
 
 There are a number of system environment variables that are unique to each platform but required by Jenkins build, test and environment pipelines.
 
-These are defined in Jenkins CasC `jenkins.yaml` and can be viewed in Jenkins UI under `Manage Jenkins` -> `System` -> `Global Properties` -> `Environment variables`.
+These are defined in Jenkins CasC `values-jenkins.yaml` and can be viewed in Jenkins UI under `Manage Jenkins` -> `System` -> `Global Properties` -> `Environment variables`.
 
 These are as follows:
 

@@ -1534,7 +1534,7 @@ ___
 
 - If you can’t wait for the Gerrit build to complete the SDK AVD and CF Virtual device builds, then you may run the build manually as per Foundation,
   - `Android Workflows` → `Builds` → `AAOS Builder` → `Build with Parameters`
-  - Define the `AAOS_LUNCH_TARGET` to build `aosp_cf_x86_64_auto-bp3a-userdebug` and update the `GERRIT_PROJECT`, `GERRIT_CHANGE_NUMBER` and `GERRIT_PATCHSET_NUMBER` parameters to identify the change you wish to include in the build (note that the required details are shown in the Gerrit build job that was triggered by the change), e.g.
+  - Define the `AAOS_LUNCH_TARGET` to build `aosp_cf_x86_64_auto-bp3a-userdebug` and update the `GERRIT_PROJECT`, `GERRIT_CHANGE_NUMBER` and `GERRIT_PATCHSET_NUMBER`, alternatively `GERRIT_TOPIC` parameters to identify the change you wish to include in the build (note that the required details are shown in the Gerrit build job that was triggered by the change), e.g.
 
     <img src="images/section.6/6.2.1_gerrit_build_params.png" width="200" />
 
@@ -1758,6 +1758,7 @@ This lab exercise shows how the user may override make commands, such as require
   - `GERRIT_PROJECT` `android/platform/hardware/interfaces`
   - `GERRIT_CHANGE_NUMBER` to the number of the change in Gerrit
   - `GERRIT_PATCHSET_NUMBER` to the patchset number of the change in Gerrit.<br/>
+  - `GERRIT_TOPIC` If more than a single change, use Gerrit Topic value.<br/>
      e.g.
 
      <img src="images/section.6/6.2.3_gerrit_parameters.png" width="200" />
@@ -2012,7 +2013,7 @@ This example shows you how to update an existing manifest to include a new forke
 
 #### <span style="color:#335bff">7.3.3 Gerrit Triggers <a name="7-3-3-gerrit-triggers"></a></span>
 
-If user decides to utilise more than the default set of forked branches/tags identified earlier, they must update the Gerrit Build job in the OSS repo, see `workloads/android/pipelines/builds/gerrit/Jenkinsfile` and the logic to determine the build version (e.g. `ap1a`, `ap2a` …. `bp1a`, `bp2a`, `bp3a`). The logic is vital for the job to determine the lunch target name vs android revision.
+If user decides to utilise more than the default set of forked branches/tags identified earlier, they must update the Gerrit Build job in the OSS repo, see `workloads/android/pipelines/builds/gerrit/Jenkinsfile` and the logic to determine the build version (e.g. `ap1a`, `ap2a` …. `bp1a`, `bp3a`). The logic is vital for the job to determine the lunch target name vs android revision.
 
 Gerrit triggers are based on a single project/repo build, i.e. build one component change. There is currently no support for cross/multi project changes such as those identified by topic. Support for topic and multi-repo changes may be provided in the next release.
 
@@ -2020,8 +2021,8 @@ Gerrit triggers are based on a single project/repo build, i.e. build one compone
 
 Cuttlefish instance templates are instances pre-installed with Android cuttlefish debian host packages, Android 14, 15 and 16 CTS, together with other tools required to launch CVD and run CTS tests. There are two instances we have created ahead of time:
 
+- `cuttlefish-vm-v1280` based on [android-cuttlefish.git v1.28.0 tag](https://github.com/google/android-cuttlefish/tree/v1.28.0)
 - `cuttlefish-vm-main` based on [android-cuttlefish.git main branch](https://github.com/google/android-cuttlefish/tree/main)
-- `cuttlefish-vm-v1320` based on [android-cuttlefish.git v1.32.0 tag](https://github.com/google/android-cuttlefish/tree/v1.32.0)
 
 Users may wish to create newer versions as the android-cuttlefish repo is updated and new tagged versions appear. This section describes how to create the instance templates and configure the test jobs to use those instances.
 
@@ -2059,7 +2060,7 @@ ___
 
 ___
 
-- Normally we define a new `computeEngine` entry, or replace an existing `computeEngine` entry within Jenkins CasC (`gitops/env/stage2/templates/jenkins.yaml` in the [horizon-sdv](https://github.com/googlecloudplatform/horizon-sdv) repo) and let ArgoCD deploy the change which will create the new cloud entry in Jenkins.
+- Normally we define a new `computeEngine` entry, or replace an existing `computeEngine` entry within Jenkins CasC (`gitops/env/stage2/workloads/values-jenkins.yaml` in the [horizon-sdv](https://github.com/googlecloudplatform/horizon-sdv) repo) and let ArgoCD deploy the change which will create the new cloud entry in Jenkins.
 - If you do not create in CasC the new cloud entry will not persist across Jenkins restarts.
 - For sake of time, for this exercise we will create a new cloud entry manually in Jenkins.
   - In Jenkins navigate to `Manage Jenkins` → `Clouds` → `New Cloud`
@@ -2101,7 +2102,7 @@ As per previous lab exercises, once the job transitions to the `Keep Devices Ali
 
 You may also repeat previous `CTS Execution` exercises but using `JENKINS_GCE_CLOUD_LABEL` `cuttlefish-vm-v120`, to verify CTS running on the virtual devices within that Cuttlefish VM instance.
 
-Feel free to experiment with `android-cuttlefish` revisions and also the CasC approach where cloud configuration is managed in `gitops/env/stage2/templates/jenkins.yaml`.
+Feel free to experiment with `android-cuttlefish` revisions and also the CasC approach where cloud configuration is managed in `gitops/env/stage2/workloads/values-jenkins.yaml`.
 
 ___
 
@@ -2126,7 +2127,7 @@ The table below shows the templates and machine types used for the Android workf
 
 <sup>1: Uses any available node: Horizon standard nodes are `n1-standard-4` shared across tools and platform.</sup><br/>
 <sup>2: Uses build nodes: `c2d-highcpu-112`</sup><br/>
-<sup>3: Uses test nodes: `n1-standard-64`</sup>
+<sup>3: Uses test nodes: `n2-standard-32`</sup>
 
 If users are interested in how these machine types are configured, then refer to the following within the OSS repo: [horizon-sdv](https://github.com/googlecloudplatform/horizon-sdv)
 
@@ -2146,7 +2147,7 @@ If users are interested in how these machine types are configured, then refer to
 - `./terraform/modules/base/variables.tf`: ` default     = "n1-standard-8"`
   - Requires GitHub actions to run the Terraform workflow to apply any changes.
 
-**Test Jobs: `n1-standard-64`**
+**Test Jobs: `n2-standard-32`**
 - This is part of the `Android Workflows` → `Environment` → `CF Instance Template` configuration.
 - Change `MACHINE_TYPE` parameter to the machine type you wish to use and regenerate the Instance Templates.
 

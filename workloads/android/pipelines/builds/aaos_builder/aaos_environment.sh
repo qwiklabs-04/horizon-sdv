@@ -49,6 +49,7 @@
 #  - GERRIT_PROJECT: the name of the project to download.
 #  - GERRIT_CHANGE_NUMBER: the change number of the changeset to download.
 #  - GERRIT_PATCHSET_NUMBER: the patchset number of the changeset to download.
+#  - GERRIT_TOPIC: the topic identifying the changes to fetch.
 #
 # If running standalone, only AAOS_CLEAN and AAOS_LUNCH_TARGET apply, eg.
 #
@@ -337,13 +338,19 @@ case "${AAOS_LUNCH_TARGET}" in
                     "curl -o .repo/local_manifests/remove_projects.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-15.0/remove_projects.xml"
                 )
                 ;;
-            *bp2a*|*bp3a*)
-                # bp2a/bp3a fallthrough: android-16.0.0_r2/r3
+            *bp3a*)
+                # bp3a fallthrough: android-16.0.0_r3
+                POST_REPO_INITIALISE_COMMANDS_LIST=(
+                    "curl -o .repo/local_manifests/manifest_brcm_rpi.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-16.0.0_r3/manifest_brcm_rpi.xml --create-dirs"
+                    "curl -o .repo/local_manifests/remove_projects.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-16.0.0_r3/remove_projects.xml"
+                )
+                ;;
+            *bp4a*)
+                # bp3a fallthrough: android-16.0.0_r4
                 POST_REPO_INITIALISE_COMMANDS_LIST=(
                     "curl -o .repo/local_manifests/manifest_brcm_rpi.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-16.0/manifest_brcm_rpi.xml --create-dirs"
                     "curl -o .repo/local_manifests/remove_projects.xml -L ${AAOS_GERRIT_RPI_MANIFEST_URL}/android-16.0/remove_projects.xml"
                 )
-                ;;
         esac
 
         # Clean up the manifests to avoid issues when versions change.
@@ -441,7 +448,7 @@ case "${AAOS_LUNCH_TARGET}" in
                     "tail -n +315 extract-google_devices-tangorpro.sh | tar -zxvf -"
                 )
                 ;;
-            *bp2a*|*bp3a*)
+            *bp3a*)
                 echo -e "\033[1;31mTAA-1094: ${AAOS_LUNCH_TARGET} is not currently supported on ${AAOS_REVISION}!\033[0m"
                 exit 1
                 ;;
@@ -513,6 +520,9 @@ GERRIT_SERVER_URL=${GERRIT_SERVER_URL%/}
 GERRIT_PROJECT=$(echo "${GERRIT_PROJECT}" | xargs)
 GERRIT_CHANGE_NUMBER=$(echo "${GERRIT_CHANGE_NUMBER}" | xargs)
 GERRIT_PATCHSET_NUMBER=$(echo "${GERRIT_PATCHSET_NUMBER}" | xargs)
+GERRIT_TOPIC=$(echo "${GERRIT_TOPIC}" | xargs)
+# Holds changes that will be used to provide vote on verified label.
+GERRIT_CHANGES_FILE="${ORIG_WORKSPACE}/gerrit-changes.txt"
 
 # Define artifact storage strategy and functions.
 AAOS_ARTIFACT_STORAGE_SOLUTION=${AAOS_ARTIFACT_STORAGE_SOLUTION:-"GCS_BUCKET"}
@@ -549,6 +559,7 @@ case "$0" in
             GERRIT_PROJECT=${GERRIT_PROJECT}
             GERRIT_CHANGE_NUMBER=${GERRIT_CHANGE_NUMBER}
             GERRIT_PATCHSET_NUMBER=${GERRIT_PATCHSET_NUMBER}
+            GERRIT_TOPIC=${GERRIT_TOPIC}
 
             USE_LOCAL_AOSP_MIRROR=${USE_LOCAL_AOSP_MIRROR}
             AOSP_MIRROR_DIR_NAME=${AOSP_MIRROR_DIR_NAME}

@@ -16,7 +16,13 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
     <br/><h3 style="margin-bottom: 10px;">GCE ARM64 Instance Template Creation Job</h3>
     <p>This job creates the GCE ARM64 based instance templates used by test pipelines to spin up ARM64 cuttlefish-ready and CTS-ready cloud instances, which are then used to launch <a href="https://source.android.com/docs/devices/cuttlefish" target="_blank" title="Cuttlefish Virtual Device">CVD</a> and run <a href="https://source.android.com/docs/compatibility/cts" target="_blank" title="Compatibility Test Suite">CTS</a> tests. Refer to the README.md in the respective repository for further details.</p>
     <h4 style="margin-bottom: 10px;">Instance Template Naming</h4>
-    <p>The name for the created instance template can either be auto-generated or user-provided (<code>CUTTLEFISH_INSTANCE_UNIQUE_NAME</code>). The resulting artifact will be <code>instance-template-&lt;name&gt;</code>. If a user-defined name is used, the Jenkins CasC (<code>jenkins.yaml</code>) must be updated with a new <code>computeEngine</code> entry for the template.</p>
+    <p>The name for the created instance template can either be auto-generated or user-provided (<code>CUTTLEFISH_INSTANCE_UNIQUE_NAME</code>). The resulting artifact will be <code>instance-template-&lt;name&gt;</code>. If a user-defined name is used, the Jenkins CasC (<code>values-jenkins.yaml</code>) must be updated with a new <code>computeEngine</code> entry for the template.</p>
+    <h4 style="margin-bottom: 10px;">Machine Type </h4>
+    <p>Users may choose to create the VM instance template from a standard machine type or define based on custom options.</p>
+    <p>Set <code>MACHINE_TYPE</code> parameter to an empty string and populate the custom options, i.e.:<br/>
+    <ul><li><code>CUSTOM_VM_TYPE</code></li>
+        <li><code>CUSTOM_CPU</code></li>
+        <li><code>CUSTOM_MEMORY</code></li></ul>
     <h4 style="margin-bottom: 10px;">Updating and Deleting Outdated Instances</h4>
     <p>This job can also be used to update and replace existing instances or delete outdated instances and associated artifacts.</p>
     <br/><div style="border-top: 1px solid #ccc; width: 100%;"></div><br/>""")
@@ -27,8 +33,8 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
       defaultValue('')
       description('''<p>The branch/tag version of Android Cuttlefish to use, e.g.</p>
         <ul>
+          <li>v1.28.0</li>
           <li>main</li>
-          <li>v1.32.0</li>
         </ul>
         <p>Reference: <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a></p>''')
       trim(true)
@@ -46,41 +52,97 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
     stringParam {
       name('ANDROID_CUTTLEFISH_POST_COMMAND')
       defaultValue('')
-      description('''<p>Command to run in <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a>.</p>
-        e.g. To fix the netsimd build issues with cxxbridge:<br/>
-        <code>git cherry-pick 78b66377</code></p>''')
+      description('''<p>Command to run in <a href="https://github.com/google/android-cuttlefish.git" target="_blank">android-cuttlefish.git</a>,  e.g.
+        <ul><li>Cherry pick: <code>git cherry-pick 655de58f</code></li>
+            <li>Checkout commit: <code>git checkout 655de58f</code></li>
+            <li>Revert commit: <code>git revert 2a786b0a</code></li></ul></p>''')
       trim(true)
     }
 
     stringParam {
       name('CUTTLEFISH_INSTANCE_UNIQUE_NAME')
       defaultValue('')
-      description('''<p>Optional parameter to define the unique name used for the instance template, e.g.  <i>cuttlefish-vm-instance-test-v1320</i><br/>
+      description('''<p>Optional parameter to define the unique name used for the instance template, e.g.  <i>cuttlefish-vm-instance-test-v1280</i><br/>
         Name must start with <i>cuttlefish-vm</i>, refer to docs for details on regex requirements for name.<br/>
-        Default: The name will be automatically derived from ANDROID_CUTTLEFISH_REVISION., e.g. <i>cuttlefish-vm-v1320</i><br/><br/></p>''')
+        Default: The name will be automatically derived from ANDROID_CUTTLEFISH_REVISION., e.g. <i>cuttlefish-vm-v1280</i><br/><br/></p>''')
       trim(true)
+    }
+
+    booleanParam {
+      name('VM_INSTANCE_CREATE')
+      defaultValue(false)
+      description('''<p>If enabled, job will create a Cuttlefish VM instance in a stopped state, created from final instance template.<br/></p>''')
+    }
+
+    booleanParam {
+      name('DELETE')
+      defaultValue(false)
+      description('''<p>Delete existing templates, skip creation steps.<br/>
+        Useful for removing old instances to reduce costs.<br/>
+        <b>Note:</b>
+          <ul><li>Define the <code>CUTTLEFISH_INSTANCE_UNIQUE_NAME</code> name if non-standard instance is to be deleted</li>
+              <li>Define the <code>ANDROID_CUTTLEFISH_REVISION</code> revision for standard instance deletion.</li></ul></p>''')
+    }
+
+    separator {
+      name('Custom Machine Type')
+      sectionHeader('Custom Machine Type')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
     }
 
     stringParam {
       name('MACHINE_TYPE')
       defaultValue('c4a-highmem-96-metal')
-      description('''<p>The ARM64 machine type to use when creating the instance, e.g..</p>
+      description('''<p>The ARM64 machine type to use when creating the instance, e.g.</p>
         <ul>
           <li>c4a-highmem-96-metal</li>
         </ul>
-        <p>Reference: <a href="https://cloud.google.com/compute/docs/general-purpose-machines" target="_blank">General-purpose machine family for Compute Engine</a> i.e. <i>--machine-type=MACHINE_TYPE</i></p>''')
+        <p>Leave empty if creating custom machine type using options below.</p>
+        <p>Refer to <a href="https://cloud.google.com/compute/docs/general-purpose-machines" target="_blank">General-purpose machine family for Compute Engine</a> for additional details, i.e. <code>--machine-type=MACHINE_TYPE</code></li></uL></p>''')
       trim(true)
     }
 
     stringParam {
-      name('BOOT_DISK_SIZE')
-      defaultValue('500GB')
-      description('''<p>The boot disk size for the instance template image, e.g..</p>
+      name('CUSTOM_VM_TYPE')
+      defaultValue('')
+      description('''<p><strong>Optional:</strong> Specifies a custom machine type, e.g.<br/>
         <ul>
-          <li>500GB</li>
-          <li>250GB</li>
+          <li>n1</li>
+          <li>n2</li>
         </ul>
-        <p>Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk=[PROPERTY=VALUE,…]</i></p>''')
+        <p><b>Note:</b>
+        <ul><li>Option is only valid when <code>MACHINE_TYPE</code> is undefined.</li>
+            <li>Refer to <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">Create Instance Template</a> for additional details, i.e.  <code>--custom-vm-type</code></li></ul></p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('CUSTOM_CPU')
+      defaultValue('32')
+      description('''<p><strong>Optional:</strong> Specifies the number of cores needed for custom machine type. e.g. <br/>
+        <ul>
+          <li>32</li>
+          <li>64</li>
+        </ul>
+        <p><b>Note:</b>
+        <ul><li>Option must be specified when <code>CUSTOM_VM_TYPE</code> is defined.</li>
+            <li>Refer to  <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">Create Instance Template</a>, for additional details, i.e.  <code>--custom-cpu</code></li></ul></p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('CUSTOM_MEMORY')
+      defaultValue('64GB')
+      description('''<p><strong>Optional:</strong> Specifies the memory needed for custom machine type. e.g. <br/>
+        <ul>
+          <li>64GB</li>
+          <li>96GB</li>
+        </ul>
+        <p><b>Note:</b>
+        <ul><li>Option must be specified when <code>CUSTOM_VM_TYPE</code> is defined.</li>
+            <li>Refer to  <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">Create Instance Template</a>, for additional details, i.e. <code>--custom-memory</code></li>
+            <li>A size unit should be provided (eg. 3072MB or 9GB) - if no units are specified, GB is assumed</li></ul></p>''')
       trim(true)
     }
 
@@ -88,6 +150,18 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
       name('BOOT_DISK_TYPE')
       defaultValue("hyperdisk-balanced")
       description('''<p>Boot disk type.</p>''')
+      trim(true)
+    }
+
+    stringParam {
+      name('BOOT_DISK_SIZE')
+      defaultValue('250GB')
+      description('''<p>The boot disk size for the instance template image, e.g.</p>
+        <ul>
+          <li>250GB</li>
+          <li>500GB</li>
+        </ul>
+        <p>Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk=[PROPERTY=VALUE,…]</i></p>''')
       trim(true)
     }
 
@@ -100,6 +174,13 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
       trim(true)
     }
 
+    separator {
+      name('Software Versions')
+      sectionHeader('Software Versions')
+      sectionHeaderStyle("${HEADER_STYLE}")
+      separatorStyle("${SEPARATOR_STYLE}")
+    }
+
     stringParam {
       name('JAVA_VERSION')
       defaultValue('openjdk-21-jdk-headless')
@@ -110,7 +191,7 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
 
     stringParam {
       name('OS_VERSION')
-      defaultValue('ubuntu-2204-jammy-arm64-v20251023')
+      defaultValue('ubuntu-2204-jammy-arm64-v20251120')
       description('''<p>ARM64 Disk image OS version.<br/>
         Select the OS version name based on project and family, e.g <code>`gcloud compute images list</code>`<br/>
         Reference: <a href="https://cloud.google.com/sdk/gcloud/reference/compute/instance-templates/create" target="_blank">gcloud compute instance-templates create</a>, i.e. <i>--create-disk</i></p>''')
@@ -126,25 +207,19 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
     }
 
     stringParam {
+      name('CURL_UPDATE_COMMAND')
+      defaultValue("")
+      description('''<p>Update Curl command.<br/>
+        Users may choose to tailor the installation command to suit their requirements.</p>''')
+      trim(true)
+    }
+
+    stringParam {
       name('NODEJS_VERSION')
       defaultValue("${NODEJS_VERSION}")
       description('''<p>NodeJS version.<br/>
         This is installed using <i>nvm</i> on the instance template to be compatible with other tooling.</p>''')
       trim(true)
-    }
-
-    booleanParam {
-      name('DELETE')
-      defaultValue(false)
-      description('''<p>Delete existing templates, skip creation steps.<br/>
-        Useful for removing old instances to reduce costs.<br/>
-        <b>Note:</b> Define the CUTTLEFISH_INSTANCE_UNIQUE_NAME if non-standard instance is to be deleted, else simply define the version in ANDROID_CUTTLEFISH_REVISION field.</p>''')
-    }
-
-    booleanParam {
-      name('VM_INSTANCE_CREATE')
-      defaultValue(false)
-      description('''<p>If enabled, job will create a Cuttlefish VM instance in a stopped state, using the final instance template.</p>''')
     }
 
     separator {
@@ -157,27 +232,30 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
     stringParam {
       name('CTS_ANDROID_16_URL')
       defaultValue("https://dl.google.com/dl/android/cts/android-cts-16_r3-linux_x86-arm.zip")
-      description('''<p>Leave blank if a version is not needed, or specify your preferred version.<br/>
-      Enter the full bucket URL, including <code>android-cts.zip</code>, for example:<br/>
-      <code>gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/01/android-cts.zip</code></p>''')
+      description('''<p>Leave blank if the version is not needed, or specify your preferred version.<br/>
+      Either download from official site, or from a local bucket if stored locally to improve download times, e.g.
+      <ul><li>Official downloads: <code>https://dl.google.com/dl/android/cts/android-cts-16_r3-linux_x86-arm.zip/code></li>
+          <li>Local GCS bucket download: <code>gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/CTS/android-cts-16_r3-linux_x86-arm.zip</code></li></ul></p>''')
       trim(true)
     }
 
     stringParam {
       name('CTS_ANDROID_15_URL')
       defaultValue("https://dl.google.com/dl/android/cts/android-cts-15_r6-linux_x86-arm.zip")
-      description('''<p>Leave blank if a version is not needed, or specify your preferred version.<br/>
-      Enter the full bucket URL, including <code>android-cts.zip</code>, for example:<br/>
-      <code>gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/02/android-cts.zip</code></p>''')
+      description('''<p>Leave blank if the version is not needed, or specify your preferred version.<br/>
+      Either download from official site, or from a local bucket if stored locally to improve download times, e.g.
+      <ul><li>Official downloads: <code>https://dl.google.com/dl/android/cts/android-cts-15_r6-linux_x86-arm.zip/code></li>
+          <li>Local GCS bucket download: <code>gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/CTS/android-cts-15_r6-linux_x86-arm.zip</code></li></ul></p>''')
       trim(true)
     }
 
     stringParam {
       name('CTS_ANDROID_14_URL')
       defaultValue("https://dl.google.com/dl/android/cts/android-cts-14_r10-linux_x86-arm.zip")
-      description('''<p>Leave blank if a version is not needed, or specify your preferred version.<br/>
-      Enter the full bucket URL, including <code>android-cts.zip</code>, for example:<br/>
-      <code>gs://sdva-2108202401-aaos/Android/Builds/AAOS_Builder/04/android-cts.zip</code></p>''')
+      description('''<p>Leave blank if the version is not needed, or specify your preferred version.<br/>
+      Either download from official site, or from a local bucket if stored locally to improve download times, e.g.
+      <ul><li>Official downloads: <code>https://dl.google.com/dl/android/cts/android-cts-14_r10-linux_x86-arm.zip/code></li>
+          <li>Local GCS bucket download: <code>gs://${ANDROID_BUILD_BUCKET_ROOT_NAME}/Android/CTS/android-cts-14_r10-linux_x86-arm.zip</code></li></ul></p>''')
       trim(true)
     }
 
@@ -211,7 +289,7 @@ pipelineJob('Android/Environment/CF Instance Template ARM64') {
 
     stringParam {
       name('ZONE')
-      defaultValue("us-central1-b")
+      defaultValue("us-central1-f")
       description('''<p>ARM64 zone or leave blank to use default platform value.</p>''')
       trim(true)
     }

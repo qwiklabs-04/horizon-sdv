@@ -43,7 +43,7 @@ To successfully run the pipeline, ensure that the referenced Cuttlefish instance
 
 ## Gerrit Triggers
 
-The pipeline is triggered by a Gerrit patchset change based on Gerrit Triggers plugin. It uses the Horizon default path and branch name prefixes:
+The pipeline is triggered by a Gerrit patchset change, or topic update based on Gerrit Triggers plugin. It uses the Horizon default path and branch name prefixes:
 - Project prefix path: `android` separates projects into Android workload.
 - Branch prefix path: `horizon` and separates branch names from upstream branches.
 
@@ -54,6 +54,12 @@ properties{
   pipelineTriggers{
     triggers{
       gerrit{
+        buildCancellationPolicy{
+          abortAbandonedPatchsets(false)
+          abortManualPatchsets(true)
+          abortNewPatchsets(false)
+          abortSameTopic(true)
+        }
         gerritProjects{
           gerritProject{
             compareType('REG_EXP')
@@ -80,7 +86,7 @@ properties{
 
 There are a number of system environment variables that are unique to each platform but required by Jenkins build, test and environment pipelines.
 
-These are defined in Jenkins CasC `jenkins.yaml` and can be viewed in Jenkins UI under `Manage Jenkins` -> `System` -> `Global Properties` -> `Environment variables`.
+These are defined in Jenkins CasC `values-jenkins.yaml` and can be viewed in Jenkins UI under `Manage Jenkins` -> `System` -> `Global Properties` -> `Environment variables`.
 
 These are as follows:
 

@@ -157,7 +157,7 @@ Jenkins provides a CI/CD pipeline execution environment for workloads, currently
 Jenkins is installed using the official OpenSource Helm chart, with custom configurations specific to the Horizon SDV project.
 
 ####  Configuration
-Jenkins is configured using jenkins-init.yaml and jenkins.yaml, which define:
+Jenkins is configured using jenkins-init.yaml, jenkins.yaml, and values-jenkins.yaml, which define:
 - Secrets management for applications.
 - Persistent storage setup.
 - Base Jenkins configuration.

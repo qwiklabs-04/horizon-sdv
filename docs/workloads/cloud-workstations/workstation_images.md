@@ -45,7 +45,7 @@ simply use `latest` because all pipelines that depend on this container image ar
 
 There are a number of system environment variables that are unique to each platform but required by these Jenkins Cloud Workstation `Workstation Images` pipelines.
 
-These are defined in Jenkins CasC `jenkins.yaml` and can be viewed in Jenkins UI under `Manage Jenkins` -> `System` -> `Global Properties` -> `Environment variables`.
+These are defined in Jenkins CasC `values-jenkins.yaml` and can be viewed in Jenkins UI under `Manage Jenkins` -> `System` -> `Global Properties` -> `Environment variables`.
 
 These are as follows:
 
@@ -64,7 +64,7 @@ These are as follows:
 -   `JENKINS_SERVICE_ACCOUNT`
     - Service account to use for pipelines. Required to ensure correct roles and permissions for GCP resources.
 
-Below variables have their values defined in `gitops/env/stage2/values.yaml` and then referenced in Jenkins CasC `jenkins.yaml`.
+Below variables have their values defined in `gitops/env/stage2/values.yaml` and then referenced in Jenkins CasC `values-jenkins.yaml`.
 
 -   `CLOUD_WS_HORIZON_CODE_OSS_IMAGE_NAME`
     - Name of the Docker image on GCP Artifact registry for VS Code IDE (`horizon-code-oss`), that is used in Cloud Workstations.

@@ -24,6 +24,7 @@ CUTTLEFISH_REPO_URL=$(echo "${CUTTLEFISH_REPO_URL}" | xargs)
 CUTTLEFISH_REPO_URL=${CUTTLEFISH_REPO_URL:-https://github.com/google/android-cuttlefish.git}
 CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION:-main}
 CUTTLEFISH_REPO_NAME=$(basename "${CUTTLEFISH_REPO_URL}" .git)
+
 # Must use flag because there is inconsistency between tag/branch and dpkg
 # version number, eg main = 1.0.0.
 CUTTLEFISH_UPDATE=${CUTTLEFISH_UPDATE:-false}
@@ -40,6 +41,9 @@ CTS_ANDROID_16_URL=${CTS_ANDROID_16_URL:-}
 CTS_ANDROID_15_URL=${CTS_ANDROID_15_URL:-}
 CTS_ANDROID_14_URL=${CTS_ANDROID_14_URL:-}
 
+# Curl upgrade command
+CURL_UPDATE_COMMAND=${CURL_UPDATE_COMMAND:-}
+
 # NodeJS Version
 NODEJS_VERSION=${NODEJS_VERSION:-20.9.0}
 
@@ -49,6 +53,7 @@ if [ -z "${WORKSPACE}" ]; then
 else
     CF_SCRIPT_PATH=workloads/android/pipelines/environment/cf_instance_template
 fi
+CUTTLEFISH_LATEST_SHA1_FILENAME="android-cuttlefish-sha1.txt"
 
 # Show variables.
 VARIABLES="Environment:
@@ -72,6 +77,10 @@ case "$0" in
         CUTTLEFISH_REPO_NAME=${CUTTLEFISH_REPO_NAME}
         CUTTLEFISH_REVISION=${CUTTLEFISH_REVISION}
         CUTTLEFISH_UPDATE=${CUTTLEFISH_UPDATE}
+
+        CURL_UPDATE_COMMAND=${CURL_UPDATE_COMMAND}
+
+        CUTTLEFISH_LATEST_SHA1_FILENAME=${CUTTLEFISH_LATEST_SHA1_FILENAME}
 
         CUTTLEFISH_POST_COMMAND=${CUTTLEFISH_POST_COMMAND}
         "

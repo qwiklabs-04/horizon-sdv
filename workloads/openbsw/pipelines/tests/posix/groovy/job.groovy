@@ -36,7 +36,10 @@ pipelineJob('OpenBSW/Tests/POSIX') {
 ./posix/tools/can/bring-up-vcan0.sh</code></pre>
     <h4 style="margin-bottom: 10px;">Launch the Reference Application:</h4>
     <p>Starts the POSIX reference application console:</p>
-    <pre><code class="language-bash">./posix/build/posix/executables/referenceApp/application/Release/app.referenceApp.elf</code></pre>
+    <b>posix-freertos</b><br/>
+    <pre><code class="language-bash">./posix/build/posix-freertos/executables/referenceApp/application/Release/app.referenceApp.elf</code></pre>
+    <b>posix-threadx</b><br/>
+    <pre><code class="language-bash">./posix/build/posix-threadx/executables/referenceApp/application/Release/app.referenceApp.elf</code></pre>
     <ul>
       <li>Keep this running while testing.</li>
       <li>Stop with Ctrl+C when done.</li>
@@ -57,7 +60,9 @@ pipelineJob('OpenBSW/Tests/POSIX') {
     stringParam {
       name('OPENBSW_DOWNLOAD_URL')
       defaultValue('')
-      description("""<p>Storage URL pointing to the location of the test image, e.g.<br/>gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Builds/BSW_Builder/&lt;BUILD_NUMBER&gt;/posix/</p>""")
+      description("""<p>Storage URL pointing to the location of the test image, e.g.<br/>gs://${OPENBSW_BUILD_BUCKET_ROOT_NAME}/OpenBSW/Builds/BSW_Builder/&lt;BUILD_NUMBER&gt;/posix/<br/><br/>
+        <b>Note:</b>
+          <ul><li>if build number is less than 2 digits, then zero pad , i.e. 1 to 9 must be 01 to 09.</li></ul)</p>""")
       trim(true)
     }
 

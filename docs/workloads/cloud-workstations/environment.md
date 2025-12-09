@@ -36,7 +36,7 @@ simply use `latest` because all pipelines that depend on this container image ar
 
 There are a number of system environment variables that are unique to each platform but required by this Jenkins Cloud Workstation environment pipeline.
 
-These are defined in Jenkins CasC `jenkins.yaml` and can be viewed in Jenkins UI under `Manage Jenkins` -> `System` -> `Global Properties` -> `Environment variables`.
+These are defined in Jenkins CasC `values-jenkins.yaml` and can be viewed in Jenkins UI under `Manage Jenkins` -> `System` -> `Global Properties` -> `Environment variables`.
 
 These are as follows:
 

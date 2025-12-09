@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Allow user to choose distribution, e.g. ubuntu:22.04
+# Allow user to choose distribution, e.g. ubuntu:22.04, ubuntu:jammy-20251203
 ARG LINUX_DISTRIBUTION=ubuntu:22.04
 FROM ${LINUX_DISTRIBUTION}
 
@@ -39,7 +39,7 @@ RUN apt-get update -y && \
     gettext gettext-base g++-multilib libncurses5 libssl-dev python3 python3-setuptools \
     python3-pip python3-requests python3-venv python3-virtualenv procps \
     meson bc coreutils dosfstools e2fsprogs fdisk kpartx mtools ninja-build \
-    pkg-config rsync less curl sudo vim ssh findutils gawk jq htop \
+    pkg-config rsync less curl sudo vim ssh findutils gawk jq htop wget \
     libcap2-bin psmisc && \
     apt-get update -y && apt install -y npm nodejs && \
     rm -rf /var/lib/apt/lists/*

@@ -26,7 +26,8 @@ spec:
   source:
     chart: kubescape-operator
     repoURL: https://kubescape.github.io/helm-charts/
-    targetRevision: {{ .Values.config.applications.kubescape_operator.version }}
+    targetRevision:
+      { { .Values.config.applications.kubescape_operator.version } }
     helm:
       values: |
         clusterName: "gke_{{ .Values.config.projectID }}_{{ .Values.config.region }}_sdv-cluster"
@@ -49,12 +50,18 @@ spec:
       namespace: kubescape
       jqPathExpressions:
         - .data
-    - kind: ValidatingWebhookConfiguration
-      name: validation
-      namespace: kubescape
     - group: admissionregistration.k8s.io
       kind: ValidatingWebhookConfiguration
       name: validation
-      namespace: kubescape
       jqPathExpressions:
-        - '.webhooks[].clientConfig.caBundle'
+        - .webhooks[].clientConfig.caBundle
+    - group: batch
+      kind: CronJob
+      name: kubescape-scheduler
+      jqPathExpressions:
+        - .spec.schedule
+    - group: batch
+      kind: CronJob
+      name: kubevuln-scheduler
+      jqPathExpressions:
+        - .spec.schedule
